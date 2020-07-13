@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Programme;
-use App\GeneralStudies;
-use App\Academic;
+use App\Subject_MPU;
+use App\Faculty;
 use App\Department;
 
-class GSController extends Controller
+
+class MPUController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,7 +23,7 @@ class GSController extends Controller
                     ->select('programmes.*')
                     ->groupBy('level')
                     ->get();
-        return view('admin.GSIndex', ['programmes' => $programmes]);
+        return view('admin.MPUIndex', ['programmes' => $programmes]);
     }
 
     /**
@@ -32,34 +33,33 @@ class GSController extends Controller
      */
     public function create($level)
     {
-        $subjects = DB::table('general_studies')
-                    ->select('general_studies.*')
-                    ->where('general_studies.level', '=', $level)
+        $subjects = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        $group = DB::table('general_studies')
-                    ->select('general_studies.*')
+        $group = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
                     ->groupBy('subject_type')
-                    ->orderBy('gs_id')
-                    ->where('general_studies.level', '=', $level)
+                    ->orderBy('mpu_id')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        return view('admin.GSCreate', compact('subjects','group', 'level'));
+        return view('admin.MPUCreate', compact('subjects','group', 'level'));
     }
 
     public function view($level)
     {
-        $subjects = DB::table('general_studies')
-                    ->select('general_studies.*')
-                    ->where('general_studies.level', '=', $level)
+        $subjects = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        $group = DB::table('general_studies')
-                    ->select('general_studies.*')
+        $group = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
                     ->groupBy('subject_type')
-                    ->orderBy('gs_id')
-                    ->where('general_studies.level', '=', $level)
+                    ->orderBy('mpu_id')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        return view('admin.GSView', compact('subjects','group', 'level'));
+        return view('admin.MPUView', compact('subjects','group', 'level'));
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -78,7 +78,7 @@ class GSController extends Controller
                 $subject_name = $request->get($i.'subject_name'.$m);
 
                 if($subject_code!="" && $subject_name!=""){
-                    $subject = new GeneralStudies([
+                    $subject = new Subject_MPU([
                         'level'                =>  $level,
                         'subject_type'         =>  $type,
                         'subject_code'         =>  $subject_code,
@@ -88,7 +88,7 @@ class GSController extends Controller
                 }
             }
         }
-        return redirect()->route('admin.gs_list.index')->with('success','Data Added');
+        return redirect()->route('admin.mpu_list.index')->with('success','Data Added');
     }
 
     /**
@@ -138,33 +138,33 @@ class GSController extends Controller
 
     public function generalStudiesEditModal(Request $request)
     {
-        $gs_id = $request->get('value');
-        $subject = GeneralStudies::find($gs_id);
+        $mpu_id = $request->get('value');
+        $subject = Subject_MPU::find($mpu_id);
         return $subject;
     }
 
     public function generalStudiesUpdateModal(Request $request)
     {
-        $gs_id = $request->get('gs_id');
+        $mpu_id = $request->get('mpu_id');
 
-        $gs = GeneralStudies::where('gs_id', '=', $gs_id)->firstOrFail();
-        $gs->subject_code  = $request->get('subject_code');
-        $gs->subject_name  = $request->get('subject_name');
-        $gs->save();
+        $mpu = Subject_MPU::where('mpu_id', '=', $mpu_id)->firstOrFail();
+        $mpu->subject_code  = $request->get('subject_code');
+        $mpu->subject_name  = $request->get('subject_name');
+        $mpu->save();
 
-        $level = $gs->level;
+        $level = $mpu->level;
 
-        $subjects = DB::table('general_studies')
-                    ->select('general_studies.*')
-                    ->where('general_studies.level', '=', $level)
+        $subjects = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        $group = DB::table('general_studies')
-                    ->select('general_studies.*')
+        $group = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
                     ->groupBy('subject_type')
-                    ->orderBy('gs_id')
-                    ->where('general_studies.level', '=', $level)
+                    ->orderBy('mpu_id')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        return redirect()->route('generalStudies.create', compact('subjects','group', 'level'))->with('success','Data Updated');
+        return redirect()->route('MPU.create', compact('subjects','group', 'level'))->with('success','Data Updated');
     }
 
     public function generalStudiesTypeUpdateModal(Request $request)
@@ -172,27 +172,27 @@ class GSController extends Controller
         $level   = $request->get('level');
         $same    = $request->get('same');
 
-        $gs = GeneralStudies::where([
+        $mpu = Subject_MPU::where([
                 ['level', '=', $level],
                 ['subject_type', '=', $same],
             ])->get();
 
-        foreach($gs as $row){
-            $gs_list = GeneralStudies::where('gs_id', '=', $row->gs_id)->firstOrFail();
+        foreach($mpu as $row){
+            $gs_list = Subject_MPU::where('mpu_id', '=', $row->mpu_id)->firstOrFail();
             $gs_list->subject_type = $request->get('subject_type');
             $gs_list->save();
         }
 
-        $subjects = DB::table('general_studies')
-                    ->select('general_studies.*')
-                    ->where('general_studies.level', '=', $level)
+        $subjects = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        $group = DB::table('general_studies')
-                    ->select('general_studies.*')
+        $group = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
                     ->groupBy('subject_type')
-                    ->orderBy('gs_id')
-                    ->where('general_studies.level', '=', $level)
+                    ->orderBy('mpu_id')
+                    ->where('subjects_mpu.level', '=', $level)
                     ->get();
-        return redirect()->route('generalStudies.create', compact('subjects','group', 'level'))->with('success','Data Updated');
+        return redirect()->route('MPU.create', compact('subjects','group', 'level'))->with('success','Data Updated');
     }
 }

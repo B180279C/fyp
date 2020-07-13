@@ -24,7 +24,7 @@
                 <tr>
                     <th>No. </th>
                     <th>Programme Name</th>
-                    <th>Department & Academic</th>
+                    <th>Department & Faculty</th>
                     <th>Level</th>
                     <th colspan="2"><center>Course</center></th>
                     <th>Action</th>
@@ -36,10 +36,10 @@
                 <tr>
                     <td><?php echo $i++?></td>
                     <td>{{$row->programme_name}}, ({{$row->short_form_name}})</td>
-                    <td>{{$row->department_name}}, {{$row->academic_name}}</td>
+                    <td>{{$row->department_name}}, {{$row->faculty_name}}</td>
                     <td>{{$row->level}}</td>
                     <td><a href="{{action('SubjectController@create', $row->programme_id)}}">Subject List</a></td>
-                    <td><a href="{{action('GSController@view', $row->level)}}">MPU Subject List</a></td>
+                    <td><a href="{{action('MPUController@view', $row->level)}}">MPU Subject List</a></td>
                     <td><a href="{{action('ProgrammeController@edit', $row->programme_id)}}">Edit</a></td>
                 </tr>
                 @endforeach

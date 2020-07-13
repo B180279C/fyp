@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Department;
-use App\Academic;
+use App\Faculty;
 use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
@@ -17,8 +17,8 @@ class DepartmentController extends Controller
     public function index()
     {
         $departments = DB::table('departments')
-                    ->join('academic', 'departments.academic_id', '=', 'academic.academic_id')
-                    ->select('departments.*', 'academic.academic_name')
+                    ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
+                    ->select('departments.*', 'faculty.faculty_name')
                     ->get();
         return view('admin.DepartmentIndex', ['departments' => $departments]);
     }
@@ -30,8 +30,8 @@ class DepartmentController extends Controller
      */
     public function create()
     {
-        $academic = Academic::all()->toArray();
-        return view('admin.DepartmentCreate', compact('academic'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.DepartmentCreate', compact('faculty'));
     }
 
     /**
@@ -43,13 +43,13 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'academic'             =>  'string',
+            'faculty'              =>  'string',
             'department_name'      =>  'required'
         ]);
 
 
         $department = new Department([
-            'academic_id'        => $request->get('academic'),
+            'faculty_id'        => $request->get('faculty'),
             'department_name'   => $request->get('department_name'),
         ]);
 
@@ -77,8 +77,8 @@ class DepartmentController extends Controller
     public function edit($id)
     {
         $department = Department::where('department_id', '=', $id)->firstOrFail();
-        $academic = Academic::all()->toArray();
-        return view('admin.DepartmentEdit', compact('department' ,'academic', 'id'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.DepartmentEdit', compact('department' ,'faculty', 'id'));
     }
 
     /**
@@ -92,12 +92,12 @@ class DepartmentController extends Controller
     {
         $this->validate($request, [
             'department_name'       =>  'required',
-            'academic'              =>  'string',
+            'faculty'               =>  'string',
         ]);
 
         $department                  = Department::where('department_id', '=', $id)->firstOrFail();
         $department->department_name = $request->get('department_name');
-        $department->academic_id     = $request->get('academic');
+        $department->faculty_id     = $request->get('faculty');
         $department->save(); 
 
         if(auth()->user()){

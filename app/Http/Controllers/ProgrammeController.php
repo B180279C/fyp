@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Department;
-use App\Academic;
+use App\Faculty;
 use App\Programme;
 use Illuminate\Support\Facades\DB;
 
@@ -19,9 +19,9 @@ class ProgrammeController extends Controller
     {
         $programmes = DB::table('programmes')
                     ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
-                    ->join('academic', 'departments.academic_id', '=', 'academic.academic_id')
-                    ->select('programmes.*', 'departments.department_name', 'academic.academic_name')
-                    ->orderBy('academic.academic_id')
+                    ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
+                    ->select('programmes.*', 'departments.department_name', 'faculty.faculty_name')
+                    ->orderBy('faculty.faculty_id')
                     ->get();
         return view('admin.ProgrammeIndex', ['programmes' => $programmes]);
     }
@@ -34,8 +34,8 @@ class ProgrammeController extends Controller
     public function create()
     {
         $departments = Department::all()->toArray();
-        $academic = Academic::all()->toArray();
-        return view('admin.ProgrammeCreate', compact('departments', 'academic'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.ProgrammeCreate', compact('departments', 'faculty'));
     }
 
     /**
@@ -85,8 +85,8 @@ class ProgrammeController extends Controller
     {
         $programme = Programme::where('programme_id', '=', $id)->firstOrFail();
         $department = Department::all()->toArray();
-        $academic = Academic::all()->toArray();
-        return view('admin.ProgrammeEdit', compact('programme','department' ,'academic', 'id'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.ProgrammeEdit', compact('programme','department' ,'faculty', 'id'));
     }
 
     /**

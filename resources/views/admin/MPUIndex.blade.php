@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <br>
-            <h3 align="center">Academic Data</h3>
+            <h3 align="center">General Studies Data</h3>
             <br>
             @if($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -15,25 +15,20 @@
                 </button>
             </div>
             @endif
-            <div align="right">
-                <a href="{{route('academic.create')}}" class="btn btn-primary">Add</a>
-                <br>
-                <br>
-            </div>
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>No. </th>
-                    <th>Academic Name</th>
-                    <th>Action</th>
+                    <th>Level</th>
+                    <th>Course</th>
                 </tr>
                 <?php
                 $i = 1; 
                 ?>
-                @foreach($academic as $row)
+                @foreach($programmes as $row)
                 <tr>
                     <td><?php echo $i++?></td>
-                    <td>{{$row['academic_name']}}</td>
-                    <td><a href="{{action('AcademicController@edit', $row['academic_id'])}}">Edit</a></td>
+                    <td>{{$row->level}}</td>
+                    <td><a href="{{action('MPUController@create', $row->level)}}">MPU Subject List</a></td>
                 </tr>
                 @endforeach
             </table>

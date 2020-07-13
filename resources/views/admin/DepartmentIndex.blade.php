@@ -23,7 +23,7 @@
             <table class="table table-bordered table-striped">
                 <tr>
                     <th>No. </th>
-                    <th>Academic</th>
+                    <th>Faculty</th>
                     <th>Department Name</th>
                     <th>Action</th>
                 </tr>
@@ -33,7 +33,7 @@
                 @foreach($departments as $row)
                 <tr>
                     <td><?php echo $i++?></td>
-                    <td>{{$row->academic_name}}</td>
+                    <td>{{$row->faculty_name}}</td>
                     <td>{{$row->department_name}}</td>
                     <td><a href="{{action('DepartmentController@edit', $row->department_id)}}">Edit</a></td>
                 </tr>

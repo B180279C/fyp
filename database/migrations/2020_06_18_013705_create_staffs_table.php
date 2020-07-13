@@ -18,8 +18,9 @@ class CreateStaffsTable extends Migration
             $table->string('user_id');
             $table->string('staff_id');
             $table->string('department_id');
-            $table->string('academic_id');
+            $table->string('faculty_id');
             $table->text('staff_image')->nullable();
+            $table->text('lecturer_CV')->nullable();
             $table->timestamps();
         });
     }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Staff;
 use App\User;
 use App\Department;
-use App\Academic;
+use App\Faculty;
 
 class StaffController extends Controller
 {
@@ -35,8 +35,8 @@ class StaffController extends Controller
     public function create()
     {
         $departments = Department::all()->toArray();
-        $academic = Academic::all()->toArray();
-        return view('admin.StaffCreate', compact('departments', 'academic'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.StaffCreate', compact('departments', 'faculty'));
     }
 
     /**
@@ -53,7 +53,7 @@ class StaffController extends Controller
             'password'              =>  'min:8|confirmed|required',
             'password_confirmation' =>  'required',
             'position'              =>  'string',
-            'academic'              =>  'string',
+            'faculty'               =>  'string',
         ]);
 
         $email = $request->get('staff_id')."@sc.edu.my";
@@ -74,7 +74,7 @@ class StaffController extends Controller
                 'user_id'         => $user_id,
                 'staff_id'        => $request->get('staff_id'),
                 'department_id'   => $request->get('department'),
-                'academic_id'     => $request->get('academic'),
+                'faculty_id'      => $request->get('faculty'),
             ]);
             
             $staff->save();
@@ -106,8 +106,8 @@ class StaffController extends Controller
         $staff = Staff::where('staff_id', '=', $id)->firstOrFail();
         $user = User::find($staff->user_id);
         $departments = Department::all()->toArray();
-        $academic = Academic::all()->toArray();
-        return view('admin.StaffEdit', compact('staff', 'user' , 'departments' ,'academic', 'id'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.StaffEdit', compact('staff', 'user' , 'departments' ,'faculty', 'id'));
     }
 
     /**
@@ -123,7 +123,7 @@ class StaffController extends Controller
             'name'                  =>  'required',
             'position'              =>  'string',
             'department'            =>  'string',
-            'academic'              =>  'string',
+            'faculty'               =>  'string',
         ]);
         $staff_id  = $request->get('staff_id');
         $email     = $request->get('staff_id')."@sc.edu.my";
@@ -143,7 +143,7 @@ class StaffController extends Controller
         $user->position         = $request->get('position');
 
         $staff->department_id   = $request->get('department');
-        $staff->academic_id     = $request->get('academic');
+        $staff->faculty_id      = $request->get('faculty');
         $staff->save();
         $user->save();
 
@@ -166,15 +166,15 @@ class StaffController extends Controller
     }
 
 
-    public function staffAcademic(Request $request)
+    public function staffFaculty(Request $request)
     {
         $value = $request->get('value');
 
         $departments = Department::all()->toArray();
-        $academic = Academic::where('academic_id', '=', $value)->firstOrFail();
+        $faculty = Faculty::where('faculty_id', '=', $value)->firstOrFail();
         $data = "";
         foreach($departments as $row){
-            if($row['academic_id'] == $value){
+            if($row['faculty_id'] == $value){
                 $department_id = $row['department_id'];
                 $department_name = $row['department_name'];
                 $data .= "<option value=$department_id>$department_name</option>";
@@ -185,7 +185,7 @@ class StaffController extends Controller
             return "null";
         }
 
-        $result = "<optgroup label='$academic->academic_name'>'".$data."'</optgroup>";
+        $result = "<optgroup label='$faculty->faculty_name'>'".$data."'</optgroup>";
         return $result;
     }
 }

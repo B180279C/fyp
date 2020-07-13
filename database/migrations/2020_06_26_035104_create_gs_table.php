@@ -13,12 +13,13 @@ class CreateGsTable extends Migration
      */
     public function up()
     {
-        Schema::create('General_Studies', function (Blueprint $table) {
-            $table->id('gs_id');
+        Schema::create('subjects_mpu', function (Blueprint $table) {
+            $table->id('mpu_id');
             $table->string('level');
             $table->string('subject_code');
             $table->string('subject_name');
             $table->string('subject_type');
+            $table->text('syllabus')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateGsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('GeneralStudies');
+        Schema::dropIfExists('subjects_mpu');
     }
 }

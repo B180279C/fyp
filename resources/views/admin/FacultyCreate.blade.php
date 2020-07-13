@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Add Academic') }}</div>
+                <div class="card-header">{{ __('Add Faculty') }}</div>
                 <div class="card-body">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
@@ -25,13 +25,13 @@
                     </div>
                     @endif
 
-                        <form method="post" action="{{route('academic.submit')}}">
+                        <form method="post" action="{{route('faculty.submit')}}">
                         {{csrf_field()}}
                         
                         <div class="form-group row">
-                            <label for="full_name" class="col-md-4 col-form-label text-md-right">{{ __('Academic Name : ') }}</label>
+                            <label for="full_name" class="col-md-4 col-form-label text-md-right">{{ __('Faculty Name : ') }}</label>
                             <div class="col-md-6">
-                                <input type="text" name="academic_name" class="form-control" placeholder="Name">
+                                <input type="text" name="faculty_name" class="form-control" placeholder="Name">
                             </div>
                         </div>
                         <div class="form-group">

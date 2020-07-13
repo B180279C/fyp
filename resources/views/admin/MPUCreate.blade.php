@@ -83,7 +83,7 @@
                     </div>
                     @endif
 
-                        <form method="post" action="{{action('GSController@store', $level)}}">
+                        <form method="post" action="{{action('MPUController@store', $level)}}">
                         {{csrf_field()}}
                         <div style="text-align: right;">
                             <button type="button" name="add" id="subject_type" class="btn btn-warning">Add Subject List</button>
@@ -131,7 +131,7 @@
                                               <input type="text" name="<?php echo $i?>subject_name<?php echo $m?>" placeholder="Subject Name" class="form-control" value="{{$row->subject_name}}" disabled/>
                                           </div>
                                           <div class="col-md-1" style="padding: 1px">
-                                            <a class="btn btn-secondary open-modal " id="{{$row->gs_id}}"><i class="fa fa-pencil" aria-hidden="true" style="color:white;"></i>
+                                            <a class="btn btn-secondary open-modal " id="{{$row->mpu_id}}"><i class="fa fa-pencil" aria-hidden="true" style="color:white;"></i>
                                             </a>
                                           </div>
                                       </div>
@@ -172,7 +172,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('GSController@generalStudiesUpdateModal')}}">
+      <form method="post" action="{{action('MPUController@generalStudiesUpdateModal')}}">
         {{csrf_field()}}
       <div class="modal-body">
         <div id="message"></div>
@@ -181,7 +181,7 @@
             <div class="col-md-3" style="text-align: right;">
               <label for="subject" class="col-form-label">Subject : </label>
             </div>
-            <input type="hidden" name="gs_id" id="gs_id_modal">
+            <input type="hidden" name="mpu_id" id="gs_id_modal">
             <div class="col-md-8 row">
               <div class="col-md-4" style="padding: 1px">
                 <input type="text" name="subject_code" id="subject_code_modal" placeholder="Code" class="form-control" value="" required/>
@@ -213,7 +213,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('GSController@generalStudiesTypeUpdateModal')}}">
+      <form method="post" action="{{action('MPUController@generalStudiesTypeUpdateModal')}}">
         {{csrf_field()}}
       <div class="modal-body">
         <div id="message_type"></div>

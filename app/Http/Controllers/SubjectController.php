@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Programme;
 use App\Subject;
-use App\Academic;
+use App\Faculty;
 use App\Department;
 
 class SubjectController extends Controller

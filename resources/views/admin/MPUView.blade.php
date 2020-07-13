@@ -25,7 +25,7 @@
                     </div>
                     @endif
 
-                        <form method="post" action="{{action('GSController@store', $level)}}">
+                        <form method="post">
                         {{csrf_field()}}
                         <!-- <div style="text-align: right;">
                             <button type="button" name="add" id="subject_type" class="btn btn-warning">Add Subject List</button>
@@ -72,8 +72,6 @@
                                 @endforeach
                                 <input type="hidden" name="count_list<?php echo $i?>" id="count_list<?php echo $i?>" value="<?php echo ($m-1)?>">
                             </div>
-                            <br>
-                          <hr>
                           <?php 
                             $i++;
                           ?>

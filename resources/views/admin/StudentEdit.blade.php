@@ -66,10 +66,10 @@
                             <label for="programme" class="col-md-4 col-form-label text-md-right">{{ __('Programme : ') }}</label>
                             <div class="col-md-6">
                                 <select class="selectpicker" name="programme" id="programme" data-width="100%" title="Choose one" data-live-search="true">
-                                    @foreach($academic as $row_academic)
-                                    <optgroup label="{{ $row_academic['academic_name']}}">
+                                    @foreach($faculty as $row_faculty)
+                                    <optgroup label="{{ $row_faculty['faculty_name']}}">
                                         @foreach($programme as $row)
-                                            @if($row_academic['academic_id']==$row->academic_id)
+                                            @if($row_faculty['faculty_id']==$row->faculty_id)
                                                 @if($student->programme_id == $row->programme_id)
                                                     <option selected value="{{ $row->programme_id }}">{{$row->short_form_name}} : {{$row->programme_name}}</option>
                                                 @else

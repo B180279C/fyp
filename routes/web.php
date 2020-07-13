@@ -37,7 +37,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::get('/staff_list','StaffController@index')->name('admin.staff_list.index');
 	Route::get('/staff/{id}','StaffController@edit')->name('admin.staff_list.edit');
 	Route::post('/staff/{id}','StaffController@update')->name('staff_list.update.submit');
-	Route::post('/staffAcademic', 'StaffController@staffAcademic');
+	Route::post('/staffFaculty', 'StaffController@staffFaculty');
 
 
 	Route::get('department/create','DepartmentController@create')->name('department.create');
@@ -60,21 +60,20 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/subjectTypeUpdateModal', 'SubjectController@subjectTypeUpdateModal');
 
 
-	Route::get('generalStudies/create/{level}','GSController@create')->name('generalStudies.create');
-	Route::post('generalStudies/create/{level}', 'GSController@store')->name('generalStudies.submit');
-	Route::get('generalStudies/view/{level}','GSController@view')->name('generalStudies.view');
-	Route::get('gs_list','GSController@index')->name('admin.gs_list.index');
-	Route::post('/generalStudiesEditModal', 'GSController@generalStudiesEditModal');
-	Route::post('/generalStudiesUpdateModal', 'GSController@generalStudiesUpdateModal');
-	Route::post('/generalStudiesTypeUpdateModal', 'GSController@generalStudiesTypeUpdateModal');
+	Route::get('subjectsMPU/create/{level}','MPUController@create')->name('MPU.create');
+	Route::post('subjectsMPU/create/{level}', 'MPUController@store')->name('MPU.submit');
+	Route::get('subjectsMPU/view/{level}','MPUController@view')->name('MPU.view');
+	Route::get('mpu_list','MPUController@index')->name('admin.mpu_list.index');
+	Route::post('/generalStudiesEditModal', 'MPUController@generalStudiesEditModal');
+	Route::post('/generalStudiesUpdateModal', 'MPUController@generalStudiesUpdateModal');
+	Route::post('/generalStudiesTypeUpdateModal', 'MPUController@generalStudiesTypeUpdateModal');
 
 
-
-	Route::get('academic/create','AcademicController@create')->name('academic.create');
-	Route::post('academic/create', 'AcademicController@store')->name('academic.submit');
-	Route::get('/academic_list','AcademicController@index')->name('admin.academic_list.index');
-	Route::get('/academic/{id}','AcademicController@edit')->name('admin.academic_list.edit');
-	Route::post('/academic/{id}','AcademicController@update')->name('academic_list.update.submit');
+	Route::get('faculty/create','FacultyController@create')->name('faculty.create');
+	Route::post('faculty/create', 'FacultyController@store')->name('faculty.submit');
+	Route::get('/faculty_list','FacultyController@index')->name('admin.faculty_list.index');
+	Route::get('/faculty/{id}','FacultyController@edit')->name('admin.faculty_list.edit');
+	Route::post('/faculty/{id}','FacultyController@update')->name('faculty_list.update.submit');
 
 });
 

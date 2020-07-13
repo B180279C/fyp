@@ -3,7 +3,7 @@
 @section('content');
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-11">
             <div class="card">
                 <div class="card-header">{{ __('Add Department') }}</div>
                 <div class="card-body">
@@ -35,11 +35,11 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Academic : ') }}</label>
+                            <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Faculty : ') }}</label>
                             <div class="col-md-6">
-                                <select class="selectpicker" name="academic" data-width="100%" title="Choose one">
-                                    @foreach($academic as $row)
-                                        <option value="{{ $row['academic_id'] }}">{{$row['academic_name']}}</option>
+                                <select class="selectpicker" name="faculty" data-width="100%" title="Choose one">
+                                    @foreach($faculty as $row)
+                                        <option value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
                                      @endforeach
                                 </select>
                             </div>

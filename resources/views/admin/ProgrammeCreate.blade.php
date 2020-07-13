@@ -11,11 +11,11 @@
           }
         });
         
-        $('#academic').change(function(){
-            var value = $('#academic').val();
+        $('#faculty').change(function(){
+            var value = $('#faculty').val();
             $.ajax({
                type:'POST',
-               url:'/staffAcademic',
+               url:'/staffFaculty',
                data:{value:value},
 
                success:function(data){
@@ -77,7 +77,7 @@
                         <div class="form-group row">
                             <label for="short_form_name" class="col-md-4 col-form-label text-md-right">{{ __('Short Form Name : ') }}</label>
                             <div class="col-md-6">
-                                <input type="text" name="short_form_name" class="form-control" placeholder="... of Information Technology : IT">
+                                <input type="text" name="short_form_name" class="form-control" placeholder="XXX">
                             </div>
                         </div>
 
@@ -94,11 +94,11 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="academic" class="col-md-4 col-form-label text-md-right">{{ __('Academic : ') }}</label>
+                            <label for="faculty" class="col-md-4 col-form-label text-md-right">{{ __('Faculty : ') }}</label>
                             <div class="col-md-6">
-                                <select class="selectpicker" name="academic" id="academic" data-width="100%" title="Choose one">
-                                    @foreach($academic as $row)
-                                        <option value="{{ $row['academic_id'] }}">{{$row['academic_name']}}</option>
+                                <select class="selectpicker" name="faculty" id="faculty" data-width="100%" title="Choose one">
+                                    @foreach($faculty as $row)
+                                        <option value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
                                     @endforeach
                                 </select>
                             </div>

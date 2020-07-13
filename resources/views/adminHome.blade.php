@@ -15,11 +15,11 @@
                     <br>
                     <a href="{{route('admin.programme_list.index')}}">Programme List</a>
                     <br>
-                    <a href="{{route('admin.academic_list.index')}}">Academic List</a>
+                    <a href="{{route('admin.faculty_list.index')}}">Faculty List</a>
                     <br>
                     <a href="{{route('admin.department_list.index')}}">Department List</a>
                     <br>
-                    <a href="{{route('admin.gs_list.index')}}">General Studies</a>
+                    <a href="{{route('admin.mpu_list.index')}}">General Studies</a>
                 </div>
             </div>
         </div>

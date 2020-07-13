@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Student;
 use App\User;
 use App\Programme;
-use App\Academic;
+use App\Faculty;
 use App\Department;
 
 class StudentController extends Controller
@@ -38,12 +38,12 @@ class StudentController extends Controller
     {
         $programme = DB::table('programmes')
                     ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
-                    ->join('academic', 'departments.academic_id', '=', 'academic.academic_id')
-                    ->select('programmes.*', 'academic.*')
+                    ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
+                    ->select('programmes.*', 'faculty.*')
                     ->orderBy('programme_name')
                     ->get();
-        $academic = Academic::all()->toArray();
-        return view('student.StudentCreate', compact('programme','academic'));
+        $faculty = Faculty::all()->toArray();
+        return view('student.StudentCreate', compact('programme','faculty'));
     }
 
     /**
@@ -133,12 +133,12 @@ class StudentController extends Controller
         $user = User::find($student->user_id);
         $programme = DB::table('programmes')
                     ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
-                    ->join('academic', 'departments.academic_id', '=', 'academic.academic_id')
-                    ->select('programmes.*', 'academic.*')
+                    ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
+                    ->select('programmes.*', 'faculty.*')
                     ->orderBy('programme_name')
                     ->get();
-        $academic = Academic::all()->toArray();
-        return view('admin.StudentEdit', compact('student', 'user' ,'programme', 'academic', 'id'));
+        $faculty = Faculty::all()->toArray();
+        return view('admin.StudentEdit', compact('student', 'user' ,'programme', 'faculty', 'id'));
     }
 
     /**

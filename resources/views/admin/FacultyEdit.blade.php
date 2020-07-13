@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Edit Academic Information') }}</div>
+                <div class="card-header">{{ __('Edit Faculty Information') }}</div>
                 <div class="card-body">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
@@ -26,12 +26,12 @@
                     </div>
                     @endif
 
-                        <form method="post" action="{{action('AcademicController@update', $id)}}">
+                        <form method="post" action="{{action('FacultyController@update', $id)}}">
                         {{csrf_field()}}
                         <div class="form-group row">
-                            <label for="department" class="col-md-4 col-form-label text-md-right">{{ __('Academic Name : ') }}</label>
+                            <label for="department" class="col-md-4 col-form-label text-md-right">{{ __('Faculty Name : ') }}</label>
                             <div class="col-md-6">
-                                <input type="text" name="academic_name" value="{{$academic->academic_name}}" class="form-control" placeholder="Academic">
+                                <input type="text" name="faculty_name" value="{{$faculty->faculty_name}}" class="form-control" placeholder="Academic">
                             </div>
                         </div>
                         <div class="form-group">

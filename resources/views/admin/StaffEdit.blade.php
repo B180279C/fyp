@@ -9,11 +9,11 @@
           }
         });
 
-        $('#academic').change(function(){
-            var value = $('#academic').val();
+        $('#faculty').change(function(){
+            var value = $('#faculty').val();
             $.ajax({
                type:'POST',
-               url:'/staffAcademic',
+               url:'/staffFaculty',
                data:{value:value},
 
                success:function(data){
@@ -85,14 +85,14 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Academic : ') }}</label>
+                            <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Faculty : ') }}</label>
                             <div class="col-md-6">
-                                <select class="selectpicker" name="academic" id="academic" data-width="100%" title="Choose one">
-                                    @foreach($academic as $row)
-                                        @if($staff->academic_id==$row['academic_id'])
-                                            <option selected value="{{ $row['academic_id'] }}">{{$row['academic_name']}}</option>
+                                <select class="selectpicker" name="faculty" id="faculty" data-width="100%" title="Choose one">
+                                    @foreach($faculty as $row)
+                                        @if($staff->faculty_id==$row['faculty_id'])
+                                            <option selected value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
                                         @else
-                                            <option value="{{ $row['academic_id'] }}">{{$row['academic_name']}}</option>
+                                            <option value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -102,10 +102,10 @@
                             <label for="department" class="col-md-4 col-form-label text-md-right">{{ __('Department : ') }}</label>
                             <div class="col-md-6">
                                 <select class="selectpicker" name="department" data-width="100%" title="Choose one" data-live-search="true" id="department"> 
-                                    @foreach($academic as $row_academic)
-                                        <optgroup label="{{ $row_academic['academic_name']}}">
+                                    @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($departments as $row)
-                                                @if($row['academic_id']==$row_academic['academic_id'])
+                                                @if($row['faculty_id']==$row_faculty['faculty_id'])
                                                     @if($staff->department_id==$row['department_id'])
                                                         <option selected value="{{ $row['department_id'] }}">{{$row['department_name']}}</option>
                                                     @else

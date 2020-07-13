@@ -13,9 +13,9 @@ class CreateAcedemicTable extends Migration
      */
     public function up()
     {
-        Schema::create('academic', function (Blueprint $table) {
-            $table->id('academic_id');
-            $table->string('academic_name');
+        Schema::create('faculty', function (Blueprint $table) {
+            $table->id('faculty_id');
+            $table->string('faculty_name');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateAcedemicTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('academic');
+        Schema::dropIfExists('faculty');
     }
 }
