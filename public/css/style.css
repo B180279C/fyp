@@ -1,0 +1,44 @@
+body, html {
+  height: 100%;
+}
+fieldset[class*="col"] > label[class*="bmd-label"]
+{
+  left: 15px !important; /*Bug: doesn't line up with default 15px column padding*/
+}
+.bmd-label-floating{
+    color: black !important;
+}
+.btn{
+  text-transform: unset !important;
+}
+.bootstrap-select .btn {
+  color: black;
+  padding-left: 0px;
+  font-family: Arial;
+  font-size: 15px;
+}
+.bootstrap-select .btn:hover,
+.bootstrap-select .btn:focus,
+.bootstrap-select .btn:active{
+  color: black;
+  border: none;
+  outline: none !important;
+  box-shadow: none !important;
+}
+.label{
+    color: black;
+}
+.option-group{
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.option{
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+#input{
+    color: black;
+}

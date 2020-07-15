@@ -1,13 +1,33 @@
 @extends('layouts.app')
 
 @section('content')
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-11">
-            <div class="card">
-                <div class="card-header">{{ __('Student Registration') }}</div>
-                <div class="card-body">
+<div class="container" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+    <div class="row align-self-center">
+        <div class="col-md-4 row" style="padding:0px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);background-color: #0d2f81;color: white;width: 100%; margin-left: 0px;height:645px;">
+            <div class="col-md-1"></div>
+            <div class="col-md-10 align-self-center">
+                <table>
+                    <tr>
+                        <td colspan="2"><b style="font-size:32px;color: gold;">University Content Management System</b></td>
+                    </tr>
+                    <tr>
+                        <td><hr></td>
+                    </tr>
+                    <tr>
+                       <td>
+                           <img src="{{ url('/image/book2.png') }}" alt="" title="" width="50px" height="30px"/>
+                           <b style="color:gold;">Store and Search More Easily.</b><br><span style="font-size: 13px;">No need uses more paper storage. Student and Lecturer can working more comfortable.</span>
+                       </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+<div class="col-md-8 row" style="margin-left: 0px;">
+    <div class="col-md-1"></div>
+        <div class="col-md-10 align-self-center">
+                <br>
+                <center><h5 style="color: #0d2f81">Sign Up</h5></center>
                     @if(count($errors) > 0)
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <ul>
@@ -49,87 +69,87 @@
                     @endif
                         <form method="post" action="{{ route('student.register.submit') }}">
                         {{csrf_field()}}
-                        <div class="form-group row">
-                            <label for="batch" class="col-md-4 col-form-label text-md-right">{{ __('Name : ') }}</label>
-                            <div class="col-md-6">
-                                <input type="text" name="name" class="form-control" placeholder="Full Name">
-                            </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1" class="bmd-label-floating">Full Name</label>
+                            <input type="text" name="name" class="form-control" id="input" required>
                         </div>
-                        <div class="form-group row">
-                            <label for="department" class="col-md-4 col-form-label text-md-right">{{ __('Programme : ') }}</label>
-                            <div class="col-md-6">
-                                <select class="selectpicker" name="programme" id="programme" data-width="100%" title="Choose one" data-live-search="true">
-                                    @foreach($faculty as $row_faculty)
-                                    <optgroup label="{{ $row_faculty['faculty_name']}}">
-                                        @foreach($programme as $row)
-                                            @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                <option  value="{{ $row->programme_id }}">{{$row->short_form_name}} : {{$row->programme_name}}</option>
-                                            @endif
-                                        @endforeach
-                                    </optgroup>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1" class="label">Programme</label>
+                            <select class="selectpicker form-control" name="programme" id="programme" data-width="100%"data-live-search="true" title="Choose One" required >
+                                @foreach($faculty as $row_faculty)
+                                <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                    @foreach($programme as $row)
+                                        @if($row_faculty['faculty_id']==$row->faculty_id)
+                                            <option value="{{ $row->programme_id }}" class="option-group">{{$row->short_form_name}} : {{$row->programme_name}}</option>
+                                        @endif
                                     @endforeach
-                                </select>
+                                </optgroup>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1" class="label">Year</label>
+                                    <select class="selectpicker form-control" name="year" id="year" data-width="100%" title="Choose One" required>
+                                            <option value="<?php echo date('y')-5?>" class="option"><?php echo date('Y')-5?></option>
+                                            <option value="<?php echo date('y')-4?>" class="option"><?php echo date('Y')-4?></option>
+                                            <option value="<?php echo date('y')-3?>" class="option"><?php echo date('Y')-3?></option>
+                                            <option value="<?php echo date('y')-2?>" class="option"><?php echo date('Y')-2?></option>
+                                            <option value="<?php echo date('y')-1?>" class="option"><?php echo date('Y')-1?></option>
+                                            <option value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1" class="label">Semester</label>
+                                    <select class="selectpicker form-control" name="semester" id="programme" data-width="100%" title="Choose One" required>
+                                            <option value="A" class="option">Semester 1</option>
+                                            <option value="B" class="option">Semester 2</option>
+                                            <option value="C" class="option">Semester 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1" class="label">Intake</label>
+                                    <select class="selectpicker form-control" name="intake" id="programme" data-width="100%" title="Choose One" required>
+                                            <option value="1" class="option">First Year</option>
+                                            <option value="2" class="option">Second Year</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="form-group row">
-                            <label for="full_name" class="col-md-4 col-form-label text-md-right">{{ __('Year/Intake : ') }}</label>
-                            <div class="col-md-2">
-                                <select class="selectpicker" name="year" id="programme" data-width="100%" title="Year">
-                                    <option value="<?php echo date('y')-5?>"><?php echo date('Y')-5?></option>
-                                    <option value="<?php echo date('y')-4?>"><?php echo date('Y')-4?></option>
-                                    <option value="<?php echo date('y')-3?>"><?php echo date('Y')-3?></option>
-                                    <option value="<?php echo date('y')-2?>"><?php echo date('Y')-2?></option>
-                                    <option value="<?php echo date('y')-1?>"><?php echo date('Y')-1?></option>
-                                    <option value="<?php echo date('y')?>"><?php echo date('Y')?></option>
-                                </select>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1" class="bmd-label-floating">Student ID</label>
+                                    <input type="text" name="student_id" class="form-control" placeholder="" id="input" required>
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <select class="selectpicker" name="semester" id="programme" data-width="100%" title="Semester">
-                                    <option value="A">Semester 1</option>
-                                    <option value="B">Semester 2</option>
-                                    <option value="C">Semester 3</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select class="selectpicker" name="intake" id="programme" data-width="100%" title="Intake">
-                                    <option value="1">First Year</option>
-                                    <option value="2">Second Year</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <hr>
-                        
-                        <div class="form-group row">
-                            <label for="student_id" class="col-md-4 col-form-label text-md-right">{{ __('Email : ') }}</label>
-                            <div class="col-md-4">
-                                <input type="text" name="student_id" class="form-control" placeholder="Student ID">
-                            </div>
-                            <span class="col-md-4 col-form-label text-md-left">@sc.edu.my</span>
-                        </div>
-                        <div class="form-group row">
-                            <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password : ') }}</label>
-                            <div class="col-md-6">
-                                <input type="password" name="password" class="form-control" placeholder="Student Account Password">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password : ') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" placeholder="Type Password Again">
+                            <div class="col align-self-end" style="padding: 0px;">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1">@sc.edu.my</label></span>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="col-md-8 offset-md-4">
-                                <input type="submit" class="btn btn-primary">
-                            </div>
+                            <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
+                            <input type="password" name="password" class="form-control" id="input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1" class="bmd-label-floating">Confirm Password</label>
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;float:left;">
                         </div>
                     </form>
+               <br>
                 </div>
-            </div>
         </div>
+        <div class="col-md-1"></div>
     </div>
 </div>
 @endsection
