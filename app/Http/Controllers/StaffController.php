@@ -48,12 +48,7 @@ class StaffController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name'                  =>  'required',
-            'staff_id'              =>  'required',
             'password'              =>  'min:8|confirmed|required',
-            'password_confirmation' =>  'required',
-            'position'              =>  'string',
-            'faculty'               =>  'string',
         ]);
 
         $email = $request->get('staff_id')."@sc.edu.my";
@@ -75,6 +70,8 @@ class StaffController extends Controller
                 'staff_id'        => $request->get('staff_id'),
                 'department_id'   => $request->get('department'),
                 'faculty_id'      => $request->get('faculty'),
+                'staff_image'     => $request->get('staff_image'),
+                'lecturer_CV'     => $request->get('staff_CV'),
             ]);
             
             $staff->save();
@@ -177,7 +174,7 @@ class StaffController extends Controller
             if($row['faculty_id'] == $value){
                 $department_id = $row['department_id'];
                 $department_name = $row['department_name'];
-                $data .= "<option value=$department_id>$department_name</option>";
+                $data .= "<option value=$department_id class='option'>$department_name</option>";
             }
         }
 
@@ -187,5 +184,42 @@ class StaffController extends Controller
 
         $result = "<optgroup label='$faculty->faculty_name'>'".$data."'</optgroup>";
         return $result;
+    }
+
+
+    public function uploadImages(Request $request) 
+    {
+        $image = $request->file('file');
+        $imageName = $image->getClientOriginalName();
+        $image->move(public_path('staffImage'),$imageName);
+        return response()->json(['success'=>$imageName]);
+    }
+
+    public function destroyImage(Request $request)
+    {
+        $filename =  $request->get('filename');
+        $path = public_path().'/staffImage/'.$filename;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return $filename;  
+    }
+
+    public function uploadCV(Request $request) 
+    {
+        $image = $request->file('file');
+        $imageName = $image->getClientOriginalName();
+        $image->move(public_path('staffCV'),$imageName);
+        return response()->json(['success'=>$imageName]);
+    }
+
+    public function destroyCV(Request $request)
+    {
+        $filename =  $request->get('filename');
+        $path = public_path().'/staffCV/'.$filename;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return $filename;  
     }
 }

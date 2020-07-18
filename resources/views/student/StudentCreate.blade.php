@@ -8,7 +8,7 @@
             <div class="col-md-10 align-self-center">
                 <table>
                     <tr>
-                        <td colspan="2"><b style="font-size:32px;color: gold;">University Content Management System</b></td>
+                        <td colspan="2"><b style="font-size:34px;color: gold;font-family: times">University Content Management System</b></td>
                     </tr>
                     <tr>
                         <td><hr></td>
@@ -67,6 +67,7 @@
                       </button>
                     </div>
                     @endif
+                    
                         <form method="post" action="{{ route('student.register.submit') }}">
                         {{csrf_field()}}
                         <div class="form-group">

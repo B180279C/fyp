@@ -38,6 +38,10 @@ Route::middleware('is_admin')->group(function(){
 	Route::get('/staff/{id}','StaffController@edit')->name('admin.staff_list.edit');
 	Route::post('/staff/{id}','StaffController@update')->name('staff_list.update.submit');
 	Route::post('/staffFaculty', 'StaffController@staffFaculty');
+	Route::post('/staffUploadImage', 'StaffController@uploadImages')->name('dropzone.uploadStaffImage');
+	Route::post('/staffDestoryImage', 'StaffController@destroyImage')->name('dropzone.destoryStaffImage');
+	Route::post('/staffUploadCV', 'StaffController@uploadCV')->name('dropzone.uploadStaffCV');
+	Route::post('/staffDestoryCV', 'StaffController@destroyCV')->name('dropzone.destoryStaffCV');
 
 
 	Route::get('department/create','DepartmentController@create')->name('department.create');

@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'University Content Management System') }}</title>
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -35,8 +35,8 @@
         $(function () {
             $('.selectpicker').selectpicker();
         });
+        
     </script>
-    
 
     <!-- bootstrap -->
     <!--  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
@@ -48,31 +48,35 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
 
-
+    <!-- materialize -->
+    <!-- Compiled and minified CSS -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
     <!-- style -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light shadow-sm">
-            <div class="container">
-                @auth
+        <nav class="navbar navbar-expand-md navbar-light shadow-sm" style="background-color: #0d2f81;">
+                <!-- @auth
                     @if(Auth::user()->position=="admin")
                         <a class="navbar-brand" href="{{ url('/admin/home') }}">
-                            {{ config('app.name', 'Laravel') }}
+                            {{ config('app.name', 'University Content Management System') }}
                         </a>
                     @else
                         <a class="navbar-brand" href="{{ url('/home') }}">
-                            {{ config('app.name', 'Laravel') }}
+                            {{ config('app.name', 'University Content Management System') }}
                         </a>
                     @endif
                 @else
                     <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
+                        {{ config('app.name', 'University Content Management System') }}
                     </a>
-                @endauth
+                @endauth -->
+                <a class="navbar-brand" href="">University Content Management System</a>
+                <a class="navbar-toggler" style="border:none; color:gold;font-family: arial;font-weight: bold;" href="">UCMS</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
+                    <i class="fa fa-bars" aria-hidden="true"></i>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -82,7 +86,7 @@
                     </ul>
 
                     <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ml-auto" style="padding-left: 8px;">
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
@@ -114,7 +118,6 @@
                         @endguest
                     </ul>
                 </div>
-            </div>
         </nav>
         <main class="py-4">
             @yield('content')
