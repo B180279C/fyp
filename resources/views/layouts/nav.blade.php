@@ -48,6 +48,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/dropzone.css">
 
+    <!-- datatables -->
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> -->
+    <link rel="stylesheet" href="{{ asset('jquery.dataTables.min.css') }}">
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.15/pagination/input.js"></script>
+
+    
+
 
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
@@ -175,7 +183,7 @@
                             </li>
                         </a>
                     </ul>
-                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Method</p>
+                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Information</p>
                     <ul class="sidebar-ul">
                         <a href="/staff_list">
                             <li class="sidebar-li" <?php if(isset($option1)){ echo $option1;};?>>

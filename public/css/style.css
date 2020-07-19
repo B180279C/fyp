@@ -227,3 +227,40 @@ i.sidebar-icon{
   border-radius: 15px;
   padding: 10px;
 }
+
+#button-add{
+  color: #0d2f81;
+  float: right;
+  background-color: white;
+  border-radius: 48%;
+  height: 47px;
+  margin-top: 10px;
+}
+.dataTables_filter{
+  display: none;
+}
+.dataTables_filter input {
+  border-radius: 5px;
+}
+.dataTables_paginate input {
+  width: 30px;
+  text-align: center;
+}
+.paginate_button{
+  padding:10px;
+  margin: 0px 2px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button{
+  display:inline-block;
+}
+.paginate_button:hover{
+    background-color: #0d2f81!important;
+    color: gold!important;
+}
+#dtBasicExample tr:nth-child(even) {
+  background-color: #e6e6e6;
+}
+#dtBasicExample tbody tr:hover {
+  background-color:#d9d9d9;
+  font-size: 18px;
+}

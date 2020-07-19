@@ -47,14 +47,34 @@
                         @endif
                         <form method="POST" action="{{ route('login') }}">
                         @csrf
-                            <div class="form-group">
-                                <label for="exampleInputEmail1" class="bmd-label-floating">Email address</label>
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                            <div class="row">
+                                <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                    <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                        <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                    </p>
+                                </div>
+                                <div class="col-11" style="padding-left: 20px;">
+                                    <div class="form-group">
+                                        <label for="exampleInputEmail1" class="bmd-label-floating">Email address</label>
+                                        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputPassword" class="bmd-label-floating">{{ __('Password') }}</label>
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                            
+                            <div class="row">
+                                <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                    <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                        <i class="fa fa-key" aria-hidden="true"></i>
+                                    </p>
+                                </div>
+                                <div class="col-11" style="padding-left: 20px;">
+                                    <div class="form-group">
+                                        <label for="exampleInputPassword" class="bmd-label-floating">{{ __('Password') }}</label>
+                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                    </div>
+                                </div>
                             </div>
+                            
                             <br>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;">
