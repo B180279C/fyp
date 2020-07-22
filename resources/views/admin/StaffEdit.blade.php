@@ -1,14 +1,19 @@
-@extends('layouts.app')
+<?php
+$title = "Edit Staff";
+$option1 = "id='selected-sidebar'";
+?>
+@extends('layouts.nav')
 
-@section('content');
+@section('content')
 <script type="text/javascript">
     $(function () {
+        $("#form_dep").hide();
         $.ajaxSetup({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
         });
-
+        
         $('#faculty').change(function(){
             var value = $('#faculty').val();
             $.ajax({
@@ -17,19 +22,250 @@
                data:{value:value},
 
                success:function(data){
-                  $("#department").html(data);
-                  $('#department').selectpicker('refresh');
+                    if(data!="null"){
+                        $("#department").html(data);
+                        $('#department').selectpicker('refresh');
+                        $("#form_dep").show();
+                    }else{
+                        $("#form_dep").hide();
+                    }
+               }
+            });
+        });
+
+        $('.staff_id').keyup(function(){
+            var value = $('.staff_id').val();
+            $.ajax({
+               type:'POST',
+               url:'/checkStaffID',
+               data:{value:value},
+               success:function(data){
+                    if(data=="true"){
+                        $("#check").val("true");
+                    }else{
+                        $("#check").val("false");
+                    }
+               }
+            });
+        });
+
+        $('#edit_image').click(function(){
+            var value = $('#id').val();
+            var image = $('#image').val();
+            $.ajax({
+               type:'POST',
+               url:'/removeImage',
+               data:{value:value,image:image},
+               success:function(data){
+                    document.getElementById('form_image').style.display = "none";      
+                    document.getElementById('dropzoneForm').style.display = "block";
+               }
+            });
+        });
+        $('#edit_CV').click(function(){
+            var value = $('#id').val();
+            var CV = $('#CV').val();
+            $.ajax({
+               type:'POST',
+               url:'/removeCV',
+               data:{value:value,CV:CV},
+               success:function(data){
+                    document.getElementById('form_CV').style.display = "none";      
+                    document.getElementById('dropzoneCV').style.display = "block";
                }
             });
         });
     });
+    
+    Dropzone.options.dropzoneForm =
+    {
+            maxFiles:1,
+            acceptedFiles: ".jpeg,.jpg,.png,.gif",
+            addRemoveLinks: true,
+            timeout: 50000,
+            init: function() {
+                  this.on("maxfilesexceeded", function(file) {
+                        this.removeAllFiles();
+                        this.addFile(file);
+                  });
+            },
+            renameFile: function(file) {
+                var name = $('.full_name').val();
+                var staff_id = $('.staff_id').val();
+                var re = /(?:\.([^.]+))?$/;
+                var ext = re.exec(file.name)[1];
+                var filename = name+"_"+staff_id+"_Image"+"."+ext;
+                $("#staff_image").val(filename);
+                return filename;
+            },
+            removedfile: function(file)
+            {
+                var name = file.upload.filename;
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    },
+                    type: 'POST',
+                    url: '{{ url("/staffDestoryImage") }}',
+                    data: {filename: name},
+                    success: function (data){
+                        console.log("File has been successfully removed!!");
+                        $("#staff_image").val("");
+                    },
+                    error: function(e) {
+                        console.log(e);
+                    }
+                });
+                var fileRef;
+                return (fileRef = file.previewElement) != null ? 
+                fileRef.parentNode.removeChild(file.previewElement) : void 0;
+            },
+    };
+    Dropzone.options.dropzoneCV =
+    {
+            maxFiles:1,
+            acceptedFiles: ".pdf,.xlsx,.docx",
+            addRemoveLinks: true,
+            timeout: 50000,
+            init: function() {
+                  this.on("maxfilesexceeded", function(file) {
+                        this.removeAllFiles();
+                        this.addFile(file);
+                  });
+            },
+            renameFile: function(file) {
+                var name = $('.full_name').val();
+                var staff_id = $('.staff_id').val();
+                var re = /(?:\.([^.]+))?$/;
+                var ext = re.exec(file.name)[1];
+                var filename = name+"_"+staff_id+"_CV"+"."+ext;
+                $("#staff_CV").val(filename);
+                return filename;
+            },
+            accept: function(file, done) {
+                switch (file.type) {
+                  case 'application/pdf':
+                    $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pdf.png')}}");
+                    break;
+                  case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                    $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/docs.png')}}");
+                    break;
+                  case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                    $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                    break;
+                }
+                done();
+            },
+            removedfile: function(file)
+            {
+                var name = file.upload.filename;
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    },
+                    type: 'POST',
+                    url: '{{ url("/staffDestoryCV") }}',
+                    data: {filename: name},
+                    success: function (data){
+                        console.log("File has been successfully removed!!");
+                        $("#staff_CV").val("");
+                    },
+                    error: function(e) {
+                        console.log(e);
+                    }
+                });
+                var fileRef;
+                return (fileRef = file.previewElement) != null ? 
+                fileRef.parentNode.removeChild(file.previewElement) : void 0;
+            },
+    };
 </script>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <div class="card">
-                <div class="card-header">{{ __('Edit Staff Information') }}</div>
-                <div class="card-body">
+<div style="background-color: #f2f2f2">
+    <div>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Edit Staff Information</p>
+        <p class="pass_page">
+            <a href="/home" class="first_page"> Home </a>/
+            <a href="/staff_list">Staff </a>/
+            <span class="now_page">Edit Staff</span>/
+        </p>
+        <hr style="margin: 0px 10px;">
+    </div>
+    <div class="row" style="padding: 10px 10px 0px 10px;">
+        <div class="col-md-4">
+            <div class="img">
+                <h5 style="color: #0d2f81;">Profile Image</h5>
+                <hr style="margin: 0px;">
+                <center>
+                    @if($staff->staff_image == "")
+                    <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
+                                class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                    @csrf
+                    <input type="hidden" name="staff_id" value="{{$id}}">
+                    <div class="dz-message" data-dz-message><span>Drop a Image in Here to Upload<br>(optional)</span></div>
+                    </form>
+                    @else
+                        <div style="margin: 50px 0px 20px 0px;" id="form_image">
+                            <input type="hidden" id="image" value="{{$staff->staff_image}}">
+                            <img src="{{ asset('staffImage/' . $staff->staff_image) }}" width="100px" height="100px" style="border-radius:10%;" />
+                            <br>
+                            <p id="edit_image" style="font-size: 14px;color: #009697;">Remove file</a>
+                        </div>
+                        <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
+                                class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
+                        @csrf
+                        <div class="dz-message" data-dz-message><span>Drop a Image in Here to Upload<br>(optional)</span></div>
+                        </form>
+                    @endif
+                </center>
+            </div>
+            <hr>
+            <div class="CV">
+                <h5 style="color: #0d2f81;">Lecturer CV</h5>
+                <hr style="margin: 0px;">
+                <center>
+                @if($staff->lecturer_CV == "")
+                <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                                class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                    @csrf
+                    <div class="dz-message" data-dz-message><span>Drop a File in Here to Upload<br>(optional)</span></div>
+                    <input type="hidden" name="staff_id" value="{{$id}}">
+                </form>
+                @else
+                    <div style="margin: 50px 0px 20px 0px;" id="form_CV">
+                            <input type="hidden" id="CV" value="{{$staff->lecturer_CV}}">
+                            <?php
+                                $ext = explode(".", $staff->lecturer_CV);
+                            ?>
+                            <a href="{{ asset('staffCV/'.$staff->lecturer_CV) }}" id="download_link">
+                            <div id="download">
+                            @if($ext[1]=="pdf")
+                            <img src="{{url('image/pdf.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
+                            @elseif($ext[1]=="docx")
+                            <img src="{{url('image/docs.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
+                            @else
+                            <img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
+                            @endif
+                            <br>
+                            <p style="text-align: center;">CV({{$staff->staff_id}})</p>
+                            </div>
+                            </a>
+                            <p id="edit_CV" style="font-size: 14px;color: #009697;">Remove file</a>
+                        </div>
+                    <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                                class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
+                        @csrf
+                        <input type="hidden" name="staff_id" value="{{$id}}">
+                        <div class="dz-message" data-dz-message><span>Drop a File in Here to Upload<br>(optional)</span></div>
+                    </form>
+                @endif
+                </center>
+            </div>
+            <hr>
+        </div>
+        <div class="col-md-8" >
+            <div id="box" class="details" style="padding-bottom: 0px;">
+                <h5 style="color: #0d2f81;">Staff Details</h5>
+                <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
                             <ul>
@@ -57,76 +293,122 @@
                     </div>
                     @endif
 
-                        <form method="post" action="{{action('StaffController@update', $id)}}">
+                    <form method="post" action="{{action('StaffController@update', $id)}}" id="form">
+                        <input type="hidden" name="staff_image" id="staff_image" value="">
+                        <input type="hidden" name="staff_CV" id="staff_CV" value="">
                         {{csrf_field()}}
-                        <div class="form-group row">
-                            <label for="staff_id" class="col-md-4 col-form-label text-md-right">{{ __('Email : ') }}</label>
-                            <div class="col-md-4">
-                                <input type="text" name="staff_id" class="form-control" placeholder="Staff ID" value="{{$staff->staff_id}}">
+                        <input type="hidden" name="id" value="{{$id}}" id="id">
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-id-badge" aria-hidden="true" style="font-size: 18px;"></i>
+                                </p>
                             </div>
-                            <span class="col-md-4 col-form-label text-md-left">@sc.edu.my</span>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="bmd-label-floating">Staff ID</label>
+                                            <input type="text" name="staff_id" class="form-control staff_id" value="{{$staff->staff_id}}" id="input" required onkeyup="myFunction()">
+                                        </div>
+                                    </div>
+                                    <div class="col align-self-end" style="padding: 0px;">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">@sc.edu.my</label></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <hr>
                         <input type="hidden" name="_method" value="post" />
-                        <div class="form-group row">
-                            <label for="full_name" class="col-md-4 col-form-label text-md-right">{{ __('Name : ') }}</label>
-                            <div class="col-md-6">
-                                <input type="text" name="name" value="{{$user->name}}" class="form-control" placeholder="Username">
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="bmd-label-floating">Name</label>
+                                    <input type="text" name="name" value="{{$user->name}}" class="form-control full_name" id="input" onkeyup="myFunction()" required>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="batch" class="col-md-4 col-form-label text-md-right">{{ __('Position : ') }}</label>
-                            <div class="col-md-6">
-                                <select class="form-control" name="position" id="position" title="Choose one">
-                                    <option <?php if($user->position==='Teacher'){ echo 'selected'; }?> value="Teacher">Teacher</option>
-                                    <option <?php if($user->position==='HoD'){ echo 'selected'; }?> value="HoD">Head of Department</option>
-                                    <option <?php if($user->position==='Dean'){ echo 'selected'; }?> value="Dean">Dean</option>
-                                </select>
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-briefcase" aria-hidden="true" style="font-size: 17px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="Position" class="label">Position</label>
+                                    <select class="selectpicker form-control" name="position" id="position" data-width="100%" title="Choose one" required>
+                                        <option <?php if($user->position==='Teacher'){ echo 'selected'; }?> value="Teacher" class="option">Teacher</option>
+                                        <option <?php if($user->position==='HoD'){ echo 'selected'; }?> value="HoD" class="option">Head of Department</option>
+                                        <option <?php if($user->position==='Dean'){ echo 'selected'; }?> value="Dean" class="option">Dean</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Faculty : ') }}</label>
-                            <div class="col-md-6">
-                                <select class="selectpicker" name="faculty" id="faculty" data-width="100%" title="Choose one">
-                                    @foreach($faculty as $row)
-                                        @if($staff->faculty_id==$row['faculty_id'])
-                                            <option selected value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
-                                        @else
-                                            <option value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-home" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="faculty" class="label">{{ __('Faculty') }}</label>
+                                    <select class="selectpicker form-control" name="faculty" id="faculty" data-width="100%" title="Choose one" required>
+                                        @foreach($faculty as $row)
+                                            @if($staff->faculty_id==$row['faculty_id'])
+                                                <option selected value="{{ $row['faculty_id'] }}" class="option">{{$row['faculty_name']}}</option>
+                                            @else
+                                                <option value="{{ $row['faculty_id'] }}" class="option">{{$row['faculty_name']}}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="department" class="col-md-4 col-form-label text-md-right">{{ __('Department : ') }}</label>
-                            <div class="col-md-6">
-                                <select class="selectpicker" name="department" data-width="100%" title="Choose one" data-live-search="true" id="department"> 
-                                    @foreach($faculty as $row_faculty)
+
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-address-book" aria-hidden="true" style="font-size: 17px;padding-left: 1px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="department" class="label">{{ __('Department ') }}</label>
+                                    <select class="selectpicker form-control" name="department" data-width="100%" title="Choose one" data-live-search="true" id="department" required>
+                                        @foreach($faculty as $row_faculty)
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($departments as $row)
                                                 @if($row['faculty_id']==$row_faculty['faculty_id'])
                                                     @if($staff->department_id==$row['department_id'])
-                                                        <option selected value="{{ $row['department_id'] }}">{{$row['department_name']}}</option>
+                                                        <option selected value="{{ $row['department_id'] }}" class="option">{{$row['department_name']}}</option>
                                                     @else
-                                                        <option  value="{{ $row['department_id'] }}">{{$row['department_name']}}</option>
+                                                        <option  value="{{ $row['department_id'] }}" class="option">{{$row['department_name']}}</option>
                                                     @endif
                                                 @endif
                                             @endforeach
                                         </optgroup>
-                                    @endforeach
-                                </select>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
+                        <input type="hidden" id="check" value="true">
+                        <hr>
                         <div class="form-group">
-                            <div class="col-md-8 offset-md-4">
-                                <input type="submit" class="btn btn-warning" value="Edit">
-                            </div>
+                            <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;float:right;" id="button-submit">
                         </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
     </div>
+    <hr>
 </div>
 @endsection

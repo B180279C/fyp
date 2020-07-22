@@ -8,7 +8,8 @@ $option1 = "id='selected-sidebar'";
 <script type="text/javascript">
     $(function () {
         $("#form_dep").hide();
-
+        $('#department').prop('disabled', true);
+        $('#department').selectpicker('refresh');
         $.ajaxSetup({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -25,6 +26,7 @@ $option1 = "id='selected-sidebar'";
                success:function(data){
                     if(data!="null"){
                         $("#department").html(data);
+                        $('#department').prop('disabled', false);
                         $('#department').selectpicker('refresh');
                         $("#form_dep").show();
                     }else{
@@ -33,99 +35,149 @@ $option1 = "id='selected-sidebar'";
                }
             });
         });
+        // $('.staff_id').keyup(function(){
+        //     var value = $('.staff_id').val();
+        //     $.ajax({
+        //        type:'POST',
+        //        url:'/checkStaffID',
+        //        data:{value:value},
+        //        success:function(data){
+        //             if(data=="true"){
+        //                 $("#check").val("true");
+        //             }else{
+        //                 $("#check").val("false");
+        //             }
+        //        }
+        //     });
+        // });
     });
 
+    function myFunction() {
+        if(($(".full_name").val()!="")&&($(".staff_id").val()!="")){
+            $("#form_image").hide();
+            $("#form_CV").hide();
+            $("#dropzoneForm").show();
+            $("#dropzoneCV").show();
+        }else{
+            $("#form_image").show();
+            $("#form_CV").show();
+            $("#dropzoneForm").hide();
+            $("#dropzoneCV").hide();
+        }
+    }
+    // function check_password(){
+    //     var c_password =  $("#password-confirm").val();
+    //     var password = $(".password").val();
+    //     if(password == c_password){
+    //         $("#check").val("true");
+    //     }else{
+    //         $("#check").val("false");
+    //     }
+    // }
     Dropzone.options.dropzoneForm =
     {
-            maxFiles:1,
-            renameFile: function(file) {
-                var dt = new Date();
-                var time = dt.getTime();
-               return time+file.name;
-            },
-            acceptedFiles: ".jpeg,.jpg,.png,.gif",
-            addRemoveLinks: true,
-            timeout: 50000,
-            removedfile: function(file)
-            {
-                var name = file.upload.filename;
-                $.ajax({
-                    headers: {
-                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                            },
-                    type: 'POST',
-                    url: '{{ url("/staffDestoryImage") }}',
-                    data: {filename: name},
-                    success: function (data){
-                        console.log("File has been successfully removed!!");
-                        document.getElementById('staff_image').value = "";
-                        document.getElementById('dropzoneForm').style.border = "2px double #a6a6a6";
-                        document.getElementById('dropzoneForm').style.color = "#a6a6a6";
-                    },
-                    error: function(e) {
-                        console.log(e);
-                    }});
-                    var fileRef;
-                    return (fileRef = file.previewElement) != null ? 
-                    fileRef.parentNode.removeChild(file.previewElement) : void 0;
-            },
-            success: function(file, response) 
-            {
-                console.log(response);
-                document.getElementById('staff_image').value = response.success;
-                document.getElementById('dropzoneForm').style.border = "none";
-            },
-            error: function(file, response)
-            {
-               return false;
-            }
+        maxFiles:1,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif",
+        addRemoveLinks: true,
+        timeout: 50000,
+        init: function() {
+            this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+            });
+        },
+        renameFile: function(file) {
+            var name = $('.full_name').val();
+            var staff_id = $('.staff_id').val();
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(file.name)[1];
+            var filename = name+"_"+staff_id+"_Image"+"."+ext;
+            $("#staff_image").val(filename);
+            return filename;
+        },
+        removedfile: function(file)
+        {
+            var name = file.upload.filename;
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                type: 'POST',
+                url: '{{ url("/staffDestoryImage") }}',
+                data: {filename: name},
+                success: function (data){
+                    console.log("File has been successfully removed!!");
+                    $("#staff_image").val("");
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            });
+            var fileRef;
+            return (fileRef = file.previewElement) != null ? 
+            fileRef.parentNode.removeChild(file.previewElement) : void 0;
+        },
     };
     Dropzone.options.dropzoneCV =
     {
-            maxFiles:1,
-            renameFile: function(file) {
-                var dt = new Date();
-                var time = dt.getTime();
-               return time+file.name;
-            },
-            acceptedFiles: ".pdf,.xlsx,.docx",
-            addRemoveLinks: true,
-            timeout: 50000,
-            removedfile: function(file)
-            {
-                var name = file.upload.filename;
-                $.ajax({
-                    headers: {
-                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                            },
-                    type: 'POST',
-                    url: '{{ url("/staffDestoryCV") }}',
-                    data: {filename: name},
-                    success: function (data){
-                        console.log("File has been successfully removed!!");
-                        document.getElementById('staff_CV').value = "";
-                        document.getElementById('dropzoneCV').style.border = "2px double #a6a6a6";
-                        document.getElementById('dropzoneCV').style.color = "#a6a6a6";
-                    },
-                    error: function(e) {
-                        console.log(e);
-                    }});
-                    var fileRef;
-                    return (fileRef = file.previewElement) != null ? 
-                    fileRef.parentNode.removeChild(file.previewElement) : void 0;
-            },
-            success: function(file, response) 
-            {
-                console.log(response);
-                document.getElementById('staff_CV').value = response.success;
-                document.getElementById('dropzoneCV').style.border = "none";
-            },
-            error: function(file, response)
-            {
-               return false;
+        maxFiles:1,
+        acceptedFiles: ".pdf,.xlsx,.docx",
+        addRemoveLinks: true,
+        timeout: 50000,
+        init: function() {
+            this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+            });
+        },
+        accept: function(file, done) {
+            switch (file.type) {
+              case 'application/pdf':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pdf.png')}}");
+                break;
+              case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/docs.png')}}");
+                break;
+              case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                 break;
             }
+            done();
+        },
+        renameFile: function(file) {
+            var name = $('.full_name').val();
+            var staff_id = $('.staff_id').val();
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(file.name)[1];
+            var filename = name+"_"+staff_id+"_CV"+"."+ext;
+            $("#staff_CV").val(filename);
+            return filename;
+        },
+        removedfile: function(file)
+        {
+            var name = file.upload.filename;
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                type: 'POST',
+                url: '{{ url("/staffDestoryCV") }}',
+                data: {filename: name},
+                success: function (data){
+                    console.log("File has been successfully removed!!");
+                    $("#staff_CV").val("");
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            });
+            var fileRef;
+            return (fileRef = file.previewElement) != null ? 
+            fileRef.parentNode.removeChild(file.previewElement) : void 0;
+        },
     };
 </script>
+
 <div style="background-color: #f2f2f2">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Staff</p>
@@ -143,20 +195,30 @@ $option1 = "id='selected-sidebar'";
                 <hr style="margin: 0px;">
                 <center>
                 <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
-                                class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                             class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
                     @csrf
+                    <input type="hidden" name="staff_id" class="dropzone_staff_id">
+                    <div class="dz-message" data-dz-message><span>Drop a Image in Here to Upload<br>(optional)</span></div>
                 </form>
+                <div id="form_image" style="border-style: double;padding: 50px 20px;font-size: 20px;color:#a6a6a6;">
+                    <p class="word">Disable to upload Image.<br>Please fill in the Name and Staff ID first.</p>
+                </div>
                 </center>
             </div>
             <hr>
             <div class="CV">
-                <h5 style="color: #0d2f81;">Lecturer CV</h5>
+                <h5 style="color: #0d2f81;">Staff CV</h5>
                 <hr style="margin: 0px;">
                 <center>
                 <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
-                                class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                                class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
                     @csrf
+                    <input type="hidden" name="staff_id" class="dropzone_staff_id">
+                    <div class="dz-message" data-dz-message><span>Drop a File in Here to Upload<br>(optional)</span></div>
                 </form>
+                <div id="form_CV" style="border-style: double;padding: 50px 20px;font-size: 20px;color:#a6a6a6;">
+                    <p class="word">Disable to upload CV.<br>Please fill in the Name and Staff ID first.</p>
+                </div>
                 </center>
             </div>
             <hr>
@@ -192,8 +254,7 @@ $option1 = "id='selected-sidebar'";
                     </div>
                     @endif
 
-                    <form method="post" action="{{route('staff.submit')}}" id="details_form">
-                    {{csrf_field()}}
+                    <form method="post" action="{{route('staff.submit')}}" id="details_form">                    {{csrf_field()}}
                     <input type="hidden" name="staff_image" id="staff_image" value="">
                     <input type="hidden" name="staff_CV" id="staff_CV" value="">
                     <div class="row">
@@ -205,7 +266,7 @@ $option1 = "id='selected-sidebar'";
                         <div class="col-10" style="padding-left: 20px;">
                             <div class="form-group">
                                 <label for="full_name" class="bmd-label-floating">Name</label>
-                                <input type="text" name="name" class="form-control" id="input" required>
+                                <input type="text" name="name" class="form-control full_name" id="input" required onkeyup="myFunction()">
                             </div>
                         </div>
                     </div>
@@ -275,7 +336,8 @@ $option1 = "id='selected-sidebar'";
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="bmd-label-floating">Staff ID</label>
-                                        <input type="text" name="staff_id" class="form-control" placeholder="" id="input" required>
+                                        <input type="text" name="staff_id" class="form-control staff_id" placeholder="" id="input" required onkeyup="myFunction()">
+                                        
                                     </div>
                                 </div>
                                 <div class="col align-self-end" style="padding: 0px;">
@@ -296,7 +358,7 @@ $option1 = "id='selected-sidebar'";
                         <div class="col-10" style="padding-left: 20px;">
                             <div class="form-group">
                                 <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
-                                <input type="password" name="password" class="form-control" id="input" required>
+                                <input type="password" name="password" class="form-control password" id="input" required>
                             </div>
                         </div>
                     </div>
@@ -310,14 +372,15 @@ $option1 = "id='selected-sidebar'";
                         <div class="col-10" style="padding-left: 20px;">
                             <div class="form-group">
                                 <label for="exampleInputEmail1" class="bmd-label-floating">Confirm Password</label>
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required>
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required onkeyup="check_password()">
                                 <!-- <span class="bmd-help">Please enter again your correct pasword.</span> -->
                             </div>
                         </div>
                     </div>
+<!--                     <input type="hidden" id="check" value=""> -->
                     <hr>
                     <div class="form-group">
-                        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;float:right;">
+                        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;float:right;" id="button-submit">
                     </div>
             </form>
         </div>

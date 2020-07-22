@@ -28,6 +28,14 @@ $option1 = "id='selected-sidebar'";
               oTable.search($(this).val()).draw();
         });
     });
+    function w3_open() {
+      document.getElementById("action_sidebar").style.display = "block";
+      document.getElementById("button_open").style.display = "none";
+    }
+    function w3_close() {
+      document.getElementById("action_sidebar").style.display = "none";
+      document.getElementById("button_open").style.display = "block";
+    }
 </script>
 <div style="background-color: #f2f2f2">
     <div>
@@ -36,19 +44,22 @@ $option1 = "id='selected-sidebar'";
             <a href="/home" class="first_page"> Home </a>/
             <span class="now_page">Staff </span>/
         </p>
-        <hr style="margin: 0px 10px;">
-        
+        <hr style="margin: -10px 10px;">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            @if($message = Session::get('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <Strong>{{$message}}</Strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <!-- Page Content -->
+            <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
+            <div id="action_sidebar" class="w3-animate-right" style="display: none">
+                <div style="text-align: right;padding:10px;">
+                    <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+              <ul class="sidebar-action-ul">
+                  <a href="/staff/create"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px;" aria-hidden="true"></i>Add New Staff</li></a>
+                  <a href="#"><li class="sidebar-action-li"><i class="fa fa-file-excel-o" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
+              </ul>
             </div>
-            @endif
+            <br>
             <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
                 <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                     <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
@@ -62,6 +73,16 @@ $option1 = "id='selected-sidebar'";
                     </div>
                 </div>
             </div>
+            @if($message = Session::get('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <Strong>{{$message}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
+
+            
             <!-- <a href="{{route('staff.create')}}" class="btn btn-primary" id="button-add">
                 <i class="fa fa-plus-circle" aria-hidden="true" style="font-size: 50px;padding:0px!important;"></i>
             </a> -->

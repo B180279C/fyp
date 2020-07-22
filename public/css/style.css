@@ -36,6 +36,7 @@ html,body{
   #sidebar-table{
     display: block;
   }
+  
 }
 fieldset[class*="col"] > label[class*="bmd-label"]
 {
@@ -227,15 +228,6 @@ i.sidebar-icon{
   border-radius: 15px;
   padding: 10px;
 }
-
-#button-add{
-  color: #0d2f81;
-  float: right;
-  background-color: white;
-  border-radius: 48%;
-  height: 47px;
-  margin-top: 10px;
-}
 .dataTables_filter{
   display: none;
 }
@@ -263,4 +255,82 @@ i.sidebar-icon{
 #dtBasicExample tbody tr:hover {
   background-color:#d9d9d9;
   font-size: 18px;
+}
+#action_sidebar{
+    width:230px;
+    background-color:#1b6ad2;
+    position:absolute;
+    z-index:1;
+    overflow:auto;
+    right:0;
+    margin-right: 5px;
+}
+
+.button_close{
+  border: 1px solid white;
+  background-color: #1b6ad2;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 35px;
+  color: white;
+}
+.button_open{
+  border: 1px solid grey;
+  background-color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 35px;
+  color: black;
+}
+
+.button_open:hover{
+  background-color: #e6e6e6;
+}
+.sidebar-action-ul{
+  list-style-type: none;
+  width: 100%;
+  margin-bottom: 0px;
+  color: white;
+  padding: 0px;
+}
+
+.sidebar-action-li{
+  width: 100%;
+  padding:5px 10px;
+  border-bottom: 1px solid black;
+  color: white;
+}
+ul.sidebar-action-ul a:hover{
+  text-decoration: none;
+}
+.sidebar-action-li:hover{
+  background-color: #15509e;
+}
+
+#edit_image:hover{
+  color: black!important;
+  text-decoration: underline;
+}
+#edit_CV:hover{
+  color: black!important;
+  text-decoration: underline;
+}
+
+.dz-image img{
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+}
+
+#download_link:hover{
+  text-decoration-line: none;
+}
+#download{
+  background-color: #dfdfdf;
+  width: 120px;
+  border-radius: 10%;
+  padding: 0px;
+}
+#download:hover{
+  background-color: #cccccc;
 }

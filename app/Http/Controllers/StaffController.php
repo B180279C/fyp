@@ -23,7 +23,9 @@ class StaffController extends Controller
                     ->join('users', 'staffs.user_id', '=', 'users.user_id')
                     ->join('departments', 'staffs.department_id', '=', 'departments.department_id')
                     ->select('staffs.*', 'users.email', 'users.name','users.position', 'departments.department_name')
+                    ->orderBy('staffs.id')
                     ->get();
+
         return view('admin.staffIndex', ['staffs' => $staffs]);
     }
 
@@ -64,19 +66,37 @@ class StaffController extends Controller
             ]);
             $user->save();
             $user_id = $user->user_id;
+            
+            $image_type = explode(".", $request->get('staff_image'));
+            $image_name = $request->get('name')."(".$request->get('staff_id').")_Image.".$image_type[1];
+            $CV_type = explode(".", $request->get('staff_CV'));
+            $CV_name = $request->get('name')."(".$request->get('staff_id').")_CV.".$CV_type[1];
+
 
             $staff = new Staff([
                 'user_id'         => $user_id,
                 'staff_id'        => $request->get('staff_id'),
                 'department_id'   => $request->get('department'),
                 'faculty_id'      => $request->get('faculty'),
-                'staff_image'     => $request->get('staff_image'),
-                'lecturer_CV'     => $request->get('staff_CV'),
+                'staff_image'     => $image_name,
+                'lecturer_CV'     => $CV_name,
             ]);
-            
             $staff->save();
+
+            $image = "fake/staff_Image/".$request->get('staff_image');
+            $CV = "fake/staff_CV/".$request->get('staff_CV');
+            rename($image, 'staffImage/'.$image_name);
+            rename($CV, 'staffCV/'.$CV_name);
             return redirect()->route('admin.staff_list.index')->with('success','Data Added');
         }else{
+            if($request->get('staff_image')!=""){
+                $path1 = public_path().'/fake/staff_Image/'.$request->get('staff_image');
+                unlink($path1);
+            }
+            if($request->get('staff_CV')!=""){
+                $path2 = public_path().'/fake/staff_CV/'.$request->get('staff_CV');
+                unlink($path2);
+            }
             return redirect()->route('staff.create')->with('failed','The Email has been existed');
         }
     }
@@ -116,12 +136,7 @@ class StaffController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name'                  =>  'required',
-            'position'              =>  'string',
-            'department'            =>  'string',
-            'faculty'               =>  'string',
-        ]);
+
         $staff_id  = $request->get('staff_id');
         $email     = $request->get('staff_id')."@sc.edu.my";
         $staff     = Staff::where('staff_id', '=', $id)->firstOrFail();
@@ -133,14 +148,53 @@ class StaffController extends Controller
                 $user->email = $email;
                 $staff->staff_id = $staff_id;
             }else{
+                if($request->get('staff_image')!=""){
+                    $path1 = public_path().'/fake/staff_Image/'.$request->get('staff_image');
+                    unlink($path1);
+                }
+                if($request->get('staff_CV')!=""){
+                    $path2 = public_path().'/fake/staff_CV/'.$request->get('staff_CV');
+                    unlink($path2);
+                }
                 return redirect()->back()->with('failed','The Email has been existed');
             }
         }
         $user->name             = $request->get('name');
         $user->position         = $request->get('position');
-
         $staff->department_id   = $request->get('department');
         $staff->faculty_id      = $request->get('faculty');
+
+        if($staff->staff_image!=""){
+            $image = 'staffImage/'.$staff->staff_image;
+            $image_type = explode(".", $image);
+            $image_name = $request->get('name')."(".$staff_id.")_Image.".$image_type[1];
+            $staff->staff_image  = $image_name;
+            rename($image, 'staffImage/'.$image_name);
+        }
+
+        if($staff->lecturer_CV!=""){
+            $CV = 'staffCV/'.$staff->lecturer_CV;
+            $CV_type = explode(".", $CV);
+            $CV_name = $request->get('name')."(".$staff_id.")_CV.".$CV_type[1];
+            $staff->lecturer_CV = $CV_name;
+            rename($CV, 'staffCV/'.$CV_name);
+        }
+        
+        if($request->get('staff_image')!=""){
+            $image_type = explode(".", $request->get('staff_image'));
+            $image_name = $request->get('name')."(".$staff_id.")_Image.".$image_type[1];
+            $staff->staff_image  = $image_name;
+            $image = "fake/staff_Image/".$request->get('staff_image');
+            rename($image, 'staffImage/'.$image_name);
+        }
+
+        if($request->get('staff_CV')!=""){
+            $CV_type = explode(".", $request->get('staff_CV'));
+            $CV_name = $request->get('name')."(".$staff_id.")_CV.".$CV_type[1];
+            $CV = "fake/staff_CV/".$request->get('staff_CV');
+            $staff->lecturer_CV     = $CV_name;
+            rename($CV, 'staffCV/'.$CV_name);
+        }
         $staff->save();
         $user->save();
 
@@ -186,19 +240,62 @@ class StaffController extends Controller
         return $result;
     }
 
+    public function checkStaffID(Request $request)
+    {
+        $value = $request->get('value');
+
+        $staff = Staff::where('staff_id', '=', $value)->first();
+        if ($staff === null) {
+            return "true";
+        }else{
+            return "false";
+        }
+    }
+
+    public function removeImage(Request $request)
+    {
+        $value = $request->get('value');
+        $image = $request->get('image');
+
+        $staff = Staff::where('staff_id', '=', $value)->firstOrFail();
+        $staff->staff_image = "";
+        $staff->save();
+
+        $path = public_path().'/staffImage/'.$image;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return $image;
+    }
+
+    public function removeCV(Request $request)
+    {
+        $value = $request->get('value');
+        $CV = $request->get('CV');
+
+        $staff = Staff::where('staff_id', '=', $value)->firstOrFail();
+        $staff->lecturer_CV = "";
+        $staff->save();
+
+        $path = public_path().'/staffCV/'.$CV;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return $CV;
+    }
 
     public function uploadImages(Request $request) 
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('staffImage'),$imageName);
-        return response()->json(['success'=>$imageName]);
+        $image->move(public_path('/fake/staff_Image/'),$imageName);
+        return response()->json(['success'=>$imageName]);  
     }
 
     public function destroyImage(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/staffImage/'.$filename;
+        $path = public_path().'/fake/staff_Image/'.$filename;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -209,14 +306,14 @@ class StaffController extends Controller
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('staffCV'),$imageName);
+        $image->move(public_path('/fake/staff_CV/'),$imageName);
         return response()->json(['success'=>$imageName]);
     }
 
     public function destroyCV(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/staffCV/'.$filename;
+        $path = public_path().'/fake/staff_CV/'.$filename;
         if (file_exists($path)) {
             unlink($path);
         }
