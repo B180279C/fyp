@@ -201,7 +201,7 @@ $option1 = "id='selected-sidebar'";
                                 class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     @csrf
                     <input type="hidden" name="staff_id" value="{{$id}}">
-                    <div class="dz-message" data-dz-message><span>Drop a Image in Here to Upload<br>(optional)</span></div>
+                    <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                     </form>
                     @else
                         <div style="margin: 50px 0px 20px 0px;" id="form_image">
@@ -213,7 +213,7 @@ $option1 = "id='selected-sidebar'";
                         <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
                         @csrf
-                        <div class="dz-message" data-dz-message><span>Drop a Image in Here to Upload<br>(optional)</span></div>
+                        <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                         </form>
                     @endif
                 </center>
@@ -227,7 +227,7 @@ $option1 = "id='selected-sidebar'";
                 <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     @csrf
-                    <div class="dz-message" data-dz-message><span>Drop a File in Here to Upload<br>(optional)</span></div>
+                    <div class="dz-message" data-dz-message><span>Drop a File in Here. After that click the Submit button to upload<br>(optional)</span></div>
                     <input type="hidden" name="staff_id" value="{{$id}}">
                 </form>
                 @else
@@ -255,7 +255,7 @@ $option1 = "id='selected-sidebar'";
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
                         @csrf
                         <input type="hidden" name="staff_id" value="{{$id}}">
-                        <div class="dz-message" data-dz-message><span>Drop a File in Here to Upload<br>(optional)</span></div>
+                        <div class="dz-message" data-dz-message><span>Drop a File in Here. After that click the Submit button to upload<br>(optional)</span></div>
                     </form>
                 @endif
                 </center>

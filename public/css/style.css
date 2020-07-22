@@ -249,7 +249,7 @@ i.sidebar-icon{
     background-color: #0d2f81!important;
     color: gold!important;
 }
-#dtBasicExample tr:nth-child(even) {
+#dtBasicExample tbody tr:nth-child(even) {
   background-color: #e6e6e6;
 }
 #dtBasicExample tbody tr:hover {

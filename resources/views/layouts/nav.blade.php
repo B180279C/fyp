@@ -50,7 +50,7 @@
 
     <!-- datatables -->
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> -->
-    <link rel="stylesheet" href="{{ asset('jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('jquery.dataTables.min.css')}}">
     <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.15/pagination/input.js"></script>
 

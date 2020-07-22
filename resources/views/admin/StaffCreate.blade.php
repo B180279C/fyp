@@ -337,7 +337,6 @@ $option1 = "id='selected-sidebar'";
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="bmd-label-floating">Staff ID</label>
                                         <input type="text" name="staff_id" class="form-control staff_id" placeholder="" id="input" required onkeyup="myFunction()">
-                                        
                                     </div>
                                 </div>
                                 <div class="col align-self-end" style="padding: 0px;">

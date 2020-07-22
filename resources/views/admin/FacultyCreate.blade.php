@@ -1,12 +1,24 @@
-@extends('layouts.app')
+<?php
+$title = "Add Faculty";
+$option3 = "id='selected-sidebar'";
+?>
+@extends('layouts.nav')
 
-@section('content');
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Add Faculty') }}</div>
-                <div class="card-body">
+@section('content')
+<div style="background-color: #f2f2f2">
+    <div>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Faculty</p>
+        <p class="pass_page">
+            <a href="/home" class="first_page"> Home </a>/
+            <a href="/faculty_list">Faculty </a>/
+            <span class="now_page">Add Faculty</span>/
+        </p>
+        <hr style="margin: 0px 10px;">
+    </div>
+    <div class="col-md-12">
+        <div class="details" style="padding: 10px 5px 5px 5px;">
+            <h5 style="color: #0d2f81;">Faculty Details</h5>
+            <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
                             <ul>
@@ -28,21 +40,25 @@
                         <form method="post" action="{{route('faculty.submit')}}">
                         {{csrf_field()}}
                         
-                        <div class="form-group row">
-                            <label for="full_name" class="col-md-4 col-form-label text-md-right">{{ __('Faculty Name : ') }}</label>
-                            <div class="col-md-6">
-                                <input type="text" name="faculty_name" class="form-control" placeholder="Name">
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-home" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="faculty" class="bmd-label-floating">{{ __('Faculty Name') }}</label>
+                                    <input type="text" name="faculty_name" class="form-control" id="input">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-md-8 offset-md-4">
-                                <input type="submit" class="btn btn-primary">
-                            </div>
+                        <hr>
+                        <div class="form-group" style="text-align: right;margin: 0px!important;">
+                            <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;">
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 </div>
 @endsection

@@ -1,12 +1,24 @@
-@extends('layouts.app')
+<?php
+$title = "Add Department";
+$option4 = "id='selected-sidebar'";
+?>
+@extends('layouts.nav')
 
-@section('content');
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-11">
-            <div class="card">
-                <div class="card-header">{{ __('Add Department') }}</div>
-                <div class="card-body">
+@section('content')
+<div style="background-color: #f2f2f2">
+    <div>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Department</p>
+        <p class="pass_page">
+            <a href="/home" class="first_page"> Home </a>/
+            <a href="/department_list">Department </a>/
+            <span class="now_page">Add Department</span>/
+        </p>
+        <hr style="margin: 0px 10px;">
+    </div>
+    <div class="col-md-12">
+        <div class="details" style="padding: 10px 5px 5px 5px;">
+            <h5 style="color: #0d2f81;">Department Details</h5>
+            <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
                             <ul>
@@ -27,32 +39,42 @@
 
                         <form method="post" action="{{route('department.submit')}}">
                         {{csrf_field()}}
-                        
-                        <div class="form-group row">
-                            <label for="full_name" class="col-md-4 col-form-label text-md-right">{{ __('Department Name : ') }}</label>
-                            <div class="col-md-6">
-                                <input type="text" name="department_name" class="form-control" placeholder="Name">
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-address-book" aria-hidden="true" style="font-size: 17px;padding-left: 1px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="department" class="bmd-label-floating">{{ __('Department ') }}</label>
+                                    <input type="text" name="department_name" class="form-control" id="input">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="position" class="col-md-4 col-form-label text-md-right">{{ __('Faculty : ') }}</label>
-                            <div class="col-md-6">
-                                <select class="selectpicker" name="faculty" data-width="100%" title="Choose one">
-                                    @foreach($faculty as $row)
-                                        <option value="{{ $row['faculty_id'] }}">{{$row['faculty_name']}}</option>
-                                     @endforeach
-                                </select>
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-home" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="faculty" class="label">{{ __('Faculty') }}</label>
+                                    <select class="selectpicker form-control" name="faculty" id="faculty" data-width="100%" title="Choose one" required>
+                                        @foreach($faculty as $row)
+                                            <option value="{{ $row['faculty_id'] }}" class="option">{{$row['faculty_name']}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-md-8 offset-md-4">
-                                <input type="submit" class="btn btn-primary">
-                            </div>
+                        <hr>
+                        <div class="form-group" style="text-align: right;margin: 0px!important;">
+                            <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;">
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 </div>
 @endsection

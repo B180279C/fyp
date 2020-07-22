@@ -8,7 +8,6 @@ $option1 = "id='selected-sidebar'";
 
 <script type="text/javascript">
     $(document).ready(function() {
-
         oTable = $('#dtBasicExample').DataTable(
         {
             "bLengthChange" : false,

@@ -1,12 +1,23 @@
-@extends('layouts.app')
-
-@section('content');
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">{{ __('MPU Subject Information') }}</div>
-                <div class="card-body">
+<?php
+$title = "View MPU Subject";
+$option5 = "id='selected-sidebar'";
+?>
+@extends('layouts.nav')
+@section('content')
+<div style="background-color: #f2f2f2">
+    <div>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Subject</p>
+        <p class="pass_page">
+            <a href="/home" class="first_page"> Home </a>/
+            <a href="/programme_list">Programme</a>/
+            <span class="now_page">MPU Subject ( {{$level}} )</span>/
+        </p>
+        <hr style="margin: 0px 10px;">
+    </div>
+    <div class="col-md-12">
+        <div class="details" style="padding: 10px 5px 5px 5px;">
+            <h5 style="color: #0d2f81;">MPU Subject Information</h5>
+            <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
                             <ul>
@@ -27,13 +38,17 @@
 
                         <form method="post">
                         {{csrf_field()}}
-                        <!-- <div style="text-align: right;">
-                            <button type="button" name="add" id="subject_type" class="btn btn-warning">Add Subject List</button>
-                        </div> -->
-                        <div class="form-group row">
-                            <label for="level" class="col-md-4 col-form-label text-md-right">{{ __('Level : ') }}</label>
-                            <div class="col-md-6 col-form-label text-md-left">
-                                <strong>{{$level}}</strong>
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-list-ol" aria-hidden="true" style="font-size: 18px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="programme_name" class="bmd-label-floating">Level</label>
+                                    <input type="text" name="programme_name" value="{{$level}}" class="form-control" id="input" readonly style="font-weight: bold;">
+                                </div>
                             </div>
                         </div>
                         <hr>
@@ -43,24 +58,31 @@
                         <div id="type">
                         @foreach($group as $row_group)
                             <div id="dynamic_field<?php echo $i?>">
-                                <div class="form-group row">
-                                    <label for="subject" class="col-md-4 col-form-label text-md-right" ><?php echo $i?>) Subject : </label>
-                                    <div class="col-md-4" style="padding: 0px">
-                                        <input type="text" name="subject_type<?php echo $i?>" placeholder="Subject Type" value="{{$row_group->subject_type}}" class="form-control" id="subject_type<?php echo $i?>" readonly/>
+                                <label class="col-12 align-self-center" style="padding-left: 0px;"><?php echo $i?>) Subject Classification</label>
+
+                                <div class="row">
+                                  <div class="col-md-2 align-self-center"></div>
+                                  <div class="col-md-8 align-self-center" style="padding: 15px 0px 0px 0px;">
+                                    <div class="form-group" style="">
+                                        <label for="subject" class="bmd-label-floating">Subject Type: </label>
+                                        <input type="text" name="subject_type<?php echo $i?>" value="{{$row_group->subject_type}}" class="form-control" id="subject_type<?php echo $i?>" readonly/>
                                     </div>
+                                  </div>
                                 </div>
                                 <?php
                                 $m = 1;
                                 ?>
                                 @foreach($subjects as $row)
                                   @if($row_group->subject_type == $row->subject_type)
-                                  <div class="form-group row list_row">
-                                      <label for="subject" class="col-md-4 col-form-label text-md-right"></label>
-                                      <div class="col-md-8 row">
-                                          <div class="col-md-3" style="padding: 1px">
+                                  <div class="row list_row">
+                                    <div class="col-md-2 align-self-center"></div>
+                                      <div class="col-md-8 row align-self-center">
+                                          <div class="form-group col-md-3">
+                                              <label for="subject" class="bmd-label-floating" style="padding-left: 15px">Code: </label>
                                               <input type="text" name="<?php echo $i?>subject_code<?php echo $m?>" placeholder="Code" class="form-control" value="{{$row->subject_code}}" disabled/>
                                           </div>
-                                          <div class="col-md-7" style="padding: 1px">
+                                          <div class="form-group col-md-7">
+                                              <label for="subject" class="bmd-label-floating" style="padding-left: 15px">Subject Name: </label>
                                               <input type="text" name="<?php echo $i?>subject_name<?php echo $m?>" placeholder="Subject Name" class="form-control" value="{{$row->subject_name}}" disabled/>
                                           </div>
                                       </div>
@@ -82,7 +104,5 @@
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 </div>
 @endsection
