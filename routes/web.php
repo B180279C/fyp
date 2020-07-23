@@ -28,6 +28,11 @@ Route::middleware('is_student')->group(function(){
 
 Route::middleware('is_admin')->group(function(){
 	Route::get('admin/home', 'HomeController@adminHome')->name('admin.home');
+	Route::get('student/create','StudentController@AdminCreateStudent')->name('admin.student.create');
+	Route::post('student/create', 'StudentController@store')->name('admin.student.submit');
+	Route::post('/studentUploadImage', 'StudentController@uploadImages')->name('dropzone.uploadStudentImage');
+	Route::post('/studentDestoryImage', 'StudentController@destroyImage')->name('dropzone.destoryStudentImage');
+	Route::post('/studentRemoveImage', 'StudentController@removeImage');
 	Route::get('/student_list','StudentController@index')->name('admin.student_list.index');
 	Route::get('/student/{id}','StudentController@edit')->name('admin.student_list.edit');
 	Route::post('/student/{id}','StudentController@update')->name('student_list.update.submit');

@@ -70,79 +70,137 @@
                     
                         <form method="post" action="{{ route('student.register.submit') }}">
                         {{csrf_field()}}
-                        <div class="form-group">
-                            <label for="exampleInputEmail1" class="bmd-label-floating">Full Name</label>
-                            <input type="text" name="name" class="form-control" id="input" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1" class="label">Programme</label>
-                            <select class="selectpicker form-control" name="programme" id="programme" data-width="100%"data-live-search="true" title="Choose One" required >
-                                @foreach($faculty as $row_faculty)
-                                <optgroup label="{{ $row_faculty['faculty_name']}}">
-                                    @foreach($programme as $row)
-                                        @if($row_faculty['faculty_id']==$row->faculty_id)
-                                            <option value="{{ $row->programme_id }}" class="option-group">{{$row->short_form_name}} : {{$row->programme_name}}</option>
-                                        @endif
-                                    @endforeach
-                                </optgroup>
-                                @endforeach
-                            </select>
+                        <input type="hidden" name="student_image" value="">
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="bmd-label-floating">Full Name</label>
+                                    <input type="text" name="name" class="form-control" id="input" required>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1" class="label">Year</label>
-                                    <select class="selectpicker form-control" name="year" id="year" data-width="100%" title="Choose One" required>
-                                            <option value="<?php echo date('y')-5?>" class="option"><?php echo date('Y')-5?></option>
-                                            <option value="<?php echo date('y')-4?>" class="option"><?php echo date('Y')-4?></option>
-                                            <option value="<?php echo date('y')-3?>" class="option"><?php echo date('Y')-3?></option>
-                                            <option value="<?php echo date('y')-2?>" class="option"><?php echo date('Y')-2?></option>
-                                            <option value="<?php echo date('y')-1?>" class="option"><?php echo date('Y')-1?></option>
-                                            <option value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
-                                    </select>
-                                </div>
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-briefcase" aria-hidden="true" style="font-size: 17px;"></i>
+                                </p>
                             </div>
-                            <div class="col">
+                            <div class="col-10" style="padding-left: 20px;">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1" class="label">Semester</label>
-                                    <select class="selectpicker form-control" name="semester" id="programme" data-width="100%" title="Choose One" required>
-                                            <option value="A" class="option">Semester 1</option>
-                                            <option value="B" class="option">Semester 2</option>
-                                            <option value="C" class="option">Semester 3</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1" class="label">Intake</label>
-                                    <select class="selectpicker form-control" name="intake" id="programme" data-width="100%" title="Choose One" required>
-                                            <option value="1" class="option">First Year</option>
-                                            <option value="2" class="option">Second Year</option>
+                                    <label for="Programme" class="label">Programme</label>
+                                    <select class="selectpicker form-control" name="programme" id="programme" data-width="100%"data-live-search="true" title="Choose One" required >
+                                        @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                            @foreach($programme as $row)
+                                                @if($row_faculty['faculty_id']==$row->faculty_id)
+                                                    <option value="{{ $row->programme_id }}" class="option-group">{{$row->short_form_name}} : {{$row->programme_name}}</option>
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1" class="bmd-label-floating">Student ID</label>
-                                    <input type="text" name="student_id" class="form-control" placeholder="" id="input" required>
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-calendar" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="label">Year</label>
+                                            <select class="selectpicker form-control" name="year" id="year" data-width="100%" title="Choose One" required>
+                                                    <option value="<?php echo date('y')-5?>" class="option"><?php echo date('Y')-5?></option>
+                                                    <option value="<?php echo date('y')-4?>" class="option"><?php echo date('Y')-4?></option>
+                                                    <option value="<?php echo date('y')-3?>" class="option"><?php echo date('Y')-3?></option>
+                                                    <option value="<?php echo date('y')-2?>" class="option"><?php echo date('Y')-2?></option>
+                                                    <option value="<?php echo date('y')-1?>" class="option"><?php echo date('Y')-1?></option>
+                                                    <option value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="label">Semester</label>
+                                            <select class="selectpicker form-control" name="semester" id="programme" data-width="100%" title="Choose One" required>
+                                                    <option value="A" class="option">Semester 1</option>
+                                                    <option value="B" class="option">Semester 2</option>
+                                                    <option value="C" class="option">Semester 3</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="label">Intake</label>
+                                            <select class="selectpicker form-control" name="intake" id="programme" data-width="100%" title="Choose One" required>
+                                                    <option value="1" class="option">First Year</option>
+                                                    <option value="2" class="option">Second Year</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col align-self-end" style="padding: 0px;">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">@sc.edu.my</label></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-id-badge" aria-hidden="true" style="font-size: 18px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="bmd-label-floating">Student ID</label>
+                                            <input type="text" name="student_id" class="form-control student_id" placeholder="" id="input" required onkeyup="myFunction()">
+                                        </div>
+                                    </div>
+                                    <div class="col align-self-end" style="padding: 0px;">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1">@sc.edu.my</label></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
-                            <input type="password" name="password" class="form-control" id="input" required>
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1" class="bmd-label-floating">Password</label>
+                                    <input type="password" name="password" class="form-control password" id="input" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="exampleInputEmail1" class="bmd-label-floating">Confirm Password</label>
-                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required>
+                        
+                        <div class="row">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="exampleInputEmail1" class="bmd-label-floating">Confirm Password</label>
+                                    <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required onkeyup="check_password()">
+                                    <!-- <span class="bmd-help">Please enter again your correct pasword.</span> -->
+                                </div>
+                            </div>
                         </div>
+                        <br>
                         <div class="form-group">
                             <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;float:left;">
                         </div>
