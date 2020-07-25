@@ -324,6 +324,7 @@ ul.sidebar-action-ul a:hover{
 
 #download_link:hover{
   text-decoration-line: none;
+  background-color: #e6e6e6;
 }
 #download{
   background-color: #dfdfdf;

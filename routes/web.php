@@ -100,6 +100,14 @@ Route::middleware('is_hod')->group(function(){
 });
 Route::middleware('is_dean')->group(function(){
 	Route::get('dean/home', 'HomeController@deanHome')->name('dean.home');
+	Route::post('/deanDetails', 'HomeController@deanDetails');
+
+	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
+	Route::get('/FacultyPortFolio/CVdepartment', 'F_PortFolioController@CVdepartment')->name('dean.F_potrfolio.CVdepartment');
+	Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
+	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');
+
+	
 	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
 	Route::post('course/create', 'CourseController@store')->name('course.submit');

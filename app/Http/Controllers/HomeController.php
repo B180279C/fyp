@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Staff;
 
 class HomeController extends Controller
 {
@@ -48,5 +49,17 @@ class HomeController extends Controller
     public function deanHome()
     {
         return view('deanHome');
+    }
+
+    public function deanDetails(Request $request){
+        $value = $request->get('value');
+        $staff = Staff::where('user_id', '=', $value)->firstOrFail();
+
+        $image = $staff->staff_image;
+        if($image == ""){
+            return "null";
+        }else{
+            return $image;
+        }
     }
 }

@@ -1,4 +1,8 @@
-@extends('layouts.app')
+<?php
+$title = "Home";
+$option0 = "id='selected-sidebar'";
+?>
+@extends('layouts.nav_dean')
    
 @section('content')
 <div class="container">
