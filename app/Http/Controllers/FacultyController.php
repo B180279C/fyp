@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use File;
 use App\Faculty;
 
 class FacultyController extends Controller
@@ -43,7 +44,12 @@ class FacultyController extends Controller
         $faculty = new Faculty([
             'faculty_name'       => $request->get('faculty_name'),
         ]);
+
         $faculty->save();
+        $faculty_id = $faculty->faculty_id;
+
+        $path = public_path().'/f_Portfolio/' . $faculty_id;
+        File::makeDirectory($path, $mode = 0777, true, true);
         return redirect()->route('admin.faculty_list.index')->with('success','Data Added');
     }
 

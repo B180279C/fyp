@@ -39,9 +39,8 @@ $option2 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <div class="details" style="padding: 10px 5px 5px 5px;">
-                <h5 style="color: #0d2f81;">List of Lecturer CV</h5>
-                
+            <div class="details" style="padding: 0px 5px 5px 5px;">
+<!--                 <h5 style="color: #0d2f81;">List of Lecturer CV</h5> -->
                 <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
                     <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                         <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">

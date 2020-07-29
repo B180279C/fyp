@@ -18,9 +18,8 @@ $option2 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
             <div class="details" style="padding: 10px 5px 5px 5px;">
-                <h5 style="color: #0d2f81;">List of Department</h5>
+<!--                 <h5 style="color: #0d2f81;">List of Department</h5> -->
 <!--                 <hr style="margin: 0px 0px 15px 0px;"> -->
-                <br>
                 <div class="row">
                     <?php
                     $i=0;

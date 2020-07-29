@@ -106,7 +106,10 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/FacultyPortFolio/CVdepartment', 'F_PortFolioController@CVdepartment')->name('dean.F_potrfolio.CVdepartment');
 	Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
 	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');
-
+	Route::post('/openNewFolder', 'F_PortFolioController@openNewFolder');
+	Route::get('/faculty_portfolio/folder/{folder_id}', 'F_PortFolioController@folder_view')->name('dean.F_potrfolio.folder_view');
+	Route::post('/portfolio_uploadFile', 'F_PortFolioController@uploadFiles')->name('dropzone.uploadFiles');
+	Route::post('/destoryFiles', 'F_PortFolioController@destroyFiles')->name('dropzone.destoryFiles');
 	
 	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
