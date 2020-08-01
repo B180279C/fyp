@@ -6,12 +6,14 @@ $option5 = "id='selected-sidebar'";
 
 @section('content')
 <script type="text/javascript">
+    var split = {};
+    Dropzone.autoDiscover = false;
     $(document).ready(function(){  
       var i=document.getElementById("count").value;
       $('#subject_type').click(function(){  
            i++;
            document.getElementById("count").value = i;
-           $('#type').append('<div id="dynamic_field'+i+'"><div><label class="col-md-11 align-self-center" style="padding-left: 0px;">'+i+') Subject Classification</label><button type="button" name="remove" id="'+i+'" class="col-md-1 btn btn-raised btn-danger btn_remove">Remove</button></div> <div class="row"><div class="col-md-2 align-self-center"></div><div class="col-md-8 align-self-center" style="padding: 15px 0px 0px 0px;"><div class="form-group" style=""><label for="subject" style="font-size:12px" class="label">Subject Type: </label><input type="text" name="subject_type'+i+'" class="form-control" placeholder="Category of subject" required/></div></div><div class="col-md-2 align-self-center" style="padding: 20px 0px 0px 5px;"><a class="btn btn-raised btn-success btn_add_list" name="add" id="'+i+'" ><i class="fa fa-plus" style="color:white;"></i></a></div></div><div class="row"><div class="col-md-2 align-self-center"></div><div class="col-md-8 row align-self-center"><div class="form-group col-md-3"><label for="subject" style="font-size:12px" class="label">Code: </label><input type="text" name="'+i+'subject_code1" class="form-control" placeholder="Subject Code" required/></div><div class="form-group col-md-7"><label for="subject" style="font-size:12px" class="label">Name: </label><input type="text" name="'+i+'subject_name1" class="form-control" placeholder="Subject Name" required/></div></div></div><input type="hidden" name="count_list'+i+'" id="count_list'+i+'" value="1"></div></div></div></div><div id="hr'+i+'"><br><hr></div>');  
+           $('#type').append('<div id="dynamic_field'+i+'"><div><label class="col-md-11 align-self-center" style="padding-left: 0px;">'+i+') Subject Classification</label><button type="button" name="remove" id="'+i+'" class="col-md-1 btn btn-raised btn-danger btn_remove">Remove</button></div> <div class="row"><div class="col-md-1 align-self-center"></div><div class="col-md-9 align-self-center" style="padding: 15px 0px 0px 0px;"><div class="form-group" style=""><label for="subject" style="font-size:12px" class="label">Subject Type: </label><input type="text" name="subject_type'+i+'" class="form-control" placeholder="Category of subject" required/></div></div><div class="col-md-2 align-self-center" style="padding: 25px 0px 0px 5px;"><a class="btn btn-raised btn-success btn_add_list" name="add" id="'+i+'" ><i class="fa fa-plus" style="color:white;"></i></a></div></div><div class="row" style="margin-bottom: 10px;"><div class="col-md-1 align-self-center"></div><div class="col-md-2 align-self-center" style="padding:0px;"><center><div class="dropzone align-self-center '+i+'num1" id="'+i+'dropzoneFile1" style="padding:0px;"><div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(optional)</span></div></div></center></div><div class="col-md-9 row align-self-center"><div class="form-group col-md-10"><label for="subject" class="label" style="font-size:12px">Syllabus: </label><input type="text" name="'+i+'syllabus1" placeholder="File Name" class="form-control" id="'+i+'syllabus1"/><input type="hidden" name="'+i+'full_syllabus1" id="'+i+'full_syllabus1"></div><div class="form-group col-md-3"><label for="subject" style="font-size:12px" class="label">Code: </label><input type="text" name="'+i+'subject_code1" class="form-control" placeholder="Subject Code" required/></div><div class="form-group col-md-7"><label for="subject" style="font-size:12px" class="label">Name: </label><input type="text" name="'+i+'subject_name1" class="form-control" placeholder="Subject Name" required/></div></div></div><input type="hidden" name="count_list'+i+'" id="count_list'+i+'" value="1"></div></div></div></div><div id="hr'+i+'"><br><hr></div>');  
       });
       $(document).on('click', '.btn_remove', function(){  
            var button_id = $(this).attr("id");   
@@ -23,12 +25,14 @@ $option5 = "id='selected-sidebar'";
            var button_id = $(this).attr("id");
            var count_list = document.getElementById('count_list'+button_id).value;
            count_list++;
+           var i = 0;
+           var file_up_names = [0];
            document.getElementById('count_list'+button_id).value = count_list;
-           $('#dynamic_field'+button_id).append('<div class="row" id="list_row'+button_id+'"><div class="col-md-2 align-self-center"></div><div class="col-md-8 row align-self-center"><div class="form-group col-md-3"><label for="subject" style="font-size:12px" class="label">Code: </label><input type="text" name="'+button_id+'subject_code'+count_list+'" class="form-control" placeholder="Subject Code" required/></div><div class="form-group col-md-7"><label for="subject" style="font-size:12px" class="label">Name: </label><input type="text" name="'+button_id+'subject_name'+count_list+'" class="form-control" placeholder="Subject Name" required/></div><div class="col-md-2 align-self-center" style="padding: 20px 0px 0px 5px;"><button type="button" name="remove" id="'+button_id+'" class="btn btn-raised btn-danger btn_remove_list"><i class="fa fa-times" aria-hidden="true" style="color:white;"></button></div></div></div>');  
+           $('#dynamic_field'+button_id).append('<div class="row" id="list_row'+button_id+'" style="margin-bottom: 10px;"><div class="col-md-1 align-self-center"></div><div class="col-md-2 align-self-center" style="padding:0px;"><center><div class="dropzone align-self-center '+button_id+'num'+count_list+'" id="'+button_id+'dropzoneFile'+count_list+'" style="padding:0px;"><div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(optional)</span></div></div></center></div><div class="col-md-9 row align-self-center"><div class="form-group col-md-10"><label for="subject" class="label" style="font-size:12px">Syllabus: </label><input type="text" name="'+button_id+'syllabus'+count_list+'" placeholder="File Name" class="form-control" id="'+button_id+'syllabus'+count_list+'" required/><input type="hidden" name="'+button_id+'full_syllabus'+count_list+'" id="'+button_id+'full_syllabus'+count_list+'"></div><div class="form-group col-md-3"><label for="subject" style="font-size:12px" class="label">Code: </label><input type="text" name="'+button_id+'subject_code'+count_list+'" class="form-control" placeholder="Subject Code" required/></div><div class="form-group col-md-7"><label for="subject" style="font-size:12px" class="label">Name: </label><input type="text" name="'+button_id+'subject_name'+count_list+'" class="form-control" placeholder="Subject Name" required/></div><div class="col-md-2 align-self-center" style="padding: 20px 0px 0px 5px;"><button type="button" name="remove" id="'+button_id+'" class="btn btn-raised btn-danger btn_remove_list"><i class="fa fa-times" aria-hidden="true" style="color:white;"></button></div></div></div>');  
       });
       $(document).on('click', '.btn_remove_list', function(){  
            var button_id = $(this).attr("id");   
-           $('#list_row'+button_id).remove();  
+           $('#list_row'+button_id).remove();
       });
 
   $.ajaxSetup({
@@ -60,8 +64,88 @@ $option5 = "id='selected-sidebar'";
     document.getElementById('same').value = subject_type;
     $('#subjectTypeModal').modal('show');
   });
+
+  $(document).on('click', '.dropzone', function(){
+    var className = $(this).attr("class");
+    split = className.split(" ");
+    var getNum = split[2].split("num");
+    $('#'+getNum[0]+"dropzoneFile"+getNum[1]).dropzone({
+          url: "{{action('SubjectController@postUpload')}}",
+          acceptedFiles: ".pdf,.xlsx,.docx",
+          addRemoveLinks: true,
+          timeout: 50000,
+          headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+          },
+          renameFile: function(file) {
+              var re = /(?:\.([^.]+))?$/;
+              var ext = re.exec(file.name)[1];
+              var newName = new Date().getTime() +"___"+file.name;
+              return newName;
+          },
+          init: function() {
+              this.on("addedfile", function(file){
+                var filename_without_ext = file.name.split(".");
+                $('#'+getNum[0]+"syllabus"+getNum[1]).val(filename_without_ext[0]);
+                $('#'+getNum[0]+"full_syllabus"+getNum[1]).val(file.upload.filename);
+              });
+          },
+          accept: function(file, done) {
+              switch (file.type) {
+                case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                  $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                   break;
+              }
+              done();
+          },
+          removedfile: function(file)
+          {
+              var name = file.upload.filename;
+              var count = $('#count').val();
+              for(var m=1;m<=count;m++){
+                var count_list = $('#count_list'+m).val();
+                for (var n=1;n<= count_list;n++) {
+                  var syllabus = $('#'+m+'full_syllabus'+n).val();
+                  if(syllabus==name){
+                    $('#'+m+'syllabus'+n).val("");
+                    $('#'+m+'full_syllabus'+n).val("");
+                  }
+                }
+              }            
+              $.ajax({
+                  headers: {
+                      'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                  },
+                  type: 'POST',
+                  url: '{{ url("/syllabusDestory") }}',
+                  data: {filename: name},
+                  success: function (data){
+                      console.log("File has been successfully removed!!");
+                  },
+                  error: function(e) {
+                      console.log(e);
+                  }
+              });
+              var fileRef;
+              return (fileRef = file.previewElement) != null ? 
+              fileRef.parentNode.removeChild(file.previewElement) : void 0;
+          },
+          success: function(file, response) {
+              console.log(response);
+          },
+          error: function(file, response) {
+              alert(response);
+          }
+      });
+  });
  });  
+  
 </script>
+<style type="text/css">
+.dropzone .dz-preview .dz-filename {
+  display: none;
+}
+</style>
 <div style="background-color: #f2f2f2">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Subject</p>
@@ -122,14 +206,14 @@ $option5 = "id='selected-sidebar'";
                             <div id="dynamic_field<?php echo $i?>">
                                 <label class="col-12 align-self-center" style="padding-left: 0px;"><?php echo $i?>) Subject Classification</label>
                               <div class="row">
-                                  <div class="col-md-2 align-self-center"></div>
-                                  <div class="col-md-8 align-self-center" style="padding: 15px 0px 0px 0px;">
-                                    <div class="form-group" style="">
+                                  <div class="col-md-1 align-self-center"></div>
+                                  <div class="col-md-9 align-self-center" style="padding: 15px 0px 0px 0px;">
+                                    <div class="form-group">
                                         <label for="subject" class="bmd-label-floating">Subject Type: </label>
                                         <input type="text" name="subject_type<?php echo $i?>" value="{{$row_group->subject_type}}" class="form-control" id="subject_type<?php echo $i?>" readonly/>
                                     </div>
                                   </div>
-                                  <div class="col-md-2 align-self-center" style="padding: 20px 0px 0px 5px;">
+                                  <div class="col-md-2 align-self-center" style="padding: 25px 0px 0px 5px;">
                                         <a class="btn btn-raised btn-info open-modal2" id="<?php echo $i?>"><i class="fa fa-pencil" aria-hidden="true" style="color:white;"></i>
                                         </a>
                                         <a class="btn btn-raised btn-success btn_add_list" name="add" id="<?php echo $i?>" ><i class="fa fa-plus" style="color:white;"></i></a>
@@ -140,9 +224,22 @@ $option5 = "id='selected-sidebar'";
                                 ?>
                                 @foreach($subjects as $row)
                                   @if($row_group->subject_type == $row->subject_type)
-                                  <div class="row list_row">
-                                    <div class="col-md-2 align-self-center"></div>
-                                      <div class="col-md-8 row align-self-center">
+                                  <div class="row list_row" style="margin-bottom: 10px;">
+                                    <div class="col-md-1 align-self-center"></div>
+                                    <div class="col-md-2 align-self-center" style="padding: 0px;">
+                                      <center>
+                                        <!-- <div class="dropzone align-self-center <?php echo $i?>num<?php echo $m?>" id="<?php echo $i?>dropzoneFile<?php echo $m?>" style="padding:5px;">
+                                          <div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(optional)</span></div>
+                                        </div> -->
+                                        
+                                    </center>
+                                    </div>
+                                      <div class="col-md-9 row align-self-center">
+                                          <div class="form-group col-md-10">
+                                              <label for="subject" class="label" style="padding-left: 15px">Syllabus: </label>
+                                              <input type="text" name="<?php echo $i?>syllabus<?php echo $m?>" placeholder="Syllabus" class="form-control" id="<?php echo $i?>syllabus<?php echo $m?>" value="{{$row->syllabus}}" disabled/>
+                                              <input type="hidden" name="<?php echo $i?>full_syllabus<?php echo $m?>" id="<?php echo $i?>full_syllabus<?php echo $m?>">
+                                          </div>
                                           <div class="form-group col-md-3">
                                               <label for="subject" class="bmd-label-floating" style="padding-left: 15px">Code: </label>
                                               <input type="text" name="<?php echo $i?>subject_code<?php echo $m?>" placeholder="Code" class="form-control" value="{{$row->subject_code}}" disabled/>

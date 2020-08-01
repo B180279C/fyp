@@ -70,7 +70,8 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/subjectEditModal', 'SubjectController@subjectEditModal');
 	Route::post('/subjectUpdateModal', 'SubjectController@subjectUpdateModal');
 	Route::post('/subjectTypeUpdateModal', 'SubjectController@subjectTypeUpdateModal');
-
+	Route::post('/syllabusPostUpload', 'SubjectController@postUpload')->name('dropzone.syllabusPostUpload');
+    Route::post('/syllabusDestory', 'SubjectController@syllabusDestory')->name('dropzone.syllabusDestory');
 
 	Route::get('subjectsMPU/create/{level}','MPUController@create')->name('MPU.create');
 	Route::post('subjectsMPU/create/{level}', 'MPUController@store')->name('MPU.submit');
@@ -86,6 +87,8 @@ Route::middleware('is_admin')->group(function(){
 	Route::get('/faculty_list','FacultyController@index')->name('admin.faculty_list.index');
 	Route::get('/faculty/{id}','FacultyController@edit')->name('admin.faculty_list.edit');
 	Route::post('/faculty/{id}','FacultyController@update')->name('faculty_list.update.submit');
+
+
 
 });
 
@@ -107,10 +110,17 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
 	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');
 	Route::post('/openNewFolder', 'F_PortFolioController@openNewFolder');
+
+	Route::post('/folderNameEdit', 'F_PortFolioController@folderNameEdit');
+	Route::post('/updateFolderName', 'F_PortFolioController@updateFolderName');
+	Route::get('/FacultyPortFolio/remove/{id}', 'F_PortFolioController@removeActiveFile');
+
 	Route::get('/faculty_portfolio/folder/{folder_id}', 'F_PortFolioController@folder_view')->name('dean.F_potrfolio.folder_view');
 	Route::post('/portfolio_uploadFile', 'F_PortFolioController@uploadFiles')->name('dropzone.uploadFiles');
 	Route::post('/destoryFiles', 'F_PortFolioController@destroyFiles')->name('dropzone.destoryFiles');
-	
+	Route::post('/storeFiles', 'F_PortFolioController@storeFiles');
+
+
 	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
 	Route::post('course/create', 'CourseController@store')->name('course.submit');

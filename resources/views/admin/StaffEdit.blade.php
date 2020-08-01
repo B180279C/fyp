@@ -250,7 +250,7 @@ $option1 = "id='selected-sidebar'";
                             </div>
                             </a>
                             <p id="edit_CV" style="font-size: 14px;color: #009697;">Remove file</a>
-                        </div>
+                    </div>
                     <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
                         @csrf

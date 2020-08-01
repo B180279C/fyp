@@ -19,6 +19,7 @@ class CreateFacPortfolioTable extends Migration
             $table->string('portfolio_type');
             $table->string('portfolio_name');
             $table->string('portfolio_place');
+            $table->text('portfolio_file')->nullable();
             $table->string('status');
             $table->timestamps();
         });

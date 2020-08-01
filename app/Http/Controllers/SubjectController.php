@@ -180,5 +180,20 @@ class SubjectController extends Controller
         return redirect()->route('subject.create', compact('programme','subjects','group', 'id'))->with('success','Data Updated');
     }
 
+    public function postUpload(Request $request){
+        $image = $request->file('file');
+        $imageName = $image->getClientOriginalName();
+        $image->move(public_path('/fake/faculty_portfolio/'),$imageName);
+        return response()->json(['success'=>$imageName]); 
+    }
 
+    public function syllabusDestory(Request $request)
+    {
+        $filename =  $request->get('filename');
+        $path = public_path().'/fake/faculty_portfolio/'.$filename;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+        return $filename;  
+    }
 }

@@ -13,16 +13,18 @@ class F_PortFolioController extends Controller
 {
     public function index()
     {
-        $user_id = auth()->user()->user_id;
-        $staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_id    = auth()->user()->user_id;
+        $staff_dean = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id = $staff_dean->faculty_id;
+        $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         $faculty_portfolio = DB::table('faculty_portfolio')
                     ->select('faculty_portfolio.*')
                     ->where('faculty_id', '=', $faculty_id)
                     ->where('portfolio_place', '=', 'Faculty')
-                    ->orderBy('faculty_portfolio.fp_id')
+                    ->where('status', '=', 'Active')
+                    ->orderByDesc('faculty_portfolio.portfolio_type')
                     ->get();
-        return view('dean.FacultyPortFolio', compact('faculty_portfolio'));
+        return view('dean.FacultyPortFolio', compact('faculty_portfolio','faculty'));
     }
 
     public function CVdepartment()
@@ -31,13 +33,14 @@ class F_PortFolioController extends Controller
             $user_id = auth()->user()->user_id;
             $staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
             $faculty_id = $staff_dean->faculty_id;
+            $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
             $departments = DB::table('departments')
                     ->select('departments.*')
                     ->where('faculty_id', '=', $faculty_id)
                     ->orderBy('departments.department_id')
                     ->get();
         }
-        return view('dean.departmentCV', compact('departments'));
+        return view('dean.departmentCV', compact('departments','faculty'));
     }
 
     public function lecturerCV($department)
@@ -46,6 +49,7 @@ class F_PortFolioController extends Controller
         	$user_id = auth()->user()->user_id;
         	$staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
         	$faculty_id = $staff_dean->faculty_id;
+            $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         	$faculty_staff = DB::table('staffs')
         			->join('users', 'staffs.user_id', '=', 'users.user_id')
                     ->select('staffs.*','users.*')
@@ -58,7 +62,7 @@ class F_PortFolioController extends Controller
                 return redirect()->back();
             }
         }
-        return view('dean.LecturerCV', compact('faculty_staff','departments'));
+        return view('dean.LecturerCV', compact('faculty_staff','departments','faculty'));
     }
 
     public function searchLecturerCV(Request $request){
@@ -141,11 +145,26 @@ class F_PortFolioController extends Controller
         return redirect()->back()->with('success','New Folder Added Successfully');
     }
 
+    public function folderNameEdit(Request $request){
+        $folder_id = $request->get('value');
+        $folder = Faculty_Portfolio::find($folder_id);
+        return $folder;
+    }
+
+    public function updateFolderName(Request $request){
+        $fp_id   = $request->get('fp_id');
+        $faculty_portfolio = Faculty_Portfolio::where('fp_id', '=', $fp_id)->firstOrFail();
+        $faculty_portfolio->portfolio_name  = $request->get('folder_name');
+        $faculty_portfolio->save();
+        return redirect()->back()->with('success','Edit Folder Name Successfully');
+    }
+
     public function folder_view($folder_id)
     {
         $user_id = auth()->user()->user_id;
         $staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id = $staff_dean->faculty_id;
+        $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         $faculty_portfolio = Faculty_Portfolio::where('fp_id', '=', $folder_id)->firstOrFail();
 
         $place_name = explode(',,,',($faculty_portfolio->portfolio_place));
@@ -162,9 +181,10 @@ class F_PortFolioController extends Controller
                     ->select('faculty_portfolio.*')
                     ->where('faculty_id', '=', $faculty_id)
                     ->where('portfolio_place', '=', $place)
+                    ->where('status', '=', 'Active')
                     ->orderBy('faculty_portfolio.fp_id')
                     ->get();
-        return view('dean.folder_view', compact('faculty_portfolio','faculty_portfolio_list','data'));
+        return view('dean.folder_view', compact('faculty','faculty_portfolio','faculty_portfolio_list','data'));
     }
 
     public function uploadFiles(Request $request) 
@@ -182,5 +202,41 @@ class F_PortFolioController extends Controller
             unlink($path);
         }
         return $filename;  
+    }
+
+    public function storeFiles(Request $request){
+        $user_id      = auth()->user()->user_id;
+        $staff_dean   = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id   = $staff_dean->faculty_id;   
+
+        $count = $request->get('count');
+        $place = $request->get('file_place');
+        for($i=1;$i<=$count;$i++){
+            $time = $request->get('time'.$i);
+            $name = $request->get('form'.$i);
+            $ext = $request->get('ext'.$i);
+            $fake = $request->get('fake'.$i);
+
+            $filename = $time."___".$name.$ext;
+            $faculty_portfolio = new Faculty_Portfolio([
+                'faculty_id'             =>  $faculty_id,
+                'portfolio_name'         =>  $name,
+                'portfolio_type'         =>  'document',
+                'portfolio_place'        =>  $place,
+                'portfolio_file'         =>  $filename,
+                'status'                 =>  'Active',
+            ]);
+            $faculty_portfolio->save();
+            $fake_place = "fake/faculty_portfolio/".$fake;
+            rename($fake_place, 'f_Portfolio/'.$faculty_id.'/'.$filename);
+        }
+        return redirect()->back()->with('success','New Document Added Successfully');
+    }
+
+    public function removeActiveFile($id){
+        $faculty_portfolio = Faculty_Portfolio::where('fp_id', '=', $id)->firstOrFail();
+        $faculty_portfolio->status  = "Remove";
+        $faculty_portfolio->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

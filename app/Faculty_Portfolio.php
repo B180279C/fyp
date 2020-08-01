@@ -11,6 +11,6 @@ class Faculty_Portfolio extends Model
 	protected $primaryKey = 'fp_id';
 	
     protected $fillable = [
-        'faculty_id','portfolio_type', 'portfolio_name','portfolio_place','status'
+        'faculty_id','portfolio_type', 'portfolio_name','portfolio_place','portfolio_file','status'
     ];
 }

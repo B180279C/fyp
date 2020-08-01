@@ -62,7 +62,7 @@
     <style type="text/css">
         .w3-sidebar{height:100%;width:200px;background-color:#fff;position:fixed!important;z-index:1;overflow:auto}
         .w3-animate-left{position:relative;animation:animateleft 0.4s}@keyframes animateleft{from{left:-300px;opacity:0} to{left:0;opacity:1}}
-        .w3-animate-top{position:relative;animation:animatetop 0.4s}@keyframes animatetop{from{top:-300px;opacity:0} to{top:0;opacity:1}}
+        .w3-animate-top{position:absolute;animation:animatetop 0.4s}@keyframes animatetop{from{top:-300px;opacity:0} to{top:0;opacity:1}}
         .w3-animate-right{position:relative;animation:animateright 0.4s}@keyframes animateright{from{right:-300px;opacity:0} to{right:0;opacity:1}}
     </style>
 
@@ -208,15 +208,10 @@
                         <a href="">
                             <li class="sidebar-li" <?php if(isset($option1)){ echo $option1;};?>>
                                     <i class="fa fa-book sidebar-icon" aria-hidden="true"></i>
-                                    <span style="padding-left: 20px;font-weight: bold;">Course PortFolio</span>
+                                    <span style="padding-left: 20px;font-weight: bold;">Course</span>
                             </li>
                         </a>
-                        <a href="/FacultyPortFolio">
-                            <li class="sidebar-li" <?php if(isset($option2)){ echo $option2;};?>>
-                                <i class="fa fa-folder-open sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
-                                <span style="padding-left: 20px;font-weight: bold;">Faculty PortFolio</span>
-                            </li>
-                        </a>
+                        
                         <a href="">
                             <li class="sidebar-li" <?php if(isset($option3)){ echo $option3;};?>>
                                 <i class="fa fa-info sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
@@ -224,6 +219,20 @@
                             </li>
                         </a>
                     </ul>
+                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Portfolio</p>
+                    <ul class="sidebar-ul">
+                    <a href="">
+                        <li class="sidebar-li" <?php if(isset($option4)){ echo $option4;};?>>
+                                <i class="fa fa-folder-open-o sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
+                                <span style="padding-left: 20px;font-weight: bold;">Course Portfolio</span>
+                        </li>
+                    </a>
+                    <a href="/FacultyPortFolio">
+                        <li class="sidebar-li" <?php if(isset($option2)){ echo $option2;};?>>
+                                <i class="fa fa-folder-open sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
+                                <span style="padding-left: 20px;font-weight: bold;">Faculty Portfolio</span>
+                        </li>
+                    </a>
                     <input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->user_id}}">
                     <table id="sidebar-table" style="background-color: #e5e7e8; border:none;width: 100.1%;padding:0px;margin: 0px; position: absolute; bottom: 0px;">
                         <tr>

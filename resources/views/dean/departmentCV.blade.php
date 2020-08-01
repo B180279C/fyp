@@ -7,7 +7,7 @@ $option2 = "id='selected-sidebar'";
 @section('content')
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Faculty Department</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/FacultyPortFolio"> Faculty PortFolio </a>/
@@ -17,6 +17,7 @@ $option2 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
+            <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;">Department</p>
             <div class="details" style="padding: 10px 5px 5px 5px;">
 <!--                 <h5 style="color: #0d2f81;">List of Department</h5> -->
 <!--                 <hr style="margin: 0px 0px 15px 0px;"> -->
@@ -25,7 +26,7 @@ $option2 = "id='selected-sidebar'";
                     $i=0;
                     ?>
                     @foreach($departments as $row)
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="margin-bottom: 20px">
                         <center>
                             <a href="/FacultyPortFolio/LecturerCV/<?php echo $row->department_id?>" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;font-weight: bold;" id="download_link">
                                 @if($i%2==0)

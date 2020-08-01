@@ -28,7 +28,7 @@ $option2 = "id='selected-sidebar'";
 </script>
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Lecturer CV</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/FacultyPortFolio"> Faculty PortFolio </a>/
@@ -39,6 +39,7 @@ $option2 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
+            <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;">Lecturer CV</p>
             <div class="details" style="padding: 0px 5px 5px 5px;">
 <!--                 <h5 style="color: #0d2f81;">List of Lecturer CV</h5> -->
                 <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
@@ -58,7 +59,7 @@ $option2 = "id='selected-sidebar'";
                 <!-- <hr style="margin: 0px 0px 15px 0px;"> -->
                 <div class="row" id="lecturer_CV">
                     @foreach($faculty_staff as $row)
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="margin-bottom: 20px">
                         <center>
                             <?php
                                 if($row->lecturer_CV!=""){
@@ -69,8 +70,7 @@ $option2 = "id='selected-sidebar'";
                             ?>
 
                             @if($ext!="")
-                            <!-- {{ asset('staffCV/'.$row->lecturer_CV) }} -->
-                            <a href="" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" download id="download_link">
+                            <a href="{{ asset('staffCV/'.$row->lecturer_CV) }}" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" download id="download_link">
                                 @if($ext[1]=="pdf")
                                 <img src="{{url('image/pdf.png')}}"/>
                                 @elseif($ext[1]=="docx")

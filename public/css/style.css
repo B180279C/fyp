@@ -58,6 +58,7 @@ fieldset[class*="col"] > label[class*="bmd-label"]
   color: #0d2f81;
   font-family: times;
   font-size: 16px;
+  margin-top: 5.5px;
   font-weight: bold;
 }
 
@@ -264,6 +265,7 @@ i.sidebar-icon{
     overflow:auto;
     right:0;
     margin-right: 5px;
+    top: 0px;
 }
 
 .button_close{
@@ -335,3 +337,46 @@ ul.sidebar-action-ul a:hover{
 #download:hover{
   background-color: #cccccc;
 }
+.file_action_block{
+  position: absolute;
+  padding-top: 5px;
+  right:20px;
+}
+.action_button_file{
+  padding:5px;
+  border-radius: 50%;
+  color:#0d2f81;
+  width: 28px;
+  text-align: center;
+  background-color: white;
+  margin-bottom: 5px;
+}
+.dropdown_list{
+  margin-top: 40px;
+  position: absolute;
+  right: 20px;
+  display: none;
+}
+.remove_button_file{
+  border: 1px solid #cccccc;
+  padding:5px;
+  border-radius: 50%;
+  color:red;
+  float: right;
+  background-color: white;
+  width: 28px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+.edit_button_file{
+  border: 1px solid #cccccc;
+  padding:5px;
+  border-radius: 50%;
+  float: right;
+  color:green;
+  width: 28px;
+  text-align: center;
+  background-color: white;
+  margin-bottom: 5px;
+}
+
