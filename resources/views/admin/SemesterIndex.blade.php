@@ -1,6 +1,6 @@
 <?php
-$title = "Department";
-$option4 = "id='selected-sidebar'";
+$title = "Faculty";
+$option7 = "id='selected-sidebar'";
 ?>
 @extends('layouts.nav')
 
@@ -12,7 +12,7 @@ $option4 = "id='selected-sidebar'";
             "bLengthChange" : false,
             "bInfo": false,
             pagingType: 'input',
-            pageLength: 5,
+            pageLength: 10,
             language: {
                 oPaginate: {
                    sNext: '<i class="fa fa-forward"></i>',
@@ -37,10 +37,10 @@ $option4 = "id='selected-sidebar'";
 </script>
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Department Listing</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Semester Listing</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <span class="now_page">Department </span>/
+            <span class="now_page">Semester </span>/
         </p>
         <hr style="margin: -10px 10px;">
     </div>
@@ -53,7 +53,7 @@ $option4 = "id='selected-sidebar'";
                     <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                 </div>
               <ul class="sidebar-action-ul">
-                  <a href="/department/create"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px;" aria-hidden="true"></i>Add New Department</li></a>
+                  <a href="/semester/create"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px;" aria-hidden="true"></i>Add New Semester</li></a>
                   <a href="#"><li class="sidebar-action-li"><i class="fa fa-file-excel-o" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
               </ul>
             </div>
@@ -82,10 +82,11 @@ $option4 = "id='selected-sidebar'";
             <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
                 <table id="dtBasicExample" style="border:none;width: 100%;">
                     <thead style="background-color: #0d2f81!important; color: gold;">
-                        <tr style="height: 60px;text-align: left;">
+                        <tr style="height: 45px;text-align: left;">
                             <th style="padding-left: 10px;">No. </th>
-                            <th style="padding-left: 10px;">Faculty</th>
-                            <th style="padding-left: 10px;">Department Name</th>
+                            <th style="padding-left: 10px;">Semester</th>
+                            <th style="padding-left: 10px;">Start Date</th>
+                            <th style="padding-left: 10px;">End Date</th>
                             <th style="padding-left: 10px;">Action</th>
                         </tr>
                     </thead>
@@ -93,12 +94,13 @@ $option4 = "id='selected-sidebar'";
                 $i = 1; 
                 ?>
                 <tbody>
-                @foreach($departments as $row)
-                <tr style="height: 60px;">
-                    <td><?php echo $i++?></td>
-                    <td>{{$row->faculty_name}}</td>
-                    <td>{{$row->department_name}}</td>
-                    <td><a href="{{action('DepartmentController@edit', $row->department_id)}}">Edit</a></td>
+                @foreach($semesters as $row)
+                <tr style="height: 45px;">
+                    <td>&nbsp;<?php echo $i++?></td>
+                    <td>&nbsp;20{{$row->year}}_{{$row->semester}}</td>
+                    <td>&nbsp;{{$row->startDate}}</td>
+                    <td>&nbsp;{{$row->endDate}}</td>
+                    <td>&nbsp;<a href="{{action('SemesterController@edit', $row->semester_id)}}">Edit</a></td>
                 </tr>
                 @endforeach
                 </tbody>

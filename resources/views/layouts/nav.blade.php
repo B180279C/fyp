@@ -184,8 +184,14 @@
                             </li>
                         </a>
                     </ul>
-                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Information</p>
+                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Management</p>
                     <ul class="sidebar-ul">
+                        <a href="/semester_list">
+                            <li class="sidebar-li" <?php if(isset($option7)){ echo $option7;};?>>
+                                    <i class="fa fa-calendar sidebar-icon" aria-hidden="true"></i>
+                                    <span style="padding-left: 20px;font-weight: bold;">Semester</span>
+                            </li>
+                        </a>
                         <a href="/staff_list">
                             <li class="sidebar-li" <?php if(isset($option1)){ echo $option1;};?>>
                                     <i class="fa fa-briefcase sidebar-icon" aria-hidden="true"></i>
@@ -222,6 +228,7 @@
                                 <span style="padding-left: 20px;font-weight: bold;">General Studies</span>
                             </li>
                         </a>
+                        
                     </ul>
                     <table id="sidebar-table" style="background-color: #e5e7e8; border:none;width: 100.1%;padding:0px;margin: 0px; position: absolute; bottom: 0px;">
                         <tr>

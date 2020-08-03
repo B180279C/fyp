@@ -68,7 +68,7 @@ $option6 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div style="overflow-x:auto;">
+            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
                 <table id="dtBasicExample" style="border:none;width: 100%;">
                     <thead style="background-color: #0d2f81!important; color: gold;">
                         <tr style="height: 60px;text-align: left;">

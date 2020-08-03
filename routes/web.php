@@ -88,7 +88,11 @@ Route::middleware('is_admin')->group(function(){
 	Route::get('/faculty/{id}','FacultyController@edit')->name('admin.faculty_list.edit');
 	Route::post('/faculty/{id}','FacultyController@update')->name('faculty_list.update.submit');
 
-
+	Route::get('semester/create','SemesterController@create')->name('semester.create');
+	Route::post('semester/create', 'SemesterController@store')->name('semester.submit');
+	Route::get('/semester_list','SemesterController@index')->name('admin.semester_list.index');
+	Route::get('/semester/{id}','SemesterController@edit')->name('admin.semester_list.edit');
+	Route::post('/semester/{id}','SemesterController@update')->name('semester_list.update.submit');
 
 });
 

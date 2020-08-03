@@ -85,7 +85,7 @@ $option1 = "id='selected-sidebar'";
             <!-- <a href="{{route('staff.create')}}" class="btn btn-primary" id="button-add">
                 <i class="fa fa-plus-circle" aria-hidden="true" style="font-size: 50px;padding:0px!important;"></i>
             </a> -->
-            <div style="overflow-x:auto;">
+            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
                 <table id="dtBasicExample" style="border:none;width: 100%;">
                     <thead style="background-color: #0d2f81!important; color: gold;">
                         <tr style="height: 60px;text-align: left;">

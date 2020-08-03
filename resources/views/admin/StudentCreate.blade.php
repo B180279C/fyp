@@ -177,31 +177,18 @@ $option2 = "id='selected-sidebar'";
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1" class="label">Year</label>
-                                        <select class="selectpicker form-control" name="year" id="year" data-width="100%" title="Choose One" required>
-                                                <option value="<?php echo date('y')-5?>" class="option"><?php echo date('Y')-5?></option>
-                                                <option value="<?php echo date('y')-4?>" class="option"><?php echo date('Y')-4?></option>
-                                                <option value="<?php echo date('y')-3?>" class="option"><?php echo date('Y')-3?></option>
-                                                <option value="<?php echo date('y')-2?>" class="option"><?php echo date('Y')-2?></option>
-                                                <option value="<?php echo date('y')-1?>" class="option"><?php echo date('Y')-1?></option>
-                                                <option value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
                                         <label for="exampleInputEmail1" class="label">Semester</label>
-                                        <select class="selectpicker form-control" name="semester" id="programme" data-width="100%" title="Choose One" required>
-                                                <option value="A" class="option">Semester 1</option>
-                                                <option value="B" class="option">Semester 2</option>
-                                                <option value="C" class="option">Semester 3</option>
+                                        <select class="selectpicker form-control" name="semester" data-width="100%" title="Choose One" required>
+                                                @foreach($semester as $row_semester)
+                                                    <option value="{{ $row_semester->semester_id }}" class="option">20{{$row_semester->year}}_{{$row_semester->semester}}</option>
+                                                @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1" class="label">Intake</label>
-                                        <select class="selectpicker form-control" name="intake" id="programme" data-width="100%" title="Choose One" required>
+                                        <select class="selectpicker form-control" name="intake" data-width="100%" title="Choose One" required>
                                                 <option value="1" class="option">First Year</option>
                                                 <option value="2" class="option">Second Year</option>
                                         </select>

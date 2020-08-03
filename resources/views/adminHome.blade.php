@@ -13,6 +13,8 @@
                 <div class="card-body">
                     You are Admin.
                     <br>
+                    <a href="{{route('admin.semester_list.index')}}">Semester List</a>
+                    <br>
                     <a href="{{route('admin.student_list.index')}}">Student List</a>
                     <br>
                     <a href="{{route('admin.staff_list.index')}}">Staff List</a>

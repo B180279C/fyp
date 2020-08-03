@@ -58,7 +58,5 @@ $option3 = "id='selected-sidebar'";
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
 </div>
 @endsection

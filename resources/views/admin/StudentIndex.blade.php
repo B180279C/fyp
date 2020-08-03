@@ -80,7 +80,7 @@ $option2 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div style="overflow-x:auto;">
+            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
                 <table id="dtBasicExample" style="border:none;width: 100%;">
                     <thead style="background-color: #0d2f81!important; color: gold;">
                         <tr style="height: 60px;text-align: left;">
@@ -103,7 +103,7 @@ $option2 = "id='selected-sidebar'";
                     <td>{{$row->name}}</td>
                     <td>{{$row->student_id}}</td>
                     <td>{{$row->programme_name}}</td>
-                    <td>{{$row->short_form_name}}_{{$row->year}}_{{$row->semester}}{{$row->intake}}</td>
+                    <td>{{$row->short_form_name}}_{{$row->year}}{{$row->semester}}{{$row->intake}}</td>
                     <td>{{$row->email}}</td>
                     <td><a href="{{action('StudentController@edit', $row->id)}}">Edit</a></td>
                 </tr>

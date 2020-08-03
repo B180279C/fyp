@@ -10,6 +10,7 @@ use App\Student;
 use App\User;
 use App\Programme;
 use App\Faculty;
+use App\Semester;
 use App\Department;
 
 class StudentController extends Controller
@@ -24,7 +25,8 @@ class StudentController extends Controller
         $students = DB::table('students')
                     ->join('users', 'students.user_id', '=', 'users.user_id')
                     ->join('programmes','students.programme_id', '=', 'programmes.programme_id')
-                    ->select('students.*', 'users.email', 'users.name', 'programmes.programme_name','programmes.short_form_name')
+                    ->join('semesters','students.semester', '=', 'semesters.semester_id')
+                    ->select('students.*', 'users.email', 'users.name', 'programmes.programme_name','programmes.short_form_name','semesters.*')
                     ->get();
         return view('admin.studentIndex', ['students' => $students]);
     }
@@ -43,7 +45,12 @@ class StudentController extends Controller
                     ->orderBy('programme_name')
                     ->get();
         $faculty = Faculty::all()->toArray();
-        return view('student.StudentCreate', compact('programme','faculty'));
+        $semester = DB::table('semesters')
+                    ->select('semesters.*')
+                    ->orderByDesc('semesters.year')
+                    ->orderByDesc('semesters.semester')
+                    ->get();
+        return view('student.StudentCreate', compact('programme','faculty','semester'));
     }
 
     public function AdminCreateStudent()
@@ -55,7 +62,12 @@ class StudentController extends Controller
                     ->orderBy('programme_name')
                     ->get();
         $faculty = Faculty::all()->toArray();
-        return view('admin.StudentCreate', compact('programme','faculty'));
+        $semester = DB::table('semesters')
+                    ->select('semesters.*')
+                    ->orderByDesc('semesters.year')
+                    ->orderByDesc('semesters.semester')
+                    ->get();
+        return view('admin.StudentCreate', compact('programme','faculty','semester'));
     }
 
     /**
@@ -96,7 +108,6 @@ class StudentController extends Controller
                 'user_id'           => $user_id,
                 'student_id'        => $request->get('student_id'),
                 'programme_id'      => $request->get('programme'),
-                'year'              => $request->get('year'),
                 'semester'          => $request->get('semester'),
                 'intake'            => $request->get('intake'),
                 'student_image'     => $image_name,
@@ -156,7 +167,12 @@ class StudentController extends Controller
                     ->orderBy('programme_name')
                     ->get();
         $faculty = Faculty::all()->toArray();
-        return view('admin.StudentEdit', compact('student', 'user' ,'programme', 'faculty', 'id'));
+        $semester = DB::table('semesters')
+                    ->select('semesters.*')
+                    ->orderByDesc('semesters.year')
+                    ->orderByDesc('semesters.semester')
+                    ->get();
+        return view('admin.StudentEdit', compact('student', 'user' ,'programme', 'faculty','semester', 'id'));
     }
 
     /**
@@ -171,7 +187,6 @@ class StudentController extends Controller
         $this->validate($request, [
             'name'                 =>  'required',
             'programme_id'         =>  'string',
-            'year'                 =>  'string',
             'semester'             =>  'string',
             'intake'               =>  'string',
         ]);
@@ -197,7 +212,6 @@ class StudentController extends Controller
 
         $user->name             = $request->get('name');
         $student->programme_id  = $request->get('programme');
-        $student->year          = $request->get('year');
         $student->semester      = $request->get('semester');
         $student->intake        = $request->get('intake');
 

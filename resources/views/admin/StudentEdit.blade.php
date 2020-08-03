@@ -220,24 +220,11 @@ $option2 = "id='selected-sidebar'";
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="exampleInputEmail1" class="label">Year</label>
-                                        <select class="selectpicker form-control" name="year" id="year" data-width="100%" title="Choose One" required>
-                                                <option <?php if($student->year==(date('y')-5)){ echo "selected";}?> value="<?php echo date('y')-5?>" class="option"><?php echo date('Y')-5?></option>
-                                                <option <?php if($student->year==(date('y')-4)){ echo "selected";}?> value="<?php echo date('y')-4?>" class="option"><?php echo date('Y')-4?></option>
-                                                <option <?php if($student->year==(date('y')-3)){ echo "selected";}?> value="<?php echo date('y')-3?>" class="option"><?php echo date('Y')-3?></option>
-                                                <option <?php if($student->year==(date('y')-2)){ echo "selected";}?> value="<?php echo date('y')-2?>" class="option"><?php echo date('Y')-2?></option>
-                                                <option <?php if($student->year==(date('y')-1)){ echo "selected";}?> value="<?php echo date('y')-1?>" class="option"><?php echo date('Y')-1?></option>
-                                                <option <?php if($student->year==date('y')){ echo "selected";}?> value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
                                         <label for="exampleInputEmail1" class="label">Semester</label>
-                                        <select class="selectpicker form-control" name="semester" id="programme" data-width="100%" title="Choose One" required>
-                                                <option <?php if($student->semester=="A"){ echo "selected";}?> value="A" class="option">Semester 1</option>
-                                                <option <?php if($student->semester=="B"){ echo "selected";}?> value="B" class="option">Semester 2</option>
-                                                <option <?php if($student->semester=="C"){ echo "selected";}?> value="C" class="option">Semester 3</option>
+                                        <select class="selectpicker form-control" name="semester" data-width="100%" title="Choose One" required>
+                                                @foreach($semester as $row_semester)
+                                                    <option <?php if($student->semester==$row_semester->semester_id){ echo "selected";}?> value="{{ $row_semester->semester_id }}" class="option">20{{$row_semester->year}}_{{$row_semester->semester}}</option>
+                                                @endforeach
                                         </select>
                                     </div>
                                 </div>
