@@ -61,8 +61,8 @@ $option5 = "id='selected-sidebar'";
                                 <label class="col-12 align-self-center" style="padding-left: 0px;"><?php echo $i?>) Subject Classification</label>
 
                                 <div class="row">
-                                  <div class="col-md-2 align-self-center"></div>
-                                  <div class="col-md-8 align-self-center" style="padding: 15px 0px 0px 0px;">
+                                  <div class="col-md-1 align-self-center"></div>
+                                  <div class="col-md-9 align-self-center" style="padding: 15px 0px 0px 0px;">
                                     <div class="form-group" style="">
                                         <label for="subject" class="bmd-label-floating">Subject Type: </label>
                                         <input type="text" name="subject_type<?php echo $i?>" value="{{$row_group->subject_type}}" class="form-control" id="subject_type<?php echo $i?>" readonly/>
@@ -75,8 +75,24 @@ $option5 = "id='selected-sidebar'";
                                 @foreach($subjects as $row)
                                   @if($row_group->subject_type == $row->subject_type)
                                   <div class="row list_row">
-                                    <div class="col-md-2 align-self-center"></div>
-                                      <div class="col-md-8 row align-self-center">
+                                    <div class="col-md-1 align-self-center"></div>
+                                      <div class="col-md-2 align-self-center" style="padding: 0px;">
+                                        <center>
+                                          <div id="download">
+                                              <a download="{{$row->syllabus_name}}.xlsx" href="{{asset('syllabus/'.$row->syllabus)}}" style="background-color: none;">
+                                                  <img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
+                                                  <br>
+                                                <p style="font-size: 14px;color: #009697;padding-bottom: 5px;">Download</a>
+                                              </a>
+                                          </div>
+                                        </center>
+                                      </div>
+                                      <div class="col-md-9 row align-self-center">
+                                         <div class="form-group col-md-10">
+                                              <label for="subject" class="label" style="padding-left: 15px">Syllabus: </label>
+                                              <input type="text" name="<?php echo $i?>syllabus<?php echo $m?>" placeholder="Syllabus" class="form-control" id="<?php echo $i?>syllabus<?php echo $m?>" value="{{$row->syllabus_name}}" disabled/>
+                                              <input type="hidden" name="<?php echo $i?>full_syllabus<?php echo $m?>" id="<?php echo $i?>full_syllabus<?php echo $m?>">
+                                          </div>
                                           <div class="form-group col-md-3">
                                               <label for="subject" class="bmd-label-floating" style="padding-left: 15px">Code: </label>
                                               <input type="text" name="<?php echo $i?>subject_code<?php echo $m?>" placeholder="Code" class="form-control" value="{{$row->subject_code}}" disabled/>

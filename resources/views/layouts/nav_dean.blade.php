@@ -249,7 +249,7 @@
                                 $dean_id = explode("@", $email);
                             ?>
                             <td>
-                                <p id="slidebar-details" style="border-bottom: 1px solid white;"><b>
+                                <p id="slidebar-details" style="border-bottom: 1px solid white;color: black;"><b>
                                     {{Auth::user()->name}} ( <?php echo $dean_id[0]?> )</b></p>
                                 <p id="slidebar-details" style="color: grey"><b>Dean</b></p>
                             </td>

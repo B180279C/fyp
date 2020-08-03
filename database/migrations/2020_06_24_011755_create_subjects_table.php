@@ -20,6 +20,7 @@ class CreateSubjectsTable extends Migration
             $table->string('subject_name');
             $table->string('subject_type');
             $table->text('syllabus')->nullable();
+            $table->string('syllabus_name');
             $table->timestamps();
         });
     }

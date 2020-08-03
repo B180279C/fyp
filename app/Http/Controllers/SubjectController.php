@@ -58,14 +58,19 @@ class SubjectController extends Controller
             for ($m=1; $m <= $count_list; $m++) { 
                 $subject_code = $request->get($i.'subject_code'.$m);
                 $subject_name = $request->get($i.'subject_name'.$m);
-
-                if($subject_code!="" && $subject_name!=""){
+                $syllabus     = $request->get($i.'syllabus'.$m);
+                $file         = $request->get($i.'full_syllabus'.$m);
+                if($subject_code!="" && $subject_name!="" && $syllabus!=""){
                     $subject = new Subject([
                         'programme_id'         =>  $id,
                         'subject_type'         =>  $type,
                         'subject_code'         =>  $subject_code,
                         'subject_name'         =>  $subject_name,
+                        'syllabus'             =>  $file,
+                        'syllabus_name'        =>  $syllabus,
                     ]);
+                    $fake_place = "fake/syllabus/".$file;
+                    rename($fake_place, 'syllabus/'.$file);
                     $subject->save();
                 }
             }
@@ -127,13 +132,30 @@ class SubjectController extends Controller
         
     public function subjectUpdateModal(Request $request)
     {
-        $subject_id   = $request->get('subject_id');
+        $subject_id        = $request->get('subject_id');
+        $fake              = $request->get('fake');
 
+        $filename = $fake;
         $subject = Subject::where('subject_id', '=', $subject_id)->firstOrFail();
         $subject->subject_code  = $request->get('subject_code');
         $subject->subject_name  = $request->get('subject_name');
-        $subject->save();
 
+        if($fake!=""){
+            if($subject->syllabus!=""){
+                $path = public_path().'/syllabus/'.$subject->syllabus;
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
+            $subject->syllabus = $filename;
+            $fake_place = "fake/syllabus/".$fake;
+            rename($fake_place, 'syllabus/'.$filename);
+            $subject->syllabus_name = $request->get('form');
+        }else{
+            $subject->syllabus_name = $request->get('syllabus');
+        }
+        
+        $subject->save();
         $id = $subject->programme_id;
         $programme = Programme::where('programme_id', '=', $id)->firstOrFail();
         $subjects = DB::table('subjects')
@@ -183,14 +205,14 @@ class SubjectController extends Controller
     public function postUpload(Request $request){
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/faculty_portfolio/'),$imageName);
+        $image->move(public_path('/fake/syllabus/'),$imageName);
         return response()->json(['success'=>$imageName]); 
     }
 
     public function syllabusDestory(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/faculty_portfolio/'.$filename;
+        $path = public_path().'/fake/syllabus/'.$filename;
         if (file_exists($path)) {
             unlink($path);
         }

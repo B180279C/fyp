@@ -76,6 +76,8 @@ class MPUController extends Controller
             for ($m=1; $m <= $count_list; $m++) { 
                 $subject_code = $request->get($i.'subject_code'.$m);
                 $subject_name = $request->get($i.'subject_name'.$m);
+                $syllabus     = $request->get($i.'syllabus'.$m);
+                $file         = $request->get($i.'full_syllabus'.$m);
 
                 if($subject_code!="" && $subject_name!=""){
                     $subject = new Subject_MPU([
@@ -83,7 +85,11 @@ class MPUController extends Controller
                         'subject_type'         =>  $type,
                         'subject_code'         =>  $subject_code,
                         'subject_name'         =>  $subject_name,
+                        'syllabus'             =>  $file,
+                        'syllabus_name'        =>  $syllabus,
                     ]);
+                    $fake_place = "fake/syllabus/".$file;
+                    rename($fake_place, 'syllabus/'.$file);
                     $subject->save();
                 }
             }
@@ -146,14 +152,30 @@ class MPUController extends Controller
     public function generalStudiesUpdateModal(Request $request)
     {
         $mpu_id = $request->get('mpu_id');
+        $fake   = $request->get('fake');
 
+        $filename = $fake;
         $mpu = Subject_MPU::where('mpu_id', '=', $mpu_id)->firstOrFail();
         $mpu->subject_code  = $request->get('subject_code');
         $mpu->subject_name  = $request->get('subject_name');
+
+        if($fake!=""){
+            if($mpu->syllabus!=""){
+                $path = public_path().'/syllabus/'.$mpu->syllabus;
+                if (file_exists($path)) {
+                    unlink($path);
+                }
+            }
+            $mpu->syllabus = $filename;
+            $fake_place = "fake/syllabus/".$fake;
+            rename($fake_place, 'syllabus/'.$filename);
+            $mpu->syllabus_name = $request->get('form');
+        }else{
+            $mpu->syllabus_name = $request->get('syllabus');
+        }
+
         $mpu->save();
-
         $level = $mpu->level;
-
         $subjects = DB::table('subjects_mpu')
                     ->select('subjects_mpu.*')
                     ->where('subjects_mpu.level', '=', $level)

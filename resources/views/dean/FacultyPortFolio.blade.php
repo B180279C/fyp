@@ -102,7 +102,7 @@ $option2 = "id='selected-sidebar'";
               var filename = file.upload.filename.split(ext);
               var name_without_time = filename[0].split("___");
               file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
-              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value="+name_without_time[1]+" class='form-control filename'></div>");
+              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value='"+name_without_time[1]+"' class='form-control filename'></div>");
               file.previewElement.appendChild(file._captionLabel);
               file.previewElement.appendChild(file._captionBox);
               writeInput(i,name_without_time[1],name_without_time[0],ext,file.upload.filename);
@@ -184,36 +184,6 @@ $option2 = "id='selected-sidebar'";
   padding-left: 25px;
   display: inline-block;
 }
-.changelabel{
-    border:0px solid black;
-    margin-left: 20%;
-    position: relative;
-    top: -105px;
-    margin-bottom: -10px;
-}
-.changeName{
-    border:0px solid black;
-    margin-left: 20%;
-    position: relative;
-    top: -105px;
-    margin-bottom: -50px;
-}
-@media only screen and (max-width: 600px) {
-    .changelabel{
-        border:0px solid black;
-        margin-left: 40%;
-        position: relative;
-        top: -105px;
-        margin-bottom: -10px;
-    }
-    .changeName{
-        border:0px solid black;
-        margin-left: 40%;
-        position: relative;
-        top: -105px;
-        margin-bottom: -50px;
-    }
-}
 </style>
 <div style="background-color: #f2f2f2">
     <div>
@@ -259,7 +229,7 @@ $option2 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/FacultyPortFolio/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="/FacultyPortFolio/SyllabusDepartment" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/syllabus.png')}}" width="70px" height="90px" style="margin-top: 50px;"/>
                             <br>

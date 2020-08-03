@@ -11,7 +11,7 @@ $option2 = "id='selected-sidebar'";
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/FacultyPortFolio"> Faculty PortFolio </a>/
-            <span class="now_page">Department ( Lecturer CV )</span>/
+            <span class="now_page">Department ( Syllabus )</span>/
         </p>
         <hr style="margin: -10px 10px;">
     </div>
@@ -19,8 +19,6 @@ $option2 = "id='selected-sidebar'";
         <div class="col-md-12">
             <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;">Department</p>
             <div class="details" style="padding: 10px 5px 5px 5px;">
-<!--                 <h5 style="color: #0d2f81;">List of Department</h5> -->
-<!--                 <hr style="margin: 0px 0px 15px 0px;"> -->
                 <div class="row">
                     <?php
                     $i=0;
@@ -28,7 +26,7 @@ $option2 = "id='selected-sidebar'";
                     @foreach($departments as $row)
                     <div class="col-md-3" style="margin-bottom: 20px">
                         <center>
-                            <a href="/FacultyPortFolio/LecturerCV/<?php echo $row->department_id?>" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;font-weight: bold;" id="download_link">
+                            <a href="/FacultyPortFolio/SyllabusProgramme/<?php echo $row->department_id?>" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;font-weight: bold;" id="download_link">
                                 @if($i%2==0)
                                 <i class="fa fa-building" aria-hidden="true" style="font-size: 72px;color: #0d2f81;"></i>
                                 @else

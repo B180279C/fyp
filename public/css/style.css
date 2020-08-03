@@ -379,4 +379,34 @@ ul.sidebar-action-ul a:hover{
   background-color: white;
   margin-bottom: 5px;
 }
+.changelabel{
+    border:0px solid black;
+    margin-left: 20%;
+    position: relative;
+    top: -105px;
+    margin-bottom: -10px;
+}
+.changeName{
+    border:0px solid black;
+    margin-left: 20%;
+    position: relative;
+    top: -105px;
+    margin-bottom: -50px;
+}
+@media only screen and (max-width: 600px) {
+    .changelabel{
+        border:0px solid black;
+        margin-left: 40%;
+        position: relative;
+        top: -105px;
+        margin-bottom: -10px;
+    }
+    .changeName{
+        border:0px solid black;
+        margin-left: 40%;
+        position: relative;
+        top: -105px;
+        margin-bottom: -50px;
+    }
+}
 

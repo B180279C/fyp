@@ -41,6 +41,18 @@ $option5 = "id='selected-sidebar'";
     }
   });
 
+  $(document).on('keyup', '.filename', function(){  
+    var value = document.getElementById('syllabus').value;
+    $("#form").val(value);
+  });
+
+  $('#edit_syllabus').click(function(){
+      if(confirm("Do you sure want to remove this syllabus")){
+        document.getElementById('100dropzoneFile100').style.display = "block";
+        document.getElementById('showSyllabus').style.display = "none";
+      }
+  });
+
   $(document).on('click', '.open-modal', function(){
     var subject_id = $(this).attr("id");
     $.ajax({
@@ -51,6 +63,15 @@ $option5 = "id='selected-sidebar'";
          document.getElementById('subject_id_modal').value = subject_id;
          document.getElementById('subject_code_modal').value = data.subject_code;
          document.getElementById('subject_name_modal').value = data.subject_name;
+         if(data.syllabus==""||data.syllabus==null){
+          document.getElementById('100dropzoneFile100').style.display = "block";
+          document.getElementById('showSyllabus').style.display = "none";
+         }else{
+          document.getElementById('100dropzoneFile100').style.display = "none";
+          document.getElementById('showSyllabus').style.display = "block";
+          setHref(data.syllabus);
+          document.getElementById('syllabus').value = data.syllabus_name;
+         }
       }
     });
 
@@ -69,9 +90,10 @@ $option5 = "id='selected-sidebar'";
     var className = $(this).attr("class");
     split = className.split(" ");
     var getNum = split[2].split("num");
-    $('#'+getNum[0]+"dropzoneFile"+getNum[1]).dropzone({
+      $('#'+getNum[0]+"dropzoneFile"+getNum[1]).dropzone({
           url: "{{action('SubjectController@postUpload')}}",
-          acceptedFiles: ".pdf,.xlsx,.docx",
+          maxFiles:1,
+          acceptedFiles: ".xlsx",
           addRemoveLinks: true,
           timeout: 50000,
           headers: {
@@ -80,14 +102,28 @@ $option5 = "id='selected-sidebar'";
           renameFile: function(file) {
               var re = /(?:\.([^.]+))?$/;
               var ext = re.exec(file.name)[1];
-              var newName = new Date().getTime() +"___"+file.name;
+              var newName = new Date().getTime()+"."+ext;
               return newName;
           },
           init: function() {
+              this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+              });
               this.on("addedfile", function(file){
                 var filename_without_ext = file.name.split(".");
-                $('#'+getNum[0]+"syllabus"+getNum[1]).val(filename_without_ext[0]);
-                $('#'+getNum[0]+"full_syllabus"+getNum[1]).val(file.upload.filename);
+                if(getNum[0]=="100"){
+                  file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
+                  file._captionBox = Dropzone.createElement("<div class='changeName'><input id='syllabus' type='text' name='syllabus' value='"+filename_without_ext[0]+"' class='form-control filename'></div>");
+                  file.previewElement.appendChild(file._captionLabel);
+                  file.previewElement.appendChild(file._captionBox);
+                  writeInput(filename_without_ext[0],file.upload.filename);
+                  $(".dz-remove").addClass("InModel");
+                  $(".dz-preview").addClass("dropzoneModel");
+                }else{
+                  $('#'+getNum[0]+"syllabus"+getNum[1]).val(filename_without_ext[0]);
+                  $('#'+getNum[0]+"full_syllabus"+getNum[1]).val(file.upload.filename);
+                }
               });
           },
           accept: function(file, done) {
@@ -138,12 +174,43 @@ $option5 = "id='selected-sidebar'";
           }
       });
   });
- });  
-  
+ }); 
+
+ function writeInput(name,fake){
+  $(document).ready(function(){  
+    $("#writeInput").append("<input type='hidden' id='form' name='form' value='"+name+"'><input type='hidden' id='fake' name='fake' value='"+fake+"'>");
+  });
+ } 
+
+ function setHref(link){
+  $(document).ready(function(){  
+    $(".syllabus_link").attr("href", "{!! asset('syllabus/"+link+"') !!}");
+  });
+ }
 </script>
 <style type="text/css">
+.dropzoneModel{
+  border-bottom: 1px solid black;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: -30px!important;
+  width: 100%;
+}
 .dropzone .dz-preview .dz-filename {
   display: none;
+}
+.dropzone .dz-preview .dz-size {
+  display: none;
+}
+.dropzone .dz-preview .dz-remove{
+  text-align: left;
+  display: inline-block;
+}
+#syllabus_link:hover{
+  text-decoration: none;
+}
+.InModel{
+  padding-left: 25px;
 }
 </style>
 <div style="background-color: #f2f2f2">
@@ -228,16 +295,19 @@ $option5 = "id='selected-sidebar'";
                                     <div class="col-md-1 align-self-center"></div>
                                     <div class="col-md-2 align-self-center" style="padding: 0px;">
                                       <center>
-                                        <!-- <div class="dropzone align-self-center <?php echo $i?>num<?php echo $m?>" id="<?php echo $i?>dropzoneFile<?php echo $m?>" style="padding:5px;">
-                                          <div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(optional)</span></div>
-                                        </div> -->
-                                        
-                                    </center>
+                                        <div id="download">
+                                            <a download="{{$row->syllabus_name}}.xlsx" href="{{asset('syllabus/'.$row->syllabus)}}" style="background-color: none;">
+                                                <img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
+                                                <br>
+                                              <p style="font-size: 14px;color: #009697;padding-bottom: 5px;">Download</a>
+                                            </a>
+                                        </div>
+                                      </center>
                                     </div>
                                       <div class="col-md-9 row align-self-center">
                                           <div class="form-group col-md-10">
                                               <label for="subject" class="label" style="padding-left: 15px">Syllabus: </label>
-                                              <input type="text" name="<?php echo $i?>syllabus<?php echo $m?>" placeholder="Syllabus" class="form-control" id="<?php echo $i?>syllabus<?php echo $m?>" value="{{$row->syllabus}}" disabled/>
+                                              <input type="text" name="<?php echo $i?>syllabus<?php echo $m?>" placeholder="Syllabus" class="form-control" id="<?php echo $i?>syllabus<?php echo $m?>" value="{{$row->syllabus_name}}" disabled/>
                                               <input type="hidden" name="<?php echo $i?>full_syllabus<?php echo $m?>" id="<?php echo $i?>full_syllabus<?php echo $m?>">
                                           </div>
                                           <div class="form-group col-md-3">
@@ -292,14 +362,31 @@ $option5 = "id='selected-sidebar'";
       <div class="modal-body">
         <div id="message"></div>
         <br>
+
+        <div class="dropzone align-self-center 100num100 dropzoneModel" id="100dropzoneFile100" style="padding:25px;display: none;">
+          <div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(optional)</span></div>
+        </div>
+
+        <div id="showSyllabus" style="display: none;">
+            <a href="/" id="syllabus_link" class="syllabus_link">
+              <div id="download">
+                <center><img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/></a></center>
+              </div>
+            </a>
+            <p id="edit_syllabus" style="font-size: 14px;color: #009697;padding-bottom: 5px;padding-left: 28px;padding-top: 10px;">Remove file</p>
+            <div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>
+            <div class='changeName'><input id='syllabus' type='text' name='syllabus' class='form-control'></div>
+        </div>
+        <hr>
         <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                     <i class="fa fa-sticky-note" aria-hidden="true" style="font-size: 18px;"></i>
                 </p>
             </div>
+            <div id="writeInput"></div>
             <input type="hidden" name="subject_id" id="subject_id_modal">
-              <div class="col-md-11 row" style="padding-left: 20px;">
+              <div class="col-11 row" style="padding-left: 20px;">
                 <div class="form-group col-md-4">
                     <label for="subject" class="label" style="padding-left: 15px">Code: </label>
                     <input type="text" name="subject_code" placeholder="Code" class="form-control" id="subject_code_modal" required/>
@@ -310,7 +397,6 @@ $option5 = "id='selected-sidebar'";
                 </div>
             </div>
         </div>
-        <br>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
