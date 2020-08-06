@@ -8,8 +8,11 @@ use Auth;
 use App\Staff;
 use App\Faculty;
 use App\Programme;
+use App\Semester;
 use App\Subject;
 use App\Course;
+use Excel;
+use App\Imports\CoursesImport;
 
 class CourseController extends Controller
 {
@@ -248,5 +251,85 @@ class CourseController extends Controller
         $course->status  = "Remove";
         $course->save();
         return redirect()->back()->with('success','Remove Successfully');
+    }
+
+    public function importExcel(Request $request)
+    {
+        $array = (new CoursesImport)->toArray($request->file('file'));
+        for($i=0;$i<=(count($array[0])-1);$i++){
+            $value = $array[0][$i]['subject_code'];
+            $programme = $array[0][$i]['programme'];
+            if ($value === '' || $value === null) {
+                if($programme === '' || $programme === null){
+                    $array[0][$i]['programme'] = "Empty";
+                    $array[0][$i]['subject_code'] = "Empty";
+                }
+            }
+        }
+        return response()->json($array[0]);
+    }
+
+    public function storeCourses(Request $request)
+    {
+        $staff = Staff::where('user_id', '=', Auth::User()->user_id)->firstOrFail();
+            if($staff->faculty_id=="8"){
+                $course_type = "MPU";
+            }else{
+                $course_type = "Normal";
+            }
+        $count = $request->get('count');
+        $failed = "";
+        for($i=0;$i<=$count;$i++){
+            $subject_code   = $request->get('subject_code'.$i);
+            $subject_name   = $request->get('subject_name'.$i);
+            $semester_name  = $request->get('semester'.$i);
+            $lecturer       = $request->get('lecturer'.$i);
+            $programme_name = $request->get('programme'.$i);
+            $programme = Programme::where('programme_name', '=', $programme_name)->first();
+
+            $subject = DB::table('subjects')
+                    ->select('subjects.*')
+                    ->where('subjects.subject_code', '=', $subject_code)
+                    ->where('subjects.programme_id', '=', $programme->programme_id)
+                    ->get();
+            $semester = Semester::where('semester_name', '=', $semester_name)->first();
+
+            $firstStaff_id = explode("(",$lecturer);
+            $secondStaff_id = explode(")",$firstStaff_id[1]);
+
+            $staff = Staff::where('staff_id', "=", $secondStaff_id[0])->first();
+
+            if(isset($subject[0])){
+                if(($semester === null)||($staff === null)){
+                   $failed .= "In No ".($i+1)." , the semester or staff got something wrong.";
+                }else{
+                    $checkexists = DB::table('courses')
+                            ->select('courses.*')
+                            ->where('courses.subject_id','=',$subject[0]->subject_id)
+                            ->where('courses.semester','=',$semester->semester_id)
+                            ->where('courses.status','=',"Active")
+                            ->get();
+                    if (count($checkexists) === 0) {
+                        $course = new Course([
+                            'subject_id'        => $subject[0]->subject_id,
+                            'course_type'       => $course_type,
+                            'semester'          => $semester->semester_id,
+                            'lecturer'          => $staff->id,
+                            'status'            => "Active",
+                        ]);
+                        $course->save();
+                    }else{
+                        $failed .= "In No ".($i+1)." , The course is already inserted.";
+                    }
+                }
+            }else{
+                $failed .= "In No ".($i+1)." , The subject details got something wrong.";
+            }
+        }
+        if($failed==""){
+            return redirect()->route('dean.C_potrfolio.index')->with('success','Data Added');
+        }else{
+            return redirect()->route('dean.C_potrfolio.index')->with('failed', $failed);
+        }
     }
 }

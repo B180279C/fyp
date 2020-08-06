@@ -142,6 +142,9 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/course/{id}','CourseController@update')->name('course.update.submit');
 	Route::get('/course/remove/{id}', 'CourseController@removeActiveCourse');
 
+	Route::post('/uploadCourses', 'CourseController@importExcel')->name('dropzone.uploadCourses');
+	Route::post('/course/excel/create', 'CourseController@storeCourses')->name('course.excel.submit');
+
 });
 
 

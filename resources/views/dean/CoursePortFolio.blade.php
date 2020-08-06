@@ -15,6 +15,8 @@ $option4 = "id='selected-sidebar'";
       document.getElementById("button_open").style.display = "block";
     }
     $(function () {
+        $('#showData').hide();
+        $('#errorData').hide();
         $.ajaxSetup({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -59,16 +61,133 @@ $option4 = "id='selected-sidebar'";
           }
           return false;
         });
-        $(document).on('click', '#open_document', function(){
+        $(document).on('click', '#open_document', function(){   
             $('#openDocumentModal').modal('show');
         });
     });
+
+    Dropzone.options.dropzoneFile =
+    {
+        acceptedFiles: ".xlsx,xls",
+        maxFiles:1,
+        timeout: 50000,
+        renameFile: function(file) {
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(file.name)[1];
+            var newName = new Date().getTime() +"___"+file.name;
+            return newName;
+        },
+        init: function() {
+            this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+                    $(".tablebody").remove(); 
+            });
+            this.on("addedfile", function(file){
+              var re = /(?:\.([^.]+))?$/;
+              var ext = re.exec(file.upload.filename)[0];
+              var filename = file.upload.filename.split(ext);
+              var name_without_time = filename[0].split("___");
+              file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
+                  file._captionBox = Dropzone.createElement("<div class='changeName'><input id='syllabus' type='text' name='syllabus' value='"+name_without_time[1]+"' class='form-control filename'></div>");
+              file.previewElement.appendChild(file._captionLabel);
+              file.previewElement.appendChild(file._captionBox);
+              $(".dz-remove").addClass("InModel");
+              $(".dz-preview").addClass("dropzoneModel");
+            });
+        },
+        accept: function(file, done) {
+            switch (file.type) {
+              case 'application/pdf':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pdf.png')}}");
+                break;
+              case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/docs.png')}}");
+                break;
+              case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                 break;
+            }
+            done();
+        },
+        success: function(file, response) {
+            console.log(response);
+            var table = document.getElementById("dtBasicExample");
+            
+            for(var i = 0; i<response.length; i++){
+              if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
+                break;
+              }
+                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['programme']!=null)){
+                  var row = table.insertRow(1+i);
+                  var cell = row.insertCell(0);
+                  var cell1 = row.insertCell(1);
+                  var cell2 = row.insertCell(2);
+                  var cell3 = row.insertCell(3);
+                  var cell4 = row.insertCell(4);
+                  cell.innerHTML  = (i+1);
+                  cell1.innerHTML = response[i]['programme_short_form_name'];
+                  cell2.innerHTML = response[i]['subject_code'] +" "+ response[i]['subject_name'];
+                  cell3.innerHTML = response[i]['semester'];
+                  cell4.innerHTML = response[i]['lecturer_staff_id'];
+                  cell.className  = 'tablebody';
+                  cell1.className = 'tablebody';
+                  cell2.className = 'tablebody';
+                  cell3.className = 'tablebody';
+                  cell4.className = 'tablebody';
+                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'>");
+                  $('#showData').show();
+                  $('#errorData').hide();
+                }else{
+                  $('#showData').hide();
+                  $('#errorData').show();
+                  break;
+                }
+          }
+          $("#writeInput").append("<input type='hidden' name='count' value='"+(i-1)+"'>");
+        },
+        error: function(file, response) {
+            console.log(response);
+        }
+    };
 </script>
 <style type="text/css">
-  #course_list:hover{
+#course_list:hover{
     text-decoration: none;
     background-color: #e6e6e6;
-  }
+}
+.dropzoneModel{
+  border-bottom: 1px solid black;
+  padding-left: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px!important;
+  width: 95%;
+}
+.dropzone .dz-preview .dz-filename {
+  display: none;
+}
+.dropzone .dz-preview .dz-size {
+  display: none;
+}
+.dropzone .dz-preview .dz-remove{
+  text-align: left;
+  display: inline-block;
+}
+#syllabus_link:hover{
+  text-decoration: none;
+}
+.InModel{
+  padding-left: 25px;
+}
+.tablebody{
+  background-color: white!important;
+  color: black;
+  height: 60px;
+  padding-left: 10px;
+}
+.tablehead{
+  background-color: #0d2f81!important; color: gold;
+}
 </style>
 <div style="background-color: #f2f2f2">
     <div>
@@ -97,6 +216,18 @@ $option4 = "id='selected-sidebar'";
             @if(\Session::has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
+
+            @if(\Session::has('failed'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <?php
+              $new_str = str_replace('.', '. <br />', Session::get('failed'));
+              echo $new_str;
+              ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -153,14 +284,28 @@ $option4 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{route('dropzone.uploadFiles')}}" enctype="multipart/form-data"
+      <form method="post" action="{{route('dropzone.uploadCourses')}}" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
       </form>
-      <form method="post" action="{{action('F_PortFolioController@storeFiles')}}">
+      <div id="showData" style="padding: 0px 20px 20px 20px;overflow-x:auto;">
+        <table id="dtBasicExample" style="box-shadow: 0px 2px 5px #aaaaaa;border:none;width:100%;">
+          <thead class="tablehead">
+            <tr style="height: 60px;text-align: left;">
+              <th style="padding-left: 10px;">No</th>
+              <th style="padding-left: 10px;">Programme</th>
+              <th style="padding-left: 10px;">Subject</th>
+              <th style="padding-left: 10px;">Semester</th>
+              <th style="padding-left: 10px;">Lecturer</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div id="errorData" style="padding: 0px 20px 20px 20px;">
+        <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
+      </div>
+      <form method="post" action="{{action('CourseController@storeCourses')}}">
         {{csrf_field()}}
-        <input type="hidden" name="count" value="0" id="count">
-        <input type="hidden" name="file_place" value="Faculty">
         <div id="writeInput"></div>
         <div class="modal-footer">
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
