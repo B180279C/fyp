@@ -47,8 +47,7 @@ class StudentController extends Controller
         $faculty = Faculty::all()->toArray();
         $semester = DB::table('semesters')
                     ->select('semesters.*')
-                    ->orderByDesc('semesters.year')
-                    ->orderByDesc('semesters.semester')
+                    ->orderByDesc('semesters.semester_name')
                     ->get();
         return view('student.StudentCreate', compact('programme','faculty','semester'));
     }
@@ -64,8 +63,7 @@ class StudentController extends Controller
         $faculty = Faculty::all()->toArray();
         $semester = DB::table('semesters')
                     ->select('semesters.*')
-                    ->orderByDesc('semesters.year')
-                    ->orderByDesc('semesters.semester')
+                    ->orderByDesc('semesters.semester_name')
                     ->get();
         return view('admin.StudentCreate', compact('programme','faculty','semester'));
     }
@@ -169,8 +167,7 @@ class StudentController extends Controller
         $faculty = Faculty::all()->toArray();
         $semester = DB::table('semesters')
                     ->select('semesters.*')
-                    ->orderByDesc('semesters.year')
-                    ->orderByDesc('semesters.semester')
+                    ->orderByDesc('semesters.semester_name')
                     ->get();
         return view('admin.StudentEdit', compact('student', 'user' ,'programme', 'faculty','semester', 'id'));
     }

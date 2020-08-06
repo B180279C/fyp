@@ -11,6 +11,6 @@ class Semester extends Model
 	protected $primaryKey = 'semester_id';
 	
     protected $fillable = [
-        'semester', 'year','startDate','endDate'
+        'semester_name','startDate','endDate'
     ];
 }

@@ -97,7 +97,7 @@ $option7 = "id='selected-sidebar'";
                 @foreach($semesters as $row)
                 <tr style="height: 45px;">
                     <td>&nbsp;<?php echo $i++?></td>
-                    <td>&nbsp;20{{$row->year}}_{{$row->semester}}</td>
+                    <td>&nbsp;{{$row->semester_name}}</td>
                     <td>&nbsp;{{$row->startDate}}</td>
                     <td>&nbsp;{{$row->endDate}}</td>
                     <td>&nbsp;<a href="{{action('SemesterController@edit', $row->semester_id)}}">Edit</a></td>

@@ -221,7 +221,7 @@
                     </ul>
                     <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Portfolio</p>
                     <ul class="sidebar-ul">
-                    <a href="">
+                    <a href="/CoursePortFolio">
                         <li class="sidebar-li" <?php if(isset($option4)){ echo $option4;};?>>
                                 <i class="fa fa-folder-open-o sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
                                 <span style="padding-left: 20px;font-weight: bold;">Course Portfolio</span>

@@ -11,7 +11,7 @@ $option0 = "id='selected-sidebar'";
             <div class="card">
                 <div class="card-header">Dashboard</div>
                 <div class="card-body">
-                    <a href="{{route('dean.course_list.index')}}">Course List</a>
+                    <!-- <a href="">Course List</a> -->
                 </div>
             </div>
         </div>

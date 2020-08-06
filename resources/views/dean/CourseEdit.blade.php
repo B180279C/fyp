@@ -7,12 +7,6 @@ $option4 = "id='selected-sidebar'";
 @section('content')
 <script type="text/javascript">
     $(function () {
-        $("#form_sub").hide();
-        $("#form_year").hide();
-        $("#form_tch").hide();
-        $("#form_lct").hide();
-        $("#form_other_lct").hide();
-
         $.ajaxSetup({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -56,12 +50,6 @@ $option4 = "id='selected-sidebar'";
             var value = $('#lecturer2').val();
             document.getElementById('lecturer').value = value;
         });
-
-        $('#subject').change(function(){
-            $("#form_year").show();
-            $("#form_tch").show();
-            $("#form_lct").show();
-        });
     });
 </script>
 <div style="background-color: #f2f2f2">
@@ -70,13 +58,13 @@ $option4 = "id='selected-sidebar'";
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/CoursePortFolio">Course PortFolio </a>/
-            <span class="now_page">Add Course</span>/
+            <span class="now_page">Edit Course</span>/
         </p>
         <hr style="margin: 0px 10px;">
     </div>
     <div class="col-md-12">
         <div class="details" style="padding: 10px 5px 5px 5px;">
-            <h5 style="color: #0d2f81;">Add New Course Portfolio Details</h5>
+            <h5 style="color: #0d2f81;">Edit Course Portfolio Information</h5>
             <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
@@ -87,6 +75,7 @@ $option4 = "id='selected-sidebar'";
                             </ul>
                         </div>
                     @endif
+
                     @if(\Session::has('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                       <Strong>{{\Session::get('success')}}</Strong>
@@ -104,8 +93,7 @@ $option4 = "id='selected-sidebar'";
                       </button>
                     </div>
                     @endif
-
-                        <form method="post" action="{{route('course.submit')}}">
+                        <form method="post" action="{{action('CourseController@update', $id)}}">
                         {{csrf_field()}}
                         <div class="row">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
@@ -121,7 +109,7 @@ $option4 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($programme as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    <option value="{{ $row->programme_id }}" class="option-group">{{$row->short_form_name}} : {{$row->programme_name}}</option>
+                                                    <option <?php if($row->programme_id==$course[0]->programme_id){echo "selected";} ?> value="{{ $row->programme_id }}" class="option-group">{{$row->short_form_name}} : {{$row->programme_name}}</option>
                                                 @endif
                                             @endforeach
                                         </optgroup>
@@ -142,7 +130,15 @@ $option4 = "id='selected-sidebar'";
                                 <div class="form-group">
                                     <label for="Programme" class="label">Subjects </label>
                                     <select class="selectpicker form-control" name="subject" data-width="100%" title="Choose one" data-live-search="true" id="subject" required>
-
+                                        @foreach($group as $row_group)
+                                            <optgroup label='{{$row_group->subject_type}}'>
+                                                @foreach($subjects as $row)
+                                                    @if($row_group->subject_type == $row->subject_type)
+                                                        <option <?php if($row->subject_id==$course[0]->subject_id){echo "selected";} ?> value="{{$row->subject_id}}" class='option-group'>{{$row->subject_code}} : {{$row->subject_name}}</option>
+                                                    @endif
+                                                @endforeach
+                                            </optgroup>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
@@ -161,7 +157,7 @@ $option4 = "id='selected-sidebar'";
                                             <label for="exampleInputEmail1" class="label">Semester</label>
                                             <select class="selectpicker form-control" name="semester" data-width="100%" title="Choose One" required>
                                                     @foreach($semester as $row_semester)
-                                                        <option value="{{ $row_semester->semester_id }}" class="option">{{$row_semester->semester_name}}</option>
+                                                        <option <?php if($row_semester->semester_id==$course[0]->semester){echo "Selected";} ?> value="{{ $row_semester->semester_id }}" class="option">{{$row_semester->semester_name}}</option>
                                                     @endforeach
                                             </select>
                                         </div>
@@ -170,6 +166,7 @@ $option4 = "id='selected-sidebar'";
                             </div>
                         </div>
                         
+
                         <div class="row" id="form_tch">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
@@ -182,11 +179,11 @@ $option4 = "id='selected-sidebar'";
                                         <div class="form-group" style="margin: 0px;">
                                             <label for="exampleInputEmail1" class="label">&nbsp;</label>
                                                 <div class="form-check form-check-inline">
-                                                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" checked>
+                                                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" <?php if($count_staff_InFaculty>0){ echo "checked";}?>>
                                                   <label class="form-check-label" for="inlineRadio1">Own Faculty</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" <?php if($count_staff_InFaculty===0){ echo "checked";}?>>
                                                   <label class="form-check-label" for="inlineRadio2">Other Faculty</label>
                                                 </div>
                                         </div>
@@ -195,6 +192,7 @@ $option4 = "id='selected-sidebar'";
                             </div>
                         </div>
 
+                        @if($count_staff_InFaculty>0)
                         <div class="row" id="form_lct">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
@@ -206,14 +204,36 @@ $option4 = "id='selected-sidebar'";
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer1" data-width="100%" title="Choose One" data-live-search="true">
                                     @foreach($staffs as $row_staff)
-                                        <option  value="{{$row_staff->id}}" class="option">{{$row_staff->name}} ({{$row_staff->staff_id}})</option>
+                                        <option <?php if($row_staff->id==$course[0]->lecturer){ echo "selected"; }?> value="{{$row_staff->id}}" class="option">{{$row_staff->name}} ({{$row_staff->staff_id}})</option>
                                     @endforeach
                                 </select>
                                 </div>
                             </div>
                         </div>
-
-
+                        <div class="row" id="form_other_lct" style="display: none;">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="label">Lecturer</label>
+                                    <select class="selectpicker form-control" id="lecturer2" data-width="100%" title="Choose One" data-live-search="true">
+                                        @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                            @foreach($lct as $row)
+                                                @if($row_faculty['faculty_id']==$row->faculty_id)
+                                                    <option <?php if($row->id==$course[0]->lecturer){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->name}} ({{$row->staff_id}})</option>
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        @else
                         <div class="row" id="form_other_lct">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
@@ -228,7 +248,7 @@ $option4 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($lct as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    <option  value="{{$row->id}}" class="option-group">{{$row->name}} ({{$row->staff_id}})</option>
+                                                    <option <?php if($row->id==$course[0]->lecturer){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->name}} ({{$row->staff_id}})</option>
                                                 @endif
                                             @endforeach
                                         </optgroup>
@@ -237,7 +257,25 @@ $option4 = "id='selected-sidebar'";
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="lecturer" id="lecturer">
+                        <div class="row" id="form_lct" style="display: none;">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-10" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="label">Lecturer</label>
+                                    <select class="selectpicker form-control" id="lecturer1" data-width="100%" title="Choose One" data-live-search="true">
+                                    @foreach($staffs as $row_staff)
+                                        <option <?php if($row_staff->id==$course[0]->lecturer){ echo "selected"; }?> value="{{$row_staff->id}}" class="option">{{$row_staff->name}} ({{$row_staff->staff_id}})</option>
+                                    @endforeach
+                                </select>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        <input type="hidden" name="lecturer" id="lecturer" value="{{$course[0]->lecturer}}">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">
                             <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;">

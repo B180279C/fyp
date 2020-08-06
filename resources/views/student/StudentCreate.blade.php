@@ -120,7 +120,7 @@
                                             <label for="exampleInputEmail1" class="label">Semester</label>
                                             <select class="selectpicker form-control" name="semester" data-width="100%" title="Choose One" required>
                                                     @foreach($semester as $row_semester)
-                                                        <option value="{{ $row_semester->semester_id }}" class="option">20{{$row_semester->year}}_{{$row_semester->semester}}</option>
+                                                        <option value="{{ $row_semester->semester_id }}" class="option">{{$row_semester->semester_name}}</option>
                                                     @endforeach
                                             </select>
                                         </div>

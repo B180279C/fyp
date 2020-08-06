@@ -53,7 +53,7 @@ $option7 = "id='selected-sidebar'";
                                                 <option <?php if($semester->year==(date('y')-3)){ echo "selected";}?> value="<?php echo date('y')-3?>" class="option"><?php echo date('Y')-3?></option>
                                                 <option <?php if($semester->year==(date('y')-2)){ echo "selected";}?> value="<?php echo date('y')-2?>" class="option"><?php echo date('Y')-2?></option>
                                                 <option <?php if($semester->year==(date('y')-1)){ echo "selected";}?> value="<?php echo date('y')-1?>" class="option"><?php echo date('Y')-1?></option>
-                                                <option <?php if($semester->year==date('y')){ echo "selected";}?> value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
+                                                <option <?php if($semester->year==(date('y'))){ echo "selected";}?> value="<?php echo date('y')?>" class="option"><?php echo date('Y')?></option>
                                     </select>
                                 </div>
                             </div>

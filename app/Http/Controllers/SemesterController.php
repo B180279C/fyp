@@ -17,8 +17,7 @@ class SemesterController extends Controller
     {
         $semesters = DB::table('semesters')
                     ->select('semesters.*')
-                    ->orderByDesc('semesters.year')
-                    ->orderByDesc('semesters.semester')
+                    ->orderByDesc('semesters.semester_name')
                     ->get();
         return view('admin.SemesterIndex', ['semesters' => $semesters]);
     }
@@ -41,9 +40,11 @@ class SemesterController extends Controller
      */
     public function store(Request $request)
     {
+        $semester_name = '20'.$request->get('year')."_".$request->get('semester');
         $semester = new Semester([
-            'semester'       => $request->get('semester'),
             'year'           => $request->get('year'),
+            'semester'       => $request->get('semester'),
+            'semester_name'  => $semester_name,
             'startDate'      => $request->get('start_date'),
             'endDate'        => $request->get('end_date'),
         ]);
@@ -84,11 +85,12 @@ class SemesterController extends Controller
     public function update(Request $request, $id)
     {
 
-        $semester               = Semester::where('semester_id', '=', $id)->firstOrFail();
-        $semester->semester     = $request->get('semester');
-        $semester->year         = $request->get('year');
-        $semester->startDate    = $request->get('start_date');
-        $semester->endDate      = $request->get('end_date');
+        $semester                = Semester::where('semester_id', '=', $id)->firstOrFail();
+        $semester->year          = $request->get('year');
+        $semester->semester      = $request->get('semester');
+        $semester->semester_name = '20'.$request->get('year')."_".$request->get('semester');
+        $semester->startDate     = $request->get('start_date');
+        $semester->endDate       = $request->get('end_date');
         $semester->save(); 
 
         if(auth()->user()){

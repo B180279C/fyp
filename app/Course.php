@@ -11,6 +11,6 @@ class Course extends Model
 	protected $primaryKey = 'course_id';
 	
     protected $fillable = [
-        'subject_id','course_type', 'year','semester','created_by','teacher'
+        'subject_id','course_type','semester','lecturer','moderator','status'
     ];
 }

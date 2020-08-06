@@ -131,10 +131,17 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/storeFiles', 'F_PortFolioController@storeFiles');
 
 
-	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
+	Route::get('/CoursePortFolio', 'C_PortFolioController@index')->name('dean.C_potrfolio.index');
+	Route::post('/searchCourse', 'C_PortFolioController@searchCourse');
+	
+	// Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
 	Route::post('course/create', 'CourseController@store')->name('course.submit');
 	Route::post('/courseSubject', 'CourseController@courseSubject');
+	Route::get('/course/{id}','CourseController@edit')->name('course.edit');
+	Route::post('/course/{id}','CourseController@update')->name('course.update.submit');
+	Route::get('/course/remove/{id}', 'CourseController@removeActiveCourse');
+
 });
 
 
