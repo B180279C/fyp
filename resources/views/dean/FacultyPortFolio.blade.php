@@ -28,32 +28,32 @@ $option2 = "id='selected-sidebar'";
            $("#form"+id).val(value);
         });
 
-        $(document).on('click', '.action_button_file', function(){  
-           var active = $('#active_dropdownlist').val();
-           var id = $(this).attr("id");
-           var num = id.split("_");
-           if(active!=""){
-              if($('#dropdown_list'+num[3]).css('display') === 'block')
-               {
-                document.getElementById('dropdown_list'+num[3]).style.display = "none";
-                document.getElementById('active_dropdownlist').value = "";
-               }else{
-                document.getElementById('dropdown_list'+num[3]).style.display = "block";
-                document.getElementById('active_dropdownlist').value = num[3];
-               }
-               document.getElementById('dropdown_list'+active).style.display = "none";
-           }else{
-              if($('#dropdown_list'+num[3]).css('display') === 'block')
-               {
-                document.getElementById('dropdown_list'+num[3]).style.display = "none";
-                document.getElementById('active_dropdownlist').value = "";
-               }else{
-                document.getElementById('dropdown_list'+num[3]).style.display = "block";
-                document.getElementById('active_dropdownlist').value = num[3];
-               }
-           }
-           return false;
-        });
+        // $(document).on('click', '.action_button_file', function(){  
+        //    var active = $('#active_dropdownlist').val();
+        //    var id = $(this).attr("id");
+        //    var num = id.split("_");
+        //    if(active!=""){
+        //       if($('#dropdown_list'+num[3]).css('display') === 'block')
+        //        {
+        //         document.getElementById('dropdown_list'+num[3]).style.display = "none";
+        //         document.getElementById('active_dropdownlist').value = "";
+        //        }else{
+        //         document.getElementById('dropdown_list'+num[3]).style.display = "block";
+        //         document.getElementById('active_dropdownlist').value = num[3];
+        //        }
+        //        document.getElementById('dropdown_list'+active).style.display = "none";
+        //    }else{
+        //       if($('#dropdown_list'+num[3]).css('display') === 'block')
+        //        {
+        //         document.getElementById('dropdown_list'+num[3]).style.display = "none";
+        //         document.getElementById('active_dropdownlist').value = "";
+        //        }else{
+        //         document.getElementById('dropdown_list'+num[3]).style.display = "block";
+        //         document.getElementById('active_dropdownlist').value = num[3];
+        //        }
+        //    }
+        //    return false;
+        // });
 
         $(document).on('click', '.edit_button_file', function(){
           var id = $(this).attr("id");
@@ -164,6 +164,38 @@ $option2 = "id='selected-sidebar'";
             $("#writeInput").append("<input type='hidden' id='form"+num+"' name='form"+num+"' value='"+name+"'><input type='hidden' id='time"+num+"' name='time"+num+"' value='"+time+"'><input type='hidden' id='ext"+num+"' name='ext"+num+"' value='"+ext+"'><input type='hidden' id='fake"+num+"' name='fake"+num+"' value='"+fake+"'>");
         });
     }
+
+    $(function () {
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+        if($('.search').val()!=""){
+          var value = $('.search').val();
+          var place = $('#place').val();
+          $.ajax({
+              type:'POST',
+              url:'/searchFiles',
+              data:{value:value,place:place},
+              success:function(data){
+                document.getElementById("course").innerHTML = data;
+              }
+          });
+        }
+        $(".search").keyup(function(){
+            var value = $('.search').val();
+            var place = $('#place').val();
+            $.ajax({
+               type:'POST',
+               url:'/searchFiles',
+               data:{value:value,place:place},
+               success:function(data){
+                    document.getElementById("course").innerHTML = data;
+               }
+            });
+        });
+    });
 </script>
 <style type="text/css">
 .dropzone .dz-preview{
@@ -183,6 +215,40 @@ $option2 = "id='selected-sidebar'";
   text-align: left;
   padding-left: 25px;
   display: inline-block;
+}
+#course_list:hover{
+    text-decoration: none;
+    background-color: #e6e6e6;
+}
+@media only screen and (max-width: 600px) {
+  #course_name{
+        margin-left:0px;
+        padding-top: 5px;
+    }
+  #course_action_two{
+    padding: 0px;
+    position: relative;
+    right: -19px;
+    text-align: right;
+  }
+  #course_action{
+    text-align: right;
+    padding: 0px 0px 0px 20px;
+  }
+}
+@media only screen and (min-width: 600px) {
+    #course_name{
+        margin-left:-55px;
+        padding-top: 5px;
+    }
+    #course_action_two{
+      text-align: right;
+      padding: 0px 0px 0px 24px;
+    }
+    #course_action{
+      text-align: right;
+      padding: 0px 0px 0px 24px;
+    }
 }
 </style>
 <div style="background-color: #f2f2f2">
@@ -217,86 +283,93 @@ $option2 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div class="details" style="position: relative;top: -10px">
-                <div class="row">
-                    <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/FacultyPortFolio/CVdepartment" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
-                            <center>
-                            <img src="{{url('image/cv.png')}}" width="96px" height="90px" style="margin-top: 50px;"/>
-                            <br>
-                            <p style="padding-top: 10px;color: #0d2f81;">Lecturer CV</p>
-                            </center>
-                        </a>
+            <div class="details" style="padding: 0px 5px 5px 5px;">
+                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
+                    <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                        <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                            <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
+                        </p>
                     </div>
-                    <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/FacultyPortFolio/SyllabusDepartment" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
-                            <center>
-                            <img src="{{url('image/syllabus.png')}}" width="70px" height="90px" style="margin-top: 50px;"/>
-                            <br>
-                            <p style="padding-top: 10px;color: #0d2f81;">Syllabus</p>
-                            </center>
-                        </a>
-                        
+                    <div class="col-11" style="padding-left: 20px;">
+                        <div class="form-group">
+                            <label for="full_name" class="bmd-label-floating">Search</label>
+                            <input type="hidden" id="place" value="Faculty">
+                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+                        </div>
                     </div>
-                    <?php
-                    $i=1;
-                    ?>
-                    @foreach($faculty_portfolio as $row)
-                    <div class="col-md-3" style="margin-bottom: 20px">
-                            @if($row->portfolio_type=="folder")
-                            <a href="/faculty_portfolio/folder/{{$row->fp_id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;"   id="download_link" class="file_listing">
-                                <p class="file_action_block">
-                                  <!-- <i class="fa fa-times" aria-hidden="true" id="remove_button_file"></i> -->
-                                  <i class="fa fa-caret-down action_button_file" aria-hidden="true" id="action_button_file_<?php echo $i?>"></i>
-                                  <div class="dropdown_list w3-animate-top" id="dropdown_list<?php echo $i?>">
-                                    <i class="fa fa-wrench edit_button_file" aria-hidden="true" id="edit_button_file_{{$row->fp_id}}"></i><br>
-                                    <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}"></i>
-                                  </div>
-                                </p>
-                                <center>
-                                <img src="{{url('image/folder2.png')}}" width="85px" height="90px" style="margin-top: 35px;" />
-                            @else
-                            <?php
-                                $filename = "";
-                                if($row->portfolio_file!=""){
-                                    $filename = explode("___", $row->portfolio_file);
-                                }
-                            ?>
-                            <a download="<?php echo $filename[1]?>" href="{{ asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file) }}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link" class="file_listing">
-                              <p class="file_action_block">
-                                  <i class="fa fa-caret-down action_button_file" aria-hidden="true" id="action_button_file_<?php echo $i?>"></i>
-                                  <div class="dropdown_list w3-animate-top" id="dropdown_list<?php echo $i?>">
-                                    <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}"></i>
-                                  </div>
-                                </p>
-                              <center>
-                                <?php
-                                    $ext = "";
-                                    if($row->portfolio_file!=""){
-                                        $ext = explode(".", $row->portfolio_file);
-                                    }
+                </div>
+                <div class="row" id="course" style="position: relative;top: -20px;">
+                      <a href="/FacultyPortFolio/CVdepartment" class="col-md-12 align-self-center" id="course_list">
+                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
+                            <div class="col-1" style="padding-top: 3px;">
+                              <img src="{{url('image/cv.png')}}" width="25px" height="25px"/>
+                            </div>
+                            <div class="col" id="course_name">
+                              <p style="margin: 0px;"><b>Lecturer CV</b></p>
+                            </div>
+                          </div>
+                        </a>
+                        <a href="/FacultyPortFolio/SyllabusDepartment" class="col-md-12 align-self-center" id="course_list">
+                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
+                            <div class="col-1" style="padding-top: 3px;padding-left: 18px;">
+                              <img src="{{url('image/syllabus.png')}}" width="19px" height="25px"/>
+                            </div>
+                            <div class="col" id="course_name">
+                              <p style="margin: 0px;"><b>Syllabus</b></p>
+                            </div>
+                          </div>
+                        </a>
+                      @foreach($faculty_portfolio as $row)
+                        @if($row->portfolio_type=="folder")
+                        <a href="/faculty_portfolio/folder/{{$row->fp_id}}" class="col-md-12 align-self-center" id="course_list">
+                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
+                            <div class="col-1" style="padding-top: 3px;">
+                                <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
+                            </div>
+                        @else
+                          <?php
+                            $filename = "";
+                            if($row->portfolio_file!=""){
+                              $filename = explode("___", $row->portfolio_file);
+                            }
+                          ?>
+                        <a download="<?php echo $filename[1]?>" href="{{ asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file) }}" class="col-md-12 align-self-center" id="course_list">
+                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
+                            <div class="col-1" style="padding-top: 3px;">
+                          <?php
+                              $ext = "";
+                              if($row->portfolio_file!=""){
+                                $ext = explode(".", $row->portfolio_file);
+                              }
                                 ?>
                                 @if($ext!="")
                                     @if($ext[1]=="pdf")
-                                    <img src="{{url('image/pdf.png')}}" width="85px" height="90px" style="margin-top: 35px;" />
+                                    <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
                                     @elseif($ext[1]=="docx")
-                                    <img src="{{url('image/docs.png')}}" width="85px" height="90px" style="margin-top: 35px;" />
+                                    <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
                                     @elseif($ext[1]=="xlsx")
-                                    <img src="{{url('image/excel.png')}}" width="85px" height="90px" style="margin-top: 35px;" />
+                                    <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
                                     @endif   
                                 @endif
+                                </div>
                             @endif
-                            <br>
-                            <p style="padding: 10px 10px 0px 10px;color: #0d2f81;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">{{$row->portfolio_name}}</p>
-                            </center>
-                            </a>
-                        
-                    </div>
-                    <?php
-                    $i++;
-                    ?>
-                    @endforeach
-                    <input type="hidden" id="active_dropdownlist" value="">
+                            <div class="col" id="course_name">
+                              <p style="margin: 0px;"><b>{{$row->portfolio_name}}</b></p>
+                            </div>
+                            @if($row->portfolio_type=="folder")
+                            <div class="col-3" id="course_action_two">
+                                <i class="fa fa-wrench edit_button_file" aria-hidden="true" id="edit_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                                <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                            </div>
+                            @else
+                            <div class="col-1" id="course_action">
+                                <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                            </div>
+                            @endif
+                          </div>
+                        </a>
+                      @endforeach
+                      <!-- <input type="hidden" id="active_dropdownlist" value=""> -->
                 </div>
             </div>
         </div>

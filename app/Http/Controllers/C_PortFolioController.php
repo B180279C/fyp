@@ -59,10 +59,12 @@ class C_PortFolioController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.faculty_id', '=', $faculty_id)
                     ->where('courses.status','=','Active')
-                    ->where('subjects.subject_code','LIKE','%'.$value.'%')
-                    ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
-                    ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
-                    ->orWhere('users.name','LIKE','%'.$value.'%')
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('subjects.subject_code','LIKE','%'.$value.'%')
+                            ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
+                            ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
+                            ->orWhere('users.name','LIKE','%'.$value.'%');
+                      })             
                     ->get();
             $result .= '<div class="col-md-12">';
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;">Search Filter : '.$value.'</p>';

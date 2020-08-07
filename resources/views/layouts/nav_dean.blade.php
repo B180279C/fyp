@@ -203,12 +203,12 @@
                             </li>
                         </a>
                     </ul>
-                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Method</p>
+                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Manage</p>
                     <ul class="sidebar-ul">
-                        <a href="">
+                        <a href="/course_list">
                             <li class="sidebar-li" <?php if(isset($option1)){ echo $option1;};?>>
                                     <i class="fa fa-book sidebar-icon" aria-hidden="true"></i>
-                                    <span style="padding-left: 20px;font-weight: bold;">Course</span>
+                                    <span style="padding-left: 20px;font-weight: bold;">Courses</span>
                             </li>
                         </a>
                         

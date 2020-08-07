@@ -110,6 +110,7 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/deanDetails', 'HomeController@deanDetails');
 
 	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
+	Route::post('/searchFiles', 'F_PortFolioController@searchFiles');
 	Route::get('/FacultyPortFolio/CVdepartment', 'F_PortFolioController@CVdepartment')->name('dean.F_potrfolio.CVdepartment');
 	Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
 
@@ -134,13 +135,14 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/CoursePortFolio', 'C_PortFolioController@index')->name('dean.C_potrfolio.index');
 	Route::post('/searchCourse', 'C_PortFolioController@searchCourse');
 	
-	// Route::get('course_list','CourseController@index')->name('dean.course_list.index');
+	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
 	Route::post('course/create', 'CourseController@store')->name('course.submit');
 	Route::post('/courseSubject', 'CourseController@courseSubject');
 	Route::get('/course/{id}','CourseController@edit')->name('course.edit');
 	Route::post('/course/{id}','CourseController@update')->name('course.update.submit');
 	Route::get('/course/remove/{id}', 'CourseController@removeActiveCourse');
+	Route::post('/searchTeachCourse', 'CourseController@searchTeachCourse');
 
 	Route::post('/uploadCourses', 'CourseController@importExcel')->name('dropzone.uploadCourses');
 	Route::post('/course/excel/create', 'CourseController@storeCourses')->name('course.excel.submit');
