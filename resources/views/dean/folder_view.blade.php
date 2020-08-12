@@ -84,7 +84,7 @@ $option2 = "id='selected-sidebar'";
     var file_up_names = [0];
     Dropzone.options.dropzoneFile =
     {
-        acceptedFiles: ".pdf,.xlsx,.docx",
+        acceptedFiles: ".pdf,.xlsx,.docx,.pptx",
         addRemoveLinks: true,
         timeout: 50000,
         renameFile: function(file) {
@@ -102,7 +102,7 @@ $option2 = "id='selected-sidebar'";
               var filename = file.upload.filename.split(ext);
               var name_without_time = filename[0].split("___");
               file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
-              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value="+name_without_time[1]+" class='form-control filename'></div>");
+              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value='"+name_without_time[1]+"' class='form-control filename'></div>");
               file.previewElement.appendChild(file._captionLabel);
               file.previewElement.appendChild(file._captionBox);
               writeInput(i,name_without_time[1],name_without_time[0],ext,file.upload.filename);
@@ -117,6 +117,9 @@ $option2 = "id='selected-sidebar'";
                 $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/docs.png')}}");
                 break;
               case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                 break;
+              case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
                 $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
                  break;
             }

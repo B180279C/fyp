@@ -49,7 +49,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/home" class="first_page"> Home </a>/
             <span class="now_page">Courses</span>/
         </p>
-        <hr style="margin: 0px 10px;">
+        <hr style="margin: -10px 10px;">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
@@ -102,7 +102,7 @@ $option1 = "id='selected-sidebar'";
                     </p>
                   </div>
                       @foreach($course as $row)
-                        <a href="" class="col-md-12 align-self-center" id="course_list">
+                        <a href="course/action/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 0px;">
                               <img src="{{url('image/subject.png')}}" width="25px" height="24px"/>

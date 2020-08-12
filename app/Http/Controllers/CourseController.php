@@ -99,6 +99,7 @@ class CourseController extends Controller
                     ->select('courses.*')
                     ->where('courses.subject_id','=',$request->get('subject'))
                     ->where('courses.semester','=',$request->get('semester'))
+                    ->where('courses.lecturer','=',$request->get('lecturer'))
                     ->where('courses.status','=',"Active")
                     ->get();
 
@@ -324,8 +325,9 @@ class CourseController extends Controller
                 }else{
                     $checkexists = DB::table('courses')
                             ->select('courses.*')
-                            ->where('courses.subject_id','=',$subject[0]->subject_id)
-                            ->where('courses.semester','=',$semester->semester_id)
+                            ->where('courses.subject_id','=', $subject[0]->subject_id)
+                            ->where('courses.semester','=', $semester->semester_id)
+                            ->where('courses.lecturer','=', $staff->id)
                             ->where('courses.status','=',"Active")
                             ->get();
                     if (count($checkexists) === 0) {
@@ -448,5 +450,23 @@ class CourseController extends Controller
             }
         }
         return $result;
+    }
+
+
+    public function courseAction($id){
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->select('courses.*','subjects.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+        if(count($course)>0){
+            return view('dean.CourseAction',compact('course','id'));
+        }else{
+            return redirect()->back();
+        }
     }
 }

@@ -188,6 +188,11 @@ $option4 = "id='selected-sidebar'";
 .tablehead{
   background-color: #0d2f81!important; color: gold;
 }
+@media only screen and (max-width: 600px) {
+  #showData{
+    margin-right: 20px;
+  }
+}
 </style>
 <div style="background-color: #f2f2f2">
     <div>
@@ -207,7 +212,7 @@ $option4 = "id='selected-sidebar'";
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
-                      <a href='course/create'><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Course</li></a>
+                      <a href='course/create'><li class="sidebar-action-li"><i class="fa fa-book" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Course</li></a>
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Add Multple Course</li></a>
                   </ul>
             </div>
@@ -283,6 +288,12 @@ $option4 = "id='selected-sidebar'";
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
+      </div>
+      <div style="margin: 20px 20px 0px 20px;">
+        <p style="color:#0d2f81; "><b>Templete:</b></p>
+        <p><b>  1. </b>Please download template by clicking <a href='{{asset("/templete/multiple_courses.xlsx")}}' id="templete_link">Templete</a>.</p>
+        <p><b>  2. </b>Delete the example data.</p>
+        <p><b>  3. </b>Fill in the Subject details and other details in file.</p>
       </div>
       <form method="post" action="{{route('dropzone.uploadCourses')}}" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">

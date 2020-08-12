@@ -28,33 +28,6 @@ $option2 = "id='selected-sidebar'";
            $("#form"+id).val(value);
         });
 
-        // $(document).on('click', '.action_button_file', function(){  
-        //    var active = $('#active_dropdownlist').val();
-        //    var id = $(this).attr("id");
-        //    var num = id.split("_");
-        //    if(active!=""){
-        //       if($('#dropdown_list'+num[3]).css('display') === 'block')
-        //        {
-        //         document.getElementById('dropdown_list'+num[3]).style.display = "none";
-        //         document.getElementById('active_dropdownlist').value = "";
-        //        }else{
-        //         document.getElementById('dropdown_list'+num[3]).style.display = "block";
-        //         document.getElementById('active_dropdownlist').value = num[3];
-        //        }
-        //        document.getElementById('dropdown_list'+active).style.display = "none";
-        //    }else{
-        //       if($('#dropdown_list'+num[3]).css('display') === 'block')
-        //        {
-        //         document.getElementById('dropdown_list'+num[3]).style.display = "none";
-        //         document.getElementById('active_dropdownlist').value = "";
-        //        }else{
-        //         document.getElementById('dropdown_list'+num[3]).style.display = "block";
-        //         document.getElementById('active_dropdownlist').value = num[3];
-        //        }
-        //    }
-        //    return false;
-        // });
-
         $(document).on('click', '.edit_button_file', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
@@ -84,7 +57,7 @@ $option2 = "id='selected-sidebar'";
     var file_up_names = [0];
     Dropzone.options.dropzoneFile =
     {
-        acceptedFiles: ".pdf,.xlsx,.docx",
+        acceptedFiles: ".pdf,.xlsx,.docx,.pptx",
         addRemoveLinks: true,
         timeout: 50000,
         renameFile: function(file) {
@@ -118,6 +91,9 @@ $option2 = "id='selected-sidebar'";
                 break;
               case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
                 $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                 break;
+              case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pptx.png')}}");
                  break;
             }
             done();
@@ -299,7 +275,7 @@ $option2 = "id='selected-sidebar'";
                     </div>
                 </div>
                 <div class="row" id="course" style="position: relative;top: -20px;">
-                      <a href="/FacultyPortFolio/CVdepartment" class="col-md-12 align-self-center" id="course_list">
+                      <a href="/FacultyPortFolio/LecturerCV/" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 3px;">
                               <img src="{{url('image/cv.png')}}" width="25px" height="25px"/>
@@ -309,7 +285,7 @@ $option2 = "id='selected-sidebar'";
                             </div>
                           </div>
                         </a>
-                        <a href="/FacultyPortFolio/SyllabusDepartment" class="col-md-12 align-self-center" id="course_list">
+                        <a href="/FacultyPortFolio/Syllabus/" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 3px;padding-left: 18px;">
                               <img src="{{url('image/syllabus.png')}}" width="19px" height="25px"/>

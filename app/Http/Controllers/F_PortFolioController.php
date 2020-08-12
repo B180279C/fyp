@@ -183,43 +183,7 @@ class F_PortFolioController extends Controller
         return $result;
     }
 
-
-
-    public function CVdepartment()
-    {
-        if(auth()->user()->position == "Dean"){
-            $user_id = auth()->user()->user_id;
-            $staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
-            $faculty_id = $staff_dean->faculty_id;
-            $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
-            $departments = DB::table('departments')
-                    ->select('departments.*')
-                    ->where('faculty_id', '=', $faculty_id)
-                    ->orderBy('departments.department_id')
-                    ->get();
-        }
-        return view('dean.departmentCV', compact('departments','faculty'));
-    }
-
-
-    public function SyllabusDepartment()
-    {
-        if(auth()->user()->position == "Dean"){
-            $user_id = auth()->user()->user_id;
-            $staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
-            $faculty_id = $staff_dean->faculty_id;
-            $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
-            $departments = DB::table('departments')
-                    ->select('departments.*')
-                    ->where('faculty_id', '=', $faculty_id)
-                    ->orderBy('departments.department_id')
-                    ->get();
-        }
-        return view('dean.departmentSyllabus', compact('departments','faculty'));
-    }
-
-
-    public function lecturerCV($department)
+    public function lecturerCV()
     {
         if(auth()->user()->position == "Dean"){
         	$user_id = auth()->user()->user_id;
@@ -230,39 +194,14 @@ class F_PortFolioController extends Controller
         			->join('users', 'staffs.user_id', '=', 'users.user_id')
                     ->select('staffs.*','users.*')
                     ->where('staffs.faculty_id', '=', $faculty_id)
-                    ->where('staffs.department_id','=', $department)
+                    ->where('staffs.lecturer_CV', '!=', null)
                     ->orderByDesc('staffs.lecturer_CV')
                     ->get();
-            $departments = Department::where('department_id', '=', $department)->firstOrFail();
-            if($departments->faculty_id!=$faculty_id){
-                return redirect()->back();
-            }
         }
-        return view('dean.LecturerCV', compact('faculty_staff','departments','faculty'));
+        return view('dean.LecturerCV', compact('faculty_staff','faculty'));
     }
 
-    public function SyllabusProgramme($department)
-    {
-        if(auth()->user()->position == "Dean"){
-            $user_id = auth()->user()->user_id;
-            $staff_dean     = Staff::where('user_id', '=', $user_id)->firstOrFail();
-            $faculty_id = $staff_dean->faculty_id;
-            $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
-            $programmes = DB::table('programmes')
-                    ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
-                    ->select('departments.*','programmes.*')
-                    ->where('departments.faculty_id', '=', $faculty_id)
-                    ->where('programmes.department_id', '=', $department)
-                    ->get();
-            $departments = Department::where('department_id', '=', $department)->firstOrFail();
-            if($departments->faculty_id!=$faculty_id){
-                return redirect()->back();
-            }
-        }
-        return view('dean.programmeSyllabus', compact('programmes','departments','faculty'));
-    }
-
-    public function Syllabus($programme)
+    public function Syllabus()
     {
         if(auth()->user()->position == "Dean"){
             $user_id = auth()->user()->user_id;
@@ -270,47 +209,55 @@ class F_PortFolioController extends Controller
             $faculty_id = $staff_dean->faculty_id;
             $faculty    = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
             $subjects = DB::table('subjects')
-                    ->select('subjects.*')
+                    ->join('programmes', 'subjects.programme_id', '=', 'programmes.programme_id')
+                    ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
+                    ->select('subjects.*','programmes.*','departments.*')
+                    ->where('departments.faculty_id', '=', $faculty_id)
                     ->where('subjects.syllabus', '!=', "")
-                    ->where('subjects.programme_id', '=', $programme)
                     ->get();
-            $programme  = Programme::where('programme_id', '=', $programme)->firstOrFail();
-            $department_id = $programme->department_id;
-            $departments = Department::where('department_id', '=', $department_id)->firstOrFail();
-            if($departments->faculty_id!=$faculty_id){
-                return redirect()->back();
-            }
         }
-        return view('dean.Syllabus', compact('subjects','programme','departments','faculty'));
+        return view('dean.Syllabus', compact('subjects','faculty'));
     }
 
     public function searchLecturerCV(Request $request){
+        $user_id    = auth()->user()->user_id;
+        $staff_dean = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id = $staff_dean->faculty_id;
         $value = $request->get('value');
-        $department = $request->get('department');
         $result = "";
         if($value!=""){
             $faculty_staff = DB::table('staffs')
                     ->join('users', 'staffs.user_id', '=', 'users.user_id')
-                    ->select('staffs.*','users.*')
-                    ->where('staffs.lecturer_CV','LIKE','%'.$value.'%')
-                    ->where('staffs.department_id','=', $department)
+                    ->join('departments','departments.department_id', '=', 'staffs.department_id')
+                    ->select('staffs.*','users.*','departments.*')
+                    ->where('staffs.faculty_id', '=', $faculty_id)
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('staffs.lecturer_CV','LIKE','%'.$value.'%')
+                            ->orWhere('departments.department_name','LIKE','%'.$value.'%');
+                    })
+                    ->where('staffs.lecturer_CV', '!=', null)
                     ->orderByDesc('staffs.lecturer_CV')
                     ->get();
+            $result .= '<div class="col-md-12">';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Search Filter : '.$value.'</p>';
+            $result .= '</div>';
             if ($faculty_staff->count()) {
                 foreach($faculty_staff as $row){
                     $ext = explode(".", $row->lecturer_CV);
-                    $result .= '<div class="col-md-3" style="margin-bottom: 20px">';
-                    $result .= '<center>';
-                    $result .= '<a href="'.asset("staffCV/".$row->lecturer_CV).'" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" download id="download_link">';
-                    if($ext[1]=="pdf"){
-                      $result .= '<img src="'.url("image/pdf.png").'"/>';
-                    }else if($ext[1]=="docx"){
-                        $result .= '<img src="'.url("image/docs.png").'"/>';
-                    }else if($ext[1]=="xlsx"){
-                        $result .= '<img src="'.url("image/excel.png").'"/>';
-                    }
-                    $result .= '<p>'.$row->lecturer_CV.'</p>';
-                    $result .= '</a></center></div>';
+                    $result .= '<a href="'.asset("staffCV/".$row->lecturer_CV).'" class="col-md-12 align-self-center" id="course_list" download>';
+                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
+                    $result .= '<div class="col-1" style="padding-top: 3px;">';
+                        if($ext[1]=="pdf"){
+                          $result .= '<img src="'.url("image/pdf.png").'" width="25px" height="25px"/>';
+                        }else if($ext[1]=="docx"){
+                            $result .= '<img src="'.url("image/docs.png").'" width="25px" height="25px"/>';
+                        }else if($ext[1]=="xlsx"){
+                            $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
+                        }
+                    $result .= '</div>';
+                    $result .= '<div class="col" id="course_name">';
+                    $result .= '<p style="margin: 0px;"><b>'.$row->lecturer_CV.'</b></p>';
+                    $result .= '</div></div></a>';
                 }
             }else{
                     $result .= '<div class="col-md-12">';
@@ -321,46 +268,66 @@ class F_PortFolioController extends Controller
             $faculty_staff = DB::table('staffs')
                     ->join('users', 'staffs.user_id', '=', 'users.user_id')
                     ->select('staffs.*','users.*')
-                    ->where('staffs.department_id','=', $department)
+                    ->where('staffs.faculty_id', '=', $faculty_id)
+                    ->where('staffs.lecturer_CV', '!=', null)
                     ->orderByDesc('staffs.lecturer_CV')
                     ->get();
+            $result .= '<div class="col-md-12">';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Faculty of Lecturer CV</p>';
+            $result .= '</div>';
             foreach($faculty_staff as $row){
-                $ext = explode(".", $row->lecturer_CV);
-                $result .= '<div class="col-md-3" style="margin-bottom: 20px">';
-                $result .= '<center>';
-                $result .= '<a href="'.asset("staffCV/".$row->lecturer_CV).'" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" download id="download_link">';
-                if($ext[1]=="pdf"){
-                    $result .= '<img src="'.url("image/pdf.png").'"/>';
-                }else if($ext[1]=="docx"){
-                    $result .= '<img src="'.url("image/docs.png").'"/>';
-                }else if($ext[1]=="xlsx"){
-                    $result .= '<img src="'.url("image/excel.png").'"/>';
-                }
-                $result .= '<p>'.$row->lecturer_CV.'</p>';
-                $result .= '</a></center></div>';
+                    $ext = explode(".", $row->lecturer_CV);
+                    $result .= '<a href="'.asset("staffCV/".$row->lecturer_CV).'" class="col-md-12 align-self-center" id="course_list" download>';
+                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
+                    $result .= '<div class="col-1" style="padding-top: 3px;">';
+                        if($ext[1]=="pdf"){
+                          $result .= '<img src="'.url("image/pdf.png").'" width="25px" height="25px"/>';
+                        }else if($ext[1]=="docx"){
+                            $result .= '<img src="'.url("image/docs.png").'" width="25px" height="25px"/>';
+                        }else if($ext[1]=="xlsx"){
+                            $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
+                        }
+                    $result .= '</div>';
+                    $result .= '<div class="col" id="course_name">';
+                    $result .= '<p style="margin: 0px;"><b>'.$row->lecturer_CV.'</b></p>';
+                    $result .= '</div></div></a>';
             }
         }
         return $result;
     }
 
     public function searchSyllabus(Request $request){
+        $user_id    = auth()->user()->user_id;
+        $staff_dean = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id = $staff_dean->faculty_id;
         $value = $request->get('value');
-        $programme = $request->get('programme');
         $result = "";
         if($value!=""){
             $subjects = DB::table('subjects')
-                    ->select('subjects.*')
-                    ->where('subjects.syllabus_name','LIKE','%'.$value.'%')
-                    ->where('subjects.programme_id', '=', $programme)
+                    ->join('programmes', 'subjects.programme_id', '=', 'programmes.programme_id')
+                    ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
+                    ->select('subjects.*','programmes.*','departments.*')
+                    ->where('departments.faculty_id', '=', $faculty_id)
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('subjects.syllabus_name','LIKE','%'.$value.'%')
+                            ->orWhere('programmes.programme_name','LIKE','%'.$value.'%')
+                            ->orWhere('departments.department_name','LIKE','%'.$value.'%');
+                    })
+                    ->where('subjects.syllabus', '!=', "")
                     ->get();
+            $result .= '<div class="col-md-12">';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Search Filter : '.$value.'</p>';
+            $result .= '</div>';
             if ($subjects->count()) {
                 foreach($subjects as $row){
-                    $result .= '<div class="col-md-3" style="margin-bottom: 20px">';
-                    $result .= '<center>';
-                    $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" download="'.$row->syllabus_name.'".xlsx" id="download_link">';
-                    $result .= '<img src="'.url("image/excel.png").'"/>';
-                    $result .= '<p>'.$row->syllabus_name.'</p>';
-                    $result .= '</a></center></div>';
+                    $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" class="col-md-12 align-self-center" id="course_list" download="'.$row->syllabus_name.'".xlsx">';
+                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
+                    $result .= '<div class="col-1" style="padding-top: 3px;">';
+                    $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
+                    $result .= '</div>';
+                    $result .= '<div class="col" id="course_name">';
+                    $result .= '<p style="margin: 0px;"><b>'.$row->syllabus_name.'</b></p>';
+                    $result .= '</div></div></a>';
                 }
             }else{
                     $result .= '<div class="col-md-12">';
@@ -369,16 +336,24 @@ class F_PortFolioController extends Controller
             }
         }else{
             $subjects = DB::table('subjects')
-                    ->select('subjects.*')
-                    ->where('subjects.programme_id', '=', $programme)
+                    ->join('programmes', 'subjects.programme_id', '=', 'programmes.programme_id')
+                    ->join('departments', 'programmes.department_id', '=', 'departments.department_id')
+                    ->select('subjects.*','programmes.*','departments.*')
+                    ->where('departments.faculty_id', '=', $faculty_id)
+                    ->where('subjects.syllabus', '!=', "")
                     ->get();
+            $result .= '<div class="col-md-12">';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Faculty of Syllabus</p>';
+            $result .= '</div>';
             foreach($subjects as $row){
-                $result .= '<div class="col-md-3" style="margin-bottom: 20px">';
-                $result .= '<center>';
-                $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" style="border: 1px solid #cccccc;padding:40px;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" download="'.$row->syllabus_name.'".xlsx" id="download_link">';
-                $result .= '<img src="'.url("image/excel.png").'"/>';
-                $result .= '<p>'.$row->syllabus_name.'</p>';
-                $result .= '</a></center></div>';
+                $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" class="col-md-12 align-self-center" id="course_list" download="'.$row->syllabus_name.'".xlsx">';
+                $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
+                $result .= '<div class="col-1" style="padding-top: 3px;">';
+                $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
+                $result .= '</div>';
+                $result .= '<div class="col" id="course_name">';
+                $result .= '<p style="margin: 0px;"><b>'.$row->syllabus_name.'</b></p>';
+                $result .= '</div></div></a>';
             }
         }
         return $result;

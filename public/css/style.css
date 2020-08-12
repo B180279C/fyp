@@ -395,10 +395,6 @@ ul.sidebar-action-ul a:hover{
     #course_action{
       padding: 15px 0px 0px 20px;
     }
-    #showData{
-      margin-right: 20px;
-    }
-
 }
 @media only screen and (min-width: 600px) {
     #course_name{
@@ -443,6 +439,10 @@ ul.sidebar-action-ul a:hover{
     #mark_data{
     display: none;
     }
+}
+
+#templete_link:hover{
+  text-decoration: none;
 }
 
 

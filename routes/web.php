@@ -111,12 +111,13 @@ Route::middleware('is_dean')->group(function(){
 
 	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
 	Route::post('/searchFiles', 'F_PortFolioController@searchFiles');
-	Route::get('/FacultyPortFolio/CVdepartment', 'F_PortFolioController@CVdepartment')->name('dean.F_potrfolio.CVdepartment');
-	Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
+	// Route::get('/FacultyPortFolio/CVdepartment', 'F_PortFolioController@CVdepartment')->name('dean.F_potrfolio.CVdepartment');
+	// Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
+	Route::get('/FacultyPortFolio/LecturerCV/', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
 
-	Route::get('/FacultyPortFolio/SyllabusDepartment', 'F_PortFolioController@SyllabusDepartment')->name('dean.F_potrfolio.Syllabusdepartment');
-	Route::get('/FacultyPortFolio/SyllabusProgramme/{department}', 'F_PortFolioController@SyllabusProgramme')->name('dean.F_potrfolio.Programmedepartment');
-	Route::get('/FacultyPortFolio/Syllabus/{programme}', 'F_PortFolioController@Syllabus')->name('dean.F_potrfolio.syllabus');
+	// Route::get('/FacultyPortFolio/SyllabusDepartment', 'F_PortFolioController@SyllabusDepartment')->name('dean.F_potrfolio.Syllabusdepartment');
+	// Route::get('/FacultyPortFolio/SyllabusProgramme/{department}', 'F_PortFolioController@SyllabusProgramme')->name('dean.F_potrfolio.Programmedepartment');
+	Route::get('/FacultyPortFolio/Syllabus/', 'F_PortFolioController@Syllabus')->name('dean.F_potrfolio.syllabus');
 
 	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');
 	Route::post('/searchSyllabus', 'F_PortFolioController@searchSyllabus');
@@ -143,6 +144,16 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/course/{id}','CourseController@update')->name('course.update.submit');
 	Route::get('/course/remove/{id}', 'CourseController@removeActiveCourse');
 	Route::post('/searchTeachCourse', 'CourseController@searchTeachCourse');
+	Route::get('course/action/{id}','CourseController@courseAction');
+
+	Route::get('/assign/student/{id}','CourseActionController@viewAssignStudent');
+	Route::post('/searchAssignStudent', 'CourseActionController@searchAssignStudent');
+	
+	Route::post('/showStudent','CourseActionController@showStudent');
+	Route::post('/storeStudent', 'CourseActionController@storeStudent');
+	Route::post('/uploadAssignStudent', 'CourseActionController@importExcelStudent')->name('dropzone.uploadAssignStudent');
+	Route::post('/assignStudent/excel/create', 'CourseActionController@storeAssignStudent')->name('assignStudent.excel.submit');
+	Route::get('/assignStudent/remove/{id}','CourseActionController@removeActiveStudent');
 
 	Route::post('/uploadCourses', 'CourseController@importExcel')->name('dropzone.uploadCourses');
 	Route::post('/course/excel/create', 'CourseController@storeCourses')->name('course.excel.submit');
