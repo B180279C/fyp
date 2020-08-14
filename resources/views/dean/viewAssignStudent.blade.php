@@ -289,7 +289,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('CourseActionController@storeStudent')}}">
+      <form method="post" action="{{action('AssignStudentController@storeStudent')}}">
         {{csrf_field()}}
       <div class="modal-body">
         <div id="message"></div>
@@ -409,7 +409,7 @@ $option1 = "id='selected-sidebar'";
       <div id="errorData" style="padding: 0px 20px 20px 20px;">
         <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
       </div>
-      <form method="post" action="{{action('CourseActionController@storeAssignStudent')}}">
+      <form method="post" action="{{action('AssignStudentController@storeAssignStudent')}}">
         {{csrf_field()}}
         <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
         <div id="writeInput"></div>

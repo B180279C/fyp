@@ -111,30 +111,26 @@ Route::middleware('is_dean')->group(function(){
 
 	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
 	Route::post('/searchFiles', 'F_PortFolioController@searchFiles');
-	// Route::get('/FacultyPortFolio/CVdepartment', 'F_PortFolioController@CVdepartment')->name('dean.F_potrfolio.CVdepartment');
-	// Route::get('/FacultyPortFolio/LecturerCV/{department}', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
+
 	Route::get('/FacultyPortFolio/LecturerCV/', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
-
-	// Route::get('/FacultyPortFolio/SyllabusDepartment', 'F_PortFolioController@SyllabusDepartment')->name('dean.F_potrfolio.Syllabusdepartment');
-	// Route::get('/FacultyPortFolio/SyllabusProgramme/{department}', 'F_PortFolioController@SyllabusProgramme')->name('dean.F_potrfolio.Programmedepartment');
 	Route::get('/FacultyPortFolio/Syllabus/', 'F_PortFolioController@Syllabus')->name('dean.F_potrfolio.syllabus');
-
 	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');
 	Route::post('/searchSyllabus', 'F_PortFolioController@searchSyllabus');
-	Route::post('/openNewFolder', 'F_PortFolioController@openNewFolder');
 
+	Route::post('/openNewFolder', 'F_PortFolioController@openNewFolder');
 	Route::post('/folderNameEdit', 'F_PortFolioController@folderNameEdit');
 	Route::post('/updateFolderName', 'F_PortFolioController@updateFolderName');
 	Route::get('/FacultyPortFolio/remove/{id}', 'F_PortFolioController@removeActiveFile');
-
 	Route::get('/faculty_portfolio/folder/{folder_id}', 'F_PortFolioController@folder_view')->name('dean.F_potrfolio.folder_view');
 	Route::post('/portfolio_uploadFile', 'F_PortFolioController@uploadFiles')->name('dropzone.uploadFiles');
 	Route::post('/destoryFiles', 'F_PortFolioController@destroyFiles')->name('dropzone.destoryFiles');
 	Route::post('/storeFiles', 'F_PortFolioController@storeFiles');
 
-
 	Route::get('/CoursePortFolio', 'C_PortFolioController@index')->name('dean.C_potrfolio.index');
 	Route::post('/searchCourse', 'C_PortFolioController@searchCourse');
+
+	Route::post('/uploadCourses', 'CourseController@importExcel')->name('dropzone.uploadCourses');
+	Route::post('/course/excel/create', 'CourseController@storeCourses')->name('course.excel.submit');
 	
 	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
@@ -146,18 +142,25 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/searchTeachCourse', 'CourseController@searchTeachCourse');
 	Route::get('course/action/{id}','CourseController@courseAction');
 
-	Route::get('/assign/student/{id}','CourseActionController@viewAssignStudent');
-	Route::post('/searchAssignStudent', 'CourseActionController@searchAssignStudent');
-	
-	Route::post('/showStudent','CourseActionController@showStudent');
-	Route::post('/storeStudent', 'CourseActionController@storeStudent');
-	Route::post('/uploadAssignStudent', 'CourseActionController@importExcelStudent')->name('dropzone.uploadAssignStudent');
-	Route::post('/assignStudent/excel/create', 'CourseActionController@storeAssignStudent')->name('assignStudent.excel.submit');
-	Route::get('/assignStudent/remove/{id}','CourseActionController@removeActiveStudent');
+	Route::get('/assign/student/{id}','AssignStudentController@viewAssignStudent');
+	Route::post('/searchAssignStudent', 'AssignStudentController@searchAssignStudent');
+	Route::post('/showStudent','AssignStudentController@showStudent');
+	Route::post('/storeStudent', 'AssignStudentController@storeStudent');
+	Route::post('/uploadAssignStudent', 'AssignStudentController@importExcelStudent')->name('dropzone.uploadAssignStudent');
+	Route::post('/assignStudent/excel/create', 'AssignStudentController@storeAssignStudent')->name('assignStudent.excel.submit');
+	Route::get('/assignStudent/remove/{id}','AssignStudentController@removeActiveStudent');
 
-	Route::post('/uploadCourses', 'CourseController@importExcel')->name('dropzone.uploadCourses');
-	Route::post('/course/excel/create', 'CourseController@storeCourses')->name('course.excel.submit');
-
+	Route::get('/lectureNote/{id}','LectureNoteController@viewLectureNote');
+	Route::post('/lectureNote/searchFiles', 'LectureNoteController@searchFiles');
+	Route::get('/lectureNote/folder/{folder_id}', 'LectureNoteController@folder_view')->name('dean.note.folder_view');
+	Route::post('/lectureNote/openNewFolder', 'LectureNoteController@openNewFolder');
+	Route::post('/lectureNote/folderNameEdit', 'LectureNoteController@folderNameEdit');
+	Route::post('/lectureNote/updateFolderName', 'LectureNoteController@updateFolderName');
+	Route::get('/lectureNote/remove/{id}', 'LectureNoteController@removeActive');
+	Route::post('/note_uploadFiles', 'LectureNoteController@uploadFiles')->name('note.dropzone.uploadFiles');
+	Route::post('/note_destoryFiles', 'LectureNoteController@destroyFiles')->name('note.dropzone.destoryFiles');
+	Route::post('/note_storeFiles', 'LectureNoteController@storeFiles');
+	Route::get('/lectureNote/download/zipFiles/{id}','LectureNoteController@zipFileDownload');
 });
 
 

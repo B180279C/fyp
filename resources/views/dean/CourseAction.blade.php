@@ -86,6 +86,24 @@ $option1 = "id='selected-sidebar'";
                             </center>
                         </a>
                     </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/lectureNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/note.png')}}" width="80px" height="90px" style="margin-top: 50px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Lecture Note</p>
+                            </center>
+                        </a>
+                    </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Teaching Plan</p>
+                            </center>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

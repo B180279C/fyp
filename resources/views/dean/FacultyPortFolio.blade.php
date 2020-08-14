@@ -63,7 +63,7 @@ $option2 = "id='selected-sidebar'";
         renameFile: function(file) {
             var re = /(?:\.([^.]+))?$/;
             var ext = re.exec(file.name)[1];
-            var newName = new Date().getTime() +"___"+file.name;
+            var newName = new Date().getTime()+"."+ext;
             file_up_names.push(newName);
             return newName;
         },
@@ -71,14 +71,13 @@ $option2 = "id='selected-sidebar'";
             this.on("addedfile", function(file){
               i++;
               var re = /(?:\.([^.]+))?$/;
-              var ext = re.exec(file.upload.filename)[0];
-              var filename = file.upload.filename.split(ext);
-              var name_without_time = filename[0].split("___");
+              var ext = re.exec(file.name)[0];
+              var filename = file.name.split(ext);
               file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
-              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value='"+name_without_time[1]+"' class='form-control filename'></div>");
+              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value='"+filename[0]+"' class='form-control filename'></div>");
               file.previewElement.appendChild(file._captionLabel);
               file.previewElement.appendChild(file._captionBox);
-              writeInput(i,name_without_time[1],name_without_time[0],ext,file.upload.filename);
+              writeInput(i,filename[0],ext,file.upload.filename);
             });
         },
         accept: function(file, done) {
@@ -101,11 +100,12 @@ $option2 = "id='selected-sidebar'";
         removedfile: function(file)
         {
             var name = file.upload.filename;
-            for(var i=0;i<file_up_names.length;i++){
-                if(file_up_names[i]==name){
+            var count = $('#count').val();
+            for(var i=0;i<=count;i++){
+              var fake = $('#fake'+i).val();
+                if(fake==name){
                     var id = i;
                     document.getElementById("form"+id).value = "";
-                    document.getElementById("time"+id).value = "";
                     document.getElementById("ext"+id).value = "";
                     document.getElementById("fake"+id).value = "";
                 }
@@ -135,9 +135,9 @@ $option2 = "id='selected-sidebar'";
             alert(response);
         }
     };  
-    function writeInput(num,name,time,ext,fake){
+    function writeInput(num,name,ext,fake){
         $(document).ready(function(){  
-            $("#writeInput").append("<input type='hidden' id='form"+num+"' name='form"+num+"' value='"+name+"'><input type='hidden' id='time"+num+"' name='time"+num+"' value='"+time+"'><input type='hidden' id='ext"+num+"' name='ext"+num+"' value='"+ext+"'><input type='hidden' id='fake"+num+"' name='fake"+num+"' value='"+fake+"'>");
+            $("#writeInput").append("<input type='hidden' id='form"+num+"' name='form"+num+"' value='"+name+"'><input type='hidden' id='ext"+num+"' name='ext"+num+"' value='"+ext+"'><input type='hidden' id='fake"+num+"' name='fake"+num+"' value='"+fake+"'>");
         });
     }
 
@@ -209,7 +209,17 @@ $option2 = "id='selected-sidebar'";
   }
   #course_action{
     text-align: right;
-    padding: 0px 0px 0px 20px;
+    padding: 3px 0px 0px 20px;
+  }
+  #file_name_two{
+    width: 185px;
+    margin: 0px;
+    padding:0px;
+  }
+  #file_name{
+    width: 240px;
+    margin: 0px;
+    padding:0px;
   }
 }
 @media only screen and (min-width: 600px) {
@@ -219,11 +229,11 @@ $option2 = "id='selected-sidebar'";
     }
     #course_action_two{
       text-align: right;
-      padding: 0px 0px 0px 24px;
+      padding: 3px 0px 0px 24px;
     }
     #course_action{
       text-align: right;
-      padding: 0px 0px 0px 24px;
+      padding: 3px 0px 0px 24px;
     }
 }
 </style>
@@ -302,50 +312,45 @@ $option2 = "id='selected-sidebar'";
                             <div class="col-1" style="padding-top: 3px;">
                                 <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                             </div>
-                        @else
-                          <?php
-                            $filename = "";
-                            if($row->portfolio_file!=""){
-                              $filename = explode("___", $row->portfolio_file);
-                            }
-                          ?>
-                        <a download="<?php echo $filename[1]?>" href="{{ asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file) }}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
-                          <?php
-                              $ext = "";
-                              if($row->portfolio_file!=""){
-                                $ext = explode(".", $row->portfolio_file);
-                              }
-                                ?>
-                                @if($ext!="")
-                                    @if($ext[1]=="pdf")
-                                    <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
-                                    @elseif($ext[1]=="docx")
-                                    <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
-                                    @elseif($ext[1]=="xlsx")
-                                    <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
-                                    @endif   
-                                @endif
-                                </div>
-                            @endif
                             <div class="col" id="course_name">
-                              <p style="margin: 0px;"><b>{{$row->portfolio_name}}</b></p>
+                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->portfolio_name}}</b></p>
                             </div>
-                            @if($row->portfolio_type=="folder")
                             <div class="col-3" id="course_action_two">
                                 <i class="fa fa-wrench edit_button_file" aria-hidden="true" id="edit_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
                                 <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                             </div>
-                            @else
+                          </div>
+                        </a>
+                        @else
+                        <?php
+                          $ext = "";
+                          if($row->portfolio_file!=""){
+                            $ext = explode(".", $row->portfolio_file);
+                          }
+                        ?>
+                        <a download="{{$row->portfolio_name}}.{{$ext[1]}}" href="{{ asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file) }}" class="col-md-12 align-self-center" id="course_list">
+                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
+                            <div class="col-1" style="padding-top: 3px;">
+                              @if($ext[1]=="pdf")
+                              <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
+                              @elseif($ext[1]=="docx")
+                              <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
+                              @elseif($ext[1]=="xlsx")
+                              <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
+                              @elseif($ext[1]=="pptx")
+                              <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
+                              @endif 
+                            </div>
+                            <div class="col" id="course_name">
+                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->portfolio_name}}</b></p>
+                            </div>
                             <div class="col-1" id="course_action">
                                 <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                             </div>
-                            @endif
                           </div>
                         </a>
+                        @endif
                       @endforeach
-                      <!-- <input type="hidden" id="active_dropdownlist" value=""> -->
                 </div>
             </div>
         </div>
