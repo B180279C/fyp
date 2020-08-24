@@ -161,6 +161,17 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/note_destoryFiles', 'LectureNoteController@destroyFiles')->name('note.dropzone.destoryFiles');
 	Route::post('/note_storeFiles', 'LectureNoteController@storeFiles');
 	Route::get('/lectureNote/download/zipFiles/{id}','LectureNoteController@zipFileDownload');
+
+	Route::get('/teachingPlan/{id}','TeachingPlanController@viewTeachingPlan')->name('tp.view');
+	Route::get('/teachingPlan/create/weekly/{id}','TeachingPlanController@createTeachingPlan')->name('tp.create');
+	Route::post('/teachingPlan/create/weekly/{id}', 'TeachingPlanController@storeTP')->name('tp.submit');
+	Route::post('/removeTopic', 'TeachingPlanController@removeTopic');
+	Route::post('/teachingPlan/searchPlan', 'TeachingPlanController@searchPlan');
+
+	Route::post('/teachingPlan/getSyllabusData', 'TeachingPlanController@getSyllabusData');
+	Route::get('/teachingPlan/create/assessment/{id}','TeachingPlanController@createTPAss')->name('tpAss.create');
+	Route::post('/teachingPlan/create/assessment/{id}', 'TeachingPlanController@storeTPAss')->name('tpAss.submit');
+	
 });
 
 

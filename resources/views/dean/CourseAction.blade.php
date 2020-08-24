@@ -96,7 +96,7 @@ $option1 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="/teachingPlan/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
                             <br>

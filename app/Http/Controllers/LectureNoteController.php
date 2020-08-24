@@ -285,14 +285,23 @@ class LectureNoteController extends Controller
      public function zipFileDownload($id){
 
         $lecture_note = DB::table('lecture_notes')
-                    ->select('lecture_notes.*')
-                    ->where('course_id', '=', $id)
-                    ->where('status', '=', 'Active')
+                    ->join('courses','courses.course_id','=','Lecture_notes.course_id')
+                    ->join('subjects','subjects.subject_id','=','courses.subject_id')
+                    ->select('lecture_notes.*','courses.*','subjects.*')
+                    ->where('lecture_notes.course_id', '=', $id)
+                    ->where('lecture_notes.status', '=', 'Active')
                     ->orderByDesc('lecture_notes.note_type')
                     ->get();
-                    
+
+        $subjects = DB::table('subjects')
+                    ->join('courses','courses.subject_id','=','subjects.subject_id')
+                    ->select('courses.*','subjects.*')
+                    ->where('courses.course_id', '=', $id)
+                    ->get();
+
+        $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
         $zip = new ZipArchive;
-        $fileName = 'Lecture_Note/Zip_Files/Lecture_Note.zip';
+        $fileName = 'Lecture_Note/Zip_Files/'.$name.'.zip';
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(public_path('/Lecture_Note/'));
         foreach($lecture_note as $row){
