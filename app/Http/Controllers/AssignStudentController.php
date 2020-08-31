@@ -41,7 +41,7 @@ class AssignStudentController extends Controller
                     ->orderByDesc('semesters.semester_name')
                     ->get();
         $assign_student = DB::table('assign_student_course')
-        			->join('students','students.id', '=', 'assign_student_course.student_id')
+        			->join('students','students.student_id', '=', 'assign_student_course.student_id')
         			->join('users','users.user_id', '=', 'students.user_id')
                     ->select('assign_student_course.*','students.*','users.*')
                     ->where('assign_student_course.course_id','=',$course[0]->course_id)
@@ -170,12 +170,12 @@ class AssignStudentController extends Controller
         	foreach($student_query as $row){
         		$checkexists = DB::table('assign_student_course')
                     ->select('assign_student_course.*')
-                    ->where('assign_student_course.student_id','=',$row->id)
+                    ->where('assign_student_course.student_id','=',$row->student_id)
                     ->where('assign_student_course.status','=',"Active")
                     ->get();
 	            if (count($checkexists) === 0) {
 	            	$assign_student_course = new Assign_Student_Course([
-	                'student_id'        => $row->id,
+	                'student_id'        => $row->student_id,
 	                'course_id'         => $request->get('course_id'),
 	                'status'            => "Active",
 		            ]);
@@ -216,28 +216,22 @@ class AssignStudentController extends Controller
         for($i=0;$i<=$count;$i++){
             $student_id   = $request->get('student_id'.$i);
             $student_name   = $request->get('student_name'.$i);
-            $students = DB::table('students')
-            		->join('users','students.user_id','=','users.user_id')
-                    ->select('students.*')
-                    ->where('students.student_id', '=', $student_id)
-                    ->where('users.name', '=', $student_name)
-                    ->get();
 
-            if(isset($students[0])){
-               	$checkexists = DB::table('assign_student_course')
+            if(isset($student_id)!=""){
+                $checkexists = DB::table('assign_student_course')
                     ->select('assign_student_course.*')
-                    ->where('assign_student_course.student_id','=',$students[0]->id)
+                    ->where('assign_student_course.student_id','=',$student_id)
                     ->where('assign_student_course.status','=',"Active")
                     ->get();
                 if (count($checkexists) === 0) {
-                        $assign_student_course = new Assign_Student_Course([
-		                'student_id'        => $students[0]->id,
-		                'course_id'         => $request->get('course_id'),
-		                'status'            => "Active",
-			            ]);
-			            $assign_student_course->save();
+                    $assign_student_course = new Assign_Student_Course([
+    		          'student_id'        => $student_id,
+    		          'course_id'         => $request->get('course_id'),
+    		          'status'            => "Active",
+    			    ]);
+                    $assign_student_course->save();
                 }else{
-                        $failed .= "The Student (".$student_id.") is already assigned.";
+                    $failed .= "The student ( ".$student_id." ) is already inserted.";
                 }
             }else{
                 $failed .= "The Student (".$student_id.") got something wrong.";

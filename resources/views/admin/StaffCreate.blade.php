@@ -30,7 +30,8 @@ $option1 = "id='selected-sidebar'";
                         $('#department').selectpicker('refresh');
                         $("#form_dep").show();
                     }else{
-                        $("#form_dep").hide();
+                        $('#department').prop('disabled', true);
+                        $('#department').selectpicker('refresh');
                     }
                }
             });

@@ -22,13 +22,8 @@ $option1 = "id='selected-sidebar'";
                data:{value:value},
 
                success:function(data){
-                    if(data!="null"){
-                        $("#department").html(data);
-                        $('#department').selectpicker('refresh');
-                        $("#form_dep").show();
-                    }else{
-                        $("#form_dep").hide();
-                    }
+                    $("#department").html(data);
+                    $('#department').selectpicker('refresh');
                }
             });
         });

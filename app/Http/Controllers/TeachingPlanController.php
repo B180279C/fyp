@@ -302,25 +302,9 @@ class TeachingPlanController extends Controller
                  ->where('course_id', '=', $id)
                  ->get();
 
-        $departments = Department::all()->toArray();
-        $faculty = Faculty::where('faculty_id', '=', '1')->firstOrFail();
-        $data = "";
-        foreach($departments as $row){
-            if($row['faculty_id'] == '1'){
-                $department_id = $row['department_id'];
-                $department_name = $row['department_name'];
-                $data .= "<option value=$department_id class='option'>$department_name</option>";
-            }
-        }
-
-        if($data==""){
-            return "null";
-        }
-        $result = "<optgroup label='$faculty->faculty_name'>'".$data."'</optgroup>";
-
         if(count($course)>0){
             $array = (new syllabusRead)->toArray('syllabus/'.$course[0]->syllabus);
-            return response()->json([$array[0],$result]);
+            return response()->json($array[0]);
         }else{
             return redirect()->back();
         }      

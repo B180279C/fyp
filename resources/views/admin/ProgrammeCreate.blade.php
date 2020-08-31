@@ -22,7 +22,6 @@ $option5 = "id='selected-sidebar'";
                type:'POST',
                url:'/staffFaculty',
                data:{value:value},
-
                success:function(data){
                     if(data!="null"){
                         $("#department").html(data);
@@ -30,7 +29,8 @@ $option5 = "id='selected-sidebar'";
                         $('#department').selectpicker('refresh');
                         $("#form_dep").show();
                     }else{
-                        $("#form_dep").hide();
+                        $('#department').prop('disabled', true);
+                        $('#department').selectpicker('refresh');
                     }
                }
             });

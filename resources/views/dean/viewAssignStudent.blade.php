@@ -405,20 +405,21 @@ $option1 = "id='selected-sidebar'";
             </tr>
           </thead>
         </table>
+        <form method="post" action="{{action('AssignStudentController@storeAssignStudent')}}">
+        {{csrf_field()}}
+          <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
+          <div id="writeInput"></div>
+          <br>
+          <div style="text-align: right;">
+          <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
+          &nbsp;
+          <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin:0px;" value="Save Changes">
+          </div>
+        </form>
       </div>
       <div id="errorData" style="padding: 0px 20px 20px 20px;">
         <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
       </div>
-      <form method="post" action="{{action('AssignStudentController@storeAssignStudent')}}">
-        {{csrf_field()}}
-        <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
-        <div id="writeInput"></div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
-        &nbsp;
-        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin-right: 13px;" value="Save Changes">
-        </div>
-      </form>
     </div>
   </div>
 </div>

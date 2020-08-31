@@ -6,6 +6,14 @@ $option5 = "id='selected-sidebar'";
 
 @section('content')
 <script type="text/javascript">
+    function w3_open() {
+        document.getElementById("action_sidebar").style.display = "block";
+        document.getElementById("button_open").style.display = "none";
+    }
+    function w3_close() {
+        document.getElementById("action_sidebar").style.display = "none";
+        document.getElementById("button_open").style.display = "block";
+    }
     var split = {};
     Dropzone.autoDiscover = false;
     $(document).ready(function(){  
@@ -49,6 +57,7 @@ $option5 = "id='selected-sidebar'";
   $('#edit_syllabus').click(function(){
       if(confirm("Do you sure want to remove this syllabus")){
         document.getElementById('100dropzoneFile100').style.display = "block";
+        document.getElementById('templete').style.display = "block";
         document.getElementById('showSyllabus').style.display = "none";
       }
   });
@@ -224,10 +233,22 @@ $option5 = "id='selected-sidebar'";
         </p>
         <hr style="margin: 0px 10px;">
     </div>
-    <div class="col-md-12">
-        <div class="details" style="padding: 10px 5px 5px 5px;">
-            <h5 style="color: #0d2f81;">Add Subject Information</h5>
-            <hr style="margin: 0px;">
+    <div class="row" style="padding:0px 15px 0px 20px;">
+      <div class="col-md-12">
+      <p style="display: inline;font-size: 25px;position: relative;top: 5px;color: #0d2f81">Add Subject Information</p>
+            <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 5px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
+                <div id="action_sidebar" class="w3-animate-right" style="display: none;margin-right: 0px;width: 250px;">
+                    <div style="text-align: right;padding:10px;">
+                        <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    </div>
+                  <ul class="sidebar-action-ul">
+                      <a download="sample_syllabus.xlsx" href="{{asset('/templete/syllabus.xlsx')}}"><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Download Sample Syllabus</li></a>     
+              </ul>
+        </div>
+      </div>
+    </div>
+        <div class="details" style="padding:0px 20px">
+            <hr style="margin: 5px 0px 0px 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
                             <ul>
@@ -359,15 +380,21 @@ $option5 = "id='selected-sidebar'";
       </div>
       <form method="post" action="{{action('SubjectController@subjectUpdateModal')}}">
         {{csrf_field()}}
+      
       <div class="modal-body">
+        <div style="margin: 0px 20px;display: none;" id="templete">
+          <p style="color:#0d2f81; "><b>Templete:</b></p>
+          <p><b>  1. </b>Please download template by clicking <a href='{{asset("/templete/syllabus.xlsx")}}' id="templete_link">Templete</a>.</p>
+          <p><b>  2. </b>Delete the example data.</p>
+          <p><b>  3. </b>Fill in the Subject details and other details in file.</p>
+        </div>
         <div id="message"></div>
-        <br>
-
         <div class="dropzone align-self-center 100num100 dropzoneModel" id="100dropzoneFile100" style="padding:25px;display: none;">
           <div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(optional)</span></div>
         </div>
 
         <div id="showSyllabus" style="display: none;">
+          <br>
             <a href="/" id="syllabus_link" class="syllabus_link">
               <div id="download">
                 <center><img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/></a></center>

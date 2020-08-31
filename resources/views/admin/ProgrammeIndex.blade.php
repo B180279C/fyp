@@ -87,8 +87,8 @@ $option5 = "id='selected-sidebar'";
                             <th style="padding-left: 10px;">Programme Name</th>
                             <th style="padding-left: 10px;">Faculty</th>
                             <th style="padding-left: 10px;">Level</th>
-                            <th style="padding-left: 10px;">Subject List</th>
-                            <th style="padding-left: 10px;">MPU Subject List</th>
+                            <th style="padding-left: 10px;">Subject</th>
+                            <th style="padding-left: 10px;">MPU Subject</th>
                             <th style="padding-left: 10px;">Action</th>
                         </tr>
                     </thead>
@@ -102,8 +102,8 @@ $option5 = "id='selected-sidebar'";
                             <td>{{$row->programme_name}}, ({{$row->short_form_name}})</td>
                             <td>{{$row->faculty_name}}</td>
                             <td>{{$row->level}}</td>
-                            <td><a href="{{action('SubjectController@create', $row->programme_id)}}">Subject List</a></td>
-                            <td><a href="{{action('MPUController@view', $row->level)}}">MPU Subject List</a></td>
+                            <td><a href="{{action('SubjectController@create', $row->programme_id)}}">Subject</a></td>
+                            <td><a href="{{action('MPUController@view', $row->level)}}">MPU Subject</a></td>
                             <td><a href="{{action('ProgrammeController@edit', $row->programme_id)}}">Edit</a></td>
                         </tr>
                     @endforeach

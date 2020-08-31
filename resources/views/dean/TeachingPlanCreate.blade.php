@@ -420,20 +420,20 @@ $option1 = "id='selected-sidebar'";
                 type:'POST',
                 url:'/teachingPlan/getSyllabusData',
                 data:{course_id:course_id},
-                success:function(response,name){
+                success:function(response){
                     var checkEmpty = $('#checkEmpty').val();
                     var week = $('#week').val();
-                    for(var i = 0;i<=(response[0].length-1);i++){
-                        if(response[0][i][2]==null&&response[0][i][10]=="L"&&response[0][i][11]=="T"){
+                    for(var i = 0;i<=(response.length-1);i++){
+                        if(response[i][2]==null&&response[i][10]=="L"&&response[i][11]=="T"){
                             var count = i;
                         }   
                     }
                     var list = 0;
-                    for(var num = count;num<=(response[0].length-1);num++){
-                        if(response[0][num][2]=="Continuous Assessment"&&response[0][num][9]=="Percentage (%) "){
+                    for(var num = count;num<=(response.length-1);num++){
+                        if(response[num][2]=="Continuous Assessment"&&response[num][9]=="Percentage (%) "){
                             break;
                         }
-                        if(response[0][num][2]!=null){
+                        if(response[num][2]!=null){
                             var list = list+1;
                         }
                     }
@@ -441,11 +441,11 @@ $option1 = "id='selected-sidebar'";
                         for(var run = 1;run<=week;run++){
                             var result = "";
                             for(var num = count;num<=(count+list+3);num++){
-                                if(response[0][num][2]=="Continuous Assessment"&&response[0][num][9]=="Percentage (%) "){
+                                if(response[num][2]=="Continuous Assessment"&&response[num][9]=="Percentage (%) "){
                                     break;
                                 }
-                                if(response[0][num][2]!=null){
-                                    var str = response[0][num][2];
+                                if(response[num][2]!=null){
+                                    var str = response[num][2];
                                     var first = str.split("\n");
                                     var sentence = first[0].split(". ");
                                     $('#lecture_topic_'+run+'_1').append('<option class="option" value="'+sentence[1]+'">'+sentence[1]+'</option>');
@@ -462,11 +462,11 @@ $option1 = "id='selected-sidebar'";
                                 var result = "";
                                 var data = $('#lecture_topic_data_'+run+'_'+m).val();
                                 for(var num = count;num<=(count+list+3);num++){
-                                    if(response[0][num][2]!=null){
-                                        var str = response[0][num][2];
+                                    if(response[num][2]!=null){
+                                        var str = response[num][2];
                                         var first = str.split("\n");
                                         var sentence = first[0].split(". ");
-                                        if(response[0][num][2]!="Continuous Assessment"){
+                                        if(response[num][2]!="Continuous Assessment"){
                                             if(sentence[1]==data){
                                                 $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[1]+'" selected>'+sentence[1]+'</option>');
                                             }else{
