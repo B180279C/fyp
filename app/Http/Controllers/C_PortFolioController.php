@@ -31,7 +31,7 @@ class C_PortFolioController extends Controller
                     ->where('departments.faculty_id', '=', $faculty_id)
                     ->where('courses.semester','=',$semester_id)
                     ->where('courses.status','=','Active')
-                    ->orderBy('courses.subject_id')
+                    ->orderBy('programmes.programme_id')
                     ->get();
         return view('dean.CoursePortFolio',compact('faculty','course'));
     }
@@ -77,7 +77,7 @@ class C_PortFolioController extends Controller
                     $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
+                    $result .= '<p style="margin: 0px;"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
                     $result .= '</div>';
                     $result .= '<div class="col-1" id="course_action">';
                     $result .= '<i class="fa fa-wrench edit_action" aria-hidden="true" id="edit_button_'.$row->course_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
@@ -112,7 +112,7 @@ class C_PortFolioController extends Controller
                 $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
                 $result .= '</div>';
                 $result .= '<div class="col" id="course_name">';
-                $result .= '<p style="margin: 0px;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
+                $result .= '<p style="margin: 0px;"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
                 $result .= '</div>';
                 $result .= '<div class="col-1" id="course_action">';
                 $result .= '<i class="fa fa-wrench edit_action" aria-hidden="true" id="edit_button_'.$row->course_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';

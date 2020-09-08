@@ -140,12 +140,14 @@ class AssignStudentController extends Controller
     	$semester = $request->get('semester');
         $intake = $request->get('intake');
         $student = $request->get('student');
+
 		$failed = "";
         if($student!=""){
         	$checkexists = DB::table('assign_student_course')
                     ->select('assign_student_course.*')
                     ->where('assign_student_course.student_id','=',$student)
                     ->where('assign_student_course.status','=',"Active")
+                    ->where('assign_student_course.course_id', '=', $request->get('course_id'))
                     ->get();
             if (count($checkexists) === 0) {
             	$assign_student_course = new Assign_Student_Course([
@@ -172,6 +174,7 @@ class AssignStudentController extends Controller
                     ->select('assign_student_course.*')
                     ->where('assign_student_course.student_id','=',$row->student_id)
                     ->where('assign_student_course.status','=',"Active")
+                    ->where('assign_student_course.course_id', '=', $request->get('course_id'))
                     ->get();
 	            if (count($checkexists) === 0) {
 	            	$assign_student_course = new Assign_Student_Course([
@@ -196,18 +199,32 @@ class AssignStudentController extends Controller
     {
         $array = (new AssignStudentImport)->toArray($request->file('file'));
         for($i=0;$i<=(count($array[0])-1);$i++){
-            $student_id = $array[0][$i]['student_id'];
-            $student_name = $array[0][$i]['student_name'];
-            if ($student_id === '' || $student_id === null) {
-                if($student_name === '' || $student_name === null){
-                    $array[0][$i]['student_id'] = "Empty";
-                    $array[0][$i]['student_name'] = "Empty";
+            if(isset($array[0][$i]['student_id'])){
+                $student_id = $array[0][$i]['student_id'];
+                $student_name = $array[0][$i]['student_name'];
+                if ($student_id === '' || $student_id === null) {
+                    if($student_name === '' || $student_name === null){
+                        $array[0][$i]['student_id'] = "Empty";
+                        $array[0][$i]['student_name'] = "Empty";
+                    }
                 }
-            }
+            }else{
+                if($i==0){
+                    return response()->json("Failed");
+                }else{
+                    $student_id = $array[0][$i]['student_id'];
+                    $student_name = $array[0][$i]['student_name'];
+                    if ($student_id === '' || $student_id === null) {
+                        if($student_name === '' || $student_name === null){
+                            $array[0][$i]['student_id'] = "Empty";
+                            $array[0][$i]['student_name'] = "Empty";
+                        }
+                    }
+                }
+            }       
         }
         return response()->json($array[0]);
     }
-
 
     public function storeAssignStudent(Request $request)
     {
@@ -222,6 +239,7 @@ class AssignStudentController extends Controller
                     ->select('assign_student_course.*')
                     ->where('assign_student_course.student_id','=',$student_id)
                     ->where('assign_student_course.status','=',"Active")
+                    ->where('assign_student_course.course_id', '=', $request->get('course_id'))
                     ->get();
                 if (count($checkexists) === 0) {
                     $assign_student_course = new Assign_Student_Course([

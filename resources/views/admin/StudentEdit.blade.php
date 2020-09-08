@@ -13,17 +13,19 @@ $option2 = "id='selected-sidebar'";
           }
         });
         $('#edit_image').click(function(){
-            var value = $('#id').val();
-            var image = $('#image').val();
-            $.ajax({
-               type:'POST',
-               url:'/studentRemoveImage',
-               data:{value:value,image:image},
-               success:function(data){
-                    document.getElementById('form_image').style.display = "none";      
-                    document.getElementById('dropzoneForm').style.display = "block";
-               }
-            });
+            if(confirm("Do you sure want to remove this?")){
+                var value = $('#id').val();
+                var image = $('#image').val();
+                $.ajax({
+                   type:'POST',
+                   url:'/studentRemoveImage',
+                   data:{value:value,image:image},
+                   success:function(data){
+                        document.getElementById('form_image').style.display = "none";      
+                        document.getElementById('dropzoneForm').style.display = "block";
+                   }
+                });
+            }
         });
     });
     Dropzone.options.dropzoneForm =

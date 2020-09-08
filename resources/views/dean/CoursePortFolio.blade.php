@@ -113,7 +113,6 @@ $option4 = "id='selected-sidebar'";
         success: function(file, response) {
             console.log(response);
             var table = document.getElementById("dtBasicExample");
-            
             for(var i = 0; i<response.length; i++){
               if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
                 break;
@@ -213,7 +212,7 @@ $option4 = "id='selected-sidebar'";
                     </div>
                   <ul class="sidebar-action-ul">
                       <a href='course/create'><li class="sidebar-action-li"><i class="fa fa-book" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Course</li></a>
-                      <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Add Multple Course</li></a>
+                      <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Add Multple Courses</li></a>
                   </ul>
             </div>
             <br>
@@ -263,7 +262,7 @@ $option4 = "id='selected-sidebar'";
                               <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                             </div>
                             <div class="col" id="course_name">
-                              <p style="margin: 0px;"><b>{{$row->semester_name}}</b> : {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</p>
+                              <p style="margin: 0px;"><b>{{$row->semester_name}}</b> : {{$row->short_form_name}} / {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</p>
                             </div>
                             <div class="col-1" id="course_action">
                                 <i class="fa fa-wrench edit_action" aria-hidden="true" id="edit_button_{{$row->course_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
@@ -290,8 +289,8 @@ $option4 = "id='selected-sidebar'";
         </button>
       </div>
       <div style="margin: 20px 20px 0px 20px;">
-        <p style="color:#0d2f81; "><b>Templete:</b></p>
-        <p><b>  1. </b>Please download template by clicking <a href='{{asset("/templete/multiple_courses.xlsx")}}' id="templete_link">Templete</a>.</p>
+        <p style="color:#0d2f81; "><b>Template:</b></p>
+        <p><b>  1. </b>Please download Template by clicking <a href='{{asset("/templete/multiple_courses.xlsx")}}' id="templete_link">Template</a>.</p>
         <p><b>  2. </b>Delete the example data.</p>
         <p><b>  3. </b>Fill in the Subject details and other details in file.</p>
       </div>

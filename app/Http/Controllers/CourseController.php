@@ -40,7 +40,7 @@ class CourseController extends Controller
                     ->where('courses.semester','=',$semester_id)
                     ->where('courses.lecturer', '=', $staff_dean->id)
                     ->where('courses.status','=','Active')
-                    ->orderBy('courses.subject_id')
+                    ->orderBy('programmes.programme_id')
                     ->get();
         return view('dean.CourseIndex',compact('course'));
     }
@@ -277,12 +277,27 @@ class CourseController extends Controller
     {
         $array = (new CoursesImport)->toArray($request->file('file'));
         for($i=0;$i<=(count($array[0])-1);$i++){
-            $value = $array[0][$i]['subject_code'];
-            $programme = $array[0][$i]['programme'];
-            if ($value === '' || $value === null) {
-                if($programme === '' || $programme === null){
-                    $array[0][$i]['programme'] = "Empty";
-                    $array[0][$i]['subject_code'] = "Empty";
+            if(isset($array[0][$i]['programme'])){
+                $value = $array[0][$i]['subject_code'];
+                $programme = $array[0][$i]['programme'];
+                if ($value === '' || $value === null) {
+                    if($programme === '' || $programme === null){
+                            $array[0][$i]['programme'] = "Empty";
+                            $array[0][$i]['subject_code'] = "Empty";
+                    }
+                }
+            }else{
+                if($i==0){
+                    return response()->json("Failed");
+                }else{
+                    $value = $array[0][$i]['subject_code'];
+                    $programme = $array[0][$i]['programme'];
+                    if ($value === '' || $value === null) {
+                        if($programme === '' || $programme === null){
+                                $array[0][$i]['programme'] = "Empty";
+                                $array[0][$i]['subject_code'] = "Empty";
+                        }
+                    }
                 }
             }
         }

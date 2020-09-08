@@ -69,7 +69,7 @@ class MPUController extends Controller
     public function store(Request $request, $level)
     {
         $count = $request->get('count');
-    
+        $failed = "";
         for($i=1;$i<=$count;$i++){
             $type = $request->get('subject_type'.$i);
             $count_list = $request->get('count_list'.$i);
@@ -78,23 +78,41 @@ class MPUController extends Controller
                 $subject_name = $request->get($i.'subject_name'.$m);
                 $syllabus     = $request->get($i.'syllabus'.$m);
                 $file         = $request->get($i.'full_syllabus'.$m);
-
-                if($subject_code!="" && $subject_name!=""){
-                    $subject = new Subject_MPU([
-                        'level'                =>  $level,
-                        'subject_type'         =>  $type,
-                        'subject_code'         =>  $subject_code,
-                        'subject_name'         =>  $subject_name,
-                        'syllabus'             =>  $file,
-                        'syllabus_name'        =>  $syllabus,
-                    ]);
-                    $fake_place = "fake/syllabus/".$file;
-                    rename($fake_place, 'syllabus/'.$file);
-                    $subject->save();
+                $already      = $request->get($i.'already'.$m);
+                if($already=="No"){
+                    if($subject_code!="" && $subject_name!="" && $syllabus!=""){
+                        $subject = new Subject_MPU([
+                            'level'                =>  $level,
+                            'subject_type'         =>  $type,
+                            'subject_code'         =>  $subject_code,
+                            'subject_name'         =>  $subject_name,
+                            'syllabus'             =>  $file,
+                            'syllabus_name'        =>  $syllabus,
+                        ]);
+                        $fake_place = "fake/syllabus/".$file;
+                        rename($fake_place, 'syllabus/'.$file);
+                        $subject->save();
+                    }else if($syllabus=="" || $file==""){
+                        $failed .= $subject_code." ".$subject_name." of syllabus cannot be empty";
+                    }
                 }
             }
         }
-        return redirect()->route('admin.mpu_list.index')->with('success','Data Added');
+        $subjects = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
+                    ->where('subjects_mpu.level', '=', $level)
+                    ->get();
+        $group = DB::table('subjects_mpu')
+                    ->select('subjects_mpu.*')
+                    ->groupBy('subject_type')
+                    ->orderBy('mpu_id')
+                    ->where('subjects_mpu.level', '=', $level)
+                    ->get();
+        if($failed==""){
+            return redirect()->route('MPU.create', compact('subjects','group', 'level'))->with('success','Data Added');
+        }else{
+            return redirect()->route('MPU.create', compact('subjects','group', 'level'))->with('failed',$failed);
+        }
     }
 
     /**

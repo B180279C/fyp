@@ -120,6 +120,7 @@ $option1 = "id='selected-sidebar'";
                 var k = 0;
                 var array = [];
                 var array_data = [];
+                var array_f_data = [];
                 for(var i = 0;i<=(response.length-1);i++){
                     if(response[i][2]!=null){
                         var str = response[i][2].toString();
@@ -144,9 +145,20 @@ $option1 = "id='selected-sidebar'";
                         }  
                     }
                 }
+                var a = 0;
                 for(var q = 0; q<array.length;q++){
                     const sorted = array.sort((a,b)=>a-b);
-                    array_data[q] = sorted[q]+"///"+array_data[q];
+                    if(q!=0){
+                        if(sorted[q]==sorted[q-1]){
+                            array_f_data[q] = array_f_data[a];
+                        }else{
+                            a++;
+                            array_f_data[q] = sorted[q]+"///"+array_data[a];
+                        }
+                    }else{
+                        array_f_data[q] = sorted[q]+"///"+array_data[q];
+                    }
+                    console.log(array_f_data[q]);
                 }
                 for(var i = 0;i<=(response.length-1);i++){
                     // console.log(response[i]);
@@ -167,8 +179,8 @@ $option1 = "id='selected-sidebar'";
                             var plo = level[1].replace(')','').replace('PLO','');
                             var int = parseInt(plo);
                             
-                            for(var q = 0; q<array_data.length;q++){
-                                var po = array_data[q].split("///");
+                            for(var q = 0; q<array_f_data.length;q++){
+                                var po = array_f_data[q].split("///");
                                 if(po[0]==int){
                                     var po_data = po[1];
                                 }

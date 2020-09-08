@@ -130,9 +130,6 @@ $option1 = "id='selected-sidebar'";
             console.log(response);
             var table = document.getElementById("dtBasicExample");
             for(var i = 0; i<response.length; i++){
-              if((response[i]['student_id']=="Empty")&&(response[i]['student_name']=="Empty")){
-                break;
-              }
                 if((response[i]['student_id']!=null)&&(response[i]['student_name']!=null)){
                   var row = table.insertRow(1+i);
                   var cell = row.insertCell(0);
@@ -219,7 +216,7 @@ $option1 = "id='selected-sidebar'";
                     </div>
                   <ul class="sidebar-action-ul">
                       <a id="open_model"><li class="sidebar-action-li"><i class="fa fa-graduation-cap" style="padding: 0px 10px;" aria-hidden="true"></i>Assign Student</li></a>
-                      <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload a Files</li></a>
+                      <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload a File</li></a>
                   </ul>
             </div>
             <br>
@@ -380,14 +377,14 @@ $option1 = "id='selected-sidebar'";
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Upload Files</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Upload a File</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div style="margin: 20px 20px 0px 20px;">
-        <p style="color:#0d2f81; "><b>Templete:</b></p>
-        <p><b>  1. </b>Please download template by clicking <a href='{{asset("/templete/assign_student.xlsx")}}' id="templete_link">Templete</a>.</p>
+        <p style="color:#0d2f81; "><b>Template:</b></p>
+        <p><b>  1. </b>Please download template by clicking <a href='{{asset("/templete/assign_student.xlsx")}}' id="templete_link">Template</a>.</p>
         <p><b>  2. </b>Delete the example data.</p>
         <p><b>  3. </b>Fill in the student ID and other details in file.</p>
       </div>

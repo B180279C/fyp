@@ -45,30 +45,34 @@ $option1 = "id='selected-sidebar'";
         });
 
         $('#edit_image').click(function(){
-            var value = $('#id').val();
-            var image = $('#image').val();
-            $.ajax({
-               type:'POST',
-               url:'/removeImage',
-               data:{value:value,image:image},
-               success:function(data){
-                    document.getElementById('form_image').style.display = "none";      
-                    document.getElementById('dropzoneForm').style.display = "block";
-               }
-            });
+            if(confirm("Do you sure want to remove this?")){
+                var value = $('#id').val();
+                var image = $('#image').val();
+                $.ajax({
+                   type:'POST',
+                   url:'/removeImage',
+                   data:{value:value,image:image},
+                   success:function(data){
+                        document.getElementById('form_image').style.display = "none";      
+                        document.getElementById('dropzoneForm').style.display = "block";
+                   }
+                });
+            }
         });
         $('#edit_CV').click(function(){
-            var value = $('#id').val();
-            var CV = $('#CV').val();
-            $.ajax({
-               type:'POST',
-               url:'/removeCV',
-               data:{value:value,CV:CV},
-               success:function(data){
-                    document.getElementById('form_CV').style.display = "none";      
-                    document.getElementById('dropzoneCV').style.display = "block";
-               }
-            });
+            if(confirm("Do you sure want to remove this?")){
+                var value = $('#id').val();
+                var CV = $('#CV').val();
+                $.ajax({
+                   type:'POST',
+                   url:'/removeCV',
+                   data:{value:value,CV:CV},
+                   success:function(data){
+                        document.getElementById('form_CV').style.display = "none";      
+                        document.getElementById('dropzoneCV').style.display = "block";
+                   }
+                });
+            }
         });
     });
     
@@ -339,7 +343,7 @@ $option1 = "id='selected-sidebar'";
                                 <div class="form-group">
                                     <label for="Position" class="label">Position</label>
                                     <select class="selectpicker form-control" name="position" id="position" data-width="100%" title="Choose one" required>
-                                        <option <?php if($user->position==='Teacher'){ echo 'selected'; }?> value="Teacher" class="option">Teacher</option>
+                                        <option <?php if($user->position==='Lecturer'){ echo 'selected'; }?> value="Lecturer" class="option">Lecturer</option>
                                         <option <?php if($user->position==='HoD'){ echo 'selected'; }?> value="HoD" class="option">Head of Department</option>
                                         <option <?php if($user->position==='Dean'){ echo 'selected'; }?> value="Dean" class="option">Dean</option>
                                     </select>

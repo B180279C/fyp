@@ -258,7 +258,7 @@ $option1 = "id='selected-sidebar'";
                             <div class="form-group">
                                 <label for="Position" class="label">Position</label>
                                 <select class="selectpicker form-control" name="position" id="position" data-width="100%" title="Choose one" required>
-                                    <option value="Teacher" class="option">Teacher</option>
+                                    <option value="Lecturer" class="option">Lecturer</option>
                                     <option value="HoD" class="option">Head of Department</option>
                                     <option value="Dean" class="option">Dean</option>
                                 </select>

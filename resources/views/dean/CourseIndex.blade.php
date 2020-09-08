@@ -108,7 +108,7 @@ $option1 = "id='selected-sidebar'";
                               <img src="{{url('image/subject.png')}}" width="25px" height="24px"/>
                             </div>
                             <div class="col" id="course_name" style="padding-top: 2px;">
-                              <p style="margin: 0px;display: inline-block;"><b>{{$row->semester_name}}</b> : {{$row->subject_code}} {{$row->subject_name}}</p>
+                              <p style="margin: 0px;display: inline-block;"><b>{{$row->semester_name}}</b> : {{$row->subject_code}} {{$row->subject_name}} ( {{$row->short_form_name}} )</p>
                               <p id="mark_data">
 	                              <i class="fa fa-check correct" aria-hidden="true"></i>
 	                              <i class="fa fa-check correct" aria-hidden="true"></i>

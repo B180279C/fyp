@@ -122,7 +122,30 @@ class TeachingPlanController extends Controller
    				$topic->save();
    		 	}
    		}
-   		return redirect()->back()->with('success','Data Added');
+      $user_id       = auth()->user()->user_id;
+      $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+      $faculty_id    = $staff_dean->faculty_id;
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->select('courses.*','subjects.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+      $TP = DB::table('teaching_plan')
+          ->select('teaching_plan.*')
+          ->where('teaching_plan.course_id','=',$id)
+          ->get();
+
+      $topic = DB::table('plan_topics')
+            ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
+            ->select('plan_topics.*','teaching_plan.*')
+            ->where('teaching_plan.course_id','=',$id)
+            ->get();
+      $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+      return view('dean.viewTeachingPlan',compact('course','TP','topic','TP_Ass'))->with('success','Weekly Plan Inserted Successfully');
    	}
 
    	public function removeTopic(Request $request)
@@ -351,6 +374,29 @@ class TeachingPlanController extends Controller
         ]);
         $TP_Ass->save();
       }
-      return redirect()->back()->with('success','Data Added');
+      $user_id       = auth()->user()->user_id;
+      $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+      $faculty_id    = $staff_dean->faculty_id;
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->select('courses.*','subjects.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+      $TP = DB::table('teaching_plan')
+          ->select('teaching_plan.*')
+          ->where('teaching_plan.course_id','=',$id)
+          ->get();
+
+      $topic = DB::table('plan_topics')
+            ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
+            ->select('plan_topics.*','teaching_plan.*')
+            ->where('teaching_plan.course_id','=',$id)
+            ->get();
+      $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+      return view('dean.viewTeachingPlan',compact('course','TP','topic','TP_Ass'))->with('success','Assessment Method Inserted Successfully');
     }
 }
