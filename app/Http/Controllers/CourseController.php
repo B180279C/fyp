@@ -27,7 +27,7 @@ class CourseController extends Controller
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
         $faculty       = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
-        $last_semester = DB::table('semesters')->orderBy('semester_id', 'desc')->first();
+        $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
         $semester_id   = $last_semester->semester_id;
         $course = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -375,7 +375,7 @@ class CourseController extends Controller
         $staff_dean  = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id  = $staff_dean->faculty_id;
         $faculty     = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
-        $last_semester = DB::table('semesters')->orderBy('semester_id', 'desc')->first();
+        $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
         $semester_id = $last_semester->semester_id;
 
         $value = $request->get('value');

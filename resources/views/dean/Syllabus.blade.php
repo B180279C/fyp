@@ -62,7 +62,7 @@ $option2 = "id='selected-sidebar'";
                 <!-- <hr style="margin: 0px 0px 15px 0px;"> -->
                 <div class="row" id="Syllabus">
                     <div class="col-md-12">
-                        <p style="font-size: 18px;margin:0px 0px 0px 10px;">Faculty of Syllabus</p>
+                        <p style="font-size: 18px;margin:0px 0px 0px 10px;">Syllabus In Faculty</p>
                     </div>
                     @foreach($subjects as $row)
                             <a href="{{ asset('syllabus/'.$row->syllabus) }}" class="col-md-12 align-self-center" id="course_list" download="{{$row->syllabus_name}}.xlsx">

@@ -63,7 +63,7 @@ $option2 = "id='selected-sidebar'";
                 <!-- <hr style="margin: 0px 0px 15px 0px;"> -->
                 <div class="row" id="lecturer_CV">
                     <div class="col-md-12">
-                        <p style="font-size: 18px;margin:0px 0px 0px 10px;">Faculty of Lecturer CV</p>
+                        <p style="font-size: 18px;margin:0px 0px 0px 10px;">Lecturer CV In Faculty</p>
                     </div>
                     @foreach($faculty_staff as $row)
                             <?php

@@ -6,7 +6,7 @@ $option5 = "id='selected-sidebar'";
 @section('content')
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Subject</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">MPU Subject</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/programme_list">Programme</a>/
@@ -79,7 +79,7 @@ $option5 = "id='selected-sidebar'";
                                       <div class="col-md-2 align-self-center" style="padding: 0px;">
                                         <center>
                                           <div id="download">
-                                              <a download="{{$row->syllabus_name}}.xlsx" href="{{asset('syllabus/'.$row->syllabus)}}" style="background-color: none;">
+                                              <a href="{{ action('MPUController@downloadSyllabus',$row->mpu_id) }}" style="background-color: none;">
                                                   <img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
                                                   <br>
                                                 <p style="font-size: 14px;color: #009697;padding-bottom: 5px;">Download</a>

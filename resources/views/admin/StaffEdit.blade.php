@@ -89,11 +89,9 @@ $option1 = "id='selected-sidebar'";
                   });
             },
             renameFile: function(file) {
-                var name = $('.full_name').val();
-                var staff_id = $('.staff_id').val();
                 var re = /(?:\.([^.]+))?$/;
                 var ext = re.exec(file.name)[1];
-                var filename = name+"_"+staff_id+"_Image"+"."+ext;
+                var filename = new Date().getTime()+"."+ext;
                 $("#staff_image").val(filename);
                 return filename;
             },
@@ -133,11 +131,9 @@ $option1 = "id='selected-sidebar'";
                   });
             },
             renameFile: function(file) {
-                var name = $('.full_name').val();
-                var staff_id = $('.staff_id').val();
                 var re = /(?:\.([^.]+))?$/;
                 var ext = re.exec(file.name)[1];
-                var filename = name+"_"+staff_id+"_CV"+"."+ext;
+                var filename = new Date().getTime()+"."+ext;
                 $("#staff_CV").val(filename);
                 return filename;
             },
@@ -205,7 +201,7 @@ $option1 = "id='selected-sidebar'";
                     @else
                         <div style="margin: 50px 0px 20px 0px;" id="form_image">
                             <input type="hidden" id="image" value="{{$staff->staff_image}}">
-                            <img src="{{ asset('staffImage/' . $staff->staff_image) }}" width="100px" height="100px" style="border-radius:10%;" />
+                            <img src="{{ action('StaffController@show',$staff->staff_image) }}" width="auto" height="100px" style="border-radius:10%;" />
                             <br>
                             <p id="edit_image" style="font-size: 14px;color: #009697;">Remove file</a>
                         </div>
@@ -233,9 +229,12 @@ $option1 = "id='selected-sidebar'";
                     <div style="margin: 50px 0px 20px 0px;" id="form_CV">
                             <input type="hidden" id="CV" value="{{$staff->lecturer_CV}}">
                             <?php
+                            $ext = "";
+                            if($staff->lecturer_CV!=""){
                                 $ext = explode(".", $staff->lecturer_CV);
+                            }
                             ?>
-                            <a href="{{ asset('staffCV/'.$staff->lecturer_CV) }}" id="download_link">
+                            <a href="{{ action('StaffController@downloadCV',$staff->staff_id) }}" id="download_link">
                             <div id="download">
                             @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="100px" height="100px" style="border-radius:10%;"/>

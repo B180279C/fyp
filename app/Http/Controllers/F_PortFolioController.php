@@ -271,7 +271,7 @@ class F_PortFolioController extends Controller
                     ->orderByDesc('staffs.lecturer_CV')
                     ->get();
             $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Faculty of Lecturer CV</p>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Lecturer CV In Faculty</p>';
             $result .= '</div>';
             foreach($faculty_staff as $row){
                     $ext = explode(".", $row->lecturer_CV);
@@ -341,7 +341,7 @@ class F_PortFolioController extends Controller
                     ->where('subjects.syllabus', '!=', "")
                     ->get();
             $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Faculty of Syllabus</p>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Syllabus In Faculty</p>';
             $result .= '</div>';
             foreach($subjects as $row){
                 $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" class="col-md-12 align-self-center" id="course_list" download="'.$row->syllabus_name.'".xlsx">';

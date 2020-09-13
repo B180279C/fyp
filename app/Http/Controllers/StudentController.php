@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Image;
 use App\Student;
 use App\User;
 use App\Programme;
@@ -96,10 +98,9 @@ class StudentController extends Controller
             $user_id = $user->user_id;
 
             if($request->get('student_image')!=""){
-                $image_type = explode(".", $request->get('student_image'));
-                $image_name = $request->get('name')."(".$request->get('student_id').")_Image.".$image_type[1];
-                $image = "fake/student_Image/".$request->get('student_image');
-                rename($image, 'studentImage/'.$image_name);
+                $image = Storage::disk('private')->get("fake/student_Image/".$request->get('student_image'));
+                Storage::disk('private')->put('studentImage/'.$request->get('student_image'), $image); 
+                Storage::disk('private')->delete('fake/student_Image/'.$request->get('student_image'));
             }
 
             $student = new Student([
@@ -108,11 +109,11 @@ class StudentController extends Controller
                 'programme_id'      => $request->get('programme'),
                 'semester'          => $request->get('semester'),
                 'intake'            => $request->get('intake'),
-                'student_image'     => $image_name,
+                'student_image'     => $request->get('student_image'),
             ]);
+
             $student->save();
             
-
             if(auth()->user()){
                 if(auth()->user()->position == "admin"){
                     return redirect()->route('admin.student_list.index')->with('success','Data Added');
@@ -125,8 +126,7 @@ class StudentController extends Controller
             if(auth()->user()){
                 if(auth()->user()->position == "admin"){
                     if($request->get('student_image')!=""){
-                        $path1 = public_path().'/fake/student_Image/'.$request->get('student_image');
-                        unlink($path1);
+                        Storage::disk('private')->delete('fake/student_Image/'.$request->get('student_image'));
                     }
                     return redirect()->route('admin.student_list.index')->with('failed','The Email has been existed');
                 }
@@ -143,9 +143,10 @@ class StudentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($image_name)
     {
-        //
+        $storagePath = storage_path('/private/studentImage/' . $image_name);
+        return Image::make($storagePath)->response();
     }
 
     /**
@@ -200,8 +201,7 @@ class StudentController extends Controller
                 $student->student_id = $student_id;
             }else{
                 if($request->get('student_image')!=""){
-                    $path1 = public_path().'/fake/student_Image/'.$request->get('student_image');
-                    unlink($path1);
+                    Storage::disk('private')->delete('fake/student_Image/'.$request->get('student_image'));
                 }
                 return redirect()->back()->with('failed','The Email has been existed');
             }
@@ -212,20 +212,11 @@ class StudentController extends Controller
         $student->semester      = $request->get('semester');
         $student->intake        = $request->get('intake');
 
-        if($student->student_image!=""){
-            $image = 'studentImage/'.$student->student_image;
-            $image_type = explode(".", $image);
-            $image_name = $request->get('name')."(".$student_id.")_Image.".$image_type[1];
-            $student->student_image  = $image_name;
-            rename($image, 'studentImage/'.$image_name);
-        }
-
         if($request->get('student_image')!=""){
-            $image_type = explode(".", $request->get('student_image'));
-            $image_name = $request->get('name')."(".$student_id.")_Image.".$image_type[1];
-            $student->student_image  = $image_name;
-            $image = "fake/student_Image/".$request->get('student_image');
-            rename($image, 'studentImage/'.$image_name);
+            $student->student_image  = $request->get('student_image');
+            $image = Storage::disk('private')->get("fake/student_Image/".$request->get('student_image'));
+            Storage::disk('private')->put('studentImage/'.$request->get('student_image'), $image); 
+            Storage::disk('private')->delete('fake/student_Image/'.$request->get('student_image'));
         }
 
         $student->save(); 
@@ -253,17 +244,14 @@ class StudentController extends Controller
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/student_Image/'),$imageName);
+        $image->storeAs('fake','/student_Image/'.$imageName, 'private');
         return response()->json(['success'=>$imageName]);  
     }
 
     public function destroyImage(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/student_Image/'.$filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/fake/student_Image/'.$filename);
         return $filename;  
     }
 
@@ -276,10 +264,7 @@ class StudentController extends Controller
         $student->student_image = "";
         $student->save();
 
-        $path = public_path().'/studentImage/'.$image;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/studentImage/'.$image);
         return $image;
     }
 }

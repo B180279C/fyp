@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Programme;
 use App\Subject;
 use App\Faculty;
@@ -71,8 +72,11 @@ class SubjectController extends Controller
                             'syllabus'             =>  $file,
                             'syllabus_name'        =>  $syllabus,
                         ]);
-                        $fake_place = "fake/syllabus/".$file;
-                        rename($fake_place, 'syllabus/'.$file);
+
+                        $fake_place = Storage::disk('private')->get("fake/syllabus/".$file);
+                        Storage::disk('private')->put('syllabus/'.$file, $fake_place); 
+                        Storage::disk('private')->delete('fake/syllabus/'.$file);
+
                         $subject->save();
                     }else if($syllabus=="" || $file==""){
                         $failed .= $subject_code." ".$subject_name." of syllabus cannot be empty";
@@ -162,14 +166,14 @@ class SubjectController extends Controller
 
         if($fake!=""){
             if($subject->syllabus!=""){
-                $path = public_path().'/syllabus/'.$subject->syllabus;
-                if (file_exists($path)) {
-                    unlink($path);
-                }
+                Storage::disk('private')->delete('/syllabus/'.$subject->syllabus);
             }
+
             $subject->syllabus = $filename;
-            $fake_place = "fake/syllabus/".$fake;
-            rename($fake_place, 'syllabus/'.$filename);
+            $fake_place = Storage::disk('private')->get("fake/syllabus/".$fake);
+            Storage::disk('private')->put('syllabus/'.$filename, $fake_place); 
+            Storage::disk('private')->delete('fake/syllabus/'.$fake);
+
             $subject->syllabus_name = $request->get('form');
         }else{
             $subject->syllabus_name = $request->get('syllabus');
@@ -225,17 +229,26 @@ class SubjectController extends Controller
     public function postUpload(Request $request){
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/syllabus/'),$imageName);
+        $image->storeAs('fake','/syllabus/'.$imageName, 'private');
         return response()->json(['success'=>$imageName]); 
     }
 
     public function syllabusDestory(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/syllabus/'.$filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/fake/syllabus/'.$filename);
         return $filename;  
+    }
+
+    public function downloadSyllabus($id)
+    {
+        $subject = Subject::where('subject_id', '=', $id)->firstOrFail();
+        $syllabus = $subject->syllabus;
+        $name = $subject->syllabus_name;
+        $ext = "";
+        if($subject->syllabus!=""){
+            $ext = explode(".", $subject->syllabus);
+        }
+        return Storage::disk('private')->download('/syllabus/'.$syllabus,$name.'.'.$ext[1]);
     }
 }

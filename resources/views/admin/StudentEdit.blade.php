@@ -41,11 +41,9 @@ $option2 = "id='selected-sidebar'";
             });
         },
         renameFile: function(file) {
-            var name = $('.full_name').val();
-            var staff_id = $('.student_id').val();
             var re = /(?:\.([^.]+))?$/;
             var ext = re.exec(file.name)[1];
-            var filename = name+"_"+staff_id+"_Image"+"."+ext;
+            var filename = new Date().getTime()+"."+ext;
             $("#student_image").val(filename);
             return filename;
         },
@@ -98,7 +96,7 @@ $option2 = "id='selected-sidebar'";
                 @else
                     <div style="margin: 50px 0px 20px 0px;" id="form_image">
                         <input type="hidden" id="image" value="{{$student->student_image}}">
-                        <img src="{{ asset('studentImage/' . $student->student_image) }}" width="100px" height="100px" style="border-radius:10%;" />
+                        <img src="{{ action('StudentController@show',$student->student_image) }}" width="auto" height="100px" style="border-radius:10%;" />
                         <br>
                         <p id="edit_image" style="font-size: 14px;color: #009697;">Remove file</a>
                     </div>

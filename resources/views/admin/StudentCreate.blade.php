@@ -35,11 +35,9 @@ $option2 = "id='selected-sidebar'";
             });
         },
         renameFile: function(file) {
-            var name = $('.full_name').val();
-            var staff_id = $('.student_id').val();
             var re = /(?:\.([^.]+))?$/;
             var ext = re.exec(file.name)[1];
-            var filename = name+"_"+staff_id+"_Image"+"."+ext;
+            var filename = new Date().getTime()+"."+ext;
             $("#student_image").val(filename);
             return filename;
         },

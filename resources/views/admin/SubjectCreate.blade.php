@@ -78,7 +78,7 @@ $option5 = "id='selected-sidebar'";
          }else{
           document.getElementById('100dropzoneFile100').style.display = "none";
           document.getElementById('showSyllabus').style.display = "block";
-          setHref(data.syllabus);
+          setHref(subject_id);
           document.getElementById('syllabus').value = data.syllabus_name;
          }
       }
@@ -194,9 +194,10 @@ $option5 = "id='selected-sidebar'";
 
  function setHref(link){
   $(document).ready(function(){  
-    $(".syllabus_link").attr("href", "{!! asset('syllabus/"+link+"') !!}");
+    $(".syllabus_link").attr("href", "{!! asset('/syllabus/download/"+link+"') !!}");
   });
  }
+ 
 </script>
 <style type="text/css">
 .dropzoneModel{
@@ -319,7 +320,7 @@ $option5 = "id='selected-sidebar'";
                                     <div class="col-md-2 align-self-center" style="padding: 0px;">
                                       <center>
                                         <div id="download">
-                                            <a download="{{$row->syllabus_name}}.xlsx" href="{{asset('syllabus/'.$row->syllabus)}}" style="background-color: none;">
+                                            <a href="{{ action('SubjectController@downloadSyllabus',$row->subject_id) }}" style="background-color: none;">
                                                 <img src="{{url('image/excel.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
                                                 <br>
                                               <p style="font-size: 14px;color: #009697;padding-bottom: 5px;">Download</a>

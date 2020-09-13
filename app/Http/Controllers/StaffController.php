@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Image;
 use App\Staff;
 use App\User;
 use App\Department;
@@ -66,36 +68,39 @@ class StaffController extends Controller
             ]);
             $user->save();
             $user_id = $user->user_id;
-            
-            $image_type = explode(".", $request->get('staff_image'));
-            $image_name = $request->get('name')."(".$request->get('staff_id').")_Image.".$image_type[1];
-            $CV_type = explode(".", $request->get('staff_CV'));
-            $CV_name = $request->get('name')."(".$request->get('staff_id').")_CV.".$CV_type[1];
-
 
             $staff = new Staff([
                 'user_id'         => $user_id,
                 'staff_id'        => $request->get('staff_id'),
                 'department_id'   => $request->get('department'),
                 'faculty_id'      => $request->get('faculty'),
-                'staff_image'     => $image_name,
-                'lecturer_CV'     => $CV_name,
+                'staff_image'     => $request->get('staff_image'),
+                'lecturer_CV'     => $request->get('staff_CV'),
             ]);
             $staff->save();
 
-            $image = "fake/staff_Image/".$request->get('staff_image');
-            $CV = "fake/staff_CV/".$request->get('staff_CV');
-            rename($image, 'staffImage/'.$image_name);
-            rename($CV, 'staffCV/'.$CV_name);
+            if($request->get('staff_image')!=""){
+                $image = Storage::disk('private')->get("fake/staff_Image/".$request->get('staff_image'));
+                Storage::disk('private')->put('staffImage/'.$request->get('staff_image'), $image); 
+                Storage::disk('private')->delete('fake/staff_Image/'.$request->get('staff_image'));
+            }
+
+            if($request->get('staff_CV')!=""){
+                $CV = Storage::disk('private')->get("fake/staff_CV/".$request->get('staff_CV'));
+                Storage::disk('private')->put('staffCV/'.$request->get('staff_CV'), $CV);
+                Storage::disk('private')->delete('fake/staff_CV/'.$request->get('staff_CV'));
+            }
+            
+            
+            
+
             return redirect()->route('admin.staff_list.index')->with('success','Data Added');
         }else{
             if($request->get('staff_image')!=""){
-                $path1 = public_path().'/fake/staff_Image/'.$request->get('staff_image');
-                unlink($path1);
+                Storage::disk('private')->delete('fake/staff_Image/'.$request->get('staff_image'));
             }
             if($request->get('staff_CV')!=""){
-                $path2 = public_path().'/fake/staff_CV/'.$request->get('staff_CV');
-                unlink($path2);
+                Storage::disk('private')->delete('fake/staff_CV/'.$request->get('staff_CV'));
             }
             return redirect()->route('staff.create')->with('failed','The Email has been existed');
         }
@@ -107,9 +112,36 @@ class StaffController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($image_name)
     {
-        //
+        $storagePath = storage_path('/private/staffImage/' . $image_name);
+        return Image::make($storagePath)->response();
+    }
+
+    public function profileImage($image_name)
+    {
+        $user_id    = auth()->user()->user_id;
+        $checkImageFaculty = Staff::where('staff_image', '=', $image_name)->firstOrFail();
+        $image_user_id = $checkImageFaculty->user_id;
+        if($user_id==$image_user_id){
+            $storagePath = storage_path('/private/staffImage/' . $image_name);
+            return Image::make($storagePath)->response();
+        }else{
+            return redirect()->route('login');
+        }
+        // $storagePath = storage_path('/private/staffImage/' . $image_name);
+        // return Image::make($storagePath)->response();
+    }
+
+    public function downloadCV($id)
+    {
+        $staff = Staff::where('staff_id', '=', $id)->firstOrFail();
+        $CV = $staff->lecturer_CV;
+        $ext = "";
+        if($staff->lecturer_CV!=""){
+            $ext = explode(".", $staff->lecturer_CV);
+        }
+        return Storage::disk('private')->download('/staffCV/'.$CV,$id.'.'.$ext[1]);
     }
 
     /**
@@ -149,52 +181,36 @@ class StaffController extends Controller
                 $staff->staff_id = $staff_id;
             }else{
                 if($request->get('staff_image')!=""){
-                    $path1 = public_path().'/fake/staff_Image/'.$request->get('staff_image');
-                    unlink($path1);
+                    Storage::disk('private')->delete('fake/staff_Image/'.$request->get('staff_image'));
                 }
                 if($request->get('staff_CV')!=""){
-                    $path2 = public_path().'/fake/staff_CV/'.$request->get('staff_CV');
-                    unlink($path2);
+                    Storage::disk('private')->delete('fake/staff_CV/'.$request->get('staff_CV'));
                 }
                 return redirect()->back()->with('failed','The Email has been existed');
             }
         }
+
         $user->name             = $request->get('name');
         $user->position         = $request->get('position');
         $staff->department_id   = $request->get('department');
         $staff->faculty_id      = $request->get('faculty');
-
-        if($staff->staff_image!=""){
-            $image = 'staffImage/'.$staff->staff_image;
-            $image_type = explode(".", $image);
-            $image_name = $request->get('name')."(".$staff_id.")_Image.".$image_type[1];
-            $staff->staff_image  = $image_name;
-            rename($image, 'staffImage/'.$image_name);
-        }
-
-        if($staff->lecturer_CV!=""){
-            $CV = 'staffCV/'.$staff->lecturer_CV;
-            $CV_type = explode(".", $CV);
-            $CV_name = $request->get('name')."(".$staff_id.")_CV.".$CV_type[1];
-            $staff->lecturer_CV = $CV_name;
-            rename($CV, 'staffCV/'.$CV_name);
-        }
         
         if($request->get('staff_image')!=""){
             $image_type = explode(".", $request->get('staff_image'));
-            $image_name = $request->get('name')."(".$staff_id.")_Image.".$image_type[1];
-            $staff->staff_image  = $image_name;
-            $image = "fake/staff_Image/".$request->get('staff_image');
-            rename($image, 'staffImage/'.$image_name);
+            $staff->staff_image  = $request->get('staff_image');
+            $image = Storage::disk('private')->get("fake/staff_Image/".$request->get('staff_image'));
+            Storage::disk('private')->put('staffImage/'.$request->get('staff_image'), $image); 
+            Storage::disk('private')->delete('fake/staff_Image/'.$request->get('staff_image'));
         }
 
         if($request->get('staff_CV')!=""){
             $CV_type = explode(".", $request->get('staff_CV'));
-            $CV_name = $request->get('name')."(".$staff_id.")_CV.".$CV_type[1];
-            $CV = "fake/staff_CV/".$request->get('staff_CV');
-            $staff->lecturer_CV     = $CV_name;
-            rename($CV, 'staffCV/'.$CV_name);
+            $staff->lecturer_CV = $request->get('staff_CV');
+            $CV = Storage::disk('private')->get("fake/staff_CV/".$request->get('staff_CV'));
+            Storage::disk('private')->put('staffCV/'.$request->get('staff_CV'), $CV); 
+            Storage::disk('private')->delete('fake/staff_CV/'.$request->get('staff_CV'));
         }
+
         $staff->save();
         $user->save();
 
@@ -261,10 +277,7 @@ class StaffController extends Controller
         $staff->staff_image = "";
         $staff->save();
 
-        $path = public_path().'/staffImage/'.$image;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/staffImage/'.$image);
         return $image;
     }
 
@@ -277,10 +290,7 @@ class StaffController extends Controller
         $staff->lecturer_CV = "";
         $staff->save();
 
-        $path = public_path().'/staffCV/'.$CV;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/staffCV/'.$CV);
         return $CV;
     }
 
@@ -288,17 +298,14 @@ class StaffController extends Controller
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/staff_Image/'),$imageName);
+        $image->storeAs('fake','/staff_Image/'.$imageName, 'private');
         return response()->json(['success'=>$imageName]);  
     }
 
     public function destroyImage(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/staff_Image/'.$filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/fake/staff_Image/'.$filename);
         return $filename;  
     }
 
@@ -306,17 +313,14 @@ class StaffController extends Controller
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/staff_CV/'),$imageName);
+        $image->storeAs('fake','/staff_CV/'.$imageName, 'private');
         return response()->json(['success'=>$imageName]);
     }
 
     public function destroyCV(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/staff_CV/'.$filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('/fake/staff_CV/'.$filename);
         return $filename;  
     }
 }

@@ -34,12 +34,27 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/studentDestoryImage', 'StudentController@destroyImage')->name('dropzone.destoryStudentImage');
 	Route::post('/studentRemoveImage', 'StudentController@removeImage');
 	Route::get('/student_list','StudentController@index')->name('admin.student_list.index');
+	
+	Route::get('images/student/{image_name}', [
+	     'as'         => 'student_image.show',
+	     'uses'       => 'StudentController@show',
+	     'middleware' => 'auth',
+	]);
+
 	Route::get('/student/{id}','StudentController@edit')->name('admin.student_list.edit');
 	Route::post('/student/{id}','StudentController@update')->name('student_list.update.submit');
 
 	Route::get('staff/create','StaffController@create')->name('staff.create');
 	Route::post('staff/create', 'StaffController@store')->name('staff.submit');
+
 	Route::get('/staff_list','StaffController@index')->name('admin.staff_list.index');
+	Route::get('images/staff/{image_name}', [
+	     'as'         => 'staff_image.show',
+	     'uses'       => 'StaffController@show',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/staff/CV/{id}','StaffController@downloadCV')->name('admin.downloadCV');
+
 	Route::get('/staff/{id}','StaffController@edit')->name('admin.staff_list.edit');
 	Route::post('/staff/{id}','StaffController@update')->name('staff_list.update.submit');
 	Route::post('/staffFaculty', 'StaffController@staffFaculty');
@@ -50,7 +65,6 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/staffDestoryImage', 'StaffController@destroyImage')->name('dropzone.destoryStaffImage');
 	Route::post('/staffUploadCV', 'StaffController@uploadCV')->name('dropzone.uploadStaffCV');
 	Route::post('/staffDestoryCV', 'StaffController@destroyCV')->name('dropzone.destoryStaffCV');
-
 
 	Route::get('department/create','DepartmentController@create')->name('department.create');
 	Route::post('department/create', 'DepartmentController@store')->name('department.submit');
@@ -72,6 +86,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/subjectTypeUpdateModal', 'SubjectController@subjectTypeUpdateModal');
 	Route::post('/syllabusPostUpload', 'SubjectController@postUpload')->name('dropzone.syllabusPostUpload');
     Route::post('/syllabusDestory', 'SubjectController@syllabusDestory')->name('dropzone.syllabusDestory');
+    Route::get('/syllabus/download/{id}','SubjectController@downloadSyllabus')->name('subject.downloadSyllabus');
 
 	Route::get('subjectsMPU/create/{level}','MPUController@create')->name('MPU.create');
 	Route::post('subjectsMPU/create/{level}', 'MPUController@store')->name('MPU.submit');
@@ -80,6 +95,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/generalStudiesEditModal', 'MPUController@generalStudiesEditModal');
 	Route::post('/generalStudiesUpdateModal', 'MPUController@generalStudiesUpdateModal');
 	Route::post('/generalStudiesTypeUpdateModal', 'MPUController@generalStudiesTypeUpdateModal');
+	Route::get('/MPUsyllabus/download/{id}','MPUController@downloadSyllabus')->name('MPUsubject.downloadSyllabus');
 
 
 	Route::get('faculty/create','FacultyController@create')->name('faculty.create');
@@ -109,9 +125,14 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('dean/home', 'HomeController@deanHome')->name('dean.home');
 	Route::post('/deanDetails', 'HomeController@deanDetails');
 
-	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
-	Route::post('/searchFiles', 'F_PortFolioController@searchFiles');
+	Route::get('images/profile/{image_name}', [
+	     'as'         => 'profile_image',
+	     'uses'       => 'StaffController@profileImage',
+	     'middleware' => 'auth',
+	]);
 
+	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
+	Route::post('/searchFiles', 'F_PortFolioController@searchFiles');	
 	Route::get('/FacultyPortFolio/LecturerCV/', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
 	Route::get('/FacultyPortFolio/Syllabus/', 'F_PortFolioController@Syllabus')->name('dean.F_potrfolio.syllabus');
 	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');

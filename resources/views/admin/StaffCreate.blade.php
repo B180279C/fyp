@@ -64,11 +64,9 @@ $option1 = "id='selected-sidebar'";
             });
         },
         renameFile: function(file) {
-            var name = $('.full_name').val();
-            var staff_id = $('.staff_id').val();
             var re = /(?:\.([^.]+))?$/;
             var ext = re.exec(file.name)[1];
-            var filename = name+"_"+staff_id+"_Image"+"."+ext;
+            var filename = new Date().getTime()+"."+ext;
             $("#staff_image").val(filename);
             return filename;
         },
@@ -122,11 +120,9 @@ $option1 = "id='selected-sidebar'";
             done();
         },
         renameFile: function(file) {
-            var name = $('.full_name').val();
-            var staff_id = $('.staff_id').val();
             var re = /(?:\.([^.]+))?$/;
             var ext = re.exec(file.name)[1];
-            var filename = name+"_"+staff_id+"_CV"+"."+ext;
+            var filename = new Date().getTime()+"."+ext;
             $("#staff_CV").val(filename);
             return filename;
         },
@@ -348,7 +344,7 @@ $option1 = "id='selected-sidebar'";
                         <div class="col-10" style="padding-left: 20px;">
                             <div class="form-group">
                                 <label for="exampleInputEmail1" class="bmd-label-floating">Confirm Password</label>
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required onkeyup="check_password()">
+                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" style="color: black;" required>
                                 <!-- <span class="bmd-help">Please enter again your correct pasword.</span> -->
                             </div>
                         </div>

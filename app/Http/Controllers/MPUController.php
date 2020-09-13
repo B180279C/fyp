@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Programme;
 use App\Subject_MPU;
 use App\Faculty;
@@ -89,8 +90,11 @@ class MPUController extends Controller
                             'syllabus'             =>  $file,
                             'syllabus_name'        =>  $syllabus,
                         ]);
-                        $fake_place = "fake/syllabus/".$file;
-                        rename($fake_place, 'syllabus/'.$file);
+
+                        $fake_place = Storage::disk('private')->get("fake/syllabus/".$file);
+                        Storage::disk('private')->put('syllabus/'.$file, $fake_place); 
+                        Storage::disk('private')->delete('fake/syllabus/'.$file);
+
                         $subject->save();
                     }else if($syllabus=="" || $file==""){
                         $failed .= $subject_code." ".$subject_name." of syllabus cannot be empty";
@@ -179,14 +183,14 @@ class MPUController extends Controller
 
         if($fake!=""){
             if($mpu->syllabus!=""){
-                $path = public_path().'/syllabus/'.$mpu->syllabus;
-                if (file_exists($path)) {
-                    unlink($path);
-                }
+                Storage::disk('private')->delete('/syllabus/'.$mpu->syllabus);
             }
             $mpu->syllabus = $filename;
-            $fake_place = "fake/syllabus/".$fake;
-            rename($fake_place, 'syllabus/'.$filename);
+
+            $fake_place = Storage::disk('private')->get("fake/syllabus/".$fake);
+            Storage::disk('private')->put('syllabus/'.$filename, $fake_place); 
+            Storage::disk('private')->delete('fake/syllabus/'.$fake);
+            
             $mpu->syllabus_name = $request->get('form');
         }else{
             $mpu->syllabus_name = $request->get('syllabus');
@@ -234,5 +238,17 @@ class MPUController extends Controller
                     ->where('subjects_mpu.level', '=', $level)
                     ->get();
         return redirect()->route('MPU.create', compact('subjects','group', 'level'))->with('success','Data Updated');
+    }
+
+    public function downloadSyllabus($id)
+    {
+        $subject = Subject_MPU::where('mpu_id', '=', $id)->firstOrFail();
+        $syllabus = $subject->syllabus;
+        $name = $subject->syllabus_name;
+        $ext = "";
+        if($subject->syllabus!=""){
+            $ext = explode(".", $subject->syllabus);
+        }
+        return Storage::disk('private')->download('/syllabus/'.$syllabus,$name.'.'.$ext[1]);
     }
 }

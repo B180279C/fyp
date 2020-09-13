@@ -15,10 +15,7 @@ class SemesterController extends Controller
      */
     public function index()
     {
-        $semesters = DB::table('semesters')
-                    ->select('semesters.*')
-                    ->orderByDesc('semesters.semester_name')
-                    ->get();
+        $semesters = Semester::orderByDesc('semester_name')->get();
         return view('admin.SemesterIndex', ['semesters' => $semesters]);
     }
 

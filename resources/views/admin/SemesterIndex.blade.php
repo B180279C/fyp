@@ -12,6 +12,7 @@ $option7 = "id='selected-sidebar'";
             "bLengthChange" : false,
             "bInfo": false,
             pagingType: 'input',
+            order: [[ 2, 'desc' ]],
             pageLength: 10,
             language: {
                 oPaginate: {
