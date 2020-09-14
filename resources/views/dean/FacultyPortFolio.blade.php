@@ -328,7 +328,7 @@ $option2 = "id='selected-sidebar'";
                             $ext = explode(".", $row->portfolio_file);
                           }
                         ?>
-                        <a download="{{$row->portfolio_name}}.{{$ext[1]}}" href="{{ asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file) }}" class="col-md-12 align-self-center" id="course_list">
+                        <a href="{{ action('F_PortFolioController@downloadFP',$row->fp_id) }}" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 3px;">
                               @if($ext[1]=="pdf")

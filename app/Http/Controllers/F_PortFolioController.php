@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Image;
 use App\Staff;
 use App\Department;
 use App\Programme;
 use App\Faculty;
 use App\Faculty_Portfolio;
+use App\Subject;
 
 class F_PortFolioController extends Controller
 {
@@ -70,7 +73,7 @@ class F_PortFolioController extends Controller
                         if($row->portfolio_file!=""){
                             $ext = explode(".", $row->portfolio_file);
                         }
-                        $result .= '<a download="'.$row->portfolio_name.$ext[1].'" href="'.asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file).'" class="col-md-12 align-self-center" id="course_list">';
+                        $result .= '<a href="'.action('F_PortFolioController@downloadFP',$row->fp_id).'" class="col-md-12 align-self-center" id="course_list">';
                         $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                         $result .= '<div class="col-1" style="padding-top: 3px;">';
                         if($ext[1]=="pdf"){
@@ -150,7 +153,7 @@ class F_PortFolioController extends Controller
                             $ext = explode(".", $row->portfolio_file);
                         }
 
-                        $result .= '<a download="'.$row->portfolio_name.$ext[1].'" href="'.asset('f_Portfolio/'.$row->faculty_id.'/'.$row->portfolio_file).'" class="col-md-12 align-self-center" id="course_list">';
+                        $result .= '<a href="'.action('F_PortFolioController@downloadFP',$row->fp_id).'" class="col-md-12 align-self-center" id="course_list">';
                         $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                         $result .= '<div class="col-1" style="padding-top: 3px;">';
 
@@ -217,6 +220,53 @@ class F_PortFolioController extends Controller
         return view('dean.Syllabus', compact('subjects','faculty'));
     }
 
+    public function downloadCV($id)
+    {
+        $staff = Staff::where('staff_id', '=', $id)->firstOrFail();
+        $staffFaculty = $staff->faculty_id;
+
+        $user_id    = auth()->user()->user_id;
+        $checkFaculty = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_faculty = $checkFaculty->faculty_id;
+
+        if($staffFaculty == $user_faculty){
+            $CV = $staff->lecturer_CV;
+            $ext = "";
+            if($staff->lecturer_CV!=""){
+                $ext = explode(".", $staff->lecturer_CV);
+            }
+            return Storage::disk('private')->download('/staffCV/'.$CV,$id.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
+    public function downloadSyllabus($id)
+    {
+        $user_id    = auth()->user()->user_id;
+        $checkFaculty = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_faculty = $checkFaculty->faculty_id;
+
+        $subject = Subject::where('subject_id', '=', $id)->firstOrFail();
+        $programme_id = $subject->programme_id;
+        $programmes = Programme::where('programme_id', '=', $programme_id)->firstOrFail();
+        $department_id = $programmes->department_id;
+        $departments = Department::where('department_id', '=', $department_id)->firstOrFail();
+        $faculty_id = $departments->faculty_id;
+
+        if($user_faculty==$faculty_id){
+            $syllabus = $subject->syllabus;
+            $name = $subject->syllabus_name;
+            $ext = "";
+            if($subject->syllabus!=""){
+                $ext = explode(".", $subject->syllabus);
+            }
+            return Storage::disk('private')->download('/syllabus/'.$syllabus,$name.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
     public function searchLecturerCV(Request $request){
         $user_id    = auth()->user()->user_id;
         $staff_dean = Staff::where('user_id', '=', $user_id)->firstOrFail();
@@ -230,7 +280,8 @@ class F_PortFolioController extends Controller
                     ->select('staffs.*','users.*','departments.*')
                     ->where('staffs.faculty_id', '=', $faculty_id)
                     ->Where(function($query) use ($value) {
-                          $query->orWhere('staffs.lecturer_CV','LIKE','%'.$value.'%')
+                          $query->orWhere('staffs.staff_id','LIKE','%'.$value.'%')
+                            ->orWhere('users.name','LIKE','%'.$value.'%')
                             ->orWhere('departments.department_name','LIKE','%'.$value.'%');
                     })
                     ->where('staffs.lecturer_CV', '!=', null)
@@ -242,7 +293,7 @@ class F_PortFolioController extends Controller
             if ($faculty_staff->count()) {
                 foreach($faculty_staff as $row){
                     $ext = explode(".", $row->lecturer_CV);
-                    $result .= '<a href="'.asset("staffCV/".$row->lecturer_CV).'" class="col-md-12 align-self-center" id="course_list" download>';
+                    $result .= '<a href="'.action('F_PortFolioController@downloadCV',$row->staff_id).'" class="col-md-12 align-self-center" id="course_list" download>';
                     $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="padding-top: 3px;">';
                         if($ext[1]=="pdf"){
@@ -254,7 +305,7 @@ class F_PortFolioController extends Controller
                         }
                     $result .= '</div>';
                     $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->lecturer_CV.'</b></p>';
+                    $result .= '<p style="margin: 0px;"><b>'.$row->staff_id."_".$row->name.'</b></p>';
                     $result .= '</div></div></a>';
                 }
             }else{
@@ -275,7 +326,7 @@ class F_PortFolioController extends Controller
             $result .= '</div>';
             foreach($faculty_staff as $row){
                     $ext = explode(".", $row->lecturer_CV);
-                    $result .= '<a href="'.asset("staffCV/".$row->lecturer_CV).'" class="col-md-12 align-self-center" id="course_list" download>';
+                    $result .= '<a href="'.action('F_PortFolioController@downloadCV',$row->staff_id).'" class="col-md-12 align-self-center" id="course_list" download>';
                     $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="padding-top: 3px;">';
                         if($ext[1]=="pdf"){
@@ -287,7 +338,7 @@ class F_PortFolioController extends Controller
                         }
                     $result .= '</div>';
                     $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->lecturer_CV.'</b></p>';
+                    $result .= '<p style="margin: 0px;"><b>'.$row->staff_id."_".$row->name.'</b></p>';
                     $result .= '</div></div></a>';
             }
         }
@@ -318,7 +369,7 @@ class F_PortFolioController extends Controller
             $result .= '</div>';
             if ($subjects->count()) {
                 foreach($subjects as $row){
-                    $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" class="col-md-12 align-self-center" id="course_list" download="'.$row->syllabus_name.'".xlsx">';
+                    $result .= '<a href="'.action('F_PortFolioController@downloadSyllabus',$row->subject_id).'" class="col-md-12 align-self-center" id="course_list">';
                     $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="padding-top: 3px;">';
                     $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
@@ -344,7 +395,7 @@ class F_PortFolioController extends Controller
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Syllabus In Faculty</p>';
             $result .= '</div>';
             foreach($subjects as $row){
-                $result .= '<a href="'.asset("syllabus/".$row->syllabus).'" class="col-md-12 align-self-center" id="course_list" download="'.$row->syllabus_name.'".xlsx">';
+                $result .= '<a href="'.action('F_PortFolioController@downloadSyllabus',$row->subject_id).'" class="col-md-12 align-self-center" id="course_list">';
                 $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                 $result .= '<div class="col-1" style="padding-top: 3px;">';
                 $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
@@ -424,16 +475,13 @@ class F_PortFolioController extends Controller
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/faculty_portfolio/'),$imageName);
+        $image->storeAs('fake','/faculty_portfolio/'.$imageName, 'private');
         return response()->json(['success'=>$imageName]);  
     }
     public function destroyFiles(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/faculty_portfolio/'.$filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('fake/faculty_portfolio/'.$filename);
         return $filename;  
     }
 
@@ -445,22 +493,23 @@ class F_PortFolioController extends Controller
         $count = $request->get('count');
         $place = $request->get('file_place');
         for($i=1;$i<=$count;$i++){
-
             $name = $request->get('form'.$i);
             $ext = $request->get('ext'.$i);
             $fake = $request->get('fake'.$i);
-
-            $faculty_portfolio = new Faculty_Portfolio([
-                'faculty_id'             =>  $faculty_id,
-                'portfolio_name'         =>  $name,
-                'portfolio_type'         =>  'document',
-                'portfolio_place'        =>  $place,
-                'portfolio_file'         =>  $fake,
-                'status'                 =>  'Active',
-            ]);
-            $faculty_portfolio->save();
-            $fake_place = "fake/faculty_portfolio/".$fake;
-            rename($fake_place, 'f_Portfolio/'.$faculty_id.'/'.$fake);
+            if($name!=""){
+                $faculty_portfolio = new Faculty_Portfolio([
+                    'faculty_id'             =>  $faculty_id,
+                    'portfolio_name'         =>  $name,
+                    'portfolio_type'         =>  'document',
+                    'portfolio_place'        =>  $place,
+                    'portfolio_file'         =>  $fake,
+                    'status'                 =>  'Active',
+                ]);
+                $faculty_portfolio->save();
+                $fake_place = Storage::disk('private')->get("fake/faculty_portfolio/".$fake);
+                Storage::disk('private')->put('f_Portfolio/'.$faculty_id.'/'.$fake, $fake_place); 
+                Storage::disk('private')->delete("fake/faculty_portfolio/".$fake);
+            }
         }
         return redirect()->back()->with('success','New Document Added Successfully');
     }
@@ -470,5 +519,25 @@ class F_PortFolioController extends Controller
         $faculty_portfolio->status  = "Remove";
         $faculty_portfolio->save();
         return redirect()->back()->with('success','Remove Successfully');
+    }
+
+    public function downloadFP($id)
+    {
+        $faculty_portfolio = Faculty_Portfolio::where('fp_id', '=', $id)->firstOrFail();
+        $faculty_id = $faculty_portfolio->faculty_id;
+
+        $user_id    = auth()->user()->user_id;
+        $checkFaculty = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_faculty = $checkFaculty->faculty_id;
+
+        if($faculty_id == $user_faculty){
+            $ext = "";
+            if($faculty_portfolio->portfolio_file!=""){
+                $ext = explode(".", $faculty_portfolio->portfolio_file);
+            }
+            return Storage::disk('private')->download('f_Portfolio/'.$faculty_id.'/'.$faculty_portfolio->portfolio_file, $faculty_portfolio->portfolio_name.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
+        }
     }
 }

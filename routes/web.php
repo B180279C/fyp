@@ -137,6 +137,8 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/FacultyPortFolio/Syllabus/', 'F_PortFolioController@Syllabus')->name('dean.F_potrfolio.syllabus');
 	Route::post('/searchLecturerCV', 'F_PortFolioController@searchLecturerCV');
 	Route::post('/searchSyllabus', 'F_PortFolioController@searchSyllabus');
+	Route::get('/dean/staff/CV/{id}','F_PortFolioController@downloadCV')->name('dean.downloadCV');
+	Route::get('/dean/syllabusDownload/{id}','F_PortFolioController@downloadSyllabus')->name('dean.downloadSyllabus');
 
 	Route::post('/openNewFolder', 'F_PortFolioController@openNewFolder');
 	Route::post('/folderNameEdit', 'F_PortFolioController@folderNameEdit');
@@ -146,6 +148,7 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/portfolio_uploadFile', 'F_PortFolioController@uploadFiles')->name('dropzone.uploadFiles');
 	Route::post('/destoryFiles', 'F_PortFolioController@destroyFiles')->name('dropzone.destoryFiles');
 	Route::post('/storeFiles', 'F_PortFolioController@storeFiles');
+	Route::get('/faculty/portfolio/{id}','F_PortFolioController@downloadFP')->name('dean.downloadFP');
 
 	Route::get('/CoursePortFolio', 'C_PortFolioController@index')->name('dean.C_potrfolio.index');
 	Route::post('/searchCourse', 'C_PortFolioController@searchCourse');
@@ -182,6 +185,7 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/note_destoryFiles', 'LectureNoteController@destroyFiles')->name('note.dropzone.destoryFiles');
 	Route::post('/note_storeFiles', 'LectureNoteController@storeFiles');
 	Route::get('/lectureNote/download/zipFiles/{id}','LectureNoteController@zipFileDownload');
+	Route::get('/lectureNote/download/{id}','LectureNoteController@downloadLN')->name('dean.downloadLN');
 
 	Route::get('/teachingPlan/{id}','TeachingPlanController@viewTeachingPlan')->name('tp.view');
 	Route::get('/teachingPlan/create/weekly/{id}','TeachingPlanController@createTeachingPlan')->name('tp.create');

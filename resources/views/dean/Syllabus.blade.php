@@ -65,7 +65,7 @@ $option2 = "id='selected-sidebar'";
                         <p style="font-size: 18px;margin:0px 0px 0px 10px;">Syllabus In Faculty</p>
                     </div>
                     @foreach($subjects as $row)
-                            <a href="{{ asset('syllabus/'.$row->syllabus) }}" class="col-md-12 align-self-center" id="course_list" download="{{$row->syllabus_name}}.xlsx">
+                            <a href="{{ action('F_PortFolioController@downloadSyllabus',$row->subject_id) }}" class="col-md-12 align-self-center" id="course_list" download="{{$row->syllabus_name}}.xlsx">
                                 <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                                     <div class="col-1" style="padding-top: 3px;">
                                         <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>

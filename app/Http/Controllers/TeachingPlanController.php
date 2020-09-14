@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Staff;
 use App\Teaching_Plan;
 use App\Plan_Topic;
@@ -326,7 +327,8 @@ class TeachingPlanController extends Controller
                  ->get();
 
         if(count($course)>0){
-            $array = (new syllabusRead)->toArray('syllabus/'.$course[0]->syllabus);
+            $path = storage_path('private/syllabus/'.$course[0]->syllabus);
+            $array = (new syllabusRead)->toArray($path);
             return response()->json($array[0]);
         }else{
             return redirect()->back();

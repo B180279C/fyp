@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Image;
 use App\Staff;
-use App\lecture_Note;
+use App\Lecture_Note;
+use App\Course;
 use ZipArchive;
 use File;
 
@@ -78,17 +81,14 @@ class LectureNoteController extends Controller
     {
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
-        $image->move(public_path('/fake/lecture_note/'),$imageName);
+        $image->storeAs('fake','/lecture_note/'.$imageName, 'private');
         return response()->json(['success'=>$imageName]);  
     }
 
     public function destroyFiles(Request $request)
     {
         $filename =  $request->get('filename');
-        $path = public_path().'/fake/lecture_note/'.$filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        Storage::disk('private')->delete('fake/lecture_note/'.$filename);
         return $filename;  
     }
 
@@ -102,7 +102,7 @@ class LectureNoteController extends Controller
             $ext = $request->get('ext'.$i);
             $fake = $request->get('fake'.$i);
 
-            $lecture_note = new lecture_Note([
+            $lecture_note = new Lecture_Note([
                 'course_id'              =>  $request->get('course_id'),
                 'note_name'              =>  $name,
                 'note_type'              =>  'document',
@@ -111,8 +111,9 @@ class LectureNoteController extends Controller
                 'status'                 =>  'Active',
             ]);
             $lecture_note->save();
-            $fake_place = "fake/lecture_note/".$fake;
-            rename($fake_place, 'Lecture_Note/'.$fake);
+            $fake_place = Storage::disk('private')->get("fake/lecture_note/".$fake);
+            Storage::disk('private')->put('Lecture_Note/'.$fake, $fake_place); 
+            Storage::disk('private')->delete("fake/lecture_note/".$fake);
         }
         return redirect()->back()->with('success','New Document Added Successfully');
     }
@@ -195,7 +196,7 @@ class LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-	            		$result .= '<a download="'.$row->note_name.$ext[1].'" href="'.asset('Lecture_Note/'.$row->note).'" class="col-md-12 align-self-center" id="course_list">';
+	            		$result .= '<a href="'.action('LectureNoteController@downloadLN',$row->ln_id).'" class="col-md-12 align-self-center" id="course_list">';
                         $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                         $result .= '<div class="col-1" style="padding-top: 3px;">';
                         if($ext[1]=="pdf"){
@@ -251,7 +252,7 @@ class LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-	            		$result .= '<a download="'.$row->note_name.$ext[1].'" href="'.asset('Lecture_Note/'.$row->note).'" class="col-md-12 align-self-center" id="course_list">';
+	            		$result .= '<a href="'.action('LectureNoteController@downloadLN',$row->ln_id).'" class="col-md-12 align-self-center" id="course_list">';
                         $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                         $result .= '<div class="col-1" style="padding-top: 3px;">';
                         if($ext[1]=="pdf"){
@@ -285,7 +286,7 @@ class LectureNoteController extends Controller
      public function zipFileDownload($id){
 
         $lecture_note = DB::table('lecture_notes')
-                    ->join('courses','courses.course_id','=','Lecture_notes.course_id')
+                    ->join('courses','courses.course_id','=','lecture_notes.course_id')
                     ->join('subjects','subjects.subject_id','=','courses.subject_id')
                     ->select('lecture_notes.*','courses.*','subjects.*')
                     ->where('lecture_notes.course_id', '=', $id)
@@ -301,9 +302,9 @@ class LectureNoteController extends Controller
 
         $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
         $zip = new ZipArchive;
-        $fileName = 'Lecture_Note/Zip_Files/'.$name.'.zip';
+        $fileName = 'private/Lecture_Note/Zip_Files/'.$name.'.zip';
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-        $files = File::files(public_path('/Lecture_Note/'));
+        $files = File::files(storage_path('/private/Lecture_Note/'));
         foreach($lecture_note as $row){
             if($row->note_type == "document"){
                 foreach ($files as $key => $value) {
@@ -350,6 +351,30 @@ class LectureNoteController extends Controller
             }
         }
         $zip->close();
-        return response()->download(public_path($fileName));
+        return response()->download(storage_path($fileName));
+    }
+
+
+    public function downloadLN($id)
+    {
+        $lecture_note = Lecture_Note::where('ln_id', '=', $id)->firstOrFail();
+        $course_id = $lecture_note->course_id;
+
+        $course = Course::where('course_id', '=', $course_id)->firstOrFail();
+        $lecturer = $course->lecturer;
+
+        $user_id    = auth()->user()->user_id;
+        $checkid    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $staff_id   = $checkid->id;
+
+        if($lecturer == $staff_id){
+            $ext = "";
+            if($lecture_note->note!=""){
+                $ext = explode(".", $lecture_note->note);
+            }
+            return Storage::disk('private')->download('Lecture_Note/'.$lecture_note->note, $lecture_note->note_name.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
+        }
     }
 }

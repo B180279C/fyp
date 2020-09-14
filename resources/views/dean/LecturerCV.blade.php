@@ -71,7 +71,7 @@ $option2 = "id='selected-sidebar'";
                                     $ext = explode(".", $row->lecturer_CV);
                                 }
                             ?>
-                            <a href="{{ asset('staffCV/'.$row->lecturer_CV) }}" class="col-md-12 align-self-center" id="course_list" download>
+                            <a href="{{ action('F_PortFolioController@downloadCV',$row->staff_id) }}" class="col-md-12 align-self-center" id="course_list">
                               <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                                 <div class="col-1" style="padding-top: 3px;">
                                     @if($ext[1]=="pdf")
@@ -83,7 +83,7 @@ $option2 = "id='selected-sidebar'";
                                     @endif
                                 </div>
                                 <div class="col" id="course_name">
-                                  <p style="margin: 0px;"><b>{{$row->lecturer_CV}}</b></p>
+                                  <p style="margin: 0px;"><b>{{$row->staff_id}}_{{$row->name}}</b></p>
                                 </div>
                               </div>
                             </a>

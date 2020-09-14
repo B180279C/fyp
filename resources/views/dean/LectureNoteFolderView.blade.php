@@ -338,7 +338,7 @@ $option1 = "id='selected-sidebar'";
                               $ext = explode(".", $row->note);
                             }
                           ?>
-                        <a download="{{$row->note_name}}.{{$ext[1]}}" href="{{ asset('Lecture_Note/'.$row->note) }}" class="col-md-12 align-self-center" id="course_list">
+                        <a href="{{ action('LectureNoteController@downloadLN',$row->ln_id) }}" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 3px;">
                               @if($ext[1]=="pdf")

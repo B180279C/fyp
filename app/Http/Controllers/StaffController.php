@@ -28,7 +28,7 @@ class StaffController extends Controller
                     ->orderBy('staffs.id')
                     ->get();
 
-        return view('admin.staffIndex', ['staffs' => $staffs]);
+        return view('admin.StaffIndex', ['staffs' => $staffs]);
     }
 
     /**
