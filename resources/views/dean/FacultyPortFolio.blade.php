@@ -194,7 +194,7 @@ $option2 = "id='selected-sidebar'";
 }
 #course_list:hover{
     text-decoration: none;
-    background-color: #e6e6e6;
+    background-color: #d9d9d9;
 }
 @media only screen and (max-width: 600px) {
   #course_name{

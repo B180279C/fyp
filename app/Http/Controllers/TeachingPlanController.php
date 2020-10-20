@@ -22,7 +22,8 @@ class TeachingPlanController extends Controller
         $faculty_id    = $staff_dean->faculty_id;
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
@@ -381,7 +382,8 @@ class TeachingPlanController extends Controller
       $faculty_id    = $staff_dean->faculty_id;
       $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();

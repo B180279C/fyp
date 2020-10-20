@@ -197,11 +197,11 @@ $option1 = "id='selected-sidebar'";
 </style>
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Student List</span>/
         </p>
         <hr style="margin: -10px 10px;">

@@ -37,18 +37,18 @@ $option1 = "id='selected-sidebar'";
     });
 </script>
 <style type="text/css">
-#course_list:hover{
+#download_link:hover{
     text-decoration: none;
-    background-color: #e6e6e6;
+    background-color: #d9d9d9;
 }
 </style>
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/course_list">Courses </a>/
-            <span class="now_page">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</span>/
+            <span class="now_page">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</span>/
         </p>
         <hr style="margin: -10px 10px;">
     </div>
@@ -101,6 +101,15 @@ $option1 = "id='selected-sidebar'";
                             <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
                             <br>
                             <p style="color: #0d2f81;">Teaching Plan</p>
+                            </center>
+                        </a>
+                    </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/exam.png')}}" width="85px" height="80px" style="margin-top: 60px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Assessment</p>
                             </center>
                         </a>
                     </div>

@@ -58,6 +58,80 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
+    <!-- lightbox Image -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('ekko-lightbox.css')}}">
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $().ready(function() {
+           $('[data-toggle="lightbox"]').click(function(event) {
+             event.preventDefault();
+                 $(this).ekkoLightbox({
+                   type: 'image',
+                   onContentLoaded: function() {
+                     var container = $('.ekko-lightbox-container');
+                     var content = $('.modal-content');
+                     var backdrop = $('.modal-backdrop');
+                     var overlay = $('.ekko-lightbox-nav-overlay');
+                     var modal = $('.modal');
+                     var image = container.find('img');
+                     var windowHeight = $(window).height();
+                     var dialog = container.parents('.modal-dialog');
+                     var data_header = $('.modal-header');
+                     var data_title = $('.modal-title');
+                     var body = $('.modal-body');
+                     // console.log(image.width());
+
+                     if((image.width() > 380) && (image.width() < 430)){
+                        dialog.css('max-width','700px');
+                        image.css('height','900px');
+                        image.css('width','700px');
+                        overlay.css('height','900px');
+                     }else{
+                        overlay.css('height','100%');
+                     }
+                     // backdrop.css('opacity','1');
+                     data_header.css('background-color','white');
+                     data_header.css('padding','10px');
+                     data_header.css('margin','0px 24px');
+                     data_header.css('border-bottom','1px solid black');
+                     data_title.css('font-size','18px');
+
+                     body.css('padding-top','0px');
+                     content.css('background', "none");
+                     content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                   }
+                 });
+           });
+         });
+    </script>
+
+    <!-- OCR function -->
+    <script src='https://unpkg.com/tesseract.js@2.1.3/dist/tesseract.min.js'></script>
+    <!-- // const exampleImage = 'https://tesseract.projectnaptha.com/img/eng_bw.png';
+    // const worker = Tesseract.createWorker({
+    //   logger: m => console.log(m)
+    // });
+    // Tesseract.setLogging(true);
+    // work();
+
+    // async function work() {
+    //   await worker.load();
+    //   await worker.loadLanguage('eng');
+    //   await worker.initialize('eng');
+
+    //   let result = await worker.detect(exampleImage);
+    //   console.log(result.data);
+
+    //   result = await worker.recognize(exampleImage);
+    //   console.log(result.data);
+
+    //   await worker.terminate();
+    // } -->
+
 
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
@@ -119,24 +193,24 @@
             }
         });
 
-        $.ajaxSetup({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-        });
-        var value = $('#user_id').val();
-        $.ajax({
-            type:'POST',
-            url:'/deanDetails',
-            data:{value:value},
-            success:function(data){
-                if(data!="null"){
-                    document.getElementById("myImage").src = "{{URL::asset('/staffImage/')}}"+"/"+data;
-                }else{
-                    document.getElementById("myImage").src = "{{URL::asset('/image/user.png')}}";
-                }
-            }
-        });
+        // $.ajaxSetup({
+        //   headers: {
+        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //   }
+        // });
+        // var value = $('#user_id').val();
+        // $.ajax({
+        //     type:'POST',
+        //     url:'/deanDetails',
+        //     data:{value:value},
+        //     success:function(data){
+        //         if(data!="null"){
+        //             document.getElementById("myImage").src = "{{URL::asset('/staffImage/')}}"+"/"+data;
+        //         }else{
+        //             document.getElementById("myImage").src = "{{URL::asset('/image/user.png')}}";
+        //         }
+        //     }
+        // });
     });
     </script>
 </head>
@@ -243,7 +317,7 @@
                                 <center>
                                     <!-- <i class="fa fa-user" aria-hidden="true" style="font-size: 55px;"></i> -->
                                     <!-- <img src="{{ url('/image/weijun.jpg') }}" width=60% height="50px;" style="border-radius: 50%; border:2px solid white;">       -->  
-                                    <img src="" height="50px;" style="border-radius: 50%; border:2px solid white;margin-left: auto;margin-right: auto;width: 60%;" id="myImage">        
+                                    <img src="{{ action('HomeController@deanDetails', Auth::user()->user_id ) }}" height="50px;" style="border-radius: 50%; border:2px solid white;margin-left: auto;margin-right: auto;width: 60%;" id="myImage">        
                                 </center>
                             </td>
                             <?php

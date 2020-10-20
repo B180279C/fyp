@@ -360,14 +360,14 @@ ul.sidebar-action-ul a:hover{
     border:0px solid black;
     margin-left: 20%;
     position: relative;
-    top: -105px;
+    top: -125px;
     margin-bottom: -10px;
 }
 .changeName{
     border:0px solid black;
     margin-left: 20%;
     position: relative;
-    top: -105px;
+    top: -125px;
     margin-bottom: -50px;
 }
 @media only screen and (max-width: 600px) {
@@ -444,4 +444,37 @@ ul.sidebar-action-ul a:hover{
   text-decoration: none;
 }
 
+.full_question{
+  font-size: 15px;
+  font-style: italic;
+}
 
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  border-bottom: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  margin: 5px 0px 0px 0px!important;
+  padding: 0px!important;
+  display: inline-block;
+}
+.loading_word{
+  font-size : 13px;
+  position: relative;
+  top: -10px;
+  border:0px solid black;
+  margin: 0px;
+  color: black;
+}
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -20,7 +20,8 @@ class LectureNoteController extends Controller
         $faculty_id    = $staff_dean->faculty_id;
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
@@ -128,7 +129,8 @@ class LectureNoteController extends Controller
 
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $lecture_note->course_id)
                  ->get();
@@ -168,8 +170,7 @@ class LectureNoteController extends Controller
 	       	$lecture_note = DB::table('lecture_notes')
 	                    ->select('lecture_notes.*')
                         ->Where(function($query) use ($value) {
-                          $query->orWhere('note_name','LIKE','%'.$value.'%')
-                            ->orWhere('note','LIKE','%'.$value.'%');
+                          $query->orWhere('note_name','LIKE','%'.$value.'%');
                         })
 	                    ->where('course_id', '=', $course_id)
 	                    ->where('status', '=', 'Active')
@@ -302,7 +303,7 @@ class LectureNoteController extends Controller
 
         $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
         $zip = new ZipArchive;
-        $fileName = 'private/Lecture_Note/Zip_Files/'.$name.'.zip';
+        $fileName = storage_path('private/Lecture_Note/Zip_Files/'.$name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Lecture_Note/'));
         foreach($lecture_note as $row){
@@ -351,7 +352,7 @@ class LectureNoteController extends Controller
             }
         }
         $zip->close();
-        return response()->download(storage_path($fileName));
+        return response()->download($fileName);
     }
 
 

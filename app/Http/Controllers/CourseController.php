@@ -408,7 +408,7 @@ class CourseController extends Controller
                         </p>';
             if ($course->count()) {
                 foreach($course as $row){
-                    $result .= '<a href="" class="col-md-12 align-self-center" id="course_list">';
+                    $result .= '<a href="course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                     $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                     $result .= '<div class="col-1">';
                     $result .= '<img src="'.url("image/subject.png").'" width="25px" height="25px"/>';
@@ -449,7 +449,7 @@ class CourseController extends Controller
                         </p>';
             $result .= '</div>';
             foreach($course as $row){
-                $result .= '<a href="" class="col-md-12 align-self-center" id="course_list">';
+                $result .= '<a href="course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                 $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                 $result .= '<div class="col-1">';
                 $result .= '<img src="'.url("image/subject.png").'" width="25px" height="25px"/>';
@@ -474,7 +474,8 @@ class CourseController extends Controller
         $faculty_id    = $staff_dean->faculty_id;
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();

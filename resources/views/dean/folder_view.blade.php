@@ -119,7 +119,7 @@ $option2 = "id='selected-sidebar'";
                 $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
                  break;
               case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pptx.png')}}");
                  break;
             }
             done();
@@ -164,7 +164,7 @@ $option2 = "id='selected-sidebar'";
     };  
     function writeInput(num,name,ext,fake){
         $(document).ready(function(){  
-            $("#writeInput").append("<input type='text' id='form"+num+"' name='form"+num+"' value='"+name+"'><input type='text' id='ext"+num+"' name='ext"+num+"' value='"+ext+"'><input type='text' id='fake"+num+"' name='fake"+num+"' value='"+fake+"'>");
+            $("#writeInput").append("<input type='hidden' id='form"+num+"' name='form"+num+"' value='"+name+"'><input type='hidden' id='ext"+num+"' name='ext"+num+"' value='"+ext+"'><input type='hidden' id='fake"+num+"' name='fake"+num+"' value='"+fake+"'>");
         });
     }
     $(function () {
@@ -220,7 +220,7 @@ $option2 = "id='selected-sidebar'";
 }
 #course_list:hover{
     text-decoration: none;
-    background-color: #e6e6e6;
+    background-color: #d9d9d9;
 }
 @media only screen and (max-width: 600px) {
   #course_name{

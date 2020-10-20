@@ -84,23 +84,23 @@ $option1 = "id='selected-sidebar'";
     }
 }
 .week:hover{
-    background-color: #e6e6e6;
+    background-color: #d9d9d9;
 }
 </style>
 <div style="background-color: #f2f2f2">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Teaching Plan</span>/
         </p>
         <hr style="margin: -10px 10px;">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <p style="display: inline;font-size: 25px;position: relative;top: 5px;color: #0d2f81;">Teaching Planning</p>
+            <p style="display: inline;font-size: 25px;position: relative;top: 5px;left:8px;color: #0d2f81;">Teaching Planning</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -181,14 +181,15 @@ $option1 = "id='selected-sidebar'";
                     @endforeach
                 </table>
             </div>
-            
+            <hr style="margin: 5px 5px;background-color:#d9d9d9;">
             @else
             <h5 style="position: relative;top: 10px;left: 10px;">Methods of Assessment</h5>
             <br>
             <div style="display: block;border:1px solid black;padding: 50px;margin: 0px 10px;">
                 <center>Empty</center>
             </div>
-            <hr style="margin: 10px 0px;">
+            <br>
+            <hr style="margin: 5px 5px;background-color:#d9d9d9;">
             @endif
             <h5 style="position: relative;top:10px;left: 10px;">Weekly Plan</h5>
             <br>

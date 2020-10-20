@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Staff;
+use Illuminate\Support\Facades\Storage;
+use Image;
 
 class HomeController extends Controller
 {
@@ -51,15 +53,17 @@ class HomeController extends Controller
         return view('deanHome');
     }
 
-    public function deanDetails(Request $request){
-        $value = $request->get('value');
-        $staff = Staff::where('user_id', '=', $value)->firstOrFail();
+    public function deanDetails($user_id){
+
+        $staff = Staff::where('user_id', '=', $user_id)->firstOrFail();
 
         $image = $staff->staff_image;
+
         if($image == ""){
-            return "null";
+            return Image::make('/image/user.png')->response();
         }else{
-            return $image;
+            $storagePath = storage_path('/private/staffImage/' . $image);
+            return Image::make($storagePath)->response();
         }
     }
 }

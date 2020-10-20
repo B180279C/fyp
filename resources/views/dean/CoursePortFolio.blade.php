@@ -153,7 +153,7 @@ $option4 = "id='selected-sidebar'";
 <style type="text/css">
 #course_list:hover{
     text-decoration: none;
-    background-color: #e6e6e6;
+    background-color: #d9d9d9;
 }
 .dropzoneModel{
   border-bottom: 1px solid black;

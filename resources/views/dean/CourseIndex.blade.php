@@ -39,7 +39,7 @@ $option1 = "id='selected-sidebar'";
 <style type="text/css">
 #course_list:hover{
     text-decoration: none;
-    background-color: #e6e6e6;
+    background-color: #d9d9d9;
 }
 </style>
 <div style="background-color: #f2f2f2">

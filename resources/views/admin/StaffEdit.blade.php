@@ -125,10 +125,10 @@ $option1 = "id='selected-sidebar'";
             addRemoveLinks: true,
             timeout: 50000,
             init: function() {
-                  this.on("maxfilesexceeded", function(file) {
+                this.on("maxfilesexceeded", function(file) {
                         this.removeAllFiles();
                         this.addFile(file);
-                  });
+                });
             },
             renameFile: function(file) {
                 var re = /(?:\.([^.]+))?$/;
@@ -173,7 +173,15 @@ $option1 = "id='selected-sidebar'";
                 return (fileRef = file.previewElement) != null ? 
                 fileRef.parentNode.removeChild(file.previewElement) : void 0;
             },
+            // success: function(file, response){
+            //     //loading function
+            //     //run OCR function
+            //     runfunction();
+            // }
     };
+    // function runfunction(){
+    //     setTimeout(function(){ console.log("aaa"); }, 3000);
+    // }
 </script>
 <div style="background-color: #f2f2f2">
     <div>
