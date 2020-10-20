@@ -151,7 +151,7 @@ $option1 = "id='selected-sidebar'";
     };
 </script>
 
-<div style="background-color: #f2f2f2">
+<div style="background-color:white;">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Staff</p>
         <p class="pass_page">

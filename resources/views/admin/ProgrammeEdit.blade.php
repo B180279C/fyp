@@ -36,7 +36,7 @@ foreach($department as $row){
     }
 }
 ?>
-<div style="background-color: #f2f2f2">
+<div style="background-color:white;">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Edti Programme</p>
         <p class="pass_page">

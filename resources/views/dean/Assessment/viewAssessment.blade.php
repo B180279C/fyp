@@ -11,13 +11,13 @@ $option1 = "id='selected-sidebar'";
 }
 #course_list:hover{
     text-decoration: none;
-    background-color: #d9d9d9;
+    background-color: #f2f2f2;
 }
 #show_image_link:hover{
     text-decoration: none;
 }
 .plus:hover{
-    background-color: #d9d9d9;
+    background-color: #f2f2f2;
 }
 @media only screen and (max-width: 600px) {
   #course_name{
@@ -113,44 +113,29 @@ $option1 = "id='selected-sidebar'";
                   if((response[i][1]==null)&&(response[i][2]!=null)&&(response[i][3]!=null)&&(response[i][9]!=null)){
                     if(count == 0){
                       count = response[i][2];
-                      // console.log(response[i]);
-                      var row = table.insertRow(count);
-                      var cell = row.insertCell(0);
-                      var cell1 = row.insertCell(1);
-                      var cell2 = row.insertCell(2);
-                      var cell3 = row.insertCell(3);
-                      var cell4 = row.insertCell(4);
-                      cell1.style.textAlign  = "center";
-                      cell2.style.textAlign  = "center";
-                      cell3.style.textAlign  = "center";
-                      cell4.style.textAlign  = "center";
-                      cell.innerHTML  = response[i][3]+" ( "+response[i][9]+ "% )";
-                      cell1.innerHTML = '<a href="/assessment/create/'+course_id+'/question/'+response[i][3]+'" style="font-size:20px;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i> Add</a>';
-                      cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
-                      cell3.innerHTML = "<a href='' style='font-size:20px;' class='question_link'><i class='fa fa-plus' aria-hidden='true' ></i> Add</a>";
-                      cell4.innerHTML = "12";
                     }else{
                       new_count = response[i][2];
                       if(new_count>count){
                         count = new_count;
-                        var row = table.insertRow(count);
-                        var cell = row.insertCell(0);
-                        var cell1 = row.insertCell(1);
-                        var cell2 = row.insertCell(2);
-                        var cell3 = row.insertCell(3);
-                        var cell4 = row.insertCell(4);
-                        cell1.style.textAlign  = "center";
-                        cell2.style.textAlign  = "center";
-                        cell3.style.textAlign  = "center";
-                        cell4.style.textAlign  = "center";
-                        cell.innerHTML  = response[i][3]+" ( "+response[i][9]+ "% )";
-                        cell1.innerHTML = '<a href="/assessment/create/'+course_id+'/question/'+response[i][3]+'" style="font-size:20px;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i> Add</a>';
-                        cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
-                        cell3.innerHTML = "<a href='' style='font-size:20px;' class='question_link'><i class='fa fa-plus' aria-hidden='true' ></i> Add</a>";
-                        cell4.innerHTML = "12";
-                        // console.log(response[i]);
+                      }else{
+                        break;
                       }
                     }
+                    var row = table.insertRow(count);
+                    var cell = row.insertCell(0);
+                    var cell1 = row.insertCell(1);
+                    var cell2 = row.insertCell(2);
+                    // var cell3 = row.insertCell(3);
+                    // var cell4 = row.insertCell(4);
+                    cell1.style.textAlign  = "center";
+                    cell2.style.textAlign  = "center";
+                    // cell3.style.textAlign  = "center";
+                    // cell4.style.textAlign  = "center";
+                    cell.innerHTML  = response[i][3]+" ( "+response[i][9]+ "% )";
+                    cell1.innerHTML = '<a href="/assessment/create/'+course_id+'/question/'+response[i][3]+'" style="font-size:18px;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+                    cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
+                    // cell3.innerHTML = '<a href="/assessment/studentResult/'+course_id+'/'+response[i][3]+'" style="font-size:20px;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i> Add</a>';
+                    // cell4.innerHTML = "10";
                   }
               }
             }
@@ -266,7 +251,7 @@ $option1 = "id='selected-sidebar'";
         });
     });
 </script>
-<div style="background-color: #f2f2f2">
+<div style="background-color:white;">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
@@ -287,11 +272,11 @@ $option1 = "id='selected-sidebar'";
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
                   <thead class="thead-light">
                       <tr>
-                        <th style="background-color: #d9d9d9;"><b>Continuous Assessment</b></th>
-                        <th style="text-align: center;background-color: #cccccc;" width="15%"><b>Question</b></th>
-                        <th style="text-align: center;background-color: #cccccc;" width="15%"><b>Status</b></th>
-                        <th style="text-align: center;background-color: #bfbfbf;" width="15%"><b>Student Result</b></th>
-                        <th style="text-align: center;background-color: #bfbfbf;" width="15%"><b>Count</b></th>
+                        <th scope="col"><b>Continuous Assessment</b></th>
+                        <th style="text-align: center;" width="15%" scope="col"><b>Question</b></th>
+                        <th style="text-align: center;" width="15%" scope="col"><b>Status</b></th>
+                        <!-- <th style="text-align: center;background-color: #bfbfbf;" width="15%"><b>Student Result</b></th>
+                        <th style="text-align: center;background-color: #bfbfbf;" width="15%"><b>Count</b></th> -->
                       </tr>
                   </thead>
                   <tbody>

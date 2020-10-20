@@ -148,6 +148,7 @@ fieldset[class*="col"] > label[class*="bmd-label"]
   border: none;
   border-radius: 50%;
   padding:5px 10px;
+  background-color: white;
 }
 #button_side:hover{
   background-color:#e5e7e8; 
@@ -251,10 +252,10 @@ i.sidebar-icon{
     color: gold!important;
 }
 #dtBasicExample tbody tr:nth-child(even) {
-  background-color: #e6e6e6;
+  background-color: #f2f2f2;
 }
 #dtBasicExample tbody tr:hover {
-  background-color:#d9d9d9;
+  background-color:#e6e6e6;
 }
 #action_sidebar{
     width:230px;

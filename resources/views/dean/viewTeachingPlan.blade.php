@@ -84,10 +84,10 @@ $option1 = "id='selected-sidebar'";
     }
 }
 .week:hover{
-    background-color: #d9d9d9;
+    background-color: #f2f2f2;
 }
 </style>
-<div style="background-color: #f2f2f2">
+<div style="background-color: white;">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
@@ -129,15 +129,15 @@ $option1 = "id='selected-sidebar'";
                     $assessment = explode(',',$all_assessment[0]);
                     $assessment_num = explode(',',$all_assessment[1]);
                 ?>
-                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover ">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
                     <thead class="thead-light">
                     <tr>
                         <th rowspan="3"><b>No</b></th>
-                        <th rowspan="3" width="20%" scope="col"><b>Course Outcomes (CO)</b></th>
-                        <th rowspan="3" width="10%" scope="col"><b>Programme Outcomes(PO)</b></th>
-                        <th rowspan="3" width="10%" scope="col"><b>Domain & Taxonomy Level (e.g A2/ C3)</b></th>
-                        <th rowspan="3" width="10%" scope="col"><b>Teaching Methods</b></th>
-                        <th width="40%"colspan="{{(count($assessment)-1)}}" scope="col" style="text-align: center;"><b>Assessemnt Methods & Mark Breakdown</b></th>
+                        <th rowspan="3" width="20%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Course Outcomes (CO)</b></th>
+                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Programme Outcomes(PO)</b></th>
+                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Domain & Taxonomy Level (e.g A2/ C3)</b></th>
+                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Teaching Methods</b></th>
+                        <th width="40%"colspan="{{(count($assessment)-1)}}" scope="col" style="text-align: center;border-left:1px solid #e6e6e6;"><b>Assessemnt Methods & Mark Breakdown</b></th>
                     </tr>
                     <?php
                         echo "<tr style='text-align: center;'>";
@@ -233,7 +233,7 @@ $option1 = "id='selected-sidebar'";
                                         <div class="col-11" style="padding-left: 20px;">
                                             <div class="form-group">
                                                 <label class="label">Lecture Topic</label>
-                                                <input type="text" class="form-control" placeholder="Topic" readonly value="{{$row_topic->lecture_topic}}">
+                                                <input type="text" class="form-control" placeholder="Topic" readonly value="{{$row_topic->lecture_topic}}" style="background-color: white;">
                                             </div>
                                         </div>
                                     </div>
@@ -248,7 +248,7 @@ $option1 = "id='selected-sidebar'";
                                         <div class="col-11" style="padding-left: 20px;">
                                             <div class="form-group">
                                                 <label class="label">Hour</label>
-                                                <input type="text" class="form-control" placeholder="Time" readonly value="{{$row_topic->lecture_hour}}">
+                                                <input type="text" class="form-control" placeholder="Time" readonly value="{{$row_topic->lecture_hour}}" style="background-color: white;">
                                             </div>
                                         </div>
                                     </div>

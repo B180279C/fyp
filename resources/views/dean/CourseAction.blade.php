@@ -39,10 +39,10 @@ $option1 = "id='selected-sidebar'";
 <style type="text/css">
 #download_link:hover{
     text-decoration: none;
-    background-color: #d9d9d9;
+    background-color: #f2f2f2;
 }
 </style>
-<div style="background-color: #f2f2f2">
+<div style="background-color:white;">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
@@ -107,9 +107,18 @@ $option1 = "id='selected-sidebar'";
                     <div class="col-md-3" style="margin-bottom: 20px">
                         <a href="/assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
-                            <img src="{{url('image/exam.png')}}" width="85px" height="80px" style="margin-top: 60px;"/>
+                            <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
                             <br>
                             <p style="color: #0d2f81;">Assessment</p>
+                            </center>
+                        </a>
+                    </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/AssessmentResult/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/exam.png')}}" width="85px" height="80px" style="margin-top: 60px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Assessment Result</p>
                             </center>
                         </a>
                     </div>

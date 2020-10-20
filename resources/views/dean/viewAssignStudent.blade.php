@@ -160,7 +160,7 @@ $option1 = "id='selected-sidebar'";
 <style type="text/css">
 #course_list:hover{
     text-decoration: none;
-    background-color: #e6e6e6;
+    background-color: #f2f2f2;
 }
 .dropzoneModel{
   border-bottom: 1px solid black;
@@ -195,7 +195,7 @@ $option1 = "id='selected-sidebar'";
   background-color: #0d2f81!important; color: gold;
 }
 </style>
-<div style="background-color: #f2f2f2">
+<div style="background-color: white;">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">

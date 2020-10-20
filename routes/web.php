@@ -230,6 +230,10 @@ Route::middleware('is_dean')->group(function(){
     Route::get('/assessment/{id}/previous/{course_id}/list', [
     'as' => 'viewPreviousAssessment', 'uses' => 'AssessmentController@viewPreviousAssessment']);
     Route::post('/assessment/list/searchListKey/', 'AssessmentController@searchListKey');
+
+
+    Route::get('/AssessmentResult/{id}/', [
+    'as' => 'viewAssessmentResult', 'uses' => 'AssessmentResultController@viewAssessmentResult']);
 });
 
 
