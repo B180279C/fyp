@@ -151,10 +151,6 @@ $option4 = "id='selected-sidebar'";
     };
 </script>
 <style type="text/css">
-#course_list:hover{
-    text-decoration: none;
-    background-color: #f2f2f2;
-}
 .dropzoneModel{
   border-bottom: 1px solid black;
   padding-left: 0px;
@@ -193,7 +189,7 @@ $option4 = "id='selected-sidebar'";
   }
 }
 </style>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty->faculty_name}}</p>
         <p class="pass_page">

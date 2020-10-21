@@ -35,7 +35,7 @@ $option6 = "id='selected-sidebar'";
       document.getElementById("button_open").style.display = "block";
     }
 </script>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">General Studies</p>
         <p class="pass_page">

@@ -5,6 +5,9 @@ html,body{
 #app{
   height: 91%;
 }
+#all{
+  background-color: white;
+}
 @media only screen and (max-width: 600px) {
   .navbar-brand{
     display: none;
@@ -478,4 +481,17 @@ ul.sidebar-action-ul a:hover{
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#download_link:hover{
+    text-decoration: none;
+    background-color: #d9d9d9;
+}
+
+#course_list:hover{
+    text-decoration: none;
+    background-color: #d9d9d9;
+}
+.week:hover{
+    background-color: #d9d9d9;
 }

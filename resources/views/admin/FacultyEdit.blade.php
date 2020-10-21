@@ -5,7 +5,7 @@ $option3 = "id='selected-sidebar'";
 @extends('layouts.nav')
 
 @section('content')
-<div style="background-color: white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Edit Faculty</p>
         <p class="pass_page">

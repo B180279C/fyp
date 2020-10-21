@@ -36,13 +36,7 @@ $option1 = "id='selected-sidebar'";
         });
     });
 </script>
-<style type="text/css">
-#course_list:hover{
-    text-decoration: none;
-    background-color: #f2f2f2;
-}
-</style>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Courses</p>
         <p class="pass_page">

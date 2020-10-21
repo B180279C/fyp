@@ -194,10 +194,6 @@ $option1 = "id='selected-sidebar'";
   padding-left: 25px;
   display: inline-block;
 }
-#course_list:hover{
-    text-decoration: none;
-    background-color: #f2f2f2;
-}
 @media only screen and (max-width: 600px) {
   #course_name{
         margin-left:0px;
@@ -239,7 +235,7 @@ $option1 = "id='selected-sidebar'";
     }
 }
 </style>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">

@@ -6,10 +6,6 @@ $option1 = "id='selected-sidebar'";
 
 @section('content')
 <style type="text/css">
-#course_list:hover{
-    text-decoration: none;
-    background-color: #f2f2f2;
-}
 #show_image_link:hover{
     text-decoration: none;
 }
@@ -68,7 +64,7 @@ $option1 = "id='selected-sidebar'";
     document.getElementById("button_open").style.display = "block";
   }
 </script>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">

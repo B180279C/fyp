@@ -183,7 +183,7 @@ $option1 = "id='selected-sidebar'";
     //     setTimeout(function(){ console.log("aaa"); }, 3000);
     // }
 </script>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Edit Staff Information</p>
         <p class="pass_page">

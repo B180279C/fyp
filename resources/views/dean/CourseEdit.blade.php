@@ -52,7 +52,7 @@ $option4 = "id='selected-sidebar'";
         });
     });
 </script>
-<div style="background-color: white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty_name->faculty_name}}</p>
         <p class="pass_page">

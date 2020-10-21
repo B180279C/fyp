@@ -212,7 +212,7 @@ $option6 = "id='selected-sidebar'";
   padding-left: 25px;
 }
 </style>
-<div style="background-color:white;">
+<div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Add New Subject</p>
         <p class="pass_page">
