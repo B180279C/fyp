@@ -53,7 +53,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
             <span class="now_page">Manage Weekly Plan</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">

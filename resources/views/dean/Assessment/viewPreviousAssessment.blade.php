@@ -61,7 +61,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/assessment/{{$course[0]->course_id}}" class="first_page">Go Back</a>/
             <span class="now_page">{{$assessments[0]->semester_name}} : Assessment List</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">

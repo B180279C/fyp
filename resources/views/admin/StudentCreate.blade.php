@@ -73,7 +73,7 @@ $option2 = "id='selected-sidebar'";
             <a href="/student_list">Student </a>/
             <span class="now_page">Add Student</span>/
         </p>
-        <hr style="margin: 0px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-4">

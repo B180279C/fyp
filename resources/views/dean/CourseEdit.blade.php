@@ -60,7 +60,7 @@ $option4 = "id='selected-sidebar'";
             <a href="/CoursePortFolio">Course PortFolio </a>/
             <span class="now_page">Edit Course</span>/
         </p>
-        <hr style="margin: 0px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="col-md-12">
         <div class="details" style="padding: 10px 5px 5px 5px;">

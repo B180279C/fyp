@@ -220,10 +220,10 @@ $option6 = "id='selected-sidebar'";
             <a href="/mpu_list">General Studies</a>/
             <span class="now_page">Add MPU Subject</span>/
         </p>
-        <hr style="margin: 0px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="col-md-12">
-        <div class="details" style="padding: 10px 5px 5px 5px;">
+        <div class="details" style="padding: 20px 5px 5px 5px;">
             <h5 style="color: #0d2f81;">Add MPU Subject Information</h5>
             <hr style="margin: 0px;">
                     

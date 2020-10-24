@@ -56,30 +56,37 @@ $option5 = "id='selected-sidebar'";
 
   $('#edit_syllabus').click(function(){
       if(confirm("Do you sure want to remove this syllabus")){
-        document.getElementById('100dropzoneFile100').style.display = "block";
+        $('.form_input').val("");
+        $('.fake_input').val(""); 
+        var subject_id = $('#subject_id_modal').val();
+        document.getElementById('100dropzoneFile'+subject_id).style.display = "block";
         document.getElementById('templete').style.display = "block";
         document.getElementById('showSyllabus').style.display = "none";
       }
   });
 
   $(document).on('click', '.open-modal', function(){
+    document.getElementById('templete').style.display = "none";
+    $('.form_input').val("");
+    $('.fake_input').val(""); 
     var subject_id = $(this).attr("id");
     $.ajax({
       type:'POST',
       url:'/subjectEditModal',
       data:{value : subject_id},
       success:function(data){
+         $('.100num100').css('display','none');
          document.getElementById('subject_id_modal').value = subject_id;
          document.getElementById('subject_code_modal').value = data.subject_code;
          document.getElementById('subject_name_modal').value = data.subject_name;
          if(data.syllabus==""||data.syllabus==null){
-          document.getElementById('100dropzoneFile100').style.display = "block";
+          document.getElementById('100dropzoneFile'+subject_id).style.display = "block";
           document.getElementById('showSyllabus').style.display = "none";
          }else{
-          document.getElementById('100dropzoneFile100').style.display = "none";
+          document.getElementById('100dropzoneFile'+subject_id).style.display = "none";
           document.getElementById('showSyllabus').style.display = "block";
           setHref(subject_id);
-          document.getElementById('syllabus').value = data.syllabus_name;
+          document.getElementById('syllabus_model').value = data.syllabus_name;
          }
       }
     });
@@ -99,7 +106,13 @@ $option5 = "id='selected-sidebar'";
     var className = $(this).attr("class");
     split = className.split(" ");
     var getNum = split[2].split("num");
-      $('#'+getNum[0]+"dropzoneFile"+getNum[1]).dropzone({
+    var lastNum = getNum[1];
+    if(getNum[0]==100){
+      var idName = $(this).attr("id");
+      var getIdNum = idName.split("dropzoneFile");
+      lastNum = getIdNum[1];
+    }
+      $('#'+getNum[0]+"dropzoneFile"+lastNum).dropzone({
           url: "{{action('SubjectController@postUpload')}}",
           maxFiles:1,
           acceptedFiles: ".xlsx",
@@ -157,7 +170,9 @@ $option5 = "id='selected-sidebar'";
                     $('#'+m+'full_syllabus'+n).val("");
                   }
                 }
-              }            
+              }  
+              $('.form_input').val("");
+              $('.fake_input').val("");         
               $.ajax({
                   headers: {
                       'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
@@ -188,7 +203,7 @@ $option5 = "id='selected-sidebar'";
 
  function writeInput(name,fake){
   $(document).ready(function(){  
-    $("#writeInput").append("<input type='hidden' id='form' name='form' value='"+name+"'><input type='hidden' id='fake' name='fake' value='"+fake+"'>");
+    $("#writeInput").append("<input type='hidden' id='form' class='form_input' name='form' value='"+name+"'><input type='hidden' id='fake' class='fake_input' name='fake' value='"+fake+"'>");
   });
  } 
 
@@ -233,9 +248,9 @@ $option5 = "id='selected-sidebar'";
             <a href="/programme/{{$programme->programme_id}}">{{$programme->programme_name}}</a>/
             <span class="now_page">Add Subject</span>/
         </p>
-        <hr style="margin: 0px 10px;">
+        <hr class="separate_hr">
     </div>
-    <div class="row" style="padding:0px 15px 0px 20px;">
+    <div class="row" style="padding:10px 15px 0px 20px;">
       <div class="col-md-12">
       <p style="display: inline;font-size: 25px;position: relative;top: 5px;color: #0d2f81">Add Subject Information</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 5px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -394,10 +409,12 @@ $option5 = "id='selected-sidebar'";
           <p><b>  3. </b>Fill in the Subject details and other details in file.</p>
         </div>
         <div id="message"></div>
-        <div class="dropzone align-self-center 100num100 dropzoneModel" id="100dropzoneFile100" style="padding:25px;display: none;">
+
+        @foreach($subjects as $model_row)
+        <div class="dropzone align-self-center 100num100 dropzoneModel" id="100dropzoneFile{{$model_row->subject_id}}" style="padding:25px;display: none;">
           <div class="dz-message" data-dz-message><span>Drop a Syllabus in Here to Upload<br>(required)</span></div>
         </div>
-
+        @endforeach
         <div id="showSyllabus" style="display: none;">
           <br>
             <a href="/" id="syllabus_link" class="syllabus_link">
@@ -407,7 +424,7 @@ $option5 = "id='selected-sidebar'";
             </a>
             <p id="edit_syllabus" style="font-size: 14px;color: #009697;padding-bottom: 5px;padding-left: 28px;padding-top: 10px;">Remove file</p>
             <div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>
-            <div class='changeName'><input id='syllabus' type='text' name='syllabus' class='form-control'></div>
+            <div class='changeName'><input id='syllabus_model' type='text' name='syllabus' class='form-control'></div>
         </div>
         <hr>
         <div class="row">

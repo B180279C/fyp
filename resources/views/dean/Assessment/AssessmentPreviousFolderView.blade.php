@@ -79,7 +79,7 @@ $option1 = "id='selected-sidebar'";
             ?>
             <span class="now_page">{{$assessments[0]->ass_name}}</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">

@@ -234,6 +234,12 @@ Route::middleware('is_dean')->group(function(){
 
     Route::get('/AssessmentResult/{id}/', [
     'as' => 'viewAssessmentResult', 'uses' => 'AssessmentResultController@viewAssessmentResult']);
+    Route::post('/AssessmentResult/openSubmissionForm', 'AssessmentResultController@openSubmissionForm');
+	Route::post('/AssessmentResult/submissionFormEdit', 'AssessmentResultController@submissionFormEdit');
+	Route::post('/AssessmentResult/updateSubmissionForm', 'AssessmentResultController@updateSubmissionForm');
+	Route::post('/ass_rs_uploadFiles', 'AssessmentResultController@uploadFiles')->name('assessmentResult.dropzone.uploadFiles');
+	Route::post('/ass_rs_destoryFiles', 'AssessmentResultController@destroyFiles')->name('assessmentResult.dropzone.destoryFiles');
+	Route::post('/ass_rs_storeFiles', 'AssessmentResultController@storeFiles');
 });
 
 

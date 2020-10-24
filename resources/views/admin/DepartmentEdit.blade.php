@@ -13,10 +13,10 @@ $option4 = "id='selected-sidebar'";
             <a href="/department_list">Department </a>/
             <span class="now_page">Edit Department</span>/
         </p>
-        <hr style="margin: 0px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="col-md-12">
-        <div class="details" style="padding: 10px 5px 5px 5px;">
+        <div class="details" style="padding: 20px 5px 5px 5px;">
             <h5 style="color: #0d2f81;">Edit Department Information</h5>
             <hr style="margin: 0px;">
                     @if(count($errors) > 0)

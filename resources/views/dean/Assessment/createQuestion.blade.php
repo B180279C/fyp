@@ -181,12 +181,15 @@ $option1 = "id='selected-sidebar'";
                   logger: m => console.log(m)
                 }
               ).then(({ data: { text } }) => {
-                // console.log(text);
-                $('.dz-remove'+m).css('display','block');
-                $('#loader'+m).css('display','none');
-                $('#loading_word'+m).css('display','none');
-                writeInput(m,filename[0],ext,file.upload.filename,text);
-                m++;
+                for(var c=0;c<=i;c++){
+                  var checkfile = $('#'+c).val();
+                  if(filename[0]==checkfile){
+                    writeInput(c,filename[0],ext,file.upload.filename,text);
+                    $('.dz-remove'+c).css('display','block');
+                    $('#loader'+c).css('display','none');
+                    $('#loading_word'+c).css('display','none');
+                  }
+                }
                 if (!isset($('#loader'+m))){
                   if(m>=i){
                     $('.submit_button').prop('disabled', false);
@@ -371,7 +374,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <span class="now_page">{{$question}}</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
@@ -388,6 +391,14 @@ $option1 = "id='selected-sidebar'";
                 </div>
                 <br>
                 <br>
+            @if(\Session::has('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
             <div class="details" style="padding: 0px 5px 5px 5px;">
               <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
                   <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">

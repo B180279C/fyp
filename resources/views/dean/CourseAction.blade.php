@@ -44,7 +44,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/course_list">Courses </a>/
             <span class="now_page">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">

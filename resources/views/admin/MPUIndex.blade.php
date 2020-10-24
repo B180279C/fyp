@@ -42,7 +42,7 @@ $option6 = "id='selected-sidebar'";
             <a href="/home" class="first_page"> Home </a>/
             <span class="now_page"> General Studies </span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
 <div class="row" style="padding: 10px 10px 10px 10px;">
 

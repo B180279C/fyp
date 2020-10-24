@@ -198,26 +198,41 @@ class AssessmentController extends Controller
 
         $count = $request->get('count');
         $place = $request->get('file_place');
+        $array[] = "";
         for($i=1;$i<=$count;$i++){
             $name = $request->get('form'.$i);
             $ext  = $request->get('ext'.$i);
             $fake = $request->get('fake'.$i);
             $text = $request->get('text'.$i);
-            if($name!=""){
-                $assessments = new Assessment([
-                    'course_id'              =>  $request->get('course_id'),
-                    'assessment'             =>  $request->get('assessment'),
-                    'ass_name'               =>  $name,
-                    'ass_type'               =>  'document',
-                    'ass_place'              =>  $place,
-                    'ass_document'           =>  $fake,
-                    'ass_word'               =>  $text,   
-                    'status'                 =>  'Active',
-                ]);
-                $assessments->save();
-                $fake_place = Storage::disk('private')->get("fake/assessment/".$fake);
-                Storage::disk('private')->put('Assessment/'.$fake, $fake_place); 
-                Storage::disk('private')->delete("fake/assessment/".$fake);
+
+            array_push($array, $name);
+            sort($array);
+        }
+        for ($m=0; $m < count($array); $m++) {    
+            $value = $array[$m];
+            if($value!=""){
+                for($i=1;$i<=$count;$i++){
+                    $name = $request->get('form'.$i);
+                    $ext  = $request->get('ext'.$i);
+                    $fake = $request->get('fake'.$i);
+                    $text = $request->get('text'.$i);
+                    if($value == $name){
+                        $assessments = new Assessment([
+                            'course_id'              =>  $request->get('course_id'),
+                            'assessment'             =>  $request->get('assessment'),
+                            'ass_name'               =>  $name,
+                            'ass_type'               =>  'document',
+                            'ass_place'              =>  $place,
+                            'ass_document'           =>  $fake,
+                            'ass_word'               =>  $text,   
+                            'status'                 =>  'Active',
+                        ]);
+                        $assessments->save();
+                        $fake_place = Storage::disk('private')->get("fake/assessment/".$fake);
+                        Storage::disk('private')->put('Assessment/'.$fake, $fake_place); 
+                        Storage::disk('private')->delete("fake/assessment/".$fake);
+                    }
+                }
             }
         }
         return redirect()->back()->with('success','New Document Added Successfully');
@@ -257,6 +272,7 @@ class AssessmentController extends Controller
                     ->where('course_id', '=', $assessment->course_id)
                     ->where('ass_place', '=', $ass_place)
                     ->where('status', '=', 'Active')
+                    ->orderBy('assessments.ass_id')
                     ->orderBy('assessments.ass_name')
                     ->get();
 
@@ -302,6 +318,7 @@ class AssessmentController extends Controller
                     ->where('assessments.assessment','=',$assessment->assessment)
                     ->where('assessments.ass_type','=','document')
                     ->where('assessments.status', '=', 'Active')
+                    ->orderBy('assessments.ass_id')
                     ->orderBy('assessments.ass_name')
                     ->get();
 
@@ -370,6 +387,7 @@ class AssessmentController extends Controller
                     ->where('assessments.course_id', '=', $course_id)
                     ->where('assessments.ass_place', '=', $question)
                     ->where('assessments.status', '=', 'Active')
+                    ->orderBy('assessments.ass_id')
                     ->orderBy('assessments.ass_name')
                     ->get();
 

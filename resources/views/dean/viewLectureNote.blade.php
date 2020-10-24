@@ -244,7 +244,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Lecture Note</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
@@ -382,7 +382,7 @@ $option1 = "id='selected-sidebar'";
         <div id="message"></div>
         <br>
         <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                     <i class="fa fa-folder" aria-hidden="true" style="font-size: 18px;"></i>
                 </p>
@@ -425,7 +425,7 @@ $option1 = "id='selected-sidebar'";
         <div id="message"></div>
         <br>
         <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                     <i class="fa fa-folder" aria-hidden="true" style="font-size: 18px;"></i>
                 </p>

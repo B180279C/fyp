@@ -170,11 +170,16 @@ $option1 = "id='selected-sidebar'";
                 'eng',
                 { logger: m => console.log(m) }
               ).then(({ data: { text } }) => {
-                // console.log(text);
-                $('.dz-remove'+m).css('display','block');
-                $('#loader'+m).css('display','none');
-                $('#loading_word'+m).css('display','none');
-                writeInput(m,filename[0],ext,file.upload.filename,text);
+                for(var c=0;c<=i;c++){
+                  var checkfile = $('#'+c).val();
+                  if(filename[0]==checkfile){
+                    writeInput(c,filename[0],ext,file.upload.filename,text);
+                    $('.dz-remove'+c).css('display','block');
+                    $('#loader'+c).css('display','none');
+                    $('#loading_word'+c).css('display','none');
+                  }
+                }
+                
                 m++;
                 if (!isset($('#loader'+m))){
                   if(m>=i){
@@ -373,7 +378,7 @@ $option1 = "id='selected-sidebar'";
             ?>
             <span class="now_page">{{$assessment->ass_name}}</span>/
         </p>
-        <hr style="margin: -10px 10px;">
+        <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
@@ -390,6 +395,14 @@ $option1 = "id='selected-sidebar'";
                 </div>
                 <br>
                 <br>
+            @if(\Session::has('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
             <div class="details" style="padding: 0px 5px 5px 5px;">
               <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
                   <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
@@ -472,20 +485,31 @@ $option1 = "id='selected-sidebar'";
     box-shadow:0 3px 9px rgba(0,0,0,.5)!important;
     outline:0;
   }
+  .header2{
+    padding: 24px 24px 0px 24px!important;
+    margin: 0px!important;
+    border:none!important;
+  }
+  .title2{
+    font-size: 20px!important;
+  }
+  .body2{
+    padding-top: 20px!important;
+  }
 </style>
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="openFolderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content content2">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Open New Folder</h5>
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Open New Folder</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <form method="post" action="{{action('AssessmentController@openNewFolder')}}">
         {{csrf_field()}}
-      <div class="modal-body">
+      <div class="modal-body body2">
         <div id="message"></div>
         <br>
         <div class="row">
@@ -521,15 +545,15 @@ $option1 = "id='selected-sidebar'";
 <div class="modal fade bd-example-modal-lg" id="folderNameEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content content2">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit Folder Name</h5>
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Edit Folder Name</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <form method="post" action="{{action('AssessmentController@updateFolderName')}}">
         {{csrf_field()}}
-      <div class="modal-body">
+      <div class="modal-body body2">
         <div id="message"></div>
         <br>
         <div class="row">
@@ -563,8 +587,8 @@ $option1 = "id='selected-sidebar'";
 <div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content content2">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Upload Files</h5>
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Upload Files</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
