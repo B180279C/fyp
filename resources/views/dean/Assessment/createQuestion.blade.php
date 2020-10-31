@@ -190,6 +190,8 @@ $option1 = "id='selected-sidebar'";
                     $('#loading_word'+c).css('display','none');
                   }
                 }
+                
+                m++;
                 if (!isset($('#loader'+m))){
                   if(m>=i){
                     $('.submit_button').prop('disabled', false);
@@ -378,7 +380,7 @@ $option1 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;color: #0d2f81">{{$question}}</p>
+             <p class="page_title">{{$question}}</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -468,7 +470,7 @@ $option1 = "id='selected-sidebar'";
               </div>
               @endif
               </div>
-              <hr>
+              <hr style="background-color: #d9d9d9;">
               <h5 style="padding-left: 3px;" class="p_sem_plus">Previous Semester (<i class="fa fa-plus" aria-hidden="true" id="icon" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
                 <div class="row" id="previous" style="display: none;">
                   <?php

@@ -48,7 +48,7 @@ $option1 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;color: #0d2f81">Method</p>
+             <p class="page_title">Method</p>
             @if(\Session::has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <Strong>{{\Session::get('success')}}</Strong>

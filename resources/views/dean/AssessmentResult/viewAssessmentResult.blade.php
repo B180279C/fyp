@@ -102,7 +102,14 @@ $option1 = "id='selected-sidebar'";
         getOption(0);
       });
 
-
+      $(document).on('click', '.remove_button', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        if(confirm('Are you sure you want to remove the it?')) {
+          window.location = "/AssessmentResult/remove/"+num[2];
+        }
+        return false;
+    });
 
       $(document).on('click', '.edit_button', function(){
         var id = $(this).attr("id");
@@ -230,8 +237,8 @@ $option1 = "id='selected-sidebar'";
           removedfile: function(file)
           {
             var model_id = $('#model_id').val();
-              var name = file.upload.filename;
-              var count = $('#count'+model_id).val();
+            var name = file.upload.filename;
+            var count = $('#count'+model_id).val();
               for(var i=1;i<=count;i++){
                 var fake = $('#'+model_id+'fake'+i).val();
                   if(fake==name){
@@ -315,11 +322,14 @@ $option1 = "id='selected-sidebar'";
     var run = false;
     for(var i=1;i<=count;i++){
       var form = $('#'+model_id+'form'+i).val();
-      if((form.length!=8)&&(form.length!=0)){
-        run = false;
-        break;
-      }else{
-        run = true;
+      if(form!=""){
+        var check = checkStudentID(form);
+        if(check=="Error : 0"){
+          run = false;
+          break;
+        }else{
+          run = true;
+        }
       }
     }
     if(run == true){
@@ -328,6 +338,38 @@ $option1 = "id='selected-sidebar'";
       document.getElementById('error-message').innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><Strong>Someone of Student ID got error!!!</Strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
     }
   }
+
+  $(function () {
+    $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    if($('.search').val()!=""){
+      var value = $('.search').val();
+      var course_id = $('#course_id').val();
+      $.ajax({
+          type:'POST',
+          url: "/AssessmentResult/searchSubmissionForm/",
+          data:{value:value,course_id:course_id},
+          success:function(data){
+            document.getElementById("submission").innerHTML = data;
+          }
+      });
+    }
+    $(".search").keyup(function(){
+        var value = $('.search').val();
+        var course_id = $('#course_id').val();
+        $.ajax({
+           type:'POST',
+           url: "/AssessmentResult/searchSubmissionForm/",
+           data:{value:value,course_id:course_id},
+           success:function(data){
+              document.getElementById("submission").innerHTML = data;
+           }
+        });
+    });
+  });
 </script>
 <div id="all">
     <div>
@@ -342,7 +384,7 @@ $option1 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p style="display: inline;font-size: 25px;position: relative;top: 5px;left:8px;color: #0d2f81">Assessment Result</p>
+             <p class="page_title">Assessment Result</p>
               <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 250px;">
                     <div style="text-align: right;padding:10px;">
@@ -350,6 +392,9 @@ $option1 = "id='selected-sidebar'";
                     </div>
                   <ul class="sidebar-action-ul">
                       <a id="open_submission"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make New Submission Form</li></a>
+                      @if((count($group)!=0))
+                        <a href='/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Download All Result</li></a>
+                      @endif
                   </ul>
                 </div>
                 <br>
@@ -386,7 +431,7 @@ $option1 = "id='selected-sidebar'";
                   @foreach($assessment_results as $row)
                   @if($row_group->assessment == $row->assessment)
                   <div class="col-12 row align-self-center" id="course_list">
-                    <a href='' class="col-8 row align-self-center" id="show_image_link">
+                    <a href='/AssessmentResult/studentResult/{{$row->ass_rs_id}}/' class="col-8 row align-self-center" id="show_image_link">
                       <div class="col-12 row" style="padding:10px;color:#0d2f81;">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/folder_submit.png')}}" width="25px" height="25px"/>
@@ -531,8 +576,6 @@ $option1 = "id='selected-sidebar'";
   </div>
 </div>
 
-
-<!-- Modal -->
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -545,7 +588,7 @@ $option1 = "id='selected-sidebar'";
       </div>
       <div style="padding: 20px;">
       <div id="error-message"></div>
-      <form method="post" action="{{action('AssessmentResultController@storeFiles')}}" id="myForm">
+      <form method="post" action="{{action('AssessmentResultController@storeFiles')}}" id="myForm" style="margin: 0px;">
       {{csrf_field()}}
       @foreach($assessment_results as $row_model)
       <div class="dropzone" id="dropzoneFile{{$row_model->ass_rs_id}}" style="padding:25px;display: none;font-size: 20px;color:#a6a6a6;border-style: double;">
@@ -557,10 +600,13 @@ $option1 = "id='selected-sidebar'";
       </div>
         <input type="hidden" value="{{$course[0]->course_id}}" name="course_id">
         <input type="hidden" name="ass_rs_id" id="model_id">
-        <div class="modal-footer">
+        <div class="modal-footer" style="margin-top: 0px;">
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
         &nbsp;
         <input type="button" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin-right: 13px;margin-top: 0px;" value="Save Changes" onclick="checkAllStudentID();">
+        <br>
+        <br>
+        <br>
         </div>
       </form>
     </div>

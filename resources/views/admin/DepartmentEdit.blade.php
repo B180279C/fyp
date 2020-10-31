@@ -16,8 +16,8 @@ $option4 = "id='selected-sidebar'";
         <hr class="separate_hr">
     </div>
     <div class="col-md-12">
-        <div class="details" style="padding: 20px 5px 5px 5px;">
-            <h5 style="color: #0d2f81;">Edit Department Information</h5>
+        <div class="details" style="padding: 10px 0px 5px 0px;">
+            <p class="page_title" style="position: relative;left: 5px;">Edit Department Information</p>
             <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">

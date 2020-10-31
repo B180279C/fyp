@@ -204,7 +204,7 @@ $option1 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;color: #0d2f81">Student List ( {{count($assign_student)}} )</p>
+             <p class="page_title">Student List ( {{count($assign_student)}} )</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">

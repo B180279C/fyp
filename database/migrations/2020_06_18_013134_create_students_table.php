@@ -21,6 +21,7 @@ class CreateStudentsTable extends Migration
             $table->string('year');
             $table->string('semester');
             $table->string('intake');
+            $table->string('batch');
             $table->text('student_image')->nullable();
             $table->timestamps();
         });

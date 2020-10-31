@@ -103,12 +103,20 @@ class StudentController extends Controller
                 Storage::disk('private')->delete('fake/student_Image/'.$request->get('student_image'));
             }
 
+            $programme = Programme::where('programme_id','=',$request->get('programme'))->firstOrFail();
+            $short_form_name = $programme->short_form_name;
+
+            $semester = Semester::where('semester_id','=',$request->get('semester'))->firstOrFail();
+            $year = $semester->year;
+            $sem = $semester->semester;
+
             $student = new Student([
                 'user_id'           => $user_id,
                 'student_id'        => $request->get('student_id'),
                 'programme_id'      => $request->get('programme'),
                 'semester'          => $request->get('semester'),
                 'intake'            => $request->get('intake'),
+                'batch'             => $short_form_name."_".$year.'_'.$sem.$request->get('intake'),
                 'student_image'     => $request->get('student_image'),
             ]);
 

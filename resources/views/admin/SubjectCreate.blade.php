@@ -252,16 +252,16 @@ $option5 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding:10px 15px 0px 20px;">
       <div class="col-md-12">
-      <p style="display: inline;font-size: 25px;position: relative;top: 5px;color: #0d2f81">Add Subject Information</p>
-            <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 5px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
+      <p class="page_title" style="position: relative;left: 0px ;">Add Subject Information</p>
+            <!-- <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 5px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none;margin-right: 0px;width: 250px;">
                     <div style="text-align: right;padding:10px;">
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
                       <a download="sample_syllabus.xlsx" href="{{asset('/templete/syllabus.xlsx')}}"><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Download Sample Syllabus</li></a>     
-              </ul>
-        </div>
+                  </ul>
+                </div> -->
       </div>
     </div>
         <div class="details" style="padding:0px 20px">

@@ -227,6 +227,7 @@ Route::middleware('is_dean')->group(function(){
     Route::get('/assessment/folder/{id}/previous/{folder_id}/{list}', [
     'as' => 'dean.ass.previous_folder_view', 'uses' => 'AssessmentController@previous_folder_view']);
     Route::post('/assessment/searchKey/', 'AssessmentController@searchKey');
+
     Route::get('/assessment/{id}/previous/{course_id}/list', [
     'as' => 'viewPreviousAssessment', 'uses' => 'AssessmentController@viewPreviousAssessment']);
     Route::post('/assessment/list/searchListKey/', 'AssessmentController@searchListKey');
@@ -240,6 +241,29 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/ass_rs_uploadFiles', 'AssessmentResultController@uploadFiles')->name('assessmentResult.dropzone.uploadFiles');
 	Route::post('/ass_rs_destoryFiles', 'AssessmentResultController@destroyFiles')->name('assessmentResult.dropzone.destoryFiles');
 	Route::post('/ass_rs_storeFiles', 'AssessmentResultController@storeFiles');
+
+	Route::get('/AssessmentResult/studentResult/{ass_rs_id}/', [
+    'as' => 'viewstudentlist', 'uses' => 'AssessmentResultController@viewstudentlist']);
+
+    Route::get('/AssessmentResult/view/student/{ar_stu_id}/', [
+    'as' => 'viewStudentResult', 'uses' => 'AssessmentResultController@viewStudentResult']);
+
+    Route::get('/AssessmentResult/result/{ar_stu_id}','AssessmentResultController@downloadDocument')->name('dean.downloadStudentResult');
+    Route::post('/AssessmentResult/searchSubmissionForm/', 'AssessmentResultController@searchSubmissionForm');
+    Route::post('/AssessmentResult/searchStudentList/', 'AssessmentResultController@searchStudentList');
+    Route::get('images/AssessmentResult/{image_name}', [
+	     'as'         => 'assessmentResult_image',
+	     'uses'       => 'AssessmentResultController@assessmentResult_image',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/AssessmentResult/view/whole_paper/{ar_stu_id}', 'AssessmentResultController@view_wholePaper');
+	Route::get('/AssessmentResult/remove/{id}', 'AssessmentResultController@removeActive');
+	Route::get('/AssessmentResultStudent/remove/{ar_stu_id}', 'AssessmentResultController@removeStudentActive');
+	Route::get('/AssessmentResult/AllZipFiles/{id}','AssessmentResultController@AllZipFileDownload');
+	Route::get('/AssessmentResult/download/zipFiles/{ass_rs_id}','AssessmentResultController@zipFileDownload');
+
+	Route::get('/AssessmentResult/Student/{student_id}/download/zipFiles/{ass_rs_id}', [
+    'as' => 'zipFileDownloadStudent', 'uses' => 'AssessmentResultController@zipFileDownloadStudent']);
 });
 
 

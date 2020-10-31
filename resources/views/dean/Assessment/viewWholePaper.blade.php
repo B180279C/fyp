@@ -48,5 +48,6 @@ $i=1;
 $i++;
 ?>
 @endforeach
+<br>
 </body>
 </html>

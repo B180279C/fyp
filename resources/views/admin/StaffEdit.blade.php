@@ -196,7 +196,7 @@ $option1 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-4">
             <div class="img">
-                <h5 style="color: #0d2f81;">Profile Image</h5>
+                <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
                 <hr style="margin: 0px;">
                 <center>
                     @if($staff->staff_image == "")
@@ -223,7 +223,7 @@ $option1 = "id='selected-sidebar'";
             </div>
             <hr>
             <div class="CV">
-                <h5 style="color: #0d2f81;">Lecturer CV</h5>
+                <p class="page_title" style="position: relative;left: 0px ;top: -10px;">Staff CV</p>
                 <hr style="margin: 0px;">
                 <center>
                 @if($staff->lecturer_CV == "")
@@ -270,7 +270,7 @@ $option1 = "id='selected-sidebar'";
         </div>
         <div class="col-md-8" >
             <div id="box" class="details" style="padding-bottom: 0px;">
-                <h5 style="color: #0d2f81;">Staff Details</h5>
+                <p class="page_title" style="position: relative;left: -5px ;top: 0px;">Staff Details</p>
                 <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">

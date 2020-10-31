@@ -78,7 +78,7 @@ $option2 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-4">
             <div class="img">
-                <h5 style="color: #0d2f81;">Profile Image</h5>
+                <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
                 <hr style="margin: 0px;">
                 <center>
                 <form method="post" action="{{route('dropzone.uploadStudentImage')}}" enctype="multipart/form-data"
@@ -92,11 +92,11 @@ $option2 = "id='selected-sidebar'";
                 </div>
                 </center>
             </div>
-            <hr>
+            <hr style="background-color: black;">
         </div>
         <div class="col-md-8" >
             <div id="box" class="details" style="padding-bottom: 0px;">
-                <h5 style="color: #0d2f81;">Student Details</h5>
+                <p class="page_title" style="position: relative;left: -5px ;top: -2px;">Student Details</p>
                 <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">

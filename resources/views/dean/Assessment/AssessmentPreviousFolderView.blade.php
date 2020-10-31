@@ -83,7 +83,7 @@ $option1 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;color: #0d2f81">{{$assessments[0]->ass_name}}</p>
+            <p class="page_title">{{$assessments[0]->ass_name}}</p>
             <hr style="margin: 12px 10px 18px 10px;">
             <div class="details" style="padding: 0px 5px 5px 5px;">
               <div class="row" style="margin-top: -20px;">

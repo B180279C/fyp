@@ -75,8 +75,8 @@ $option4 = "id='selected-sidebar'";
         <hr class="separate_hr">
     </div>
     <div class="col-md-12">
-        <div class="details" style="padding: 10px 5px 5px 5px;">
-            <h5 style="color: #0d2f81;">Add New Course Portfolio Details</h5>
+        <div class="details" style="padding: 10px 0px 5px 0px;">
+            <p class="page_title" style="position: relative;left: 5px;">Add New Course Details</p>
             <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
@@ -113,7 +113,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-briefcase" aria-hidden="true" style="font-size: 17px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="Programme" class="label">Programme</label>
                                     <select class="selectpicker form-control" name="programme" id="programme" data-width="100%"data-live-search="true" title="Choose One" required>
@@ -138,7 +138,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-book" aria-hidden="true" style="font-size: 17px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="Programme" class="label">Subjects </label>
                                     <select class="selectpicker form-control" name="subject" data-width="100%" title="Choose one" data-live-search="true" id="subject" required>
@@ -154,7 +154,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-calendar" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
@@ -176,7 +176,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-tags" aria-hidden="true" style="font-size: 18px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="row">
                                     <div class="col" style="padding: 18px 0px 0px 0px;margin: 0px;">
                                         <div class="form-group" style="margin: 0px;">
@@ -201,7 +201,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer1" data-width="100%" title="Choose One" data-live-search="true">
@@ -220,7 +220,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer2" data-width="100%" title="Choose One" data-live-search="true">

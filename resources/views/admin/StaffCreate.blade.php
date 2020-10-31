@@ -164,7 +164,7 @@ $option1 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-4">
             <div class="img">
-                <h5 style="color: #0d2f81;">Profile Image</h5>
+                <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
                 <hr style="margin: 0px;">
                 <center>
                 <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
@@ -178,9 +178,9 @@ $option1 = "id='selected-sidebar'";
                 </div>
                 </center>
             </div>
-            <hr>
+            <!-- <hr style="background-color: #e6e6e6;"> -->
             <div class="CV">
-                <h5 style="color: #0d2f81;">Staff CV</h5>
+                <p class="page_title" style="position: relative;left: 0px ;top: -10px;">Staff CV</p>
                 <hr style="margin: 0px;">
                 <center>
                 <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
@@ -194,11 +194,11 @@ $option1 = "id='selected-sidebar'";
                 </div>
                 </center>
             </div>
-            <hr>
+            <hr style="background-color: black">
         </div>
         <div class="col-md-8" >
             <div id="box" class="details" style="padding-bottom: 0px;">
-                <h5 style="color: #0d2f81;">Staff Details</h5>
+                <p class="page_title" style="position: relative;left: -5px ;top: 0px;">Staff Details</p>
                 <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">

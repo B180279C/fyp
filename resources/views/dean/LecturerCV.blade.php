@@ -38,7 +38,7 @@ $option2 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <p style="display: inline;font-size: 25px;position: relative;top: 5px;left: 10px;color: #0d2f81;">Lecturer CV</p>
+            <p class="page_title">Lecturer CV</p>
             <div class="details" style="padding: 0px 5px 5px 5px;">
 <!--                 <h5 style="color: #0d2f81;">List of Lecturer CV</h5> -->
                 <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
