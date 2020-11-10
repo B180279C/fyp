@@ -6,6 +6,7 @@ $option1 = "id='selected-sidebar'";
 
 @section('content')
 <style type="text/css">
+
 #show_image_link:hover{
     text-decoration: none;
 }
@@ -71,6 +72,28 @@ $option1 = "id='selected-sidebar'";
       padding: 3px 0px 0px 24px;
     }
 }
+
+.checkbox_group_style{
+  border:0px solid black;
+  padding: 1px 10px 0px 10px!important;
+  margin: 0px!important;
+}
+.checkbox_style{
+  border:0px solid black;
+  padding: 0px 10px!important;
+  margin: 0px!important;
+  display: inline;
+  width: 28px;
+}
+.group{
+  margin-top:3px;
+  padding-left: 15px;
+  border:0px solid black;
+  display: inline;
+  padding: 0px!important;
+  margin: 0px!important;
+}
+
 </style>
 <script type="text/javascript">
   function w3_open() {
@@ -81,6 +104,7 @@ $option1 = "id='selected-sidebar'";
     document.getElementById("action_sidebar").style.display = "none";
     document.getElementById("button_open").style.display = "block";
   }
+  
   Dropzone.autoDiscover = false;
   $(document).ready(function(){  
       $.ajaxSetup({
@@ -100,6 +124,19 @@ $option1 = "id='selected-sidebar'";
       $(document).on('click', '#open_submission', function(){
         $('#openSubmissionModal').modal('show');
         getOption(0);
+      });
+
+      $(document).on('click', '#checkDownloadAction', function(){
+        var checkedValue = ""; 
+        var inputElements = document.getElementsByClassName('group_download');
+        for(var i=0; inputElements[i]; i++){
+          if(inputElements[i].checked){
+            checkedValue += inputElements[i].value+"_";
+          }
+        }
+        var course_id = $('#course_id').val();
+        var id = course_id+"_"+checkedValue;
+        window.location = "/AssessmentResult/AllZipFiles/"+id+"/checked";
       });
 
       $(document).on('click', '.remove_button', function(){
@@ -354,6 +391,17 @@ $option1 = "id='selected-sidebar'";
           data:{value:value,course_id:course_id},
           success:function(data){
             document.getElementById("submission").innerHTML = data;
+            $('.group_checkbox').click(function(){
+              var id = $(this).attr("id");
+              var ass_rs_id = id.split("group");
+
+              if($(this).prop("checked") == true){
+                $('.group_'+ass_rs_id[1]).prop("checked", true);
+              }
+              else if($(this).prop("checked") == false){
+                $('.group_'+ass_rs_id[1]).prop("checked", false);
+              }
+            });
           }
       });
     }
@@ -366,10 +414,51 @@ $option1 = "id='selected-sidebar'";
            data:{value:value,course_id:course_id},
            success:function(data){
               document.getElementById("submission").innerHTML = data;
+              $('.group_checkbox').click(function(){
+                var id = $(this).attr("id");
+                var ass_rs_id = id.split("group");
+
+                if($(this).prop("checked") == true){
+                  $('.group_'+ass_rs_id[1]).prop("checked", true);
+                }
+                else if($(this).prop("checked") == false){
+                  $('.group_'+ass_rs_id[1]).prop("checked", false);
+                }
+              });
            }
         });
     });
   });
+
+  $(document).ready(function(){
+    $('.group_checkbox').click(function(){
+      var id = $(this).attr("id");
+      var ass_rs_id = id.split("group");
+      // alert(ass_rs_id[1]);
+
+      if($(this).prop("checked") == true){
+        $('.group_'+ass_rs_id[1]).prop("checked", true);
+      }
+      else if($(this).prop("checked") == false){
+        $('.group_'+ass_rs_id[1]).prop("checked", false);
+      }
+    });
+
+    $(document).on('click', '.plus', function(){
+      var id = $(this).attr("id"); 
+      $('#assessment_'+id).slideToggle("slow", function(){
+        if($('#assessment_'+id).is(":visible")){
+          $('#icon_'+id).removeClass('fa fa-plus');
+          $('#icon_'+id).addClass('fa fa-minus');
+        }else{
+          $('#icon_'+id).removeClass('fa fa-minus');
+          $('#icon_'+id).addClass('fa fa-plus');
+        }
+      });
+    });
+  });
+
+  
 </script>
 <div id="all">
     <div>
@@ -378,6 +467,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/home" class="first_page"> Home </a>/
             <a href="/course_list">Courses </a>/
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <span class="now_page">Assessment Result</span>/
         </p>
         <hr class="separate_hr">
@@ -393,7 +483,9 @@ $option1 = "id='selected-sidebar'";
                   <ul class="sidebar-action-ul">
                       <a id="open_submission"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make New Submission Form</li></a>
                       @if((count($group)!=0))
-                        <a href='/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Download All Result</li></a>
+                      <p class="title_method">Download</p>
+                        <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
+                        <a href='/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   </ul>
                 </div>
@@ -422,25 +514,36 @@ $option1 = "id='selected-sidebar'";
                       </div>
                   </div>
               </div>
-              <div id="submission" class="row" style="margin-top: -10px;">
+              
+              <div id="submission" class="row" style="margin-top: -25px;">
                 <?php 
                 $i = 0;
                 ?>
                 @foreach($group as $row_group)
-                  <h5 style="margin-top:3px;padding-left: 15px;">{{$row_group->assessment}}</h5>
+                <div style="border-bottom:1px solid black;padding:0px;" class="col-md-12">
+                  <div class="col-12 row" style="padding:10px 10px;margin: 0px;">
+                    <div class="checkbox_group_style">
+                      <input type="checkbox" name="group{{$row_group->ass_rs_id}}" id='group{{$row_group->ass_rs_id}}' class="group_checkbox">
+                    </div>
+                    <h5 class="group plus" id="{{$i}}">{{$row_group->assessment}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                  </div>
+                  <div id="assessment_{{$i}}" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">
                   @foreach($assessment_results as $row)
                   @if($row_group->assessment == $row->assessment)
                   <div class="col-12 row align-self-center" id="course_list">
-                    <a href='/AssessmentResult/studentResult/{{$row->ass_rs_id}}/' class="col-8 row align-self-center" id="show_image_link">
-                      <div class="col-12 row" style="padding:10px;color:#0d2f81;">
+                    <div class="col-8 row align-self-center" style="padding-left: 20px;">
+                      <div class="checkbox_style align-self-center">
+                        <input type="checkbox" name="group{{$row->ass_rs_id}}" value="{{$row->ass_rs_id}}" class="group_download  group_{{$row_group->ass_rs_id}}">
+                      </div>
+                      <a href='/AssessmentResult/studentResult/{{$row->ass_rs_id}}/' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/folder_submit.png')}}" width="25px" height="25px"/>
                         </div>
                         <div class="col-10" id="course_name">
                           <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->submission_name}}</b></p>
                         </div>
-                      </div>
-                    </a>
+                      </a>
+                    </div>
                     <div class="col-4" id="course_action_two">
                       <i class="fa fa-upload upload_button open_modal" aria-hidden="true" id="upload_button_{{$row->ass_rs_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;
                       <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->ass_rs_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
@@ -452,7 +555,10 @@ $option1 = "id='selected-sidebar'";
                   $i++;
                   ?>
                   @endforeach
+                  </div>
+                </div>
                 @endforeach
+                
                 @if($i==0)
                 <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px 0px 20px;">
                   <center>Empty</center>

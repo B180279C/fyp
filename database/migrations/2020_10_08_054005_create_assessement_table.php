@@ -13,13 +13,11 @@ class CreateAssessementTable extends Migration
      */
     public function up()
     {
-        Schema::create('assessments', function (Blueprint $table) {
-            $table->id('ass_id');
-            $table->string('course_id');
+        Schema::create('assessment_list', function (Blueprint $table) {
+            $table->id('ass_li_id');
+            $table->string('ass_id');
             $table->string('ass_type');
-            $table->string('assessment');
             $table->string('ass_name');
-            $table->string('ass_place');
             $table->text('ass_document')->nullable();
             $table->text('ass_word')->nullable();
             $table->string('status');

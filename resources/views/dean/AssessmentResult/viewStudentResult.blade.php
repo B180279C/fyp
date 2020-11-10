@@ -37,8 +37,41 @@ $option1 = "id='selected-sidebar'";
 		display: block;
 	}
 }
+
+.checkbox_group_style{
+  border:0px solid black;
+  padding: 3px 10px 0px 10px!important;
+  margin: 0px!important;
+}
+.checkbox_style{
+  border:0px solid black;
+  padding: 0px 10px!important;
+  margin: 0px!important;
+  display: inline;
+}
+.group{
+  margin-top:3px;
+  padding-left: 15px;
+  border:0px solid black;
+  display: inline;
+  padding: 0px!important;
+  margin: 0px!important;
+}
 </style>
 <script type="text/javascript">
+  $(document).ready(function(){
+    $('.group_checkbox').click(function(){
+      var id = $(this).attr("id");
+      var type = id.split("group_");
+
+      if($(this).prop("checked") == true){
+        $('.group_'+type[1]).prop("checked", true);
+      }
+      else if($(this).prop("checked") == false){
+        $('.group_'+type[1]).prop("checked", false);
+      }
+    });
+  });
   $(document).ready(function(){
   	$.ajaxSetup({
       headers: {
@@ -90,7 +123,19 @@ $option1 = "id='selected-sidebar'";
     $('#openDocumentModal').modal('show');
   });
 
-  
+  $(document).on('click', '#checkDownloadAction', function(){
+    var checkedValue = ""; 
+    var inputElements = document.getElementsByClassName('group_download');
+    for(var i=0; inputElements[i]; i++){
+      if(inputElements[i].checked){
+        checkedValue += inputElements[i].value+"---";
+      }
+    }
+    var ass_id = $('#ass_id').val();
+    var id = ass_id+"---"+checkedValue;
+    window.location = "/AssessmentResult/download/zipFiles/"+id+"/checked";
+  });
+
   var i = 0;
   Dropzone.options.dropzoneFile =
   {
@@ -250,26 +295,48 @@ $option1 = "id='selected-sidebar'";
     if($('.search').val()!=""){
       var value = $('.search').val();
       var course_id = $('#course_id').val();
-      var ass_rs_id = $('#ass_rs_id').val();
+      var ass_id = $('#ass_id').val();
       $.ajax({
           type:'POST',
           url: "/AssessmentResult/searchStudentList/",
-          data:{value:value,course_id:course_id,ass_rs_id:ass_rs_id},
+          data:{value:value,course_id:course_id,ass_id:ass_id},
           success:function(data){
             document.getElementById("student_list").innerHTML = data;
+            $('.group_checkbox').click(function(){
+              var id = $(this).attr("id");
+              var type = id.split("group_");
+
+              if($(this).prop("checked") == true){
+                $('.group_'+type[1]).prop("checked", true);
+              }
+              else if($(this).prop("checked") == false){
+                $('.group_'+type[1]).prop("checked", false);
+              }
+            });
           }
       });
     }
     $(".search").keyup(function(){
         var value = $('.search').val();
         var course_id = $('#course_id').val();
-        var ass_rs_id = $('#ass_rs_id').val();
+        var ass_id = $('#ass_id').val();
         $.ajax({
            type:'POST',
            url: "/AssessmentResult/searchStudentList/",
-           data:{value:value,course_id:course_id,ass_rs_id:ass_rs_id},
+           data:{value:value,course_id:course_id,ass_id:ass_id},
            success:function(data){
               document.getElementById("student_list").innerHTML = data;
+              $('.group_checkbox').click(function(){
+                var id = $(this).attr("id");
+                var type = id.split("group_");
+
+                if($(this).prop("checked") == true){
+                  $('.group_'+type[1]).prop("checked", true);
+                }
+                else if($(this).prop("checked") == false){
+                  $('.group_'+type[1]).prop("checked", false);
+                }
+              });
            }
         });
     });
@@ -282,14 +349,15 @@ $option1 = "id='selected-sidebar'";
             <a href="/home" class="first_page"> Home </a>/
             <a href="/course_list">Courses </a>/
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/AssessmentResult/{{$course[0]->course_id}}">Assessment Result</a>/
-            <span class="now_page">{{$assessment_result->submission_name}}</span>/
+            <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
+            <a href="/AssessmentResult/{{$course[0]->course_id}}/question/{{$assessments->assessment}}">{{$assessments->assessment}} ( R )</a>/
+            <span class="now_page">{{$assessments->assessment_name}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <p class="page_title">{{$assessment_result->submission_name}}</p>
+            <p class="page_title">{{$assessments->assessment_name}}</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 250px;">
                     <div style="text-align: right;padding:10px;">
@@ -298,7 +366,9 @@ $option1 = "id='selected-sidebar'";
                   	<ul class="sidebar-action-ul">
                       <a class="open_modal"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
                       @if((count($lecturer_result)!=0)||(count($student_result)!=0))
-                        <a href='/AssessmentResult/download/zipFiles/{{$assessment_result->ass_rs_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Download All Result</li></a>
+                      <p class="title_method">Download</p>
+                        <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
+                        <a href='/AssessmentResult/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   	</ul>
                 </div>
@@ -323,29 +393,37 @@ $option1 = "id='selected-sidebar'";
 		                    <div class="form-group">
 		                        <label for="full_name" class="bmd-label-floating">Search</label>
 		                        <input type="hidden" value="{{$course[0]->course_id}}" id="course_id">
-                            <input type="hidden" value="{{$assessment_result->ass_rs_id}}" id="ass_rs_id">
+                            <input type="hidden" value="{{$assessments->ass_id}}" id="ass_id">
 		                        <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
 		                    </div>
 		                </div>
 		            </div>
-		            <div id="student_list" class="row" style="margin-top: -10px;">
+                
+		            <div id="student_list" class="row" style="margin-top: -15px;">
                   @if(count($lecturer_result)>0)
-		            	<div class="row col-md-12 l_plus" style="border:0px solid black;margin: 0px;padding:0px;font-size: 20px;">
-			            	<div class="col-md-3" style="padding-left: 18px;border:0px solid black" class="col-md-12">
-			            		Submitted By Lecturer (<i class="fa fa-minus" aria-hidden="true" id="icon_l" style="color: #0d2f81;position: relative;top: 2px;"></i>)
-			            	</div>
-			            	<div class="col-9 show_count" style="border:0px solid black;">
-			            		<hr style="display: inline-block; background-color: #cccccc;width: 94%;margin:0px;position: relative;top: -5px;">
-			            		<span style="display: inline-block;border:0px solid black;text-align: right;width:5%;"> ( {{count($lecturer_result)}} ) </span>
-			            	</div>
-		            	</div>
-                  
-		            	<div class="row col-md-12" id="lecturer" style="margin:12px 0px 0px 0px;padding: 0px;">
+                  <div class="col-12 row" style="padding: 0px 10px;margin: 0px;">
+                    <div class="checkbox_group_style align-self-center">
+                      <input type="checkbox" name="group_lecturer" id='group_lecturer' class="group_checkbox">
+                    </div>
+  		            	<div class="l_plus row col" style="border:0px solid black;margin: 0px;padding:0px;font-size: 20px;">
+  			            	<div class="col-md-3 row" style="padding-left: 18px;border:0px solid black;margin: 0px;padding:0px;">
+  			            		Submitted By Lecturer (<i class="fa fa-minus" aria-hidden="true" id="icon_l" style="color: #0d2f81;position: relative;top: 7px;"></i>)
+  			            	</div>
+  			            	<div class="col-9 show_count" style="border:0px solid black;">
+  			            		<hr style="display: inline-block; background-color: #cccccc;width: 94%;margin:0px;position: relative;top: -5px;">
+  			            		<span style="display: inline-block;border:0px solid black;text-align: right;width:5%;"> ( {{count($lecturer_result)}} ) </span>
+  			            	</div>
+  		            	</div>
+                  </div>
+		            	<div class="row col-md-12" id="lecturer" style="margin:12px 0px 0px 0px;padding: 0px 0px 5px 0px;border-bottom:1px solid black;">
 		            		@foreach($lecturer_result as $lr_row)
 			            	<div class="row col-md-4 align-self-center" id="course_list" style="margin:0px 0px 5px 0px;">
-			                    <a href='/AssessmentResult/view/student/{{$lr_row->ar_stu_id}}/' class="col-12 row align-self-center" id="show_image_link">
-			                      <div class="col-12 row" style="padding:10px;color:#0d2f81;">
-			                        <div class="col-1" style="position: relative;top: -2px;">
+                          <div class="checkbox_style align-self-center">
+                            <input type="checkbox" name="group{{$lr_row->ar_stu_id}}" value="{{$lr_row->student_id}}_Lecturer" class="group_lecturer group_download">
+                          </div>
+			                    <a href='/AssessmentResult/view/student/{{$lr_row->ar_stu_id}}/' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
+			                      <div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">
+			                        <div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">
 			                          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
 			                        </div>
 			                        <div class="col-10">
@@ -358,21 +436,29 @@ $option1 = "id='selected-sidebar'";
 		                </div>
                     @endif
                     @if(count($student_result)>0)
-		                <div class="row col-md-12 s_plus" style="border:0px solid black;margin: 20px 0px 0px 0px;padding:0px;font-size: 20px;">
-  			            	<div class="col-md-3" style="padding-left: 18px;border:0px solid black" class="col-md-12">
-  			            		Submitted By Students (<i class="fa fa-minus" aria-hidden="true" id="icon_s" style="color: #0d2f81;position: relative;top: 2px;"></i>)
-  			            	</div>
-  			            	<div class="col-9 show_count" style="border:0px solid black;">
-  			            		<hr style="display: inline-block; background-color: #cccccc;width: 94%;margin:0px;position: relative;top: -5px;">
-  			            		<span style="display: inline-block;border:0px solid black;text-align: right;width:5%;"> ( {{count($student_result)}} ) </span>
-  			            	</div>
-		            	  </div>
-		                <div class="row col-md-12" id="student" style="margin:12px 0px 0px 0px;padding: 0px;">
+                    <div class="col-12 row" style="padding: 0px 10px;margin: 10px 0px 0px 0px;">
+                      <div class="checkbox_group_style align-self-center">
+                        <input type="checkbox" name="group_student" id='group_student' class="group_checkbox">
+                      </div>
+                      <div class="s_plus row col" style="border:0px solid black;margin:0px;padding:0px;font-size: 20px;">
+                        <div class="col-md-3 row" style="padding-left: 18px;border:0px solid black;margin: 0px;padding:0px;">
+                          Submitted By Students (<i class="fa fa-minus" aria-hidden="true" id="icon_s" style="color: #0d2f81;position: relative;top: 7px;"></i>)
+                        </div>
+                        <div class="col-9 show_count" style="border:0px solid black;">
+                          <hr style="display: inline-block; background-color: #cccccc;width: 94%;margin:0px;position: relative;top: -5px;">
+                          <span style="display: inline-block;border:0px solid black;text-align: right;width:5%;"> ( {{count($student_result)}} ) </span>
+                        </div>
+                      </div>
+                    </div>
+		                <div class="row col-md-12" id="student" style="margin:12px 0px 0px 0px;padding: 0px  0px 10px 0px;border-bottom:1px solid black;">
 		                	@foreach($student_result as $sr_row)
 			            	<div class="row col-md-4 align-self-center" id="course_list" style="margin:0px;">
-			                    <a href='/AssessmentResult/view/student/{{$sr_row->ar_stu_id}}/' class="col-12 row align-self-center" id="show_image_link">
-			                      <div class="col-12 row" style="padding:10px;color:#0d2f81;">
-			                        <div class="col-1" style="position: relative;top: -2px;">
+                          <div class="checkbox_style align-self-center">
+                            <input type="checkbox" name="group{{$sr_row->ar_stu_id}}" value="{{$sr_row->student_id}}_Students" class="group_student group_download">
+                          </div>
+			                    <a href='/AssessmentResult/view/student/{{$sr_row->ar_stu_id}}/' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
+			                      <div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">
+			                        <div class="col-1" style="position: relative;top: -2px; padding-left: 2px;">
 			                          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
 			                        </div>
 			                        <div class="col-10">
@@ -413,9 +499,9 @@ $option1 = "id='selected-sidebar'";
       </form>
       <form method="post" action="{{action('AssessmentResultController@storeFiles')}}" id="myForm">
         {{csrf_field()}}
-        <input type="hidden" name="count{{$assessment_result->ass_rs_id}}" value="0" id="count">
+        <input type="hidden" name="count{{$assessments->ass_id}}" value="0" id="count">
         <input type="hidden" value="{{$course[0]->course_id}}" name="course_id">
-        <input type="hidden" name="ass_rs_id" value="{{$assessment_result->ass_rs_id}}" id="model_id">
+        <input type="hidden" name="ass_id" value="{{$assessments->ass_id}}" id="model_id">
         <div id="writeInput"></div>
         <br>
         <div class="modal-footer">

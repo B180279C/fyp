@@ -516,6 +516,9 @@ class F_PortFolioController extends Controller
 
     public function removeActiveFile($id){
         $faculty_portfolio = Faculty_Portfolio::where('fp_id', '=', $id)->firstOrFail();
+        if($faculty_portfolio->portfolio_type=="folder"){
+            $faculty_portfolio_list = Faculty_Portfolio::where('portfolio_place', 'LIKE', $faculty_portfolio->portfolio_place.",,,".$id.'%')->update(['status' => 'Remove']);
+        }
         $faculty_portfolio->status  = "Remove";
         $faculty_portfolio->save();
         return redirect()->back()->with('success','Remove Successfully');

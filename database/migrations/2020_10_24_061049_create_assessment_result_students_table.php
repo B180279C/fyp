@@ -15,7 +15,7 @@ class CreateAssessmentResultStudentsTable extends Migration
     {
         Schema::create('assessment_result_students', function (Blueprint $table) {
             $table->id('ar_stu_id');
-            $table->string('ass_rs_id');
+            $table->string('ass_id');
             $table->string('student_id');
             $table->string('submitted_by');
             $table->string('document_name');

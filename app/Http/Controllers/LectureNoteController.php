@@ -73,6 +73,9 @@ class LectureNoteController extends Controller
 
     public function removeActive($id){
         $lecture_note = lecture_Note::where('ln_id', '=', $id)->firstOrFail();
+        if($lecture_note->note_type=="folder"){
+            $lecture_note_list = lecture_Note::where('note_place', 'LIKE', $lecture_note->note_place.",,,".$id.'%')->update(['status' => 'Remove']);
+        }
         $lecture_note->status  = "Remove";
         $lecture_note->save();
         return redirect()->back()->with('success','Remove Successfully');

@@ -122,20 +122,21 @@ Route::middleware('is_hod')->group(function(){
 	Route::get('hod/home', 'HomeController@hodHome')->name('hod.home');
 });
 Route::middleware('is_dean')->group(function(){
+	//Detail
 	Route::get('dean/home', 'HomeController@deanHome')->name('dean.home');
-
 	Route::get('images/home_image/{user_id}', [
 	     'as'         => 'home_image',
 	     'uses'       => 'HomeController@deanDetails',
 	     'middleware' => 'auth',
 	]);
-
 	Route::get('images/profile/{image_name}', [
 	     'as'         => 'profile_image',
 	     'uses'       => 'StaffController@profileImage',
 	     'middleware' => 'auth',
 	]);
 
+
+	// Faculty PortFolio
 	Route::get('/FacultyPortFolio', 'F_PortFolioController@index')->name('dean.F_potrfolio.index');
 	Route::post('/searchFiles', 'F_PortFolioController@searchFiles');	
 	Route::get('/FacultyPortFolio/LecturerCV/', 'F_PortFolioController@lecturerCV')->name('dean.F_potrfolio.lecturerCV');
@@ -144,7 +145,6 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/searchSyllabus', 'F_PortFolioController@searchSyllabus');
 	Route::get('/dean/staff/CV/{id}','F_PortFolioController@downloadCV')->name('dean.downloadCV');
 	Route::get('/dean/syllabusDownload/{id}','F_PortFolioController@downloadSyllabus')->name('dean.downloadSyllabus');
-
 	Route::post('/openNewFolder', 'F_PortFolioController@openNewFolder');
 	Route::post('/folderNameEdit', 'F_PortFolioController@folderNameEdit');
 	Route::post('/updateFolderName', 'F_PortFolioController@updateFolderName');
@@ -155,12 +155,13 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/storeFiles', 'F_PortFolioController@storeFiles');
 	Route::get('/faculty/portfolio/{id}','F_PortFolioController@downloadFP')->name('dean.downloadFP');
 
+	//Course PortFolio
 	Route::get('/CoursePortFolio', 'C_PortFolioController@index')->name('dean.C_potrfolio.index');
 	Route::post('/searchCourse', 'C_PortFolioController@searchCourse');
 
+	// CourseList
 	Route::post('/uploadCourses', 'CourseController@importExcel')->name('dropzone.uploadCourses');
 	Route::post('/course/excel/create', 'CourseController@storeCourses')->name('course.excel.submit');
-	
 	Route::get('course_list','CourseController@index')->name('dean.course_list.index');
 	Route::get('course/create','CourseController@create')->name('course.create');
 	Route::post('course/create', 'CourseController@store')->name('course.submit');
@@ -171,6 +172,7 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/searchTeachCourse', 'CourseController@searchTeachCourse');
 	Route::get('course/action/{id}','CourseController@courseAction');
 
+	//Assign Student
 	Route::get('/assign/student/{id}','AssignStudentController@viewAssignStudent');
 	Route::post('/searchAssignStudent', 'AssignStudentController@searchAssignStudent');
 	Route::post('/showStudent','AssignStudentController@showStudent');
@@ -179,6 +181,8 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/assignStudent/excel/create', 'AssignStudentController@storeAssignStudent')->name('assignStudent.excel.submit');
 	Route::get('/assignStudent/remove/{id}','AssignStudentController@removeActiveStudent');
 
+
+	//Note
 	Route::get('/lectureNote/{id}','LectureNoteController@viewLectureNote');
 	Route::post('/lectureNote/searchFiles', 'LectureNoteController@searchFiles');
 	Route::get('/lectureNote/folder/{folder_id}', 'LectureNoteController@folder_view')->name('dean.note.folder_view');
@@ -192,6 +196,7 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/lectureNote/download/zipFiles/{id}','LectureNoteController@zipFileDownload');
 	Route::get('/lectureNote/download/{id}','LectureNoteController@downloadLN')->name('dean.downloadLN');
 
+	//TP
 	Route::get('/teachingPlan/{id}','TeachingPlanController@viewTeachingPlan')->name('tp.view');
 	Route::get('/teachingPlan/create/weekly/{id}','TeachingPlanController@createTeachingPlan')->name('tp.create');
 	Route::post('/teachingPlan/create/weekly/{id}', 'TeachingPlanController@storeTP')->name('tp.submit');
@@ -203,15 +208,17 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/teachingPlan/create/assessment/{id}', 'TeachingPlanController@storeTPAss')->name('tpAss.submit');
 	
 	
+	//Assessment
 	Route::get('/assessment/{id}','AssessmentController@viewAssessment')->name('dean.viewAssessment');
 	Route::post('/assessment/getSyllabusData', 'AssessmentController@getSyllabusData');
 	Route::get('/assessment/create/{id}/question/{question}', [
     'as' => 'createQuestion', 'uses' => 'AssessmentController@create_question']);
-    Route::get('/assessment/folder/{folder_id}', 'AssessmentController@folder_view')->name('dean.ass.folder_view');
-    Route::post('/assessment/openNewFolder', 'AssessmentController@openNewFolder');
-	Route::post('/assessment/folderNameEdit', 'AssessmentController@folderNameEdit');
-	Route::post('/assessment/updateFolderName', 'AssessmentController@updateFolderName');
+    Route::post('/assessment/openNewAssessment', 'AssessmentController@openNewAssessment');
+    Route::post('/assessment/AssessmentNameEdit', 'AssessmentController@AssessmentNameEdit');
+	Route::post('/assessment/updateAssessmentName', 'AssessmentController@updateAssessmentName');
+	Route::get('/assessment/view_list/{ass_id}', 'AssessmentController@assessment_list_view')->name('dean.ass.assessment_list_view');
 	Route::get('/assessment/remove/{id}', 'AssessmentController@removeActive');
+	Route::get('/assessment/remove/list/{id}', 'AssessmentController@removeActiveList');
 	Route::post('/ass_uploadFiles', 'AssessmentController@uploadFiles')->name('assessment.dropzone.uploadFiles');
 	Route::post('/ass_destoryFiles', 'AssessmentController@destroyFiles')->name('assessment.dropzone.destoryFiles');
 	Route::post('/ass_storeFiles', 'AssessmentController@storeFiles');
@@ -221,35 +228,34 @@ Route::middleware('is_dean')->group(function(){
 	     'middleware' => 'auth',
 	]);
 	Route::get('/assessment/view/whole_paper/{ass_id}', 'AssessmentController@view_wholePaper');
-	Route::get('/assessment/download/{ass_id}', 'AssessmentController@downloadFiles');
-	Route::get('/assessment/folder/{id}/previous/{course_id}/question/{question}/{list}', [
-    'as' => 'viewPreviousQuestion', 'uses' => 'AssessmentController@viewPreviousQuestion']);
-    Route::get('/assessment/folder/{id}/previous/{folder_id}/{list}', [
-    'as' => 'dean.ass.previous_folder_view', 'uses' => 'AssessmentController@previous_folder_view']);
-    Route::post('/assessment/searchKey/', 'AssessmentController@searchKey');
+	Route::get('/assessment/download/{ass_li_id}', 'AssessmentController@downloadFiles');
+	Route::post('/assessment/searchKey/', 'AssessmentController@searchKey');
+    Route::post('/assessment/searchAssessmentList/', 'AssessmentController@searchAssessmentList');
+    Route::get('/assessment/AllZipFiles/{id}/{download}','AssessmentController@AllZipFileDownload');
+    Route::get('/assessment/download/zipFiles/{ass_id}/{download}','AssessmentController@zipFileDownload');
+	// Route::get('/assessment/folder/{id}/previous/{course_id}/question/{question}/{list}', [
+ //    'as' => 'viewPreviousQuestion', 'uses' => 'AssessmentController@viewPreviousQuestion']);
+    // Route::get('/assessment/folder/{id}/previous/{folder_id}/{list}', [
+    // 'as' => 'dean.ass.previous_folder_view', 'uses' => 'AssessmentController@previous_folder_view']);
+    
+    // Route::get('/assessment/{id}/previous/{course_id}/list', [
+    // 'as' => 'viewPreviousAssessment', 'uses' => 'AssessmentController@viewPreviousAssessment']);
+    // Route::post('/assessment/list/searchListKey/', 'AssessmentController@searchListKey');
 
-    Route::get('/assessment/{id}/previous/{course_id}/list', [
-    'as' => 'viewPreviousAssessment', 'uses' => 'AssessmentController@viewPreviousAssessment']);
-    Route::post('/assessment/list/searchListKey/', 'AssessmentController@searchListKey');
 
-
-    Route::get('/AssessmentResult/{id}/', [
-    'as' => 'viewAssessmentResult', 'uses' => 'AssessmentResultController@viewAssessmentResult']);
-    Route::post('/AssessmentResult/openSubmissionForm', 'AssessmentResultController@openSubmissionForm');
-	Route::post('/AssessmentResult/submissionFormEdit', 'AssessmentResultController@submissionFormEdit');
-	Route::post('/AssessmentResult/updateSubmissionForm', 'AssessmentResultController@updateSubmissionForm');
+    // Continuous Assessment Student Result
+    Route::get('/AssessmentResult/{id}/question/{question}', [
+    'as' => 'viewAssessmentStudentResult', 'uses' => 'AssessmentResultController@viewAssessmentStudentResult']);
 	Route::post('/ass_rs_uploadFiles', 'AssessmentResultController@uploadFiles')->name('assessmentResult.dropzone.uploadFiles');
 	Route::post('/ass_rs_destoryFiles', 'AssessmentResultController@destroyFiles')->name('assessmentResult.dropzone.destoryFiles');
 	Route::post('/ass_rs_storeFiles', 'AssessmentResultController@storeFiles');
-
-	Route::get('/AssessmentResult/studentResult/{ass_rs_id}/', [
+	Route::get('/AssessmentResult/studentResult/{ass_id}/', [
     'as' => 'viewstudentlist', 'uses' => 'AssessmentResultController@viewstudentlist']);
-
     Route::get('/AssessmentResult/view/student/{ar_stu_id}/', [
     'as' => 'viewStudentResult', 'uses' => 'AssessmentResultController@viewStudentResult']);
 
     Route::get('/AssessmentResult/result/{ar_stu_id}','AssessmentResultController@downloadDocument')->name('dean.downloadStudentResult');
-    Route::post('/AssessmentResult/searchSubmissionForm/', 'AssessmentResultController@searchSubmissionForm');
+    Route::post('/AssessmentResult/searchAssessmentForm/', 'AssessmentResultController@searchAssessmentForm');
     Route::post('/AssessmentResult/searchStudentList/', 'AssessmentResultController@searchStudentList');
     Route::get('images/AssessmentResult/{image_name}', [
 	     'as'         => 'assessmentResult_image',
@@ -259,11 +265,47 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/AssessmentResult/view/whole_paper/{ar_stu_id}', 'AssessmentResultController@view_wholePaper');
 	Route::get('/AssessmentResult/remove/{id}', 'AssessmentResultController@removeActive');
 	Route::get('/AssessmentResultStudent/remove/{ar_stu_id}', 'AssessmentResultController@removeStudentActive');
-	Route::get('/AssessmentResult/AllZipFiles/{id}','AssessmentResultController@AllZipFileDownload');
-	Route::get('/AssessmentResult/download/zipFiles/{ass_rs_id}','AssessmentResultController@zipFileDownload');
-
-	Route::get('/AssessmentResult/Student/{student_id}/download/zipFiles/{ass_rs_id}', [
+	Route::get('/AssessmentResult/AllZipFiles/{id}/{download}','AssessmentResultController@AllZipFileDownload');
+	Route::get('/AssessmentResult/download/zipFiles/{ass_id}/{download}','AssessmentResultController@zipFileDownload');
+	Route::get('/AssessmentResult/Student/{student_id}/download/zipFiles/{ass_id}/{download}', [
     'as' => 'zipFileDownloadStudent', 'uses' => 'AssessmentResultController@zipFileDownloadStudent']);
+    
+
+	// FinalExamination
+	Route::get('/FinalExamination/{id}/', [
+    'as' => 'viewFinalExamination', 'uses' => 'FinalExaminationController@viewFinalExamination']);
+    Route::post('/FinalExamination/getSyllabusData', 'FinalExaminationController@getSyllabusData');
+    Route::get('/FinalExamination/question/{id}/', [
+    'as' => 'createQuestion', 'uses' => 'FinalExaminationController@create_question']);
+    Route::post('/FinalExamination/openNewAssessment', 'FinalExaminationController@openNewAssessment');
+    Route::post('/FinalExamination/AssessmentNameEdit', 'FinalExaminationController@AssessmentNameEdit');
+	Route::post('/FinalExamination/updateAssessmentName', 'FinalExaminationController@updateAssessmentName')->name('final_updateAssessmentName');
+	Route::get('/FinalExamination/view_list/{fx_id}', 'FinalExaminationController@final_assessment_list_view')->name('dean.final.final_assessment_list_view');
+	Route::get('/FinalExamination/remove/{id}', 'FinalExaminationController@removeActive');
+	Route::get('/FinalExamination/remove/list/{id}', 'FinalExaminationController@removeActiveList');
+	Route::post('/FinalExamination/uploadFiles', 'FinalExaminationController@uploadFiles')->name('assessment_final.dropzone.uploadFiles');
+	Route::post('/FinalExamination/destoryFiles', 'FinalExaminationController@destroyFiles')->name('assessment.dropzone.destoryFiles');
+	Route::post('/FinalExamination/storeFiles', 'FinalExaminationController@storeFiles');
+	Route::get('/images/final_assessment/{image_name}', [
+	     'as'         => 'assessment_final_image',
+	     'uses'       => 'FinalExaminationController@FinalAssessmentImage',
+	     'middleware' => 'auth',
+	]);
+	Route::post('/FinalExamination/searchAssessmentList/', 'FinalExaminationController@searchAssessmentList');
+	Route::post('/FinalExamination/searchKey/', 'FinalExaminationController@searchKey');
+	Route::get('/final_assessment/view/whole_paper/{fx_id}', 'FinalExaminationController@view_wholePaper');
+	Route::get('/FinalExamination/download/{ass_fx_id}', 'FinalExaminationController@downloadFiles');
+	Route::get('/FinalExamination/AllZipFiles/{id}/{download}','FinalExaminationController@AllZipFileDownload');
+	Route::get('/FinalExamination/download/zipFiles/{fx_id}/{download}','FinalExaminationController@zipFileDownload');
+
+
+	// Final Examination Result
+	Route::get('/FinalExaminationResult/{id}', [
+    'as' => 'viewFinalResult', 'uses' => 'FinalExaminationResultController@viewFinalResult']);
+    Route::post('/final_rs_uploadFiles', 'FinalExaminationResultController@uploadFiles')->name('FinalResult.dropzone.uploadFiles');
+	Route::post('/final_rs_destoryFiles', 'FinalExaminationResultController@destroyFiles')->name('FinalResult.dropzone.destoryFiles');
+	Route::post('/final_rs_storeFiles', 'FinalExaminationResultController@storeFiles');
+
 });
 
 

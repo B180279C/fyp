@@ -80,9 +80,9 @@
                      var data_header = $('.modal-header');
                      var data_title = $('.modal-title');
                      var body = $('.modal-body');
-                     // console.log(image.width());
+                     console.log(image.width());
 
-                     if((image.width() > 380) && (image.width() < 430)){
+                     if((image.width() > 380) && (image.width() < 441)){
                         dialog.css('max-width','700px');
                         image.css('height','900px');
                         image.css('width','700px');

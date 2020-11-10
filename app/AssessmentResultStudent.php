@@ -11,6 +11,6 @@ class AssessmentResultStudent extends Model
 	protected $primaryKey = 'ar_stu_id';
 	
     protected $fillable = [
-        'ass_rs_id','student_id', 'submitted_by','document_name','document','status'
+        'ass_id','student_id', 'submitted_by','document_name','document','status'
     ];
 }
