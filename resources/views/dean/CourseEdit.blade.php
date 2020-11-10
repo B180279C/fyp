@@ -93,7 +93,7 @@ $option4 = "id='selected-sidebar'";
                       </button>
                     </div>
                     @endif
-                        <form method="post" action="{{action('CourseController@update', $id)}}">
+                        <form method="post" action="{{action('Dean\CourseController@update', $id)}}">
                         {{csrf_field()}}
                         <div class="row">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">

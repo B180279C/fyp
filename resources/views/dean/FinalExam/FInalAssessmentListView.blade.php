@@ -594,7 +594,7 @@ $option1 = "id='selected-sidebar'";
         @csrf
 
       </form>
-      <form method="post" action="{{action('FinalExaminationController@storeFiles')}}">
+      <form method="post" action="{{action('Dean\FinalExaminationController@storeFiles')}}">
         {{csrf_field()}}
         <input type="hidden" name="count" value="0" id="count">
         <input type="hidden" value="{{$final->fx_id}}" name="fx_id">

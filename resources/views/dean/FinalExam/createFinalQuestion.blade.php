@@ -306,7 +306,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('FinalExaminationController@openNewAssessment')}}">
+      <form method="post" action="{{action('Dean\FinalExaminationController@openNewAssessment')}}">
         {{csrf_field()}}
       <div class="modal-body body2">
         <div id="message"></div>
@@ -361,7 +361,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('FinalExaminationController@updateAssessmentName')}}">
+      <form method="post" action="{{action('Dean\FinalExaminationController@updateAssessmentName')}}">
         {{csrf_field()}}
       <div class="modal-body body2">
         <div id="message"></div>

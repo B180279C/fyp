@@ -592,7 +592,7 @@ $option1 = "id='selected-sidebar'";
         class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
       </form>
-      <form method="post" action="{{action('AssessmentController@storeFiles')}}">
+      <form method="post" action="{{action('Dean\AssessmentController@storeFiles')}}">
         {{csrf_field()}}
         <input type="hidden" name="count" value="0" id="count">
         <input type="hidden" value="{{$assessments->ass_id}}" name="ass_id">

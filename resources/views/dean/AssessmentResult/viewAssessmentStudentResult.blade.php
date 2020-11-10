@@ -131,7 +131,7 @@ $option1 = "id='selected-sidebar'";
       lastNum = getIdNum[1];
       var i = 0;
       $("#dropzoneFile"+lastNum).dropzone({
-          url: "{{action('AssessmentResultController@uploadFiles')}}",
+          url: '{{ url("/ass_rs_uploadFiles") }}',
           acceptedFiles: ".pdf,.xlsx,.docx,.pptx,.jpg,.jpeg,.png",
           addRemoveLinks: true,
           timeout: 50000,
@@ -426,7 +426,7 @@ function writeInput(id,num,name,ext,fake){
       </div>
       <div style="padding:20px 20px 0px 20px;">
       <div id="error-message"></div>
-      <form method="post" action="{{action('AssessmentResultController@storeFiles')}}" id="myForm" style="margin: 0px;">
+      <form method="post" action="{{action('Dean\AssessmentResultController@storeFiles')}}" id="myForm" style="margin: 0px;">
       {{csrf_field()}}
       @foreach($assessments as $row_model)
       <div class="dropzone" id="dropzoneFile{{$row_model->ass_id}}" style="padding:25px;display: none;font-size: 20px;color:#a6a6a6;border-style: double;">

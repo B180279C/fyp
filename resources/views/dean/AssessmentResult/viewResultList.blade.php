@@ -187,6 +187,14 @@ $(document).on('click', '#checkDownloadAction', function(){
                     </ul>
                 </div>
             @endif
+            @if(\Session::has('success'))
+              <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top:20px;margin-bottom: 0px;">
+                  <Strong>{{\Session::get('success')}}</Strong>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+            @endif
             <div class="details" style="padding: 5px 5px 0px 5px;">
               <div class="row" style="margin-top: 15px;">
               	@if(count($lecturer_result)>0)
@@ -218,7 +226,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$row->ar_stu_id}}" class="group_lecturer group_download">
                       </div>
-                      <a href="{{ action('AssessmentResultController@downloadDocument',$row->ar_stu_id) }}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{ action('Dean\AssessmentResultController@downloadDocument',$row->ar_stu_id) }}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
@@ -293,7 +301,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$sow->ar_stu_id}}" class="group_student group_download">
                       </div>
-                      <a href="{{ action('AssessmentResultController@downloadDocument',$sow->ar_stu_id)}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{ action('Dean\AssessmentResultController@downloadDocument',$sow->ar_stu_id)}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>

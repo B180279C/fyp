@@ -493,11 +493,11 @@ $option1 = "id='selected-sidebar'";
         </button>
       </div>
       <div id="error-message" style="margin: 5px 20px;"></div>
-      <form method="post" action="{{action('AssessmentResultController@uploadFiles')}}" enctype="multipart/form-data"
+      <form method="post" action="{{action('Dean\AssessmentResultController@uploadFiles')}}" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin:0px 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
       </form>
-      <form method="post" action="{{action('AssessmentResultController@storeFiles')}}" id="myForm">
+      <form method="post" action="{{action('Dean\AssessmentResultController@storeFiles')}}" id="myForm">
         {{csrf_field()}}
         <input type="hidden" name="count{{$assessments->ass_id}}" value="0" id="count">
         <input type="hidden" value="{{$course[0]->course_id}}" name="course_id">

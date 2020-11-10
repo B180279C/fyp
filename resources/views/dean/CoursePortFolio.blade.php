@@ -310,7 +310,7 @@ $option4 = "id='selected-sidebar'";
       <div id="errorData" style="padding: 0px 20px 20px 20px;">
         <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
       </div>
-      <form method="post" action="{{action('CourseController@storeCourses')}}">
+      <form method="post" action="{{action('Dean\CourseController@storeCourses')}}">
         {{csrf_field()}}
         <div id="writeInput"></div>
         <div class="modal-footer">

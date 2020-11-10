@@ -126,7 +126,7 @@ $option1 = "id='selected-sidebar'";
               cell1.style.textAlign  = "center";
               cell2.style.textAlign  = "center";
               cell.innerHTML  = "Student Result";
-              cell1.innerHTML = '<a href="/FinalExaminationResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
             }
   });
