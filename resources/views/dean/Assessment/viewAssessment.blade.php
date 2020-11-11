@@ -107,6 +107,7 @@ $option1 = "id='selected-sidebar'";
               var new_count = 0;
               var table = document.getElementById("table");
               
+              
               for(var i = 0;i<=(response[0].length-1);i++){
                   if((response[0][i][1]==null)&&(response[0][i][2]!=null)&&(response[0][i][3]!=null)&&(response[0][i][9]!=null)){
                     if(count == 0){
@@ -123,7 +124,11 @@ $option1 = "id='selected-sidebar'";
                     var assessment_count = 0;
                     var status = "fa fa-times wrong";
                     for(var a = 0; a<=(response[1].length-1);a++){
-                      var assessment = response[0][i][3].toString();
+                      var assessment = response[0][i][3];
+                      var last_char = assessment.charAt(assessment.length-1);
+                      if(last_char==" "){
+                        assessment = assessment.substring(0, assessment.length - 1);
+                      }
                       if(assessment == response[1][a]['assessment']){
                         assessment_count++;
                         status = "fa fa-check correct";
@@ -313,41 +318,6 @@ $option1 = "id='selected-sidebar'";
               <p><b>  3. </b>The Course of Continuous Assessments has been moderated.</p>
               </div> -->
 
-            </div>
-            <!-- <hr style="margin: 5px 5px;background-color:#d9d9d9;">
-            <h5 style="position: relative;top:10px;left: 10px;">Assessment List of Other Semester</h5>
-            <br>
-            <div class="details" style="padding: 0px 5px 5px 5px;">
-                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -30px;">
-                    <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                        <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                            <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
-                        </p>
-                    </div>
-                    <div class="col-11" style="padding-left: 20px;">
-                        <div class="form-group">
-                            <label for="full_name" class="bmd-label-floating">Search</label>
-                            <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
-                        </div>
-                    </div>
-                </div>
-                <div class="row" id="assessments" style="position: relative;top: -25px;">
-                  @foreach($previous_semester as $row)
-                  <div class="col-12 row align-self-center" id="course_list">
-                    <a href="/assessment/{{$course[0]->course_id}}/previous/{{$row->course_id}}/list" id="show_image_link" class="col-9 row align-self-center">
-                      <div class="col-12 row" style="padding:10px;color:#0d2f81;">
-                        <div class="col-1" style="position: relative;top: -2px;">
-                          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
-                        </div>
-                        <div class="col-10" id="course_name">
-                          <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->semester_name}}</b></p>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                  @endforeach
-                </div>
             </div>
         </div>
     </div>
