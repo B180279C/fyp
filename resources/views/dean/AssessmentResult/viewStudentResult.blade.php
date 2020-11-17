@@ -131,9 +131,13 @@ $option1 = "id='selected-sidebar'";
         checkedValue += inputElements[i].value+"---";
       }
     }
-    var ass_id = $('#ass_id').val();
-    var id = ass_id+"---"+checkedValue;
-    window.location = "/AssessmentResult/download/zipFiles/"+id+"/checked";
+    if(checkedValue!=""){
+      var ass_id = $('#ass_id').val();
+      var id = ass_id+"---"+checkedValue;
+      window.location = "/AssessmentResult/download/zipFiles/"+id+"/checked";
+    }else{
+      alert("Please select the document first.");
+    }
   });
 
   var i = 0;

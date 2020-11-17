@@ -158,20 +158,29 @@ function w3_close() {
       if(checkedValue!=""&&error==""){
         var course_id = $('#course_id').val();
         var id = course_id+"---"+checkedValue;
-        if($('.search').val()!=""){
-          var data = $('#data').val();
-          if(data=="name"){
-            window.location = "/PastYear/assessment/download/zipFiles/"+id+"/searched";
+        if(className=="group_q group_download"){
+          if($('.search').val()!=""){
+            var data = $('#data').val();
+            if(data=="name"){
+              window.location = "/PastYear/assessment/download/zipFiles/"+id+"/searched";
+            }else{
+              window.location = "/PastYear/assessment/download/zipFiles/"+id+"/searchedWord";
+            }
           }else{
-            window.location = "/PastYear/assessment/download/zipFiles/"+id+"/searchedWord";
+            window.location = "/PastYear/assessment/download/zipFiles/"+id+"/checked";
           }
         }else{
-          window.location = "/PastYear/assessment/download/zipFiles/"+id+"/checked";
+          if($('.search_result').val()!=""){
+            var data = $('#data').val();
+            window.location = "/PastYear/assessment/sampleResult/download/zipFiles/"+id+"/"+data;
+          }else{
+            window.location = "/PastYear/assessment/sampleResult/download/zipFiles/"+id+"/checked";
+          }
         }
       }else if(error=="error"){
-        alert("The Question and Solution is cannot download with the sample result. Please select and download them in one by one or click Download 'All Result'.");
+          alert("The Question and Solution is cannot download with the sample result. Please select and download them in one by one or click Download 'All Result'.");
       }else{
-        alert("Please select the document first.");
+          alert("Please select the document first.");
       }
     });
   });
@@ -406,7 +415,7 @@ function w3_close() {
                         <div class="checkbox_style align-self-center">
                           <input type="checkbox" value="{{$row->course_id}}" class="group_r group_download">
                         </div>
-                        <a href="/PastYear/assessment/{{$course[0]->course_id}}/assessment_name/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                        <a href="/PastYear/sampleResult/{{$course[0]->course_id}}/previous/{{$row->course_id}}/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                           <div class="col-1" style="position: relative;top: -2px;">
                             <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                           </div>

@@ -216,7 +216,7 @@ class FinalExaminationController extends Controller
                     ->join('courses', 'courses.course_id', '=', 'ass_final.course_id')
                     ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
                     ->select('assessment_final.*','courses.*','semesters.*','ass_final.*')
-                    ->where('ass_final.course_id', '=', $assessment_final->course_id)
+                    ->where('ass_final.fx_id', '=', $assessment_final->fx_id)
                     ->where('assessment_final.status', '=', 'Active')
                     ->orderBy('assessment_final.ass_fx_id')
                     ->orderBy('assessment_final.ass_fx_name')

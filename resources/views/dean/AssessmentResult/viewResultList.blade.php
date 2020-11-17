@@ -148,11 +148,15 @@ $(document).on('click', '#checkDownloadAction', function(){
       checkedValue += inputElements[i].value+"_";
     }
   }
-  var ass_id = $('#ass_id').val();
-  var student_id = $('#student_id').val();
-  var id = ass_id+"_"+checkedValue;
+  if(checkedValue!=""){
+    var ass_id = $('#ass_id').val();
+    var student_id = $('#student_id').val();
+    var id = ass_id+"_"+checkedValue;
 
-  window.location = "/AssessmentResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
+    window.location = "/AssessmentResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
+  }else{
+    alert("Please select the document first.");
+  }
 });
 </script>
 <div id="all">

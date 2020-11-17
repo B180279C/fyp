@@ -132,9 +132,9 @@ $option1 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="/PastYear/FinalAssessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
-                            <img src="{{url('image/final.png')}}" width="75px" height="80px" style="margin-top: 60px;"/>
+                            <img src="{{url('image/final.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 10px;"/>
                             <br>
                             <p style="color: #0d2f81;">Final Assessment</p>
                             </center>
@@ -142,7 +142,7 @@ $option1 = "id='selected-sidebar'";
                     </div>
 
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="/PastYearNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/note.png')}}" width="75px" height="80px" style="margin-top: 60px;"/>
                             <br>

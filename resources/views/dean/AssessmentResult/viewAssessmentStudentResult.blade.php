@@ -107,9 +107,13 @@ $option1 = "id='selected-sidebar'";
         checkedValue += inputElements[i].value+"_";
       }
     }
-    var course_id = $('#course_id').val();
-    var id = course_id+"_"+checkedValue;
-    window.location = "/AssessmentResult/AllZipFiles/"+id+"/checked";
+    if(checkedValue!=""){
+      var course_id = $('#course_id').val();
+      var id = course_id+"_"+checkedValue;
+      window.location = "/AssessmentResult/AllZipFiles/"+id+"/checked";
+    }else{
+      alert("Please select the document first.");
+    }
   });
 
   $(document).on('click', '.open_modal', function(){

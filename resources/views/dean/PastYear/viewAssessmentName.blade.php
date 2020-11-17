@@ -269,13 +269,13 @@ function w3_close() {
         <p class="pass_page">
             <a href="/course/action/{{$id}}" class="first_page">Past Year</a>/
             <a href="/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
-            <span class="now_page">{{$previous[0]->semester_name}}</span>/
+            <span class="now_page">{{$previous[0]->semester_name}} ( Q & S )</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p class="page_title">{{$previous[0]->semester_name}}</p>
+             <p class="page_title">{{$previous[0]->semester_name}} ( Q & S )</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">

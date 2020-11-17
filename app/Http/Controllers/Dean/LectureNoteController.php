@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Image;
 use App\Staff;
+use App\Semester;
 use App\Lecture_Note;
 use App\Course;
 use ZipArchive;
@@ -33,8 +34,24 @@ class LectureNoteController extends Controller
                     ->where('status', '=', 'Active')
                     ->orderByDesc('lecture_notes.note_type')
                     ->get();
+
+        $previous_semester = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->join('staffs','staffs.id','=','courses.lecturer')
+                    ->join('users','staffs.user_id','=','users.user_id')
+                    ->join('lecture_notes','courses.course_id','=','lecture_notes.course_id')
+                    ->select('subjects.*','courses.*','semesters.*','staffs.*','users.*')
+                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                    ->where('courses.course_id','!=',$id)
+                    ->where('courses.status', '=', 'Active')
+                    ->orderByDesc('semesters.semester_name')
+                    ->groupBy('courses.course_id')
+                    ->get();
+
+
         if(count($course)>0){
-            return view('dean.LectureNote.viewLectureNote',compact('course','lecture_note'));
+            return view('dean.LectureNote.viewLectureNote',compact('course','lecture_note','previous_semester'));
         }else{
             return redirect()->back();
         }
@@ -62,6 +79,88 @@ class LectureNoteController extends Controller
         $folder_id = $request->get('value');
         $folder = lecture_Note::find($folder_id);
         return $folder;
+    }
+
+    public function SelectPreviousSemester(Request $request){
+        $course_id = $request->get('value');
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+
+        $previous_semester = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->join('staffs','staffs.id','=','courses.lecturer')
+                    ->join('users','staffs.user_id','=','users.user_id')
+                    ->join('lecture_notes','courses.course_id','=','lecture_notes.course_id')
+                    ->select('subjects.*','courses.*','semesters.*','staffs.*','users.*')
+                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                    ->where('courses.course_id','!=',$course_id)
+                    ->where('courses.status', '=', 'Active')
+                    ->orderByDesc('semesters.semester_name')
+                    ->groupBy('courses.course_id')
+                    ->get();
+        return $previous_semester;
+    }
+
+    public function SelectFolderSemester(Request $request){
+        $course_id = $request->get('value');
+
+        $lecture_note = DB::table('lecture_notes')
+                    ->join('courses', 'courses.course_id', '=', 'lecture_notes.course_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('lecture_notes.*','courses.*','semesters.*')
+                    ->where('lecture_notes.course_id', '=', $course_id)
+                    ->where('lecture_notes.note_place', '=', 'Note')
+                    ->where('lecture_notes.status', '=', 'Active')
+                    ->orderByDesc('lecture_notes.note_type')
+                    ->get();
+        return $lecture_note;
+    }
+
+    public function SelectFolderPlace(Request $request){
+        $ln_id = $request->get('value');
+        $lecture_note = lecture_Note::where('ln_id', '=', $ln_id)->firstOrFail();
+        $place = $lecture_note->note_place.",,,".$lecture_note->ln_id;
+
+        $course_id = $lecture_note->course_id;
+
+        $course = Course::where('course_id', '=', $course_id)->firstOrFail();
+
+        $semester = Semester::where('semester_id', '=', $course->semester)->firstOrFail();
+        $semester_name = $semester->semester_name;
+
+        if($lecture_note->note_place=="Note"){
+            $data = $lecture_note->note_name; 
+        }else{
+            $place_name = explode(',,,',($lecture_note->note_place));
+            $i=1;
+            $data = "";
+            while(isset($place_name[$i])!=""){
+                $name = Lecture_Note::where('ln_id', '=', $place_name[$i])->firstOrFail();
+                $data .= $name->note_name.",,,";
+                $i++;
+            } 
+            $data .= $lecture_note->note_name;
+        }
+        return $course_id."___".$semester_name."___".$ln_id."___".$place."___".$data;
+    }
+
+    public function SelectFolder(Request $request){
+        $place = $request->get('value');
+        $lecture_note = DB::table('lecture_notes')
+                    ->join('courses', 'courses.course_id', '=', 'lecture_notes.course_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('lecture_notes.*','courses.*','semesters.*')
+                    ->where('lecture_notes.note_place', '=', $place)
+                    ->where('lecture_notes.status', '=', 'Active')
+                    ->orderByDesc('lecture_notes.note_type')
+                    ->get();
+        return $lecture_note;
     }
 
     public function updateFolderName(Request $request){
@@ -121,6 +220,32 @@ class LectureNoteController extends Controller
             Storage::disk('private')->delete("fake/lecture_note/".$fake);
         }
         return redirect()->back()->with('success','New Document Added Successfully');
+    }
+
+    public function storePreviousFiles(Request $request){
+
+        $c_count = $request->get('c_count');
+        $checkbox_input = $request->get('checkbox_input');
+        $lnID = explode('---',($checkbox_input));
+        $i=1;
+
+        while(isset($lnID[$i])!=""){
+            echo $lnID[$i];
+            // $name = Lecture_Note::where('ln_id', '=', $place_name[$i])->firstOrFail();
+            // $data .= ",,,".$name->note_name;
+            $i++;
+        }
+
+        // $lecture_note = new Lecture_Note([
+        //     'course_id'              =>  $request->get('course_id'),
+        //     'note_name'              =>  $name,
+        //     'note_type'              =>  'document',
+        //     'note_place'             =>  $place,
+        //     'note'                   =>  $fake,
+        //     'status'                 =>  'Active',
+        // ]);
+        // $lecture_note->save();
+        // return redirect()->back()->with('success','New Document Added Successfully');
     }
 
     public function folder_view($folder_id)

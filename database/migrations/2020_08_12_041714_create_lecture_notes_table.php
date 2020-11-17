@@ -20,6 +20,7 @@ class CreateLectureNotesTable extends Migration
             $table->string('note_name');
             $table->string('note_place');
             $table->text('note')->nullable();
+            $table->string('used_by')->nullable();
             $table->string('status');
             $table->timestamps();
         });

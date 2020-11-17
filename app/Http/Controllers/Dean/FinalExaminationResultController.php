@@ -337,6 +337,36 @@ class FinalExaminationResultController extends Controller
         }
     }
 
+    public function view_wholePaper($fxr_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $checkCID = AssessmentFinalResult::where('fxr_id', '=', $fxr_id)->firstOrFail();
+        $course_id = $checkCID->course_id;
+        $submitted_by = $checkCID->submitted_by;
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->select('courses.*','subjects.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+
+        $assessment_result_list = DB::table('assessment_final_result')
+                                ->select('assessment_final_result.*')
+                                ->where('assessment_final_result.course_id','=',$course_id)
+                                ->where('assessment_final_result.submitted_by','=',$checkCID->submitted_by)
+                                ->where('assessment_final_result.student_id','=',$checkCID->student_id)
+                                ->get();
+        if(count($course)>0){
+            return view('dean.FinalExamResult.viewWholePaper', compact('assessment_result_list','checkCID','submitted_by'));
+        }else{
+            return redirect()->back();
+        }
+    }
+
     public function downloadDocument($fxr_id)
     {
         $user_id       = auth()->user()->user_id;

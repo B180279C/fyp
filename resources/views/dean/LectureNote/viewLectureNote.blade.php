@@ -14,7 +14,166 @@ $option1 = "id='selected-sidebar'";
       document.getElementById("action_sidebar").style.display = "none";
       document.getElementById("button_open").style.display = "block";
   }
+
+  function checkORNot(value){
+    var input = $('#checkbox_input').val();
+    var c_count = parseInt($('#c_count').val());
+    var checkbox = $('#checkbox_input').val().split("---");
+    $('#checkbox_input').val(input+"---"+value);
+    if(input==""){
+      $('#checkbox_input').val("---"+value);
+    }else{
+      input
+      var remove = "";
+      var data = "";
+      for(var m=1;m<=(checkbox.length-1);m++){
+        if(checkbox[m]==value){
+          for(var c=1;c<=(checkbox.length-1);c++){
+            if(checkbox[c]!=value){
+              data += '---'+checkbox[c];
+            }
+          }
+          $('#checkbox_input').val(data);
+          remove = "true";
+        }
+      }
+    }
+
+    if(remove != "true"){
+      $('#checkbox_input').val(input+"---"+value);
+      c_count = c_count+1;
+      $('#c_count').val(c_count);
+      $('.c_count_num').html(c_count);
+    }else{
+      c_count = c_count-1;
+      $('#c_count').val(c_count);
+      $('.c_count_num').html(c_count);
+    }
+  }
   $(document).ready(function(){  
+    $(document).on('click', '#open_previous', function(){
+      $('#openPreviousModal').modal('show');
+    });
+
+    $(document).on('click', '.select_semester', function(){
+      var course_id = $('#course_id').val();
+      $.ajax({
+        type:'POST',
+        url:'/lectureNote/SelectPreviousSemester',
+        data:{value : course_id},
+        success:function(data){
+          // console.log(data);
+          $('.href_link').html('<a style="padding:0px;margin: 0px;" class="select_semester">Semester</a> &nbsp;/&nbsp;');
+          document.getElementById('previous').innerHTML = "";
+          for(var i=0;i<=(data.length-1);i++){
+            $("#previous").append('<div class="row semester hover" id="semester_'+data[i]['course_id']+'" style="margin:0px; padding: 0px;"><div class="col-1" id="icon_image"><img src="{{url("image/folder2.png")}}" width="25px" height="25px"/></div><div class="col name"><p style="padding: 5px 0px;margin: 0px;">'+data[i]['semester_name']+'</p></div></div>');
+          }
+        } 
+      });
+    });
+
+    $(document).on('click', '.semester', function(){
+      var id = $(this).attr("id");
+      var num = id.split("_");  
+      $.ajax({
+        type:'POST',
+        url:'/lectureNote/SelectFolderSemester',
+        data:{value : num[1]},
+        success:function(data){
+          document.getElementById('previous').innerHTML = "";
+          $('.href_link').html('<a style="padding:0px;margin: 0px;" class="select_semester">Semester</a> &nbsp;/&nbsp;<a style="padding:0px;margin: 0px;" class="semester" id="semester_'+data[0]['course_id']+'">'+data[0]['semester_name']+'</a> &nbsp;/&nbsp;');
+          for(var i=0;i<=(data.length-1);i++){
+            var checked = "";
+            var checkbox = $('#checkbox_input').val().split("---");
+            for(var m=1;m<=(checkbox.length-1);m++){
+              if(checkbox[m]==data[i]['ln_id']){
+                checked = 'checked';
+              }
+            }
+            if(data[i]['note_type']=="folder"){
+              var type = "folder";
+              var image = "<img src='{{url('image/folder2.png')}}' width='25px' height='25px'/>";
+              var input = '';
+              var name_link = '<div class="col '+type+' name" id="folder_'+data[i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[i]['note_name']+'</p></div>';
+            }else{
+              var type = "document";
+              var ext = data[i]['note'].split('.');
+              if(ext[1]=="pdf"){
+                var image = "<img src='{{url('image/pdf.png')}}' width='25px' height='25px'/>";
+              }else if(ext[1]=="docx"){
+                var image = "<img src='{{url('image/docs.png')}}' width='25px' height='25px'/>";
+              }else if(ext[1]=="xlsx"){
+                var image = "<img src='{{url('image/excel.png')}}' width='25px' height='25px'/>";
+              }else if(ext[1]=="pptx"){
+                var image = "<img src='{{url('image/pptx.png')}}' width='25px' height='25px'/>";
+              }
+              var name_link = "<a href='/lectureNote/download/"+data[i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[i]['note_name']+"</p></a>";
+              var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+data[i]['ln_id']+'" id="lnId_'+data[i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[i]['ln_id']+' group_download" '+checked+'></div>';
+            }
+            $("#previous").append('<div class="row hover" style="margin:0px; padding: 0px;"><div class="col-1" id="icon_image">'+image+'</div>'+name_link+input+'</div>');
+          }
+        } 
+      });
+    });
+
+    $(document).on('click', '.folder', function(){
+      var id = $(this).attr("id");
+      var num = id.split("_");
+      $.ajax({
+        type:'POST',
+        url:'/lectureNote/SelectFolderPlace',
+        data:{value : num[1]},
+        success:function(data){
+          document.getElementById('previous').innerHTML = "";
+          var place = data.split("___");
+          var name = place[4].split(",,,");
+          var folder_id = place[3].split(',,,');
+          var link = "";
+          for(var m=0;m<=(name.length-1);m++){
+            link += '<a style="padding:0px;margin: 0px;" class="folder" id="folder_'+folder_id[m+1]+'">'+name[m]+'</a> &nbsp;/&nbsp;';
+          }
+          $('.href_link').html('<a style="padding:0px;margin: 0px;" class="select_semester">Semester</a> &nbsp;/&nbsp;<a style="padding:0px;margin: 0px;" class="semester" id="semester_'+place[0]+'">'+place[1]+'</a> &nbsp;/&nbsp;'+link);
+          $.ajax({
+            type:'POST',
+            url:'/lectureNote/SelectFolder',
+            data:{value : place[3]},
+            success:function(data){
+              for(var i=0;i<=(data.length-1);i++){
+                var checked = "";
+                var checkbox = $('#checkbox_input').val().split("---");
+                for(var m=1;m<=(checkbox.length-1);m++){
+                  if(checkbox[m]==data[i]['ln_id']){
+                    checked = 'checked';
+                  }
+                }
+                if(data[i]['note_type']=="folder"){
+                  var type = "folder";
+                  var image = "<img src='{{url('image/folder2.png')}}' width='25px' height='25px'/>";
+                  var input = '';
+                  var name_link = '<div class="col '+type+' name" id="folder_'+data[i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[i]['note_name']+'</p></div>';
+                }else{
+                  var type = "document";
+                  var ext = data[i]['note'].split('.');
+                  if(ext[1]=="pdf"){
+                    var image = "<img src='{{url('image/pdf.png')}}' width='25px' height='25px'/>";
+                  }else if(ext[1]=="docx"){
+                    var image = "<img src='{{url('image/docs.png')}}' width='25px' height='25px'/>";
+                  }else if(ext[1]=="xlsx"){
+                    var image = "<img src='{{url('image/excel.png')}}' width='25px' height='25px'/>";
+                  }else if(ext[1]=="pptx"){
+                    var image = "<img src='{{url('image/pptx.png')}}' width='25px' height='25px'/>";
+                  }
+                  var name_link = "<a href='/lectureNote/download/"+data[i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[i]['note_name']+"</p></a>";
+                  var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+data[i]['ln_id']+'" id="lnId_'+data[i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[i]['ln_id']+' group_download" '+checked+'></div>';
+                }
+                $("#previous").append('<div class="row hover" style="margin:0px; padding: 0px;"><div class="col-1" id="icon_image">'+image+'</div>'+name_link+input+'</div>');
+              }
+            }
+          });          
+        } 
+      });
+    });
+
     $(document).on('click', '#open_folder', function(){
       $('#openFolderModal').modal('show');
     });
@@ -39,6 +198,7 @@ $option1 = "id='selected-sidebar'";
         success:function(data){
           document.getElementById('ln_id').value = num[2];
           document.getElementById('folder_name').value = data.note_name;
+          
         } 
       });
       $('#folderNameEdit').modal('show');
@@ -174,8 +334,16 @@ $option1 = "id='selected-sidebar'";
             });
         });
     });
+
+  
 </script>
 <style type="text/css">
+.show_image_link:hover{
+  text-decoration: none;
+}
+.hover:hover{
+  background-color: #d9d9d9;
+}
 .dropzone .dz-preview{
   border-bottom: 1px solid black;
   padding-left: 10px;
@@ -194,11 +362,21 @@ $option1 = "id='selected-sidebar'";
   padding-left: 25px;
   display: inline-block;
 }
+#icon_image{
+  padding-top: 3px;border-bottom:1px solid #aaaaaa;
+}
+#checkbox{
+  border-bottom:1px solid #aaaaaa;padding: 5px 0px;margin: 0px; text-align: center;
+}
+.name:hover{
+  text-decoration: none;
+  color: #0d2f81;
+}
 @media only screen and (max-width: 600px) {
   #course_name{
         margin-left:0px;
         padding-top: 5px;
-    }
+  }
   #course_action_two{
     padding: 0px;
     position: relative;
@@ -219,6 +397,12 @@ $option1 = "id='selected-sidebar'";
     margin: 0px;
     padding:0px;
   }
+  .name{
+    border-bottom:1px solid #aaaaaa;
+    padding:0px;
+    margin: 0px 0px 0px 10px;
+    color: black;
+  }
 }
 @media only screen and (min-width: 600px) {
     #course_name{
@@ -232,6 +416,12 @@ $option1 = "id='selected-sidebar'";
     #course_action{
       text-align: right;
       padding: 3px 0px 0px 24px;
+    }
+    .name{
+      border-bottom:1px solid #aaaaaa;
+      padding:0px;
+      margin: 0px 0px 0px -15px;
+      color: black;
     }
 }
 </style>
@@ -255,9 +445,12 @@ $option1 = "id='selected-sidebar'";
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
+                      <a id="open_previous"><li class="sidebar-action-li"><i class="fa fa-fast-backward" style="padding: 0px 10px;" aria-hidden="true"></i>Previous semesters of note</li></a>
                       <a id="open_folder"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Folder</li></a>
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
-                      <a href='/lectureNote/download/zipFiles/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Download All Note</li></a>
+                      <p class="title_method">Download</p>
+                      <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
+                      <a href='/lectureNote/download/zipFiles/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Note</li></a>
                   </ul>
             </div>
             <br>
@@ -298,7 +491,7 @@ $option1 = "id='selected-sidebar'";
                         </div>
                     </div>
                 </div>
-                <div class="row" id="lecture_note" style="position: relative;top: -30px;">
+                <div class="row" id="lecture_note" style="margin-top:-25px;">
                       <?php
                       $i=0;
                       ?>
@@ -476,6 +669,48 @@ $option1 = "id='selected-sidebar'";
         &nbsp;
         <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin-right: 13px;" value="Save Changes">
         </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="openPreviousModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="box-shadow: 1px 1px 2px #aaaaaa;border:0px solid black;padding:15px 8px ;">
+        <h5 class="modal-title" id="exampleModalLabel">Select Previous Semester of Notes</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div style="margin:0px; padding: 10px 0px 10px 10px;border-bottom: 1px solid black;" class="href_link">
+        <a style="padding:0px;margin: 0px;" class="select_semester">
+          Semester
+        </a> &nbsp;/&nbsp;
+      </div>
+      <div id="previous">
+      @foreach($previous_semester as $row)
+      <div class="row semester hover" id="semester_{{$row->course_id}}" style="margin:0px; padding: 0px;">
+        <div class="col-1" id="icon_image">
+          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
+        </div>
+        <div class="col name">
+          <p style="padding: 5px 0px;margin: 0px;" class="previous_{{$row->course_id}}">{{$row->semester_name}}</p>
+        </div>
+      </div>
+      @endforeach
+      </div>
+      <form method="post" action="{{action('Dean\LectureNoteController@storePreviousFiles')}}" style="margin: 5px 0px;">
+        {{csrf_field()}}
+      <p style="margin: 0px 8px;">Selected Item (Count) : <span class="c_count_num"></span></p>
+      <input type="hidden" name="c_count" id="c_count" value="0">
+      <input type="hidden" name="checkbox_input" id="checkbox_input">
+      <div class="modal-footer" style="border-top:0px solid #aaaaaa;">
+        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
+        &nbsp;
+        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">
+      </div>
       </form>
     </div>
   </div>

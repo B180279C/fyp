@@ -148,11 +148,15 @@ $(document).on('click', '#checkDownloadAction', function(){
       checkedValue += inputElements[i].value+"_";
     }
   }
-  var course_id = $('#course_id').val();
-  var student_id = $('#student_id').val();
-  var id = course_id+"_"+checkedValue;
+  if(checkedValue!=""){
+    var course_id = $('#course_id').val();
+    var student_id = $('#student_id').val();
+    var id = course_id+"_"+checkedValue;
 
-  window.location = "/FinalResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
+    window.location = "/FinalResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
+  }else{
+    alert("Please select the document first.");
+  }
 });
 </script>
 <div id="all">
@@ -253,7 +257,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                     <div class="checkbox_style align-self-center">
                       <input type="checkbox" value="{{$row->fxr_id}}" class="group_lecturer group_download">
                     </div>
-                    <a href="/images/FinalResult/{{$row->document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->document_name}} <br> <a href='/AssessmentResult/view/whole_paper/{{$row->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                    <a href="/images/FinalResult/{{$row->document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->document_name}} <br> <a href='/FinalResult/view/whole_paper/{{$row->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
                       <div class="col-1" style="position: relative;top: -2px;">
                         <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                       </div>
@@ -328,7 +332,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                     <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$sow->fxr_id}}" class="group_student group_download">
                       </div>
-                    <a href="/images/FinalResult/{{$sow->document}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$sow->document_name}} <br> <a href='/AssessmentResult/view/whole_paper/{{$sow->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                    <a href="/images/FinalResult/{{$sow->document}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$sow->document_name}} <br> <a href='/FinalResult/view/whole_paper/{{$sow->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
                       <div class="col-1" style="position: relative;top: -2px;">
                         <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                       </div>
