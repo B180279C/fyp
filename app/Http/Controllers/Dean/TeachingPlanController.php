@@ -60,6 +60,7 @@ class TeachingPlanController extends Controller
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
+
         $TP = DB::table('teaching_plan')
         	->select('teaching_plan.*')
         	->where('teaching_plan.course_id','=',$id)
@@ -76,6 +77,91 @@ class TeachingPlanController extends Controller
             return redirect()->back();
         }
    	}
+
+    public function createPreviousTP($id){
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+      if($course[0]->semester =='A'){
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','=','A')
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in short semester. Please write down the TP Assessment Method for this course.";
+      }else{
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','!=',"A")
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in long semester. Please write down the TP Assessment Method for this course.";
+      }
+      if(count($previous)>0){
+        $TP = DB::table('teaching_plan')
+          ->select('teaching_plan.*')
+          ->where('teaching_plan.course_id','=',$previous[0]->course_id)
+          ->get();
+
+        if(count($TP)>0){
+          $delete_topic = DB::table('plan_topics')
+            ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
+            ->select('plan_topics.*','teaching_plan.*')
+            ->where('teaching_plan.course_id','=',$id)
+            ->get();
+          foreach($delete_topic as $row){
+            DB::delete('delete from plan_topics where topic_id = ?',[$row->topic_id]);
+          }
+          DB::delete('delete from teaching_plan where course_id = ?',[$id]);
+          foreach ($TP as $row) {
+            $TP = new Teaching_Plan([
+                'course_id'         =>  $id,
+                'week'              =>  $row->week,
+                'tutorial'          =>  $row->tutorial,
+                'assessment'        =>  $row->assessment,
+                'remarks'           =>  $row->remarks,
+            ]);
+            $TP->save();
+            $tp_id = $TP->tp_id;
+
+            $topic = DB::table('plan_topics')
+              ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
+              ->select('plan_topics.*','teaching_plan.*')
+              ->where('plan_topics.tp_id','=',$row->tp_id)
+              ->get();
+
+            foreach ($topic as $row_topic) {
+              $save_topic = new Plan_Topic([
+                  'tp_id'               =>  $tp_id,
+                  'lecture_topic'       =>  $row_topic->lecture_topic,
+                  'lecture_hour'        =>  $row_topic->lecture_hour,
+                  'sub_topic'           =>  $row_topic->sub_topic,
+              ]);
+              $save_topic->save();
+            }
+          }
+          return redirect()->back()->with('success','Weekly Plan Inserted Successfully');
+        }else{
+          return redirect()->back()->with('Failed','Your last semester of weekly plan is empty.');
+        }
+      }else{
+        return redirect()->back()->with('Failed',$failed);
+      }
+    }
 
    	public function storeTP(Request $request, $id)
    	{
@@ -125,30 +211,7 @@ class TeachingPlanController extends Controller
    				$topic->save();
    		 	}
    		}
-      $user_id       = auth()->user()->user_id;
-      $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-      $faculty_id    = $staff_dean->faculty_id;
-      $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
-                 ->where('lecturer', '=', $staff_dean->id)
-                 ->where('course_id', '=', $id)
-                 ->get();
-      $TP = DB::table('teaching_plan')
-          ->select('teaching_plan.*')
-          ->where('teaching_plan.course_id','=',$id)
-          ->get();
-
-      $topic = DB::table('plan_topics')
-            ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
-            ->select('plan_topics.*','teaching_plan.*')
-            ->where('teaching_plan.course_id','=',$id)
-            ->get();
-      $TP_Ass = DB::table('tp_assessment_method')
-                  ->select('tp_assessment_method.*')
-                  ->where('course_id', '=', $id)
-                  ->get();
-      return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass'))->with('success','Weekly Plan Inserted Successfully');
+      return redirect()->back()->with('success','Weekly Plan Inserted Successfully');
    	}
 
    	public function removeTopic(Request $request)
@@ -308,10 +371,113 @@ class TeachingPlanController extends Controller
                   ->where('course_id', '=', $id)
                   ->get();
         if(count($course)>0){
-            return view('dean.TeachingPlan.TeachingPlanAssCreate',compact('course','TP_Ass'));
+            if(count($TP_Ass)>0){
+              return view('dean.TeachingPlan.TeachingPlanAssOld',compact('course','TP_Ass'));
+            }else{
+              return view('dean.TeachingPlan.TeachingPlanAssCreate',compact('course','TP_Ass'));
+            }
         }else{
             return redirect()->back();
         }
+    }
+
+    public function createNewTPAss($id){
+      $user_id       = auth()->user()->user_id;
+      $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+      $faculty_id    = $staff_dean->faculty_id;
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+      $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+      if(count($course)>0){
+        return view('dean.TeachingPlan.TeachingPlanAssCreate',compact('course','TP_Ass'));
+      }else{
+        return redirect()->back();
+      }
+    }
+
+    public function createPreviousTPAss($id){
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+      if($course[0]->semester =='A'){
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','=','A')
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in short semester. Please write down the TP Assessment Method for this course.";
+      }else{
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','!=',"A")
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in long semester. Please write down the TP Assessment Method for this course.";
+      }
+
+      if(count($previous)>0){
+        $TP_ass = DB::table('tp_assessment_method')
+                 ->join('courses','tp_assessment_method.course_id','=','courses.course_id')
+                 ->select('courses.*','tp_assessment_method.*')
+                 ->where('tp_assessment_method.course_id', '=', $previous[0]->course_id)
+                 ->orderBy('tp_assessment_method.am_id')
+                 ->get();
+        if(count($TP_ass)>0){
+          DB::delete('delete from tp_assessment_method where course_id = ?',[$id]);
+          foreach($TP_ass as $row){
+            $TP_Ass = new TP_Assessment_Method([
+              'course_id'         =>  $id,
+              'CLO'               =>  $row->CLO,
+              'PO'                =>  $row->PO,
+              'domain_level'      =>  $row->domain_level,
+              'method'            =>  $row->method,
+              'assessment'        =>  $row->assessment,
+              'markdown'          =>  $row->markdown,
+            ]);
+            $TP_Ass->save();
+          }
+          $TP = DB::table('teaching_plan')
+            ->select('teaching_plan.*')
+            ->where('teaching_plan.course_id','=',$id)
+            ->get();
+          $topic = DB::table('plan_topics')
+                ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
+                ->select('plan_topics.*','teaching_plan.*')
+                ->where('teaching_plan.course_id','=',$id)
+                ->get();
+          $TP_Ass = DB::table('tp_assessment_method')
+                      ->select('tp_assessment_method.*')
+                      ->where('course_id', '=', $id)
+                      ->get();
+          return redirect()->back()->with('success','Assessment Method Inserted Successfully');
+        }else{
+          return redirect()->back()->with('Failed',"Your last semester of Assessment Method is empty.");
+        }
+      }else{
+        return redirect()->back()->with('Failed',$failed);
+      }
     }
 
     public function getSyllabusData(Request $request)

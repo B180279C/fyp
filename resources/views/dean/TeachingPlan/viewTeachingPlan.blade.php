@@ -108,6 +108,7 @@ $option1 = "id='selected-sidebar'";
                     <a href="/teachingPlan/create/weekly/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-pencil" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Weekly Plan</li></a>
                   </ul>
             </div>
+            
             @if(\Session::has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <Strong>{{\Session::get('success')}}</Strong>
@@ -116,6 +117,7 @@ $option1 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
+
             @if(count($TP_Ass)>0)
             <h5 style="position: relative;top: 15px;left: 10px;">Methods of Assessment</h5>
             <div style="overflow-x: auto;padding:20px 10px 5px 10px;">

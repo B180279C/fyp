@@ -51,17 +51,37 @@ $option1 = "id='selected-sidebar'";
             <a href="/course_list">Courses </a>/
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <a href="/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
-            <span class="now_page">Manage Assessment Method</span>/
+            <span class="now_page">Create New Assessment Method</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">
             <p class="page_title">Methods of Assessment</p>
-            <hr style="margin-top: 5px;margin-bottom: 0px;padding: 0px;">
+            <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
+                <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 270px;">
+                    <div style="text-align: right;padding:10px;">
+                        <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    </div>
+                  <ul class="sidebar-action-ul">
+                    <a id="checkAction"><li class="sidebar-action-li"><i class="fa fa-fast-backward" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Previous of Assessment Method</li></a>
+                  </ul>
+                </div>
+            <br>
+            <br>
+            <hr style="margin-top: -10px;margin-bottom: 0px;padding: 0px;">
             @if(\Session::has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
+
+            @if(\Session::has('Failed'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <Strong>{{\Session::get('Failed')}}</Strong>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -95,7 +115,24 @@ $option1 = "id='selected-sidebar'";
                 }
             });
         });
+
+        $(document).on('click', '#checkAction', function(){
+          var course_id = $('#course_id').val();
+          if(confirm('Are you sure want to use previous semester of assessment method? (Important : If the course is a long semester, you will get the last long semester of the assessment method. On the contrary, if it is a short semester, you will get the last short semester.')) {
+            window.location = "/teachingPlan/create/previous/assessment/"+course_id;
+          }
+          return false;
+        });
     });
+
+    function w3_open() {
+      document.getElementById("action_sidebar").style.display = "block";
+      document.getElementById("button_open").style.display = "none";
+    }
+    function w3_close() {
+      document.getElementById("action_sidebar").style.display = "none";
+      document.getElementById("button_open").style.display = "block";
+    }
 
     $(document).ready(function(){
         $.ajaxSetup({
