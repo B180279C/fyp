@@ -26,11 +26,7 @@ $option1 = "id='selected-sidebar'";
       if(checkedValue!=""){
         var course_id = $('#course_id').val();
         var id = course_id+"---"+checkedValue;
-          if($('.search').val()!=""){
-            window.location = "/PastYearNote/download/zipFiles/"+id+"/searched";
-          }else{
-            window.location = "/PastYearNote/download/zipFiles/"+id+"/checked";
-          }
+        window.location = "/PastYearNote/download/zipFiles/"+id+"/searched";
       }else{
           alert("Please select the document first.");
       }
@@ -275,7 +271,15 @@ $option1 = "id='selected-sidebar'";
                                 <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                               </div>
                               <div class="col-10" id="assessment_word">
-                                <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->note_name}}</b></p>
+                                @if($row->used_by!=null)
+                                  @foreach($all_note as $all_row)
+                                    @if(($row->used_by)==($all_row->ln_id))
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->note_name}} <span style="color: grey;">( Used In : {{$all_row->semester_name}} )</span></b></p>
+                                    @endif
+                                  @endforeach
+                                @else
+                                  <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->note_name}}</b></p>
+                                @endif 
                               </div>
                             </a>
                           </div>
@@ -287,6 +291,7 @@ $option1 = "id='selected-sidebar'";
                             $ext = explode(".", $row->note);
                           }
                         ?>
+                        @if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx"))
                         <div class="col-12 row align-self-center" id="course_list">
                           <div class="col-12 row align-self-center">
                             <div class="checkbox_style align-self-center">
@@ -305,11 +310,57 @@ $option1 = "id='selected-sidebar'";
                                @endif
                               </div>
                               <div class="col-10" id="assessment_word">
-                                <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->note_name}}</b></p>
+                                @if($row->used_by!=null)
+                                  @foreach($all_note as $all_row)
+                                    @if(($row->used_by)==($all_row->ln_id))
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->note_name}} <span style="color: grey;">( Used In : {{$all_row->semester_name}} )</span></b></p>
+                                    @endif
+                                  @endforeach
+                                @else
+                                  <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->note_name}}</b></p>
+                                @endif 
                               </div>
                             </a>
                           </div>
                         </div>
+                        @else
+                        @if($row->used_by!=null)
+                            @foreach($all_note as $all_row)
+                              @if(($row->used_by)==($all_row->ln_id))
+                                <?php
+                                  $semester_name = "<span style='color: grey;'>( Used In :".$all_row->semester_name.")</span>";
+                                ?>
+                              @endif
+                            @endforeach
+                          @else
+                            <?php
+                              $semester_name = "";
+                            ?>
+                          @endif
+                          <div class="col-12 row align-self-center" id="course_list">
+                            <div class="col-12 row align-self-center">
+                              <div class="checkbox_style align-self-center">
+                                  <input type="checkbox" value="{{$row->ln_id}}" class="group_download">
+                                </div>
+                              <a href="/images/lectureNote/{{$row->note}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->note_name}} {{$semester_name}}">
+                                <div class="col-1" style="position: relative;top: -2px;">
+                                  <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
+                                </div>
+                                <div class="col-10" id="assessment_word">
+                                   @if($row->used_by!=null)
+                                      @foreach($all_note as $all_row)
+                                        @if(($row->used_by)==($all_row->ln_id))
+                                          <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->note_name}} <span style="color: grey;">( Used In : {{$all_row->semester_name}} )</span></b></p>
+                                        @endif
+                                      @endforeach
+                                    @else
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->note_name}}</b></p>
+                                    @endif  
+                                </div>
+                              </a>
+                            </div>
+                          </div>
+                        @endif
                       @endif
                     @endforeach
                 </div>

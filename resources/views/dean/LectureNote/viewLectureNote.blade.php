@@ -14,7 +14,6 @@ $option1 = "id='selected-sidebar'";
       document.getElementById("action_sidebar").style.display = "none";
       document.getElementById("button_open").style.display = "block";
   }
-
   function checkORNot(value){
     var input = $('#checkbox_input').val();
     var c_count = parseInt($('#c_count').val());
@@ -51,6 +50,24 @@ $option1 = "id='selected-sidebar'";
     }
   }
   $(document).ready(function(){  
+
+    $(document).on('click', '#checkDownloadAction', function(){
+      var checkedValue = ""; 
+      var inputElements = document.getElementsByClassName('group_download_list');
+      for(var i=0; inputElements[i]; i++){
+        if(inputElements[i].checked){
+          checkedValue += inputElements[i].value+"---";
+        }
+      }
+      if(checkedValue!=""){
+        var course_id = $('#course_id').val();
+        var id = course_id+"---"+checkedValue;
+        window.location = "/lectureNote/download/zipFiles/"+id+"/checked";
+      }else{
+          alert("Please select the document first.");
+      }
+    });
+
     $(document).on('click', '#open_previous', function(){
       $('#openPreviousModal').modal('show');
     });
@@ -81,23 +98,36 @@ $option1 = "id='selected-sidebar'";
         data:{value : num[1]},
         success:function(data){
           document.getElementById('previous').innerHTML = "";
-          $('.href_link').html('<a style="padding:0px;margin: 0px;" class="select_semester">Semester</a> &nbsp;/&nbsp;<a style="padding:0px;margin: 0px;" class="semester" id="semester_'+data[0]['course_id']+'">'+data[0]['semester_name']+'</a> &nbsp;/&nbsp;');
-          for(var i=0;i<=(data.length-1);i++){
+          $('.href_link').html('<a style="padding:0px;margin: 0px;" class="select_semester">Semester</a> &nbsp;/&nbsp;<a style="padding:0px;margin: 0px;" class="semester" id="semester_'+data[0][0]['course_id']+'">'+data[0][0]['semester_name']+'</a> &nbsp;/&nbsp;');
+          for(var i=0;i<=(data[0].length-1);i++){
+            var used_by = data[0][i]['used_by'];
+            if(used_by==null){
+              used_by = data[0][i]['ln_id'];
+            }
+
             var checked = "";
             var checkbox = $('#checkbox_input').val().split("---");
             for(var m=1;m<=(checkbox.length-1);m++){
-              if(checkbox[m]==data[i]['ln_id']){
+              if(checkbox[m]==data[0][i]['ln_id']){
                 checked = 'checked';
               }
             }
-            if(data[i]['note_type']=="folder"){
+            if(data[0][i]['note_type']=="folder"){
               var type = "folder";
               var image = "<img src='{{url('image/folder2.png')}}' width='25px' height='25px'/>";
               var input = '';
-              var name_link = '<div class="col '+type+' name" id="folder_'+data[i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[i]['note_name']+'</p></div>';
+              if(data[0][i]['used_by']!=null){
+                for(var p=0;p<=(data[1].length-1);p++){
+                  if((data[0][i]['used_by'])==(data[1][p]['ln_id'])){
+                    var name_link = '<div class="col '+type+' name" id="folder_'+data[0][i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[0][i]['note_name']+' ( Used In : '+data[1][p]['semester_name']+' )</p></div>';
+                  }
+                }
+              }else{
+                var name_link = '<div class="col '+type+' name" id="folder_'+data[0][i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[0][i]['note_name']+'</p></div>';
+              }
             }else{
               var type = "document";
-              var ext = data[i]['note'].split('.');
+              var ext = data[0][i]['note'].split('.');
               if(ext[1]=="pdf"){
                 var image = "<img src='{{url('image/pdf.png')}}' width='25px' height='25px'/>";
               }else if(ext[1]=="docx"){
@@ -106,9 +136,19 @@ $option1 = "id='selected-sidebar'";
                 var image = "<img src='{{url('image/excel.png')}}' width='25px' height='25px'/>";
               }else if(ext[1]=="pptx"){
                 var image = "<img src='{{url('image/pptx.png')}}' width='25px' height='25px'/>";
+              }else{
+                var image = "<img src='{{url('image/img_icon.png')}}' width='25px' height='25px'/>";
               }
-              var name_link = "<a href='/lectureNote/download/"+data[i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[i]['note_name']+"</p></a>";
-              var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+data[i]['ln_id']+'" id="lnId_'+data[i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[i]['ln_id']+' group_download" '+checked+'></div>';
+              if(data[0][i]['used_by']!=null){
+                for(var p=0;p<=(data[1].length-1);p++){
+                  if((data[0][i]['used_by'])==(data[1][p]['ln_id'])){
+                    var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+" ( Used In : "+data[1][p]['semester_name']+" )</p></a>";
+                  }
+                }
+              }else{
+                var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+"</p></a>";
+              }
+              var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+used_by+'" id="lnId_'+data[0][i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[0][i]['ln_id']+' group_download" '+checked+'></div>';
             }
             $("#previous").append('<div class="row hover" style="margin:0px; padding: 0px;"><div class="col-1" id="icon_image">'+image+'</div>'+name_link+input+'</div>');
           }
@@ -136,24 +176,36 @@ $option1 = "id='selected-sidebar'";
           $.ajax({
             type:'POST',
             url:'/lectureNote/SelectFolder',
-            data:{value : place[3]},
+            data:{value : place[3],course_id : place[0]},
             success:function(data){
-              for(var i=0;i<=(data.length-1);i++){
+              for(var i=0;i<=(data[0].length-1);i++){
                 var checked = "";
                 var checkbox = $('#checkbox_input').val().split("---");
+                var used_by = data[0][i]['used_by'];
+                if(used_by==null){
+                  used_by = data[0][i]['ln_id'];
+                }
                 for(var m=1;m<=(checkbox.length-1);m++){
-                  if(checkbox[m]==data[i]['ln_id']){
+                  if(checkbox[m]==data[0][i]['ln_id']){
                     checked = 'checked';
                   }
                 }
-                if(data[i]['note_type']=="folder"){
+                if(data[0][i]['note_type']=="folder"){
                   var type = "folder";
                   var image = "<img src='{{url('image/folder2.png')}}' width='25px' height='25px'/>";
                   var input = '';
-                  var name_link = '<div class="col '+type+' name" id="folder_'+data[i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[i]['note_name']+'</p></div>';
+                  if(data[0][i]['used_by']!=null){
+                    for(var p=0;p<=(data[1].length-1);p++){
+                      if((data[0][i]['used_by'])==(data[1][p]['ln_id'])){
+                        var name_link = '<div class="col '+type+' name" id="folder_'+data[0][i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[0][i]['note_name']+' ( Used In : '+data[1][p]['semester_name']+' )</p></div>';
+                      }
+                    }
+                  }else{
+                    var name_link = '<div class="col '+type+' name" id="folder_'+data[0][i]['ln_id']+'"><p style="padding: 5px 0px;margin: 0px;">'+data[0][i]['note_name']+'</p></div>';
+                  }
                 }else{
                   var type = "document";
-                  var ext = data[i]['note'].split('.');
+                  var ext = data[0][i]['note'].split('.');
                   if(ext[1]=="pdf"){
                     var image = "<img src='{{url('image/pdf.png')}}' width='25px' height='25px'/>";
                   }else if(ext[1]=="docx"){
@@ -162,9 +214,19 @@ $option1 = "id='selected-sidebar'";
                     var image = "<img src='{{url('image/excel.png')}}' width='25px' height='25px'/>";
                   }else if(ext[1]=="pptx"){
                     var image = "<img src='{{url('image/pptx.png')}}' width='25px' height='25px'/>";
+                  }else{
+                    var image = "<img src='{{url('image/img_icon.png')}}' width='25px' height='25px'/>";
                   }
-                  var name_link = "<a href='/lectureNote/download/"+data[i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[i]['note_name']+"</p></a>";
-                  var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+data[i]['ln_id']+'" id="lnId_'+data[i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[i]['ln_id']+' group_download" '+checked+'></div>';
+                  if(data[0][i]['used_by']!=null){
+                    for(var p=0;p<=(data[1].length-1);p++){
+                      if((data[0][i]['used_by'])==(data[1][p]['ln_id'])){
+                        var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+" ( Used In : "+data[1][p]['semester_name']+" )</p></a>";
+                      }
+                    }
+                  }else{
+                    var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+"</p></a>";
+                  }
+                  var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+used_by+'" id="lnId_'+data[0][i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[0][i]['ln_id']+' group_download" '+checked+'></div>';
                 }
                 $("#previous").append('<div class="row hover" style="margin:0px; padding: 0px;"><div class="col-1" id="icon_image">'+image+'</div>'+name_link+input+'</div>');
               }
@@ -180,6 +242,12 @@ $option1 = "id='selected-sidebar'";
 
     $(document).on('click', '#open_document', function(){
       $('#openDocumentModal').modal('show');
+    });
+
+    $(document).on('click', '.download_button', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        window.location = "/lectureNote/download/"+num[2];
     });
 
     $(document).on('keyup', '.filename', function(){  
@@ -218,7 +286,7 @@ $option1 = "id='selected-sidebar'";
   var i = 0;
   Dropzone.options.dropzoneFile =
   {
-        acceptedFiles: ".pdf,.xlsx,.docx,.pptx",
+        acceptedFiles: ".pdf,.xlsx,.docx,.pptx,.jpg,.jpeg,.png",
         addRemoveLinks: true,
         timeout: 50000,
         renameFile: function(file) {
@@ -338,8 +406,36 @@ $option1 = "id='selected-sidebar'";
   
 </script>
 <style type="text/css">
-.show_image_link:hover{
-  text-decoration: none;
+.checkbox_group_style{
+  border:0px solid black;
+  padding: 1px 10px 0px 10px!important;
+  margin: 0px!important;
+}
+.checkbox_style{
+  border:0px solid black;
+  padding: 0px 5px!important;
+  margin: 0px!important;
+  display: inline;
+  width: 28px;
+}
+.group{
+  margin-top:3px;
+  padding-left: 15px;
+  border:0px solid black;
+  display: inline;
+  padding: 0px!important;
+  margin: 0px!important;
+}
+.question_link:hover{
+    background-color: #d9d9d9;
+    text-decoration: none;
+    color: #0d2f81;
+}
+#show_image_link:hover{
+    text-decoration: none;
+}
+.plus:hover{
+    background-color: #f2f2f2;
 }
 .hover:hover{
   background-color: #d9d9d9;
@@ -372,20 +468,29 @@ $option1 = "id='selected-sidebar'";
   text-decoration: none;
   color: #0d2f81;
 }
+
+
 @media only screen and (max-width: 600px) {
+  #assessment_name{
+    margin-left: 0px;
+    padding-top: 0px;
+  }
+  #assessment_word{
+    margin-left: 0px;
+    padding-top: 0px;
+  }
   #course_name{
-        margin-left:0px;
-        padding-top: 5px;
+    padding-top: 0px;
+  }
+  #course_list{
+    margin-left: 0px;
+    padding: 4px 15px;
   }
   #course_action_two{
-    padding: 0px;
+    padding: 10px 0px 0px 0px;
     position: relative;
-    right: -19px;
+    right: -24px;
     text-align: right;
-  }
-  #course_action{
-    text-align: right;
-    padding: 3px 0px 0px 20px;
   }
   #file_name_two{
     width: 185px;
@@ -397,31 +502,53 @@ $option1 = "id='selected-sidebar'";
     margin: 0px;
     padding:0px;
   }
+  #lecturer_name{
+    display: none;
+  }
   .name{
     border-bottom:1px solid #aaaaaa;
-    padding:0px;
-    margin: 0px 0px 0px 10px;
-    color: black;
+    margin: 0px;
+    color: #0d2f81;
   }
 }
 @media only screen and (min-width: 600px) {
+    #course_list{
+      margin-left: 0px;
+      padding: 4px 15px;
+    }
+    #assessment_name{
+        margin-left:-53px;
+        padding-top:0px;
+    }
+    #assessment_word{
+        margin-left:-48px;
+        padding-top:0px;
+    }
     #course_name{
-        margin-left:-55px;
-        padding-top: 5px;
+        margin-left:-18px;
+        padding-top:0px;
     }
     #course_action_two{
       text-align: right;
-      padding: 3px 0px 0px 24px;
+      margin-left: 5px;
+      padding: 8px 0px 0px 25px;
     }
     #course_action{
       text-align: right;
       padding: 3px 0px 0px 24px;
     }
+    #lecturer_name{
+      text-align: right;
+      position:relative;
+      top:7px;
+      border:0px solid black;
+      padding: 0px;
+      display: block;
+    }
     .name{
       border-bottom:1px solid #aaaaaa;
-      padding:0px;
-      margin: 0px 0px 0px -15px;
-      color: black;
+      margin: 0px 0px 0px -30px;
+      color: #0d2f81;
     }
 }
 </style>
@@ -450,7 +577,7 @@ $option1 = "id='selected-sidebar'";
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
                       <p class="title_method">Download</p>
                       <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                      <a href='/lectureNote/download/zipFiles/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Note</li></a>
+                      <a href='/lectureNote/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Note</li></a>
                   </ul>
             </div>
             <br>
@@ -492,79 +619,173 @@ $option1 = "id='selected-sidebar'";
                     </div>
                 </div>
                 <div class="row" id="lecture_note" style="margin-top:-25px;">
-                      <?php
-                      $i=0;
-                      ?>
-                      @foreach($lecture_note as $row)
-                        @if($row->note_type=="folder")
-                        <a href="/lectureNote/folder/{{$row->ln_id}}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
-                                <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
+                    <?php
+                    $i=0;
+                    ?>
+                    @foreach($lecture_note as $row)
+                    @if($row->note_type=="folder")
+                        <div class="col-12 row align-self-center" id="course_list">
+                          <div class="col-9 row align-self-center">
+                            <div class="checkbox_style align-self-center">
+                              <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
                             </div>
-                          <div class="col" id="course_name">
-                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}}</b></p>
+                            <a href="/lectureNote/folder/{{$row->ln_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                              <div class="col-1" style="position: relative;top: -2px;">
+                                <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
+                              </div>
+                              <div class="col-10" id="course_name">
+                                @if($row->used_by!=null)
+                                  @foreach($all_note as $all_row)
+                                    @if(($row->used_by)==($all_row->ln_id))
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}} <span style="color: grey;">( Used In : {{$all_row->semester_name}} )</span></b></p>
+                                    @endif
+                                  @endforeach
+                                @else
+                                  <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}}</b></p>
+                                @endif  
+                              </div>
+                            </a>
                           </div>
                           <div class="col-3" id="course_action_two">
+                            @if($row->used_by==null)
                                 <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->ln_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                            @endif
                                 <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->ln_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                             </div>
                           </div>
-                        </a>
                         @else
-                          <?php
+                      <?php
                             $ext = "";
                             if($row->note){
                               $ext = explode(".", $row->note);
                             }
                           ?>
-                        <a href="{{ action('Dean\LectureNoteController@downloadLN',$row->ln_id) }}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
-                              @if($ext[1]=="pdf")
-                              <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
-                              @elseif($ext[1]=="docx")
-                              <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
-                              @elseif($ext[1]=="xlsx")
-                              <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
-                              @elseif($ext[1]=="pptx")
-                              <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
-                              @endif
+                        @if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx"))
+                        <div class="col-12 row align-self-center" id="course_list">
+                          <div class="col-9 row align-self-center">
+                            <div class="checkbox_style align-self-center">
+                              <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
                             </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->note_name}}</b></p>
-                            </div>
-                            <div class="col-1" id="course_action">
+                            <a href="{{action('Dean\LectureNoteController@downloadLN',$row->ln_id)}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                              <div class="col-1" style="position: relative;top: -2px;">
+                               @if($ext[1]=="pdf")
+                                <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="docx")
+                                <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="xlsx")
+                                <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="pptx")
+                                <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
+                               @endif
+                              </div>
+                              <div class="col-10" id="course_name">
+                                @if($row->used_by!=null)
+                                  @foreach($all_note as $all_row)
+                                    @if(($row->used_by)==($all_row->ln_id))
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}} <span style="color: grey;">( Used In : {{$all_row->semester_name}} )</span></b></p>
+                                    @endif
+                                  @endforeach
+                                @else
+                                  <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}}</b></p>
+                                @endif  
+                              </div>
+                            </a>
+                          </div>
+                          <div class="col-3" id="course_action_two">
                                 <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->ln_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                            </div>  
+                          </div>
+                        </div>
+                          @else
+                          @if($row->used_by!=null)
+                            @foreach($all_note as $all_row)
+                              @if(($row->used_by)==($all_row->ln_id))
+                                <?php
+                                  $semester_name = "<span style='color: grey;'>( Used In :".$all_row->semester_name.")</span>";
+                                ?>
+                              @endif
+                            @endforeach
+                          @else
+                            <?php
+                              $semester_name = "";
+                            ?>
+                          @endif
+                          <div class="col-12 row align-self-center" id="course_list">
+                            <div class="col-9 row align-self-center">
+                              <div class="checkbox_style align-self-center">
+                                  <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
+                                </div>
+                              <a href="/images/lectureNote/{{$row->note}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->note_name}} {{$semester_name}}">
+                                <div class="col-1" style="position: relative;top: -2px;">
+                                  <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
+                                </div>
+                                <div class="col-10" id="course_name">
+                                   @if($row->used_by!=null)
+                                      @foreach($all_note as $all_row)
+                                        @if(($row->used_by)==($all_row->ln_id))
+                                          <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}} <span style="color: grey;">( Used In : {{$all_row->semester_name}} )</span></b></p>
+                                        @endif
+                                      @endforeach
+                                    @else
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->note_name}}</b></p>
+                                    @endif  
+                                </div>
+                              </a>
                             </div>
-                        </a>
+                            <div class="col-3" id="course_action_two">
+                              <i class="fa fa-download download_button" aria-hidden="true" id="download_button_{{$row->ln_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;
+                              <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->ln_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                            </div>
+                          </div>
+                          @endif
                         @endif
-                      <?php
-                      $i++;
-                      ?>
-                      @endforeach
-                      <?php
-                      if($i==0){
-                      ?>
-                      <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px;">
-                              <center>Empty</center>
-                      </div>
-                      <?php
-                      }
-                      ?>
+                    <?php
+                    $i++;
+                    ?>
+                    @endforeach
+                    <?php
+                    if($i==0){
+                    ?>
+                    <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px;">
+                      <center>Empty</center>
+                    </div>
+                    <?php
+                    }
+                    ?>  
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<style type="text/css">
+  .content2{
+    position:relative;
+    background-color:#fff!important;
+    background-clip:padding-box;
+    border-radius:3px;
+    -webkit-box-shadow:0 3px 9px rgba(0,0,0,.5)!important;
+    box-shadow:0 3px 9px rgba(0,0,0,.5)!important;
+    outline:0;
+  }
+  .header2{
+    padding: 24px 24px 0px 24px!important;
+    margin: 0px!important;
+    border:none!important;
+  }
+  .title2{
+    font-size: 20px!important;
+  }
+  .body2{
+    padding-top: 20px!important;
+  }
+</style>
+
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="openFolderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Open New Folder</h5>
+    <div class="modal-content content2">
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Open New Folder</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -605,9 +826,9 @@ $option1 = "id='selected-sidebar'";
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="folderNameEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit Folder Name</h5>
+    <div class="modal-content content2">
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Edit Folder Name</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -646,9 +867,9 @@ $option1 = "id='selected-sidebar'";
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Upload Files</h5>
+    <div class="modal-content content2">
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Upload Files</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -677,9 +898,9 @@ $option1 = "id='selected-sidebar'";
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="openPreviousModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header" style="box-shadow: 1px 1px 2px #aaaaaa;border:0px solid black;padding:15px 8px ;">
-        <h5 class="modal-title" id="exampleModalLabel">Select Previous Semester of Notes</h5>
+    <div class="modal-content content2">
+      <div class="modal-header header2" style="box-shadow: 1px 1px 2px #aaaaaa;border:0px solid black;padding:15px 8px ;">
+        <h5 class="modal-title title2" id="exampleModalLabel">Select Previous Semester of Notes</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -704,8 +925,10 @@ $option1 = "id='selected-sidebar'";
       <form method="post" action="{{action('Dean\LectureNoteController@storePreviousFiles')}}" style="margin: 5px 0px;">
         {{csrf_field()}}
       <p style="margin: 0px 8px;">Selected Item (Count) : <span class="c_count_num"></span></p>
+      <input type="hidden" id="semester_name" value="">
       <input type="hidden" name="c_count" id="c_count" value="0">
       <input type="hidden" name="checkbox_input" id="checkbox_input">
+      <input type="hidden" value="{{$course[0]->course_id}}" name="course_id">
       <div class="modal-footer" style="border-top:0px solid #aaaaaa;">
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
         &nbsp;

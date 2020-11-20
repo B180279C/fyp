@@ -192,14 +192,20 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/lectureNote/SelectFolderSemester', 'Dean\LectureNoteController@SelectFolderSemester');
 	Route::post('/lectureNote/SelectFolderPlace', 'Dean\LectureNoteController@SelectFolderPlace');
 	Route::post('/lectureNote/SelectFolder', 'Dean\LectureNoteController@SelectFolder');
+	Route::post('/lectureNote/GetUsedSemester', 'Dean\LectureNoteController@GetUsedSemester');
 	Route::post('/lectureNote/updateFolderName', 'Dean\LectureNoteController@updateFolderName');
 	Route::get('/lectureNote/remove/{id}', 'Dean\LectureNoteController@removeActive');
+	Route::get('images/lectureNote/{image_name}', [
+	     'as'         => 'lectureNote_image',
+	     'uses'       => 'Dean\LectureNoteController@LectureNoteImage',
+	     'middleware' => 'auth',
+	]);
 	Route::post('/note_uploadFiles', 'Dean\LectureNoteController@uploadFiles')->name('note.dropzone.uploadFiles');
 	Route::post('/note_destoryFiles', 'Dean\LectureNoteController@destroyFiles')->name('note.dropzone.destoryFiles');
 	Route::post('/note_storeFiles', 'Dean\LectureNoteController@storeFiles');
 	Route::post('/note_storePreviousFiles', 'Dean\LectureNoteController@storePreviousFiles');
-	Route::get('/lectureNote/download/zipFiles/{id}','Dean\LectureNoteController@zipFileDownload');
 	Route::get('/lectureNote/download/{id}','Dean\LectureNoteController@downloadLN')->name('dean.downloadLN');
+	Route::get('/lectureNote/download/zipFiles/{course_id}/{download}','Dean\LectureNoteController@zipFileDownload');
 
 	//TP
 	Route::get('/teachingPlan/{id}','Dean\TeachingPlanController@viewTeachingPlan')->name('tp.view');
