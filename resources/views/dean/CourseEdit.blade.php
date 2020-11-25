@@ -51,20 +51,30 @@ $option4 = "id='selected-sidebar'";
             document.getElementById('lecturer').value = value;
         });
     });
+
+    function checkLCT_MOD(){
+        var lecturer = $('#lecturer').val();
+        var moderator = $('#moderator').val();
+        if(lecturer==moderator){
+            document.getElementById('error-message').innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><Strong>The lecturer and moderator cannot be same.</Strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+        }else{
+            document.getElementById("myForm").submit();
+        }
+    }
 </script>
 <div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty_name->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/CoursePortFolio">Course PortFolio </a>/
+            <a href="/CoursePortFolio">Courses </a>/
             <span class="now_page">Edit Course</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="col-md-12">
         <div class="details" style="padding: 10px 0px 5px 0px;">
-            <p class="page_title" style="position: relative;left: 5px;">Edit Course Portfolio Information</p>
+            <p class="page_title" style="position: relative;left: 5px;">Edit Course Information</p>
             <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
@@ -93,7 +103,9 @@ $option4 = "id='selected-sidebar'";
                       </button>
                     </div>
                     @endif
-                        <form method="post" action="{{action('Dean\CourseController@update', $id)}}">
+
+                    <div id="error-message"></div>
+                        <form method="post" action="{{action('Dean\CourseController@update', $id)}}" id="myForm">
                         {{csrf_field()}}
                         <div class="row">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
@@ -101,7 +113,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-briefcase" aria-hidden="true" style="font-size: 17px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="Programme" class="label">Programme</label>
                                     <select class="selectpicker form-control" name="programme" id="programme" data-width="100%"data-live-search="true" title="Choose One" required>
@@ -126,7 +138,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-book" aria-hidden="true" style="font-size: 17px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="Programme" class="label">Subjects </label>
                                     <select class="selectpicker form-control" name="subject" data-width="100%" title="Choose one" data-live-search="true" id="subject" required>
@@ -150,7 +162,7 @@ $option4 = "id='selected-sidebar'";
                                     <i class="fa fa-calendar" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
@@ -165,15 +177,33 @@ $option4 = "id='selected-sidebar'";
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row" id="form_credit">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="exampleInputEmail1" class="bmd-label-floating">Credit Value</label>
+                                            <input type="number" name="credit" class="form-control" value="{{$course[0]->credit}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
 
-                        <div class="row" id="form_tch">
+                        <div class="row" id="form_tch" style="margin-top:15px;">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-tags" aria-hidden="true" style="font-size: 18px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 25px;">
                                 <div class="row">
                                     <div class="col" style="padding: 18px 0px 0px 0px;margin: 0px;">
                                         <div class="form-group" style="margin: 0px;">
@@ -193,13 +223,13 @@ $option4 = "id='selected-sidebar'";
                         </div>
 
                         @if($count_staff_InFaculty>0)
-                        <div class="row" id="form_lct">
+                        <div class="row" id="form_lct" style="margin-top:17px;">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer1" data-width="100%" title="Choose One" data-live-search="true">
@@ -210,13 +240,13 @@ $option4 = "id='selected-sidebar'";
                                 </div>
                             </div>
                         </div>
-                        <div class="row" id="form_other_lct" style="display: none;">
+                        <div class="row" id="form_other_lct" style="display: none;margin-top:17px;">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer2" data-width="100%" title="Choose One" data-live-search="true">
@@ -234,13 +264,13 @@ $option4 = "id='selected-sidebar'";
                             </div>
                         </div>
                         @else
-                        <div class="row" id="form_other_lct">
+                        <div class="row" id="form_other_lct" style="margin-top:17px;">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer2" data-width="100%" title="Choose One" data-live-search="true">
@@ -257,13 +287,13 @@ $option4 = "id='selected-sidebar'";
                                 </div>
                             </div>
                         </div>
-                        <div class="row" id="form_lct" style="display: none;">
+                        <div class="row" id="form_lct" style="display: none;margin-top:17px;">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="label">Lecturer</label>
                                     <select class="selectpicker form-control" id="lecturer1" data-width="100%" title="Choose One" data-live-search="true">
@@ -274,11 +304,36 @@ $option4 = "id='selected-sidebar'";
                                 </div>
                             </div>
                         </div>
+
                         @endif
+
+                        <div class="row" id="form_moderator">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="label">Moderator</label>
+                                    <select class="selectpicker form-control" data-width="100%" title="Choose One" data-live-search="true" name="moderator" id="moderator">
+                                        @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                            @foreach($moderator as $row)
+                                                @if($row_faculty['faculty_id']==$row->faculty_id)
+                                                    <option <?php if($row->id==$course[0]->moderator){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->name}} ({{$row->staff_id}})</option>
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <input type="hidden" name="lecturer" id="lecturer" value="{{$course[0]->lecturer}}">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">
-                            <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;">
+                            <input type="button" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" onclick="checkLCT_MOD();" value="Save Changes">
                         </div>
                     </form>
                 </div>

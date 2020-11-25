@@ -74,12 +74,19 @@ class CourseController extends Controller
                     ->select('staffs.*', 'users.*')
                     ->where('staffs.faculty_id', '!=', $faculty_id)
                     ->get();
+
+        $moderator = DB::table('staffs')
+                    ->join('users', 'staffs.user_id', '=', 'users.user_id')
+                    ->select('staffs.*', 'users.*')
+                    ->where('users.status','=','Active')
+                    ->get();
+
         $semester = DB::table('semesters')
                     ->select('semesters.*')
                     ->orderByDesc('semesters.semester_name')
                     ->get();
         $faculty = Faculty::all()->toArray();
-        return view('dean.CourseCreate', compact('programme', 'staffs','lct','faculty','faculty_name','semester'));
+        return view('dean.CourseCreate', compact('programme', 'staffs','lct','faculty','faculty_name','semester','moderator'));
     }
 
     /**
@@ -104,12 +111,14 @@ class CourseController extends Controller
                     ->where('courses.status','=',"Active")
                     ->get();
 
-        if (count($checkexists) === 0) {
+        if (count($checkexists) === 0){
             $course = new Course([
                 'subject_id'        => $request->get('subject'),
                 'course_type'       => $course_type,
                 'semester'          => $request->get('semester'),
                 'lecturer'          => $request->get('lecturer'),
+                'moderator'         => $request->get('moderator'),
+                'credit'            => $request->get('credit'),
                 'status'            => "Active",
             ]);
             $course->save();
@@ -184,7 +193,13 @@ class CourseController extends Controller
                     ->where('staffs.faculty_id','=', $faculty_id)
                     ->get();
         $count_staff_InFaculty = count($staff_check_inFaculty);
-        return view('dean.CourseEdit', compact('programme', 'staffs','lct','faculty','faculty_name','semester','group','subjects','course','count_staff_InFaculty', 'id'));
+
+        $moderator = DB::table('staffs')
+                    ->join('users', 'staffs.user_id', '=', 'users.user_id')
+                    ->select('staffs.*', 'users.*')
+                    ->where('users.status','=','Active')
+                    ->get();
+        return view('dean.CourseEdit', compact('programme', 'staffs','lct','faculty','faculty_name','semester','group','subjects','course','count_staff_InFaculty','moderator', 'id'));
     }
 
     /**
@@ -212,7 +227,9 @@ class CourseController extends Controller
             }
         }
         $course->semester      = $request->get('semester');
+        $course->credit        = $request->get('credit');
         $course->lecturer      = $request->get('lecturer');
+        $course->moderator     = $request->get('moderator');
         $course->save();
         return redirect()->route('dean.C_potrfolio.index')->with('success','Data Updated');
     }
@@ -319,7 +336,9 @@ class CourseController extends Controller
             $subject_code   = $request->get('subject_code'.$i);
             $subject_name   = $request->get('subject_name'.$i);
             $semester_name  = $request->get('semester'.$i);
+            $credit         = $request->get('credit'.$i);
             $lecturer       = $request->get('lecturer'.$i);
+            $moderator      = $request->get('moderator'.$i);
             $programme_name = $request->get('programme'.$i);
             $programme = Programme::where('programme_name', '=', $programme_name)->first();
 
@@ -333,17 +352,23 @@ class CourseController extends Controller
             $firstStaff_id = explode("(",$lecturer);
             $secondStaff_id = explode(")",$firstStaff_id[1]);
 
+            $moderatorStaff_id = explode("(",$moderator);
+            $second_moderatorStaff_id = explode(")",$moderatorStaff_id[1]);
+
             $staff = Staff::where('staff_id', "=", $secondStaff_id[0])->first();
 
+            $moderator_staff = Staff::where('staff_id', "=", $second_moderatorStaff_id[0])->first();
+
             if(isset($subject[0])){
-                if(($semester === null)||($staff === null)){
-                   $failed .= "In No ".($i+1)." , the semester or staff got something wrong.";
+                if(($semester === null)||($staff === null)||($moderator_staff === null)){
+                   $failed .= "In No ".($i+1)." , the semester or staff or moderator got something wrong.";
                 }else{
                     $checkexists = DB::table('courses')
                             ->select('courses.*')
                             ->where('courses.subject_id','=', $subject[0]->subject_id)
                             ->where('courses.semester','=', $semester->semester_id)
                             ->where('courses.lecturer','=', $staff->id)
+                            ->where('courses.moderator','=',$moderator_staff->id)
                             ->where('courses.status','=',"Active")
                             ->get();
                     if (count($checkexists) === 0) {
@@ -351,7 +376,9 @@ class CourseController extends Controller
                             'subject_id'        => $subject[0]->subject_id,
                             'course_type'       => $course_type,
                             'semester'          => $semester->semester_id,
+                            'credit'            => $credit,
                             'lecturer'          => $staff->id,
+                            'moderator'         => $moderator_staff->id,
                             'status'            => "Active",
                         ]);
                         $course->save();

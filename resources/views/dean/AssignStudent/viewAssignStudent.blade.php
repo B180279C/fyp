@@ -6,6 +6,18 @@ $option1 = "id='selected-sidebar'";
 
 @section('content')
 <script type="text/javascript">
+  $(document).on('click', '.plus', function(){
+    var id = $(this).attr("id"); 
+      $('#student_'+id).slideToggle("slow", function(){
+        if($('#student_'+id).is(":visible")){
+          $('#icon_'+id).removeClass('fa fa-plus');
+          $('#icon_'+id).addClass('fa fa-minus');
+        }else{
+          $('#icon_'+id).removeClass('fa fa-minus');
+          $('#icon_'+id).addClass('fa fa-plus');
+        }
+    });
+  });
   function w3_open() {
       document.getElementById("action_sidebar").style.display = "block";
       document.getElementById("button_open").style.display = "none";
@@ -252,8 +264,18 @@ $option1 = "id='selected-sidebar'";
                         </div>
                     </div>
                 </div>
-                <div class="row" id="assign_student" style="position: relative;top: -20px;padding: 0px 20px;">
+                <div class="row" id="assign_student" style="margin-top: -40px;padding: 0px 15px;">
+                  <?php
+                      $i=0;
+                    ?>
+                    @foreach($batch as $row_batch)
+                    <div style="border-bottom:1px solid black;padding:0px;" class="col-md-12">
+                    <div class="col-12 row" style="padding:15px 10px 5px 10px;margin: 0px;">
+                    <h5 class="group plus" id="{{$i}}">{{$row_batch->batch}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                    </div>
+                    <div id="student_{{$i}}" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px 0px 5px 0px;">
                       @foreach($assign_student as $row)
+                      @if($row->batch == $row_batch->batch)
                       <div class="col-md-4" style="margin: 0px;padding:2px;">
                         <a href="" class="row" id="course_list" style="border: 1px solid #cccccc;border-radius: 10px;color: black;font-weight: bold;margin: 0px;">
                             <div class="col-10" style="color: #0d2f81;padding: 10px;">
@@ -265,7 +287,14 @@ $option1 = "id='selected-sidebar'";
                             </div>
                         </a>
                       </div>
+                      @endif
                       @endforeach
+                      <?php
+                      $i++;
+                      ?>
+                      </div>
+                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>

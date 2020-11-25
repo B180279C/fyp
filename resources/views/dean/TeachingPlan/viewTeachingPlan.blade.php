@@ -105,7 +105,10 @@ $option1 = "id='selected-sidebar'";
                     </div>
                   <ul class="sidebar-action-ul">
                     <a href="/teachingPlan/create/assessment/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-list-ol" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Assessment Method</li></a>
+                    <a href="/teachingPlan/create/CQI/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage CQI</li></a>
                     <a href="/teachingPlan/create/weekly/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-pencil" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Weekly Plan</li></a>
+                    <p class="title_method">Report</p>
+                    <a href="/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
                   </ul>
             </div>
             
@@ -129,25 +132,25 @@ $option1 = "id='selected-sidebar'";
                     $assessment_num = explode(',',$all_assessment[1]);
                 ?>
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
-                    <thead class="thead-light">
-                    <tr>
-                        <th rowspan="3"><b>No</b></th>
-                        <th rowspan="3" width="20%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Course Outcomes (CO)</b></th>
-                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Programme Outcomes(PO)</b></th>
-                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Domain & Taxonomy Level (e.g A2/ C3)</b></th>
-                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;"><b>Teaching Methods</b></th>
-                        <th width="40%"colspan="{{(count($assessment)-1)}}" scope="col" style="text-align: center;border-left:1px solid #e6e6e6;"><b>Assessemnt Methods & Mark Breakdown</b></th>
+                    <thead>
+                    <tr style="background-color: #d9d9d9;">
+                        <th rowspan="3" style="border-left:1px solid #e6e6e6;color:black;"><b>No</b></th>
+                        <th rowspan="3" width="20%" scope="col" style="border-left:1px solid #e6e6e6;color:black;"><b>Course Outcomes (CO)</b></th>
+                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;color:black;"><b>Programme Outcomes(PO)</b></th>
+                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;color:black;"><b>Domain & Taxonomy Level (e.g A2/ C3)</b></th>
+                        <th rowspan="3" width="10%" scope="col" style="border-left:1px solid #e6e6e6;color:black;"><b>Teaching Methods</b></th>
+                        <th width="40%"colspan="{{(count($assessment)-1)}}" scope="col" style="text-align: center;border-left:1px solid #e6e6e6;color:black;"><b>Assessemnt Methods & Mark Breakdown</b></th>
                     </tr>
                     <?php
-                        echo "<tr style='text-align: center;'>";
+                        echo "<tr style='text-align: center;background-color: #d9d9d9;'>";
                             while((isset($assessment[$m]))&&($assessment[$m]!="")){
-                                echo '<th><b>'.$assessment[$m].'</b></th>';
+                                echo '<th style="color:black;"><b>'.$assessment[$m].'</b></th>';
                                 $m++;
                             }
                         echo "</tr>";
-                        echo "<tr style='text-align: center;'>";
+                        echo "<tr style='text-align: center;background-color: #d9d9d9;'>";
                             while((isset($assessment_num[$n]))&&($assessment_num[$n]!="")){
-                                echo '<th><b>'.$assessment_num[$n].'%</b></th>';
+                                echo '<th style="color:black;"><b>'.$assessment_num[$n].'%</b></th>';
                                 $n++;
                             }
                         echo "</tr>";
@@ -158,18 +161,18 @@ $option1 = "id='selected-sidebar'";
                     ?>
                     @foreach($TP_Ass as $row_ass)
                         <tr>
-                            <td>{{$num}}</td>
-                            <td>{{$row_ass->CLO}}</td>
-                            <td>{{$row_ass->PO}}</td>
-                            <td>{{$row_ass->domain_level}}</td>
-                            <td>{{rtrim($row_ass->method,',')}}</td>
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$num}}</td>
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_ass->CLO}}</td>
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_ass->PO}}</td>
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_ass->domain_level}}</td>
+                            <td style="border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{rtrim($row_ass->method,',')}}</td>
                             <?php
                             $check = explode(',',$row_ass->markdown);
                             for($c = 0; $c<=($n-1);$c++){
                                 if($check[$c]!=""){
-                                    echo '<td style="text-align: center;"><i class="fa fa-check correct" aria-hidden="true"></i></td>';
+                                    echo '<td style="text-align: center;border-bottom: 1px solid #d9d9d9;"><i class="fa fa-check correct" aria-hidden="true"></i></td>';
                                 }else{
-                                    echo '<td style="text-align: center;"><i class="fa fa-times wrong" aria-hidden="true"></i></td>';
+                                    echo '<td style="text-align: center;border-bottom: 1px solid #d9d9d9;"><i class="fa fa-times wrong" aria-hidden="true"></i></td>';
                                 }
                             }
                             ?>
@@ -183,6 +186,48 @@ $option1 = "id='selected-sidebar'";
             <hr style="margin: 5px 5px;background-color:#d9d9d9;">
             @else
             <h5 style="position: relative;top: 10px;left: 10px;">Methods of Assessment</h5>
+            <br>
+            <div style="display: block;border:1px solid black;padding: 50px;margin: 0px 10px;">
+                <center>Empty</center>
+            </div>
+            <br>
+            <hr style="margin: 5px 5px;background-color:#d9d9d9;">
+            @endif
+            @if(count($TP_CQI)>0)
+            <h5 style="position: relative;top: 10px;left: 10px;">Continual Quality Improvement (CQI)</h5>
+            <div style="overflow-x: auto;padding:20px 10px 5px 10px;">
+            <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
+                <thead>
+                    <tr style="background-color: #d9d9d9;">
+                        <th style="color: black;"><center><b>No</b></center></th>
+                        <th style="border-left:1px solid #cccccc;text-align:center;color: black;"><b>Proposed Improvement Action(s)<br/>(From Previous trimester Course Report)</b></th>
+                        <th style="border-left:1px solid #cccccc;text-align:center;color: black;"><b>Plan for this Trimester<br/>(action(s) must be shown in Part D, if applicable)<br/>(to be transferred to this trimester Course Report)</b></th>
+                    </tr>
+                    </thead>
+                    <?php
+                    $i = 1;
+                    ?>
+                @foreach($TP_CQI as $row)
+                    <tr>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">
+                            {{$i}} 
+                        </td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">
+                            {{$row->action}}
+                        </td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">
+                            {{$row->plan}}
+                        </td>
+                    </tr>
+                    <?php
+                    $i++
+                    ?>
+                @endforeach
+            </table>
+            </div>
+            <hr style="margin: 5px 5px;background-color:#d9d9d9;">
+            @else
+            <h5 style="position: relative;top: 10px;left: 10px;">Continual Quality Improvement (CQI)</h5>
             <br>
             <div style="display: block;border:1px solid black;padding: 50px;margin: 0px 10px;">
                 <center>Empty</center>

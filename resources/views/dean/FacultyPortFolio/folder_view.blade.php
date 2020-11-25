@@ -254,7 +254,7 @@ $option2 = "id='selected-sidebar'";
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/FacultyPortFolio"> Faculty PortFolio </a>/
+            <a href="/FacultyPortFolio"> Faculty ( Portfolio )</a>/
             @if($faculty_portfolio->portfolio_place=="Faculty")
                 <span class="now_page">{{$faculty_portfolio->portfolio_name}}</span>/
             @else

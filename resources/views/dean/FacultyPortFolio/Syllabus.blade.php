@@ -41,7 +41,7 @@ $option2 = "id='selected-sidebar'";
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/FacultyPortFolio"> Faculty PortFolio </a>/
+            <a href="/FacultyPortFolio"> Faculty ( Portfolio )</a>/
             <span class="now_page">Syllabus</span>/
         </p>
         <hr class="separate_hr">

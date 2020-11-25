@@ -345,18 +345,35 @@ $option1 = "id='selected-sidebar'";
                 $place = explode(',,,',($lecture_note->note_place));
                 $place_name = explode(',,,',($data));
                 $i=1;
+                if($lecture_note->used_by!=""){
+                  foreach($all_note as $all_row){
+                    if(($lecture_note->used_by)==($all_row->ln_id)){
+                      $note_name = $lecture_note->note_name." (".$all_row->semester_name.")";
+                    }
+                  }
+                }else{
+                  $note_name = $lecture_note->note_name;
+                }
                 while(isset($place[$i])!=""){
-                  echo "<a href='/lectureNote/folder/$place[$i]'>".$place_name[$i]."</a>/";
+                  if($lecture_note->used_by!=""){
+                    foreach($all_note as $all_row){
+                      if(($lecture_note->used_by)==($all_row->ln_id)){
+                        echo "<a href='/lectureNote/folder/$place[$i]'>".$place_name[$i]." (".$all_row->semester_name.")</a>/";
+                      }
+                    }
+                  }else{
+                    echo "<a href='/lectureNote/folder/$place[$i]'>".$place_name[$i]."</a>/";
+                  }
                   $i++;
                 }
             ?>
-            <span class="now_page">{{$lecture_note->note_name}}</span>/
+            <span class="now_page">{{$note_name}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p class="page_title">{{$lecture_note->note_name}}</p>
+             <p class="page_title">{{$note_name}}</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">

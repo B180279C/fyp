@@ -237,7 +237,8 @@ class LectureNoteController extends Controller
     public function removeActive($id){
         $lecture_note = lecture_Note::where('ln_id', '=', $id)->firstOrFail();
         if($lecture_note->note_type=="folder"){
-            $lecture_note_list = lecture_Note::where('note_place', 'LIKE', $lecture_note->note_place.",,,".$id.'%')->update(['status' => 'Remove']);
+            $lecture_note_list = lecture_Note::where('note_place', 'LIKE', $lecture_note->note_place.",,,".$id)->update(['status' => 'Remove']);
+            $lecture_note_list_2 = lecture_Note::where('note_place', 'LIKE', $lecture_note->note_place.",,,".$id.",,,".'%')->update(['status' => 'Remove']);
         }
         $lecture_note->status  = "Remove";
         $lecture_note->save();
@@ -473,7 +474,6 @@ class LectureNoteController extends Controller
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                     ->select('lecture_notes.*','semesters.*','subjects.*')
                     ->where('subjects.subject_id', '=', $course[0]->subject_id)
-                    ->where('lecture_notes.note_place', '!=', 'Note')
                     ->where('lecture_notes.status', '=', 'Active')
                     ->orderByDesc('lecture_notes.note_type')
                     ->get();

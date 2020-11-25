@@ -117,24 +117,27 @@ $option4 = "id='selected-sidebar'";
               if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
                 break;
               }
-                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['programme']!=null)){
+                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['lecturer_staff_id']!=response[i]['moderator_staff_id'])){
                   var row = table.insertRow(1+i);
                   var cell = row.insertCell(0);
                   var cell1 = row.insertCell(1);
                   var cell2 = row.insertCell(2);
                   var cell3 = row.insertCell(3);
                   var cell4 = row.insertCell(4);
+                  var cell5 = row.insertCell(5);
                   cell.innerHTML  = (i+1);
-                  cell1.innerHTML = response[i]['programme_short_form_name'];
-                  cell2.innerHTML = response[i]['subject_code'] +" "+ response[i]['subject_name'];
-                  cell3.innerHTML = response[i]['semester'];
+                  cell1.innerHTML = response[i]['programme_short_form_name']+" : "+response[i]['subject_code'] +" "+ response[i]['subject_name']
+                  cell2.innerHTML = response[i]['semester'];
+                  cell3.innerHTML = response[i]['credit'];
                   cell4.innerHTML = response[i]['lecturer_staff_id'];
+                  cell5.innerHTML = response[i]['moderator_staff_id'];
                   cell.className  = 'tablebody';
                   cell1.className = 'tablebody';
                   cell2.className = 'tablebody';
                   cell3.className = 'tablebody';
                   cell4.className = 'tablebody';
-                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'>");
+                  cell5.className = 'tablebody';
+                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'>");
                   $('#showData').show();
                   $('#errorData').hide();
                 }else{
@@ -194,13 +197,13 @@ $option4 = "id='selected-sidebar'";
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <span class="now_page">Course Portfolio</span>/
+            <span class="now_page">Courses</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-             <p class="page_title">Course Portfolio</p>
+             <p class="page_title">Courses</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -299,16 +302,17 @@ $option4 = "id='selected-sidebar'";
           <thead class="tablehead">
             <tr style="height: 60px;text-align: left;">
               <th style="padding-left: 10px;">No</th>
-              <th style="padding-left: 10px;">Programme</th>
               <th style="padding-left: 10px;">Subject</th>
               <th style="padding-left: 10px;">Semester</th>
+              <th style="padding-left: 10px;">Credit</th>
               <th style="padding-left: 10px;">Lecturer</th>
+              <th style="padding-left: 10px;">Moderator</th>
             </tr>
           </thead>
         </table>
       </div>
       <div id="errorData" style="padding: 0px 20px 20px 20px;">
-        <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
+        <p><b>Something going wrong. </b>Please Check Again the excel file of data. <br/>(<b>Important : </b>All result cannot be empty, Lecturer and Moderator cannot be same.)</p>
       </div>
       <form method="post" action="{{action('Dean\CourseController@storeCourses')}}">
         {{csrf_field()}}

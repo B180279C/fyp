@@ -38,7 +38,7 @@ $option1 = "id='selected-sidebar'";
 </script>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Courses</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">My Courses</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <span class="now_page">Courses</span>/

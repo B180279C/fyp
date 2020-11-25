@@ -19,6 +19,7 @@ class CreateCoursesTable extends Migration
             $table->string('course_type');
             $table->string('year');
             $table->string('semester');
+            $table->string('credit');
             $table->string('lecturer');
             $table->string('moderator');
             $table->string('created_by');

@@ -50,8 +50,17 @@ class AssignStudentController extends Controller
                     ->where('assign_student_course.course_id','=',$course[0]->course_id)
                     ->where('assign_student_course.status','=',"Active")
                     ->get();
+
+        $batch = DB::table('assign_student_course')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
+                    ->select('assign_student_course.*','students.*','users.*')
+                    ->where('assign_student_course.course_id','=',$course[0]->course_id)
+                    ->where('assign_student_course.status','=',"Active")
+                    ->groupBy('students.batch')
+                    ->get();
         if(count($course)>0){
-            return view('dean.AssignStudent.viewAssignStudent',compact('course','id','faculty','programme','semester','assign_student'));
+            return view('dean.AssignStudent.viewAssignStudent',compact('course','id','faculty','programme','semester','assign_student','batch'));
         }else{
             return redirect()->back();
         }
@@ -63,44 +72,101 @@ class AssignStudentController extends Controller
         $course_id = $request->get('course_id');
         $result = "";
         if($value!=""){
-            $assign_student = DB::table('assign_student_course')
-        			->join('students','students.id', '=', 'assign_student_course.student_id')
-        			->join('users','users.user_id', '=', 'students.user_id')
+            $batch = DB::table('assign_student_course')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
                     ->select('assign_student_course.*','students.*','users.*')
                     ->where('assign_student_course.course_id','=',$course_id)
                     ->where('assign_student_course.status','=',"Active")
                     ->Where(function($query) use ($value) {
                           $query->orWhere('students.student_id','LIKE','%'.$value.'%')
-                            ->orWhere('users.name','LIKE','%'.$value.'%');
-                      })
+                            ->orWhere('users.name','LIKE','%'.$value.'%')
+                            ->orWhere('students.batch','LIKE','%'.$value.'%');
+                    })
+                    ->groupBy('students.batch')
                     ->get();
-            if ($assign_student->count()) {
-            	foreach($assign_student as $row){
-                    $result .= '<div class="col-md-3 align-self-center" style="padding:0px 3px;">';
-                    $result .= '<a href="" id="course_list" style="border: 1px solid #cccccc;border-radius: 10px;color: black;font-weight: bold;display: inline-block;width: 100%;">';
-                    $result .= '<div class="col" style="padding: 10px;color: #0d2f81;">';
-                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"><b>'.$row->name.' ( '.$row->student_id.' )</p>';
-                    $result .= '</div></a></div>';
+           $assign_student = DB::table('assign_student_course')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
+                    ->select('assign_student_course.*','students.*','users.*')
+                    ->where('assign_student_course.course_id','=',$course_id)
+                    ->where('assign_student_course.status','=',"Active")
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('students.student_id','LIKE','%'.$value.'%')
+                            ->orWhere('users.name','LIKE','%'.$value.'%')
+                            ->orWhere('students.batch','LIKE','%'.$value.'%');
+                    })
+                    ->get();
+
+            if(count($batch)>0){
+                $i=0;
+                foreach($batch as $row_batch){
+                    $result .='<div style="border-bottom:1px solid black;padding:0px;" class="col-md-12">';
+                    $result .='<div class="col-12 row" style="padding:15px 10px 5px 10px;margin: 0px;">';
+                    $result .='<h5 class="group plus" id="'.$i.'">'.$row_batch->batch.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
+                    $result .='</div>';
+                    $result .='<div id="student_'.$i.'" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px 0px 5px 0px;">';
+                    foreach($assign_student as $row){
+                        if($row->batch == $row_batch->batch){
+                            $result .='<div class="col-md-4" style="margin: 0px;padding:2px;">';
+                            $result .='<a href="" class="row" id="course_list" style="border: 1px solid #cccccc;border-radius: 10px;color: black;font-weight: bold;margin: 0px;">';
+                            $result .='<div class="col-10" style="color: #0d2f81;padding: 10px;">';
+                            $result .='<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"><b>'.$row->name.' ( '.$row->student_id.')</b></p>';
+                            $result .='</div>';
+                            $result .='<div class="col-1" style="padding: 10px 20px;">';
+                            $result .='<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->asc_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .='</div>';
+                            $result .='</a>';
+                            $result .='</div>';
+                        }
+                    }
+                    $i++;
+                    $result .='</div></div>';
                 }
             }else{
-            	$result .= '<div class="col-md-12">';
+                $result .= '<div class="col-md-12">';
                 $result .= '<p>Not Found</p>';
                 $result .= '</div>';
             }
         }else{
+            $batch = DB::table('assign_student_course')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
+                    ->select('assign_student_course.*','students.*','users.*')
+                    ->where('assign_student_course.course_id','=',$course_id)
+                    ->where('assign_student_course.status','=',"Active")
+                    ->groupBy('students.batch')
+                    ->get();
             $assign_student = DB::table('assign_student_course')
-        			->join('students','students.id', '=', 'assign_student_course.student_id')
-        			->join('users','users.user_id', '=', 'students.user_id')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
                     ->select('assign_student_course.*','students.*','users.*')
                     ->where('assign_student_course.course_id','=',$course_id)
                     ->where('assign_student_course.status','=',"Active")
                     ->get();
-            foreach($assign_student as $row){
-                    $result .= '<div class="col-md-3 align-self-center" style="padding:0px 3px;">';
-                    $result .= '<a href="" id="course_list" style="border: 1px solid #cccccc;border-radius: 10px;color: black;font-weight: bold;display: inline-block;width: 100%;">';
-                    $result .= '<div class="col" style="padding: 10px;color: #0d2f81;">';
-                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"><b>'.$row->name.' ( '.$row->student_id.' )</p>';
-                    $result .= '</div></a></div>';
+            $i=0;
+            foreach($batch as $row_batch){
+                $result .='<div style="border-bottom:1px solid black;padding:0px;" class="col-md-12">';
+                $result .='<div class="col-12 row" style="padding:15px 10px 5px 10px;margin: 0px;">';
+                $result .='<h5 class="group plus" id="'.$i.'">'.$row_batch->batch.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
+                $result .='</div>';
+                $result .='<div id="student_'.$i.'" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px 0px 5px 0px;">';
+                foreach($assign_student as $row){
+                    if($row->batch == $row_batch->batch){
+                        $result .='<div class="col-md-4" style="margin: 0px;padding:2px;">';
+                        $result .='<a href="" class="row" id="course_list" style="border: 1px solid #cccccc;border-radius: 10px;color: black;font-weight: bold;margin: 0px;">';
+                        $result .='<div class="col-10" style="color: #0d2f81;padding: 10px;">';
+                        $result .='<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;"><b>'.$row->name.' ( '.$row->student_id.')</b></p>';
+                        $result .='</div>';
+                        $result .='<div class="col-1" style="padding: 10px 20px;">';
+                        $result .='<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->asc_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                        $result .='</div>';
+                        $result .='</a>';
+                        $result .='</div>';
+                    }
+                }
+                $i++;
+                $result .='</div></div>';
             }
         }
         return $result;
