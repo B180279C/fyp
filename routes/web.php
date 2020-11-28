@@ -226,12 +226,12 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/teachingPlan/CQIUpdate/', 'Dean\TeachingPlanController@CQIUpdate');
 	Route::get('/teachingPlan/CQIRemove/{id}', 'Dean\TeachingPlanController@removeActive');
 	Route::get('/teachingPlan/report/{id}', 'Dean\TeachingPlanController@TPDownload');
-	
+	Route::get('/teachingPlan/Action/Submit/{id}', 'Dean\TeachingPlanController@TPSubmitAction');
 	
 	//Assessment
 	Route::get('/assessment/{id}','Dean\AssessmentController@viewAssessment')->name('dean.viewAssessment');
 	Route::post('/assessment/getSyllabusData', 'Dean\AssessmentController@getSyllabusData');
-	Route::get('/assessment/create/{id}/question/{question}', [
+	Route::get('/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'createQuestion', 'uses' => 'Dean\AssessmentController@create_question']);
     Route::post('/assessment/openNewAssessment', 'Dean\AssessmentController@openNewAssessment');
     Route::post('/assessment/AssessmentNameEdit', 'Dean\AssessmentController@AssessmentNameEdit');
@@ -253,14 +253,7 @@ Route::middleware('is_dean')->group(function(){
     Route::post('/assessment/searchAssessmentList/', 'Dean\AssessmentController@searchAssessmentList');
     Route::get('/assessment/AllZipFiles/{id}/{download}','Dean\AssessmentController@AllZipFileDownload');
     Route::get('/assessment/download/zipFiles/{ass_id}/{download}','Dean\AssessmentController@zipFileDownload');
-	// Route::get('/assessment/folder/{id}/previous/{course_id}/question/{question}/{list}', [
- //    'as' => 'viewPreviousQuestion', 'uses' => 'AssessmentController@viewPreviousQuestion']);
-    // Route::get('/assessment/folder/{id}/previous/{folder_id}/{list}', [
-    // 'as' => 'dean.ass.previous_folder_view', 'uses' => 'AssessmentController@previous_folder_view']);
-    
-    // Route::get('/assessment/{id}/previous/{course_id}/list', [
-    // 'as' => 'viewPreviousAssessment', 'uses' => 'AssessmentController@viewPreviousAssessment']);
-    // Route::post('/assessment/list/searchListKey/', 'AssessmentController@searchListKey');
+    Route::get('/assessment/Action/Submit/{id}', 'Dean\AssessmentController@AssessmentSubmitAction');
 
 
     // Continuous Assessment Student Result
@@ -407,12 +400,19 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('Moderator','Dean\Moderator\M_CourseController@index');
 	Route::post('/searchModeratorCourse', 'Dean\Moderator\M_CourseController@searchModeratorCourse');
 	Route::get('/Moderator/course/{id}','Dean\Moderator\M_CourseController@ModeratorAction');
+	//Moderator Student list
 	Route::get('/Moderator/assign/student/{id}','Dean\Moderator\M_StudentListController@ModeratorStudent');
 	Route::post('/searchModeratorStudent', 'Dean\Moderator\M_StudentListController@searchModeratorStudent');
+	//Moderator Lecture Note
 	Route::get('/Moderator/lectureNote/{id}','Dean\Moderator\M_LectureNoteController@ModeratorLectureNote');
 	Route::post('/Moderator/lectureNote/searchFiles', 'Dean\Moderator\M_LectureNoteController@searchModeratorLN');
 	Route::get('/Moderator/lectureNote/folder/{ln_id}','Dean\Moderator\M_LectureNoteController@ModeratorLNFolderView');
-	
+	//Moderator Teaching Plan
+	Route::get('/Moderator/teachingPlan/{id}','Dean\Moderator\M_TeachingPlanController@ModeratorTeachingPlan');
+	Route::post('/Moderator/teachingPlan/verify/','Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction');
+	//Moderator Assessment
+	Route::get('/Moderator/Assessment/{id}','Dean\Moderator\M_AssessmentController@ModeratorAssessment');
+
 });
 
 

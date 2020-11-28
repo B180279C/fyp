@@ -435,7 +435,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/course_list">Courses </a>/
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
-            <a href="/assessment/create/{{$course[0]->course_id}}/question/{{$question}}">{{$question}} ( Q & S )</a>/
+            <a href="/assessment/create/{{$course[0]->course_id}}/question/{{$assessments->coursemark}}/{{$question}}">{{$question}} ( Q & S )</a>/
             <span class="now_page">{{$assessments->assessment_name}}</span>/
         </p>
         <hr class="separate_hr">

@@ -82,7 +82,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="/Moderator/Assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
                             <br>

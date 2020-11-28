@@ -15,6 +15,7 @@ use App\Faculty;
 use App\Imports\syllabusRead;
 use App\TP_Assessment_Method;
 use App\TP_CQI;
+use App\Action_V_A;
 
 class TeachingPlanController extends Controller
 {
@@ -49,8 +50,15 @@ class TeachingPlanController extends Controller
                   ->where('course_id', '=', $id)
                   ->where('status','=','Active')
                   ->get();
+
+        $action = DB::table('action_v_a')
+                  ->select('action_v_a.*')
+                  ->where('course_id', '=', $id)
+                  ->orderBy('action_id')
+                  ->get();
+
         if(count($course)>0){
-            return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI'));
+            return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action'));
         }else{
             return redirect()->back();
         }
@@ -551,31 +559,7 @@ class TeachingPlanController extends Controller
         ]);
         $TP_Ass->save();
       }
-      $user_id       = auth()->user()->user_id;
-      $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-      $faculty_id    = $staff_dean->faculty_id;
-      $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
-                 ->where('course_id', '=', $id)
-                 ->get();
-      $TP = DB::table('teaching_plan')
-          ->select('teaching_plan.*')
-          ->where('teaching_plan.course_id','=',$id)
-          ->get();
-
-      $topic = DB::table('plan_topics')
-            ->join('teaching_plan', 'teaching_plan.tp_id', '=', 'plan_topics.tp_id')
-            ->select('plan_topics.*','teaching_plan.*')
-            ->where('teaching_plan.course_id','=',$id)
-            ->get();
-      $TP_Ass = DB::table('tp_assessment_method')
-                  ->select('tp_assessment_method.*')
-                  ->where('course_id', '=', $id)
-                  ->get();
-      return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass'))->with('success','Assessment Method Inserted Successfully');
+      return redirect()->back()->with('success','Assessment Method Inserted Successfully');
     }
 
     public function createTPCQI($id)
@@ -993,9 +977,15 @@ class TeachingPlanController extends Controller
     $table->addCell(4000)->addText('Moderated By: ', null, $noSpaceAndLeft);
     $table->addCell(4000)->addText('Approved By: ', null, $noSpaceAndLeft);
 
+    $Moderator = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('staffs.id', '=', $course[0]->moderator)
+                 ->get();
+
     $table->addRow(1);
     $table->addCell(4000)->addText('Name: '.$course[0]->name.'<w:br/>Course Coordinator',null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Name: <w:br/>Moderator', null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Name: '.$Moderator[0]->name.'<w:br/>Moderator', null, $noSpaceAndLeft);
     $table->addCell(4000)->addText('Name: <w:br/>Head of Department', null, $noSpaceAndLeft);
 
     $table->addRow(1);
@@ -1006,5 +996,31 @@ class TeachingPlanController extends Controller
     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
     $objWriter->save($course[0]->subject_code." ".$course[0]->subject_name.'.docx');
     return response()->download(public_path($course[0]->subject_code." ".$course[0]->subject_name.'.docx'))->deleteFileAfterSend(true);
+  }
+
+  public function TPSubmitAction($id)
+  {
+    $user_id       = auth()->user()->user_id;
+    $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+    $faculty_id    = $staff_dean->faculty_id;
+    $course = DB::table('courses')
+              ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+              ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+              ->select('courses.*','subjects.*','semesters.*')
+              ->where('lecturer', '=', $staff_dean->id)
+              ->where('course_id', '=', $id)
+              ->get();
+    if(count($course)>0){
+      $action = new Action_V_A([
+        'course_id'   => $id,
+        'action_type' => "TP",
+        'status'      => "Waiting For Verified",
+        'for_who'     => "Moderator",
+      ]);
+      $action->save();
+      return redirect()->back()->with('success','Teaching Plan Submitted to Moderator Successfully');
+    }else{
+      return redirect()->back();
+    }
   }
 }

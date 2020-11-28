@@ -112,8 +112,37 @@ $option1 = "id='selected-sidebar'";
             url:'/assessment/AssessmentNameEdit',
             data:{value : num[2]},
             success:function(data){
+              var clo = data[0].CLO;
+              var clo_list = clo.split("///");
+              var clo_selected = clo_list[0].split(',');
+              var clo_full = clo_list[1].split(',');
+              var option = "";
+              for(var c = 0;c<=(data[2].length-1);c++){
+                  for(var d = 0;d<=(clo_full.length-1);d++){
+                    if(data[2][c].am_id==clo_full[d]){
+                      if(clo_selected[d]==clo_full[d]){
+                        option += "<option title='CLO "+(c+1)+"' class='option' value="+data[2][c].am_id+" selected>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
+                      }else{
+                        option += "<option title='CLO "+(c+1)+"' class='option' value="+data[2][c].am_id+">CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
+                      }
+                    }
+                  }
+              }
+              $("#CLO").html(option);
+              $('#CLO').selectpicker('refresh');
+              $('#CLO_ALL').val(clo_full);
+              var mark = 0;
+              for(var i = 0;i<=(data[1].length-1);i++){
+                var mark = mark+parseInt(data[1][i].coursework);
+              }
+              console.log(mark);
+              var full_mark = '{{$coursework}}';
               document.getElementById('ass_id').value = num[2];
-              document.getElementById('folder_name').value = data.assessment_name;
+              document.getElementById('mark_record').innerHTML = "The {{$question}} of coursework is {{$coursework}}%, It already insert "+(mark-parseInt(data[0].coursework))+"%.";
+              document.getElementById('mark_record_2').innerHTML = "So, It Cannot insert over "+(full_mark-(mark-parseInt(data[0].coursework)))+"% of coursework.";
+              document.getElementById("coursework").max = (full_mark-(mark-parseInt(data[0].coursework)));
+              document.getElementById('folder_name').value = data[0].assessment_name;
+              document.getElementById('coursework').value = data[0].coursework;
             } 
           });
           $('#folderNameEdit').modal('show');
@@ -276,40 +305,6 @@ $option1 = "id='selected-sidebar'";
               </div>
               @endif
               </div>
-              <!-- <hr style="background-color: #d9d9d9;">
-              <h5 style="padding-left: 3px;" class="p_sem_plus">Previous Semester (<i class="fa fa-plus" aria-hidden="true" id="icon" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
-                <div class="row" id="previous" style="display: none;">
-                  <?php
-                  $p = 0;
-                  ?>
-                  @foreach($previous_semester as $row_2)
-                    @foreach($group_assessments as $row_3)
-                    @if($row_2->course_id == $row_3->course_id)
-                    <?php
-                    $p++;
-                    ?>
-                    <div class="col-12 row align-self-center" id="course_list">
-                        <a href="/assessment/folder/{{$course[0]->course_id}}/previous/{{$row_3->course_id}}/question/{{$question}}/once" id="show_image_link" class="col-9 row align-self-center">
-                          <div class="col-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="position: relative;top: -2px;">
-                              <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
-                            </div>
-                            <div class="col-10" id="course_name">
-                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row_2->semester_name}} : {{$question}} </b></p>
-                            </div>
-                          </div>
-                        </a>
-                    </div>
-                    @endif
-                    @endforeach
-                  @endforeach
-                
-                @if($p==0)
-                <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 10px 20px 0px 20px;">
-                  <center>Empty</center>
-                </div>
-                @endif
-                </div> -->
             </div>
         </div>
     </div>
@@ -368,6 +363,56 @@ $option1 = "id='selected-sidebar'";
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-list-alt" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Course Learning Outcome ( CLO )</label>
+                      <select class="selectpicker form-control" name="CLO[]" data-width="100%" title="Choose one" multiple required>
+                        <?php
+                          $num = 1;
+                          $check = "";
+                          foreach($TP_Ass as $row){
+                            $assessment_list = explode('///',$row->assessment);
+                            $markdown = explode(',',$row->markdown);
+                            $assessment = explode(',',$assessment_list[0]);
+                            for($i = 0; $i<=count($assessment)-1;$i++){
+                              $assessment_rep = str_replace(' ','',$assessment[$i]);
+                              if($assessment_rep==$question){
+                                if($markdown[$i]=="yes"){
+                                  $check .= $row->am_id.',';
+                                  echo "<option title='CLO ".$num."' class='option' value=".$row->am_id.">CLO ".$num." : ".$row->CLO." ( ".$row->domain_level." , ".$row->PO." ) </option>";
+                                }
+                              }
+                            }
+                            $num++;
+                          }
+                      ?>
+                      </select>
+                      <input type="hidden" name="CLO_ALL" value="{{$check}}">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-percent" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Coursework</label>
+                      <input type="number" name="coursework" min="0" max="{{$coursework-$mark}}" class="form-control" required/>
+                      <input type="hidden" name="total" value="{{$coursework}}">
+                      <span class="bmd-help">The {{$question}} of coursework is {{$coursework}}%, It already insert {{$mark}}%.</span>
+                      <span class="bmd-help">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
+                </div>
+            </div>
+        </div>
         <br>
       </div>
       <div class="modal-footer">
@@ -407,6 +452,37 @@ $option1 = "id='selected-sidebar'";
                       <label for="subject_type" class="label">Assessment Name</label>
                       <input type="hidden" name="ass_id" id="ass_id">
                       <input type="text" name="assessment_name" class="form-control" id="folder_name" placeholder="Folder" required/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-list-alt" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Course Learning Outcome ( CLO )</label>
+                      <select class="selectpicker form-control" name="CLO[]" data-width="100%" id="CLO" title="Choose one" multiple required>
+                      </select>
+                      <input type="hidden" name="CLO_ALL" id="CLO_ALL">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-percent" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="label">Coursework</label>
+                      <input type="hidden" name="total" value="{{$coursework}}">
+                      <input type="number" name="coursework" min="0" max="{{$coursework-$mark}}" class="form-control" id="coursework" required/>
+                      <span class="bmd-help" id="mark_record">The {{$question}} of coursework is {{$coursework}}%, It already insert {{$mark}}%.</span>
+                      <span class="bmd-help" id="mark_record_2">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
                 </div>
             </div>
         </div>

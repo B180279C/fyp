@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAssessmentsTable extends Migration
+class CreateCaActionVATable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateAssessmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('assessments', function (Blueprint $table) {
-            $table->id('ass_id');
+        Schema::create('actionCA_v_a', function (Blueprint $table) {
+            $table->id('actionCA_id');
             $table->string('course_id');
-            $table->string('assessment');
-            $table->string('assessment_name');
-            $table->string('CLO');
-            $table->string('coursemark');
-            $table->string('coursework');
             $table->string('status');
+            $table->string('for_who');
+            $table->string('AccOrRec');
+            $table->string('self_declaration');
+            $table->text('suggest')->nullable();
+            $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ class CreateAssessmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('assessments');
+        Schema::dropIfExists('actionCA_v_a');
     }
 }

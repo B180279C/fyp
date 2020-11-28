@@ -1,13 +1,13 @@
 <?php
-$title = "Course";
-$option1 = "id='selected-sidebar'";
+$title = "Moderator";
+$option3 = "id='selected-sidebar'";
 ?>
 @extends('layouts.nav_dean')
 
 @section('content')
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#tp").on("click",".week", function(){
+        $(document).on("click",".tp_title", function(){
             var id = $(this).attr("id");
             $('#plan_detail_'+id).slideToggle("slow", function(){
                 // check paragraph once toggle effect is completed
@@ -20,7 +20,9 @@ $option1 = "id='selected-sidebar'";
                 }
             });
         });
-
+        var quill_editor = new Quill('#remarks', {
+            theme: 'snow'
+        });
         $('#less').hide();
         $(document).on("click",".more", function(){
             $('#more').hide();
@@ -38,60 +40,52 @@ $option1 = "id='selected-sidebar'";
             return false;
         });
     });
-    function w3_open() {
-      document.getElementById("action_sidebar").style.display = "block";
-      document.getElementById("button_open").style.display = "none";
-    }
-    function w3_close() {
-      document.getElementById("action_sidebar").style.display = "none";
-      document.getElementById("button_open").style.display = "block";
-    }
 
-    function submitAction(){
-        var course_id = $('#course_id').val();
-        window.location = "/teachingPlan/Action/Submit/"+course_id; 
-    }
-
-    function submitActionSecond(){
-        var course_id = $('#course_id').val();
-        if(confirm('Please ensure your teaching plan is fixed all error and full complete already. Are you sure want to submit again to moderator.')) {
-            window.location = "/teachingPlan/Action/Submit/"+course_id; 
+function Submit_Action(Action){
+    var quill_editor = new Quill('#remarks');
+    $("#remarks_data").val(quill_editor.root.innerHTML);
+    var checkedValue = ""; 
+    var inputElements = document.getElementsByClassName('group_verify');
+    for(var i=0; inputElements[i]; i++){
+        if(inputElements[i].checked){
+            checkedValue += inputElements[i].value+"_";
         }
     }
 
-    $(function () {
-        $.ajaxSetup({
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-        });
-        if($('.search').val()!=""){
-          var value = $('.search').val();
-          var course_id = $('#course_id').val();
-          $.ajax({
-              type:'POST',
-              url:'/teachingPlan/searchPlan',
-              data:{value:value,course_id:course_id},
-              success:function(data){
-                document.getElementById("tp").innerHTML = data;
-              }
-          });
+    $('#verify').val(checkedValue);
+    $('#result').val(Action);
+    if(Action=="Verify"){
+        if(checkedValue=="1_2_3_"){
+            document.getElementById("myForm").submit();
+        }else{
+            alert("If you select the verify button, that need to active all the verify checkbox.");
         }
-        $(".search").keyup(function(){
-            var value = $('.search').val();
-            var course_id = $('#course_id').val();
-            $.ajax({
-               type:'POST',
-               url:'/teachingPlan/searchPlan',
-               data:{value:value,course_id:course_id},
-               success:function(data){
-                    document.getElementById("tp").innerHTML = data;
-               }
-            });
-        });
-    });
+    }else{
+        if(checkedValue!="1_2_3_"){
+            document.getElementById("myForm").submit();
+        }else{
+            alert("If you select the reject button, that need to inactive one or more verify checkbox.");
+        }
+    }
+    
+}
+function w3_open() {
+    document.getElementById("action_sidebar").style.display = "block";
+    document.getElementById("button_open").style.display = "none";
+}
+function w3_close() {
+    document.getElementById("action_sidebar").style.display = "none";
+    document.getElementById("button_open").style.display = "block";
+}
 </script>
 <style type="text/css">
+.editor{
+    height: 100px;
+    display: block;
+}
+.more:hover{
+    text-decoration:none;
+}
 #topic_sub{
     width:95%;
     padding:0px 0px 20px 0px;
@@ -100,9 +94,6 @@ $option1 = "id='selected-sidebar'";
 .topic_remove{
     text-align: right;
     padding:10px 40px 0px 0px;
-}
-.more:hover{
-    text-decoration:none;
 }
 @media only screen and (max-width: 600px) {
     #topic_sub{
@@ -121,13 +112,13 @@ $option1 = "id='selected-sidebar'";
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="/Moderator">Moderator </a>/
+            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Teaching Plan</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">
             <p class="page_title">Teaching Planning</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -136,9 +127,6 @@ $option1 = "id='selected-sidebar'";
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
-                    <a href="/teachingPlan/create/assessment/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-list-ol" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Assessment Method</li></a>
-                    <a href="/teachingPlan/create/CQI/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage CQI</li></a>
-                    <a href="/teachingPlan/create/weekly/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-pencil" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Weekly Plan</li></a>
                     <p class="title_method">Report</p>
                     <a href="/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
                   </ul>
@@ -153,11 +141,16 @@ $option1 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
+            
             <?php
             $action_count = count($action);
             $c = 1;
             $c_more = 1;
-            foreach($action as $row_action){
+            $button_verify = "No";
+            $checkbox_M = '<input type="checkbox" checked class="group_verify" value="1"><b style="color: green"> Verify</b>';
+            $checkbox_C = '<input type="checkbox" checked class="group_verify" value="2"><b style="color: green"> Verify</b>';
+            $checkbox_W = '<input type="checkbox" checked class="group_verify" value="3"><b style="color: green"> Verify</b>';
+            foreach ($action as $row_action){
                 $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: grey;"></i>';
                 $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: grey;"></i>';
                 $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: grey;"></i>';
@@ -170,17 +163,20 @@ $option1 = "id='selected-sidebar'";
                         $status = '<span style="color:#3C5AFF;">Waiting For Verified</span>';
                         $tp_count = 0;
                         $remarks = "";
+                        $color = "black";
                     }else if($row_action->status=="Waiting For Approved"){
                         $status = '<span style="color:green;">Waiting For Approved</span>';
                         $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $tp_count = 3;
+                        $color = "green";
                     }else{
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who;
+                        $color = "red";
                         $remarks_count = explode('///',$row_action->remarks);
                         $remarks = $remarks_count[1];
                         $verified_count = explode('_',$remarks_count[0]);
@@ -196,12 +192,14 @@ $option1 = "id='selected-sidebar'";
                         $tp_count = count($verified_count)-1;
                     }
                     echo '<div class="row action_list" style="border-bottom:1px solid black;margin:-10px 0px 10px 0px;padding:0px;display:none;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';
+                    echo '<div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b>'.$tp_count.'/3</b></span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                    echo '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : <span style="color: grey;">'.$status.'</span></span></div>';
+                    if($remarks!=""){
+                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                    }
                     echo '</div>';
                 }
 
@@ -210,6 +208,8 @@ $option1 = "id='selected-sidebar'";
                         $status = '<span style="color:#3C5AFF;">Waiting For Verified</span>';
                         $tp_count = 0;
                         $remarks = "";
+                        $color = 'black';
+                        $button_verify = "Yes";
                     }else if($row_action->status=="Waiting For Approved"){
                         $status = '<span style="color:green;">Waiting For HOD to Approve</span>';
                         $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
@@ -217,40 +217,49 @@ $option1 = "id='selected-sidebar'";
                         $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $tp_count = 3;
                         $remarks = $row_action->remarks;
+                        $color = 'green';
+                        $checkbox_M = '<b style="color: green"> Verified</b>';
+                        $checkbox_C = '<b style="color: green"> Verified</b>';
+                        $checkbox_W = '<b style="color: green"> Verified</b>';
                     }else{
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
-                        $status = $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitActionSecond()'>Submit Again to Moderator</button>";
+                        $checkbox_M = '<b style="color: red"> Rejected</b>';
+                        $checkbox_C = '<b style="color: red"> Rejected</b>';
+                        $checkbox_W = '<b style="color: red"> Rejected</b>';
+                        $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who;
                         $remarks_count = explode('///',$row_action->remarks);
                         $remarks = $remarks_count[1];
+                        $color = 'red';
                         $verified_count = explode('_',$remarks_count[0]);
                         for($array_num=0;$array_num<(count($verified_count)-1);$array_num++){
                             if($verified_count[$array_num]=="1"){
                                 $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
+                                $checkbox_M = '<b style="color: green"> Verified</b>';
                             }else if($verified_count[$array_num]=="2"){
                                 $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
+                                $checkbox_C = '<b style="color: green"> Verified</b>';
                             }else{
                                 $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
+                                $checkbox_W = '<b style="color: green"> Verified</b>';
                             }
                         }
                         $tp_count = count($verified_count)-1;
                     }
                     if($action_count != 1){
-                        // echo '<hr style="margin: -10px 5px 0px 5px;background-color:black;">';
                         echo "<a href='' style='border:0px solid black;margin-top:-20px;padding:0px 10px 10px 10px;display:block;' class='more' id='more'>More...</a>";
                     }
                     echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';
+                    echo '<div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b>'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : <span style="color: grey;">'.$status.'</span></span></div>';
                     if($remarks!=""){
-                        echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
                     }
                     echo '</div>';
-                    
                 }
                 $c++;
             }
@@ -277,13 +286,12 @@ $option1 = "id='selected-sidebar'";
 
             if($num==3){
                 $completed = '<b style="color: green;">Complete</b>';
-                $pending = $completed."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitAction()'>Submit to Moderator</button>";
             }else{
                 $completed = '<b style="color: red;">Not Complete</b>';
             }
             ?>
             <div class="row" style="border: 0px solid black;margin:-10px 0px 0px 0px;padding:0px;">
-                    <div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">The Teaching Plan : <b>{{$num}}/3</b> ( {!!$completed!!} )</span></div>
+                    <div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">The Teaching Plan : <b>{{$num}}/3</b></span></div>
                     <div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">{!!$iconM!!} Method of Assessment</span></div>
                     <div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">{!!$iconC!!} Continual Quality Improvement (CQI)</span></div>
                     <div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">{!!$iconW!!} Weekly Plan</span></div>
@@ -292,8 +300,13 @@ $option1 = "id='selected-sidebar'";
             @endif
             <hr style="margin: 3px 5px;background-color:black;">
             @if(count($TP_Ass)>0)
-            <h5 style="position:relative;margin-top: 10px;left: 10px;">Methods of Assessment</h5>
-            <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
+            <div class="row">
+                <h5 style="position: relative;top:4px;left: 10px;" class="tp_title col-10" id="1">
+                    Methods of Assessment (<i class="fa fa-plus" aria-hidden="true" id="icon_1" style="color: #0d2f81;position: relative;top: 2px;"></i>)
+                </h5>
+                <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;">{!!$checkbox_M!!}</div>
+            </div>
+            <div style="overflow-x: auto;padding:0px 10px 5px 10px;display: none;" id="plan_detail_1">
                 <?php
                     $m = 0;
                     $n = 0;
@@ -355,16 +368,23 @@ $option1 = "id='selected-sidebar'";
             </div>
             <hr style="margin: 5px 5px;background-color:#d9d9d9;">
             @else
-            <h5 style="position:relative;margin-top: 10px;left: 10px;">Methods of Assessment</h5>
-            <div style="display: block;border:1px solid black;padding: 50px;margin: 0px 10px;">
+            <div class="row">
+                <h5 style="position: relative;top:4px;left: 10px;" class="tp_title col-10" id="1">
+                    Methods of Assessment (<i class="fa fa-plus" aria-hidden="true" id="icon_1" style="color: #0d2f81;position: relative;top: 2px;"></i>)
+                </h5>
+                <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;">{!!$checkbox_M!!}</div>
+            </div>
+            <div style="border:1px solid black;padding: 50px;margin: 0px 10px;display: none;" id="plan_detail_1">
                 <center>Empty</center>
             </div>
-            <br>
-            <hr style="margin: 5px 5px;background-color:#d9d9d9;">
+            <hr style="margin: 3px 5px;background-color:#d9d9d9;">
             @endif
             @if(count($TP_CQI)>0)
-            <h5 style="position: relative;top: 5px;left: 10px;">Continual Quality Improvement (CQI)</h5>
-            <div style="overflow-x: auto;padding:8px 10px 5px 10px;">
+            <div class="row">
+                <h5 style="position: relative;top:3px;left: 10px;" class="tp_title col-10" id="2">Continual Quality Improvement (CQI) (<i class="fa fa-plus" aria-hidden="true" id="icon_2" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;">{!!$checkbox_C!!}</div>
+            </div>
+            <div style="overflow-x: auto;padding:0px 10px 5px 10px;display: none;" id="plan_detail_2">
             <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
                 <thead>
                     <tr style="background-color: #d9d9d9;">
@@ -396,140 +416,120 @@ $option1 = "id='selected-sidebar'";
             </div>
             <hr style="margin: 5px 5px;background-color:#d9d9d9;">
             @else
-            <h5 style="position: relative;top: 5px;left: 10px;">Continual Quality Improvement (CQI)</h5>
-            <div style="display: block;border:1px solid black;padding: 50px;margin: 15px 10px 0px 10px;">
+            <div class="row">
+                <h5 style="position: relative;top:3px;left: 10px;" class="tp_title col-10" id="2">Continual Quality Improvement (CQI) (<i class="fa fa-plus" aria-hidden="true" id="icon_2" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;">{!!$checkbox_C!!}</div>
+            </div>
+            <div style="display: none;border:1px solid black;padding: 50px;margin: 0px 10px;" id="plan_detail_2">
                 <center>Empty</center>
             </div>
-            <br>
-            <hr style="margin: 5px 5px;background-color:#d9d9d9;">
+            <hr style="margin: 3px 5px;background-color:#d9d9d9;">
             @endif
-            <h5 style="position: relative;top:5px;left: 10px;">Weekly Plan</h5>
-            <br>
-            <div class="details" style="padding: 0px 5px 5px 5px;">
-                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -35px;">
-                    <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                        <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                            <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
-                        </p>
-                    </div>
-                    <div class="col-11" style="padding-left: 20px;">
-                        <div class="form-group">
-                            <label for="full_name" class="bmd-label-floating">Search</label>
-                            <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
-                        </div>
-                    </div>
-                </div>
-                <div class="row" id="tp" style="position: relative;margin-top: -35px;padding:0px;"> 
-                    <div class="col-md-12" style="padding:0px;">
+            @if(count($TP)>0)
+            <div class="row">
+                <h5 style="position: relative;top:3px;left: 10px;" class="tp_title col-10" id="3">Weekly Plan (<i class="fa fa-plus" aria-hidden="true" id="icon_3" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;">{!!$checkbox_W!!}</div>
+            </div>
+            <div style="overflow-x: auto;padding:0px 10px;display: none;" id="plan_detail_3">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
+                    <thead>
+                        <tr style="background-color: #d9d9d9;">
+                            <th style="color: black;"><center><b>Week</b></center></th>
+                            <th style="border-left:1px solid #cccccc;text-align:center;color: black;" width="40%"><center><b>Lecture Note<br/>(including sub-topics)</b></center></th>
+                            <th style="border-left:1px solid #cccccc;text-align:center;color: black;"><center><b>Lecture (F2F) Hour</b></center></th>
+                            <th style="border-left:1px solid #cccccc;text-align:center;color: black;" width="15%"><center><b>Tutorial / Practical</b></center></th>
+                            <th style="border-left:1px solid #cccccc;text-align:center;color: black;" width="15%"><center><b>Assessment</b></center></th>
+                            <th style="border-left:1px solid #cccccc;text-align:center;color: black;" width="15%"><center><b>Remarks (CQI Action / Activity)</b></center></th>
+                        </tr>
+                    </thead>
                     <?php
-                    $i = 1;
+                    $array = array();
+                    $num = 0;
                     ?>
                     @foreach($TP as $row)
-                    <p class="col-12 align-self-center week" id="{{$i}}" style="padding:10px 10px;font-size: 20px;margin: 0px;">
-                            <i class="fa fa-plus" id="icon_{{$i}}" aria-hidden="true" style="font-size: 20px;color: #0d2f81"></i>
-                            Week {{$i}}
-                    </p>
-                    <div class="teachingPlan" style="border-bottom: 1px solid grey;padding:0px 20px;">
-                        <div class="row plan" id="plan_detail_{{$i}}" style="padding: 0px 20px;display: none;">
-                            <div class="col-md-9 row" id="topic_list_{{$i}}" style="padding: 0px; margin: 0px;display: inline-block;">
-                                @foreach($topic as $row_topic)
-                                    @if($row_topic->tp_id == $row->tp_id)
-                                <div class="col-md-8 topic" style="display: inline-block;height: 50px;">
-                                    <div class="row">
-                                        <div class="col-1 align-self-center" style="padding: 10px 0px 0px 0px;">
-                                            <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                                                <i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i>
-                                            </p>
-                                        </div>
-                                        <div class="col-11" style="padding-left: 20px;">
-                                            <div class="form-group">
-                                                <label class="label">Lecture Topic</label>
-                                                <input type="text" class="form-control" placeholder="Topic" readonly value="{{$row_topic->lecture_topic}}" style="background-color: white;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3" style="display: inline-block;height: 80px;">
-                                    <div class="row">
-                                        <div class="col-1 align-self-center" style="padding: 15px 0px 0px 0px;">
-                                            <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                                                <i class="fa fa-clock-o" aria-hidden="true" style="font-size: 20px;"></i>
-                                            </p>
-                                        </div>
-                                        <div class="col-11" style="padding-left: 20px;">
-                                            <div class="form-group">
-                                                <label class="label">Hour</label>
-                                                <input type="text" class="form-control" placeholder="Time" readonly value="{{$row_topic->lecture_hour}}" style="background-color: white;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12" id="topic_sub" style="display: inline-block;">
-                                    <p class="text-center align-self-center" style="margin: 0px 18px 10px 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;display: inline-block;">
-                                        <i class="fa fa-info" aria-hidden="true" style="font-size: 18px;"></i>
-                                    </p>
-                                    <label class="bmd-label-floating">Sub-Topic</label>
-                                    <div>
-                                        {!!$row_topic->sub_topic!!}
-                                    </div>
-                                </div>
-                                <br>
-                                <br>
-                                @endif
-                            @endforeach
-                            </div> 
-                            <input type="hidden" name="topic_count_{{$i}}" id="topic_count_{{$i}}" value="1">
-                            <div class="col-md-3" style="padding:20px 0px 0px 0px;">
-                              <div class="short-div">
-                                    <p class="text-center align-self-center" style="margin: 0px 18px 10px 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;display: inline-block;">
-                                        <i class="fa fa-file-text" aria-hidden="true" style="font-size: 18px;padding-left:1px;"></i>
-                                    </p>
-                                    <label class="bmd-label-floating">Tutorials</label>
-                                    <div>
-                                        {!!$row->tutorial!!}
-                                    </div>
-                              </div>
-                              <hr>
-                              <div class="short-div">
-                                  <p class="text-center align-self-center" style="margin: 0px 18px 10px 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;display: inline-block;">
-                                        <i class="fa fa-thumb-tack" aria-hidden="true" style="font-size: 18px;"></i>
-                                    </p>
-                                    <label class="bmd-label-floating">Assessment</label>
-                                    <div>
-                                        {!!$row->assessment!!}
-                                    </div>
-                              </div>
-                              <hr>
-                              <div class="short-div">
-                                  <p class="text-center align-self-center" style="margin: 0px 18px 10px 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;display: inline-block;">
-                                        <i class="fa fa-exclamation" aria-hidden="true" style="font-size: 18px;"></i>
-                                    </p>
-                                    <label class="bmd-label-floating">Remarks</label>
-                                    <div>
-                                        {!!$row->remarks!!}
-                                    </div>
-                              </div>
-                              <hr>
-                            </div>
-                        </div>
-                    </div>
-                    <?php 
-                    $i++;
-                    ?>
+                        <?php
+                        $count = 0;
+                        ?>
+                        @foreach($topic as $row_topic)
+                            @if($row_topic->tp_id == $row->tp_id)
+                            <?php
+                            $count++;
+                            ?>
+                            @endif
+                        @endforeach
+                        <?php
+                        array_push($array, $count);
+                        $num++;
+                        ?>
                     @endforeach
+
                     <?php
-                    if($i==1){
+                        $array_count = 0;
                     ?>
-                    <div style="display: block;border:1px solid black;padding: 50px;margin: 0px 20px;">
-                        <center>Empty</center>
+                    @foreach($TP as $row)
+                        <?php
+                        $i = 0;
+                        ?>
+                        @foreach($topic as $row_topic)
+                            @if($row_topic->tp_id == $row->tp_id)
+                            <?php
+                            $i++;
+                            ?>
+                                @if($i==1)
+                                    <tr>
+                                        <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row->week}}</td>
+                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>Topic : {{$row_topic->lecture_topic}}</b><br/>{!!$row_topic->sub_topic!!}</td>
+                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_topic->lecture_hour}}</td>
+                                        <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{!!$row->tutorial!!}</td>
+                                        <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{!!$row->assessment!!}</td>
+                                        <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{!!$row->remarks!!}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>Topic : {{$row_topic->lecture_topic}}</b><br/>{!!$row_topic->sub_topic!!}</td>
+                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_topic->lecture_hour}}</td>
+                                    </tr>
+                                @endif
+                            @endif
+                        @endforeach
+                        <?php
+                            $array_count++;
+                        ?>
+                    @endforeach
+                </table>
+            </div>
+            @else
+            <div class="row">
+                <h5 style="position: relative;top:3px;left: 10px;" class="tp_title col-10" id="3">Weekly Plan (<i class="fa fa-plus" aria-hidden="true" id="icon_3" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;">{!!$checkbox_W!!}</div>
+            </div>
+            <div style="display: none;border:1px solid black;padding: 50px;margin: 0px 10px;" id="plan_detail_3">
+                <center>Empty</center>
+            </div>
+            @endif
+            <hr style="margin: 5px 5px;background-color:black;">
+            @if($button_verify=="Yes")
+            <div class="row" style="height: auto;margin: 5px -10px 10px -10px;">
+                <form id="myForm" method="post" action="{{action('Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction')}}" style="width: 100%;margin: 0px;">
+                    {{csrf_field()}}
+                    <input type="hidden" name="verify" id="verify">
+                    <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
+                    <input type="hidden" name="result" id="result">
+                    <div class="col-12" style="border: 0px solid black;margin: 0px;padding: 0px 20px;font-size: 16px;">
+                        Remarks : 
                     </div>
-                    <?php
-                    }
-                    ?>
-                </div>
+                    <div class="col-12" style="border: 0px solid black;margin-top:5px;margin-bottom: 0px;">
+                        <div id="remarks" class="editor">
+                        </div>
+                        <textarea style="display:none" id="remarks_data" name="remarks"></textarea>
+                    </div>
+                </form>
+                <div class="col-12" style="text-align: right;margin: 0px!important;padding-top: 10px;padding-right: 10px;">
+                    <input type="button" class="btn btn-raised btn-success" style="color: white;margin: 0px!important;" value="Verify" onclick="Submit_Action('Verify')">&nbsp;
+                    <input type="button" class="btn btn-raised btn-danger" style="color: white;margin: 0px!important;" value="Reject" onclick="Submit_Action('Reject')">&nbsp;
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>

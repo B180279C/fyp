@@ -17,6 +17,7 @@ use App\AssessmentList;
 use App\Imports\syllabusRead;
 use ZipArchive;
 use File;
+use App\ActionCA_V_A;
 
 class AssessmentController extends Controller
 {
@@ -33,20 +34,21 @@ class AssessmentController extends Controller
                  ->where('course_id', '=', $id)
                  ->get();
 
-        $previous_semester = DB::table('courses')
-                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                    ->join('assessments','courses.course_id','=','assessments.course_id')
-                    ->select('subjects.*','courses.*','semesters.*')
-                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
-                    ->where('courses.course_id','!=',$id)
-                    ->where('courses.status', '=', 'Active')
-                    ->orderByDesc('courses.semester')
-                    ->groupBy('courses.course_id')
+        $assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
                     ->get();
 
+        $action = DB::table('actionCA_v_a')
+                  ->select('actionCA_v_a.*')
+                  ->where('course_id', '=', $id)
+                  ->orderBy('actionCA_id')
+                  ->get();
+
         if(count($course)>0){
-            return view('dean.Assessment.viewAssessment',compact('course','previous_semester'));
+            return view('dean.Assessment.viewAssessment',compact('course','assessments','action'));
         }else{
             return redirect()->back();
         }
@@ -83,7 +85,7 @@ class AssessmentController extends Controller
         }      
     }
 
-    public function create_question($id,$question)
+    public function create_question($id,$coursework,$question)
     {
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
@@ -105,6 +107,11 @@ class AssessmentController extends Controller
                     ->orderBy('assessments.assessment_name')
                     ->get();
 
+        $mark = 0;
+        foreach ($assessments as $row){
+            $mark = $mark+$row->coursework;
+        }
+
         $previous_semester = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -124,8 +131,13 @@ class AssessmentController extends Controller
                     ->groupBy('assessments.course_id')
                     ->get();
 
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
         if(count($course)>0){
-            return view('dean.Assessment.createQuestion',compact('course','question','assessments','previous_semester','group_assessments'));
+            return view('dean.Assessment.createQuestion',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework'));
         }else{
             return redirect()->back();
         }
@@ -160,11 +172,24 @@ class AssessmentController extends Controller
         $course_id    = $request->get('course_id');
         $ass_name     = $request->get('assessment_name');
         $assessment   = $request->get('assessment');
-
+        $CLO = array();
+        $CLO = $request->get('CLO');
+        $coursework = $request->get('coursework');
+        $CLO_ALL = $request->get('CLO_ALL');
+        $total = $request->get('total');
+        $CLO_List = "";
+        if($CLO!=null){  
+          foreach($CLO as $value){
+            $CLO_List .= $value.',';
+          }
+        }
         $assessment = new Assessments([
             'course_id'         =>  $course_id,
             'assessment'        =>  $assessment,
-            'assessment_name'          =>  $ass_name,
+            'assessment_name'   =>  $ass_name,
+            'CLO'               =>  $CLO_List."///".$CLO_ALL,
+            'coursemark'        =>  $total,
+            'coursework'        =>  $coursework,
             'status'            =>  'Active',
         ]);
         $assessment->save();
@@ -175,15 +200,42 @@ class AssessmentController extends Controller
     public function AssessmentNameEdit(Request $request){
         $ass_id = $request->get('value');
         $folder = Assessments::find($ass_id);
-        return $folder;
+        $assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id','=',$folder->course_id)
+                    ->where('assessment','=',$folder->assessment)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $folder->course_id)
+                  ->get();       
+
+        return [$folder,$assessments,$TP_Ass];
     }
 
     public function updateAssessmentName(Request $request){
         $ass_id   = $request->get('ass_id');
+        $coursework = $request->get('coursework');
+        $CLO = array();
+        $CLO = $request->get('CLO');
+        $CLO_ALL = $request->get('CLO_ALL');
+        $CLO_List = "";
+        if($CLO!=null){  
+          foreach($CLO as $value){
+            $CLO_List .= $value.',';
+          }
+        }
         $assessment = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
         $assessment->assessment_name  = $request->get('assessment_name');
+        $assessment->CLO  = $CLO_List."///".$CLO_ALL;
+        $assessment->coursemark  = $request->get('total');
+        $assessment->coursework  = $request->get('coursework');
+
         $assessment->save();
-        return redirect()->back()->with('success','Edit Folder Name Successfully');
+        return redirect()->back()->with('success','Edit Assessment Detail Successfully');
     }
 
     public function assessment_list_view($ass_id){
@@ -758,254 +810,28 @@ class AssessmentController extends Controller
         $zip->close();
         return response()->download($fileName);
     }
-
-    // public function viewPreviousAssessment($id,$course_id)
-    // {
-    //     $user_id       = auth()->user()->user_id;
-    //     $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-    //     $faculty_id    = $staff_dean->faculty_id;
-
-    //     $course = DB::table('courses')
-    //              ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-    //              ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //              ->select('courses.*','subjects.*','semesters.*')
-    //              ->where('lecturer', '=', $staff_dean->id)
-    //              ->where('course_id', '=', $id)
-    //              ->get();
-
-    //     $assessments = DB::table('assessments')
-    //                 ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-    //                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //                 ->select('assessments.*','courses.*','semesters.*')
-    //                 ->where('assessments.course_id', '=', $course_id)
-    //                 ->where('assessments.status', '=', 'Active')
-    //                 ->groupBy('assessments.assessment')
-    //                 ->get();
-
-    //     if(count($course)>0){
-    //         return view('dean.Assessment.viewPreviousAssessment',compact('course','assessments'));
-    //     }else{
-    //         return redirect()->back();
-    //     }
-    // }
-
-    // public function searchListKey(Request $request)
-    // {
-    //     $value         = $request->get('value');
-    //     $course_id     = $request->get('course_id');
-
-    //     $course = DB::table('courses')
-    //              ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-    //              ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //              ->select('courses.*','subjects.*','semesters.*')
-    //              ->where('course_id', '=', $course_id)
-    //              ->get();
-
-    //     $result = "";
-    //     if($value!=""){
-    //         $grouping = DB::table('assessments')
-    //                     ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-    //                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //                     ->select('assessments.*','courses.*','semesters.*')
-    //                     ->where('courses.subject_id','=',$course[0]->subject_id)
-    //                     ->Where(function($query) use ($value) {
-    //                       $query->orWhere('assessments.ass_name','LIKE','%'.$value.'%')
-    //                         ->orWhere('assessments.ass_word','LIKE','%'.$value.'%')
-    //                         ->orWhere('semesters.semester_name','LIKE','%'.$value.'%');
-    //                     })
-    //                     ->where('assessments.course_id','!=',$course_id)
-    //                     ->where('assessments.status', '=', 'Active')
-    //                     ->groupBy('assessments.assessment')
-    //                     ->orderBy('assessments.assessment')
-    //                     ->get();
-
-    //         $result .= '<h5 style="margin-top: 5px;padding-left: 15px;border:0px solid black;" class="col-md-12">Searched Result</h5>';
-
-    //         $result .= '<hr style="color:#d9d9d9;margin:0px 15px;position:relative;top:3px;" class="col">';
-    //         $p = 1;
-    //         if(count($grouping) >0 ){
-    //             foreach($grouping as $ga){
-    //                 $current_assessments = DB::table('assessments')
-    //                         ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-    //                         ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //                         ->select('assessments.*','courses.*','semesters.*')
-    //                         ->where('courses.subject_id','=',$course[0]->subject_id)
-    //                         ->Where(function($query) use ($value) {
-    //                           $query->orWhere('assessments.ass_name','LIKE','%'.$value.'%')
-    //                             ->orWhere('assessments.ass_word','LIKE','%'.$value.'%')
-    //                             ->orWhere('semesters.semester_name','LIKE','%'.$value.'%');
-    //                         })
-    //                         ->where('assessments.course_id','!=',$course_id)
-    //                         ->where('assessments.assessment', '=', $ga->assessment)
-    //                         ->where('assessments.status', '=', 'Active')
-    //                         ->orderBy('assessments.ass_type')
-    //                         ->orderByDesc('semesters.semester_name')
-    //                         ->orderBy('assessments.ass_name')
-    //                         ->orderBy('assessments.ass_id')
-    //                         ->get();
-
-    //                 $result .= '<div style="border-bottom:1px solid black;padding:0px;" class="col-md-12">';
-    //                 $result .= '<h5 style="padding:15px 0px 15px 15px;margin:0px;" class="col-md-12 plus" id="'.$p.'">'.$ga->assessment.' (<i class="fa fa-plus" aria-hidden="true" id="icon_'.$p.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
-    //                 $result .= '<div id="previous_'.$p.'" class="col-12 row align-self-center list" style="display:none;margin-left:0px;padding:0px;">';
-    //                 foreach($current_assessments as $row){
-    //                     if($row->ass_place==$row->assessment){
-    //                         $original_place = $row->semester_name." : ";
-    //                         $title = $row->semester_name." : ".$row->assessment.' / '.$row->ass_name;
-    //                     }else{
-    //                         $original_place = $row->semester_name." : ";
-    //                         $place_name = explode(',,,',($row->ass_place));
-    //                         $title = $row->semester_name." : ";
-    //                         $i=1;
-    //                         while(isset($place_name[$i])!=""){
-    //                             $name = Assessment::where('ass_id', '=', $place_name[$i])->firstOrFail();
-    //                             $original_place .= $name->ass_name." / ";
-    //                             $title .= $name->ass_name." / ";
-    //                             $i++;
-    //                         }
-    //                         $title .= $row->ass_name;
-    //                     }
-    //                     if($row->ass_type=="folder"){
-    //                         $result .= '<div class="col-12 row align-self-center" id="course_list">';
-    //                         $result .= '<a href="/assessment/folder/'.$course[0]->course_id.'/previous/'.$row->ass_id.'/list" id="show_image_link" class="col-9 row align-self-center">';
-    //                         $result .= '<div class="col-12 row" style="padding:10px;color:#0d2f81;">';
-    //                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-    //                         $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
-    //                         $result .= '</div>';
-    //                         $result .= '<div class="col-10" id="course_name">';
-    //                         $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->semester_name." : ".$row->ass_name.'</b></p>';
-    //                         $result .= '</div></div></a>';
-    //                         $result .= '</div>';
-    //                     }else{
-    //                         $result .= '<div class="col-12 row align-self-center" id="course_list">';
-    //                         $result .= '<a href="/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-9 row align-self-center" id="show_image_link" data-title="'.$title.' <br> <a href='."/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
-    //                         $result .= '<div class="col-12 row" style="padding:10px;color:#0d2f81;">';
-    //                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-    //                         $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
-    //                         $result .= '</div>';
-    //                         $result .= '<div class="col-10" id="course_name">';
-
-    //                         $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$original_place. '<span style="color:black;">' .$row->ass_name. '</span></b></p>';
-    //                         $result .= '</div></div></a>';
-    //                         $result .= '<div class="col-3" id="course_action_two">';
-    //                         $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->ass_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>';
-    //                         $result .= '</div></div>';
-    //                     }
-    //                 }
-    //                 $result .= '</div></div>';
-    //                 $p++;
-    //             }
-    //         }else{
-    //             $result .= '<div class="col-md-12">';
-    //             $result .= '<p>Not Found</p>';
-    //             $result .= '</div>';
-    //         }
-    //     }else{
-    //         $previous_semester = DB::table('courses')
-    //                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-    //                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //                 ->join('assessments','courses.course_id','=','assessments.course_id')
-    //                 ->select('subjects.*','courses.*','semesters.*')
-    //                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
-    //                 ->where('courses.course_id','!=',$course_id)
-    //                 ->where('courses.status', '=', 'Active')
-    //                 ->orderByDesc('courses.semester')
-    //                 ->groupBy('courses.course_id')
-    //                 ->get();
-    //         foreach($previous_semester as $row){
-    //             $result .= '<div class="col-12 row align-self-center" id="course_list">';
-    //             $result .= '<a href="/assessment/'.$course_id.'/previous/'.$row->course_id.'/list" id="show_image_link" class="col-9 row align-self-center">';
-    //             $result .= '<div class="col-12 row" style="padding:10px;color:#0d2f81;">';
-    //             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-    //             $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
-    //             $result .= '</div>';
-    //             $result .= '<div class="col-10" id="course_name">';
-    //             $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->semester_name.'</b></p>';
-    //             $result .= '</div>';
-    //             $result .= '</div>';
-    //             $result .= '</a>';
-    //             $result .= '</div>';
-    //         }
-    //     }
-    //     return $result;
-    // }
-
-    // public function viewPreviousQuestion($id,$course_id,$question,$list){
-    //     $user_id       = auth()->user()->user_id;
-    //     $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-    //     $faculty_id    = $staff_dean->faculty_id;
-
-    //     $course = DB::table('courses')
-    //              ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-    //              ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //              ->select('courses.*','subjects.*','semesters.*')
-    //              ->where('lecturer', '=', $staff_dean->id)
-    //              ->where('course_id', '=', $id)
-    //              ->get();
-
-    //     $assessments = DB::table('assessments')
-    //                 ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-    //                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //                 ->select('assessments.*','courses.*','semesters.*')
-    //                 ->where('assessments.course_id', '=', $course_id)
-    //                 ->where('assessments.ass_place', '=', $question)
-    //                 ->where('assessments.status', '=', 'Active')
-    //                 ->orderBy('assessments.ass_id')
-    //                 ->orderBy('assessments.ass_name')
-    //                 ->get();
-
-    //     if(count($course)>0){
-    //         return view('dean.Assessment.viewPreviousQuestion',compact('course','question','assessments','list'));
-    //     }else{
-    //         return redirect()->back();
-    //     }
-    // }
-
-    // public function previous_folder_view($id,$folder_id,$list)
-    // {
-    //     $user_id       = auth()->user()->user_id;
-    //     $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-    //     $faculty_id    = $staff_dean->faculty_id;
-
-    //     $course = DB::table('courses')
-    //              ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-    //              ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //              ->select('courses.*','subjects.*','semesters.*')
-    //              ->where('lecturer', '=', $staff_dean->id)
-    //              ->where('course_id', '=', $id)
-    //              ->get();
-
-    //     $assessments = DB::table('assessments')
-    //                 ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-    //                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-    //                 ->select('assessments.*','courses.*','semesters.*')
-    //                 ->where('assessments.ass_id', '=', $folder_id)
-    //                 ->get();
-
-    //     $question = $assessments[0]->assessment;
-        
-    //     $place_name = explode(',,,',($assessments[0]->ass_place));
-    //     $i=1;
-    //     $data = $question;
-    //     while(isset($place_name[$i])!=""){
-    //         $name = Assessment::where('ass_id', '=', $place_name[$i])->firstOrFail();
-    //         $data .= ",,,".$name->ass_name;
-    //         $i++;
-    //     }
-
-    //     $ass_place = $assessments[0]->ass_place.",,,".$assessments[0]->ass_id;
-
-    //     $assessment_list = DB::table('assessments')
-    //                 ->select('assessments.*')
-    //                 ->where('course_id', '=', $assessments[0]->course_id)
-    //                 ->where('ass_place', '=', $ass_place)
-    //                 ->where('status', '=', 'Active')
-    //                 ->orderBy('assessments.ass_name')
-    //                 ->get();
-
-    //     if(count($course)>0){
-    //         return view('dean.Assessment.AssessmentPreviousFolderView', compact('course','ass_place','assessments','assessment_list','data','question','list'));
-    //     }else{
-    //         return redirect()->back();
-    //     }
-    // }
+    public function AssessmentSubmitAction($id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                  ->select('courses.*','subjects.*','semesters.*')
+                  ->where('lecturer', '=', $staff_dean->id)
+                  ->where('course_id', '=', $id)
+                  ->get();
+        if(count($course)>0){
+          $action = new ActionCA_V_A([
+            'course_id'   => $id,
+            'status'      => "Waiting For Moderation",
+            'for_who'     => "Moderator",
+          ]);
+          $action->save();
+          return redirect()->back()->with('success','Continuous Assessment Submitted to Moderator Successfully');
+        }else{
+          return redirect()->back();
+        }
+    }
 }

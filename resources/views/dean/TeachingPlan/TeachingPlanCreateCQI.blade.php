@@ -140,6 +140,7 @@ $(document).on('click', '.btn_remove', function(){
             </div>
             @endif
             <div class="details" style="padding: 0px 5px 5px 5px;">
+                @if(count($CQI)>0)
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
                     <thead>
                     <tr style="background-color: #d9d9d9;">
@@ -174,6 +175,11 @@ $(document).on('click', '.btn_remove', function(){
                     @endforeach
                     
                 </table>
+                @else
+                <div style="display: block;border:1px solid black;padding: 50px;margin: 0px 5px 0px 5px;">
+                    <center>Empty</center>
+                </div>
+                @endif
             </div>
         </div>
     </div>
