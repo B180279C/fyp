@@ -339,13 +339,41 @@ $option4 = "id='selected-sidebar'";
                             </div>
                             <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
-                                    <label for="full_name" class="label">Final Reviewer</label>
-                                    <select class="selectpicker form-control" data-width="100%" title="Choose One" data-live-search="true" name="reviewer" id="reviewer">
+                                    <label for="full_name" class="label">Verified By</label>
+                                    <select class="selectpicker form-control" data-width="100%" title="Choose One" data-live-search="true" name="verified_by" id="reviewer">
                                         @foreach($faculty as $row_faculty)
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    <option <?php if($row->id==$course[0]->reviewer){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @if($row->position=="HoD")
+                                                        <option <?php if($row->id==$course[0]->verified_by){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="form_dean">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="label">Approved By</label>
+                                    <select class="selectpicker form-control" data-width="100%" title="Choose One" data-live-search="true" name="approved_by" id="reviewer">
+                                        @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                            @foreach($reviewer as $row)
+                                                @if($row_faculty['faculty_id']==$row->faculty_id)
+                                                    @if($row->position=="Dean")
+                                                        <option <?php if($row->id==$course[0]->approved_by){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @endif
                                                 @endif
                                             @endforeach
                                         </optgroup>

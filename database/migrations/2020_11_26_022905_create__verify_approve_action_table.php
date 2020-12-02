@@ -20,6 +20,9 @@ class CreateVerifyApproveActionTable extends Migration
             $table->string('status');
             $table->string('for_who');
             $table->text('remarks')->nullable();
+            $table->date('prepared_date')->nullable();
+            $table->date('verified_date')->nullable();
+            $table->date('approved_date')->nullable();
             $table->timestamps();
         });
     }

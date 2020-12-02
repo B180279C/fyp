@@ -251,7 +251,8 @@ class CourseController extends Controller
         $course->credit        = $request->get('credit');
         $course->lecturer      = $request->get('lecturer');
         $course->moderator     = $request->get('moderator');
-        $course->reviewer     = $request->get('reviewer');
+        $course->verified_by   = $request->get('verified_by');
+        $course->approved_by   = $request->get('approved_by');
         $course->save();
         return redirect()->back()->with('success','Data Updated');
     }
@@ -361,7 +362,8 @@ class CourseController extends Controller
             $credit         = $request->get('credit'.$i);
             $lecturer       = $request->get('lecturer'.$i);
             $moderator      = $request->get('moderator'.$i);
-            $reviewer      = $request->get('reviewer'.$i);
+            $verified_by    = $request->get('verified_by'.$i);
+            $approved_by    = $request->get('approved_by'.$i);
             $programme_name = $request->get('programme'.$i);
             $programme = Programme::where('programme_name', '=', $programme_name)->first();
 
@@ -378,18 +380,23 @@ class CourseController extends Controller
             $moderatorStaff_id = explode("(",$moderator);
             $second_moderatorStaff_id = explode(")",$moderatorStaff_id[1]);
 
-            $reviewerStaff_id = explode("(",$reviewer);
-            $second_reviewerStaff_id = explode(")",$reviewerStaff_id[1]);
+            $verifiedStaff_id = explode("(",$verified_by);
+            $second_verifiedStaff_id = explode(")",$verifiedStaff_id[1]);
+
+            $approvedStaff_id = explode("(",$approved_by);
+            $second_approvedStaff_id = explode(")",$approvedStaff_id[1]);
 
             $staff = Staff::where('staff_id', "=", $secondStaff_id[0])->first();
 
             $moderator_staff = Staff::where('staff_id', "=", $second_moderatorStaff_id[0])->first();
 
-            $reviewer_staff = Staff::where('staff_id', "=", $second_reviewerStaff_id[0])->first();
+            $approved_staff = Staff::where('staff_id', "=", $second_approvedStaff_id[0])->first();
+
+            $verified_staff = Staff::where('staff_id', "=", $second_verifiedStaff_id[0])->first();
 
             if(isset($subject[0])){
-                if(($semester === null)||($staff === null)||($moderator_staff === null)||($reviewer_staff === null)){
-                   $failed .= "In No ".($i+1)." , the semester or staff(Lecturer,moderator,reviewer) got something wrong.";
+                if(($semester === null)||($staff === null)||($moderator_staff === null)||($verified_staff === null)||($approved_staff === null)){
+                   $failed .= "In No ".($i+1)." , the semester or staff(Lecturer,moderator,verified_by,approved_by) got something wrong.";
                 }else{
                     $checkexists = DB::table('courses')
                             ->select('courses.*')
@@ -407,7 +414,8 @@ class CourseController extends Controller
                             'credit'            => $credit,
                             'lecturer'          => $staff->id,
                             'moderator'         => $moderator_staff->id,
-                            'reviewer'          => $reviewer_staff->id,
+                            'verified_by'       => $verified_staff->id,
+                            'approved_by'       => $approved_staff->id,
                             'status'            => "Active",
                         ]);
                         $course->save();

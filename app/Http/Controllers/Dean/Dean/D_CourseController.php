@@ -28,7 +28,7 @@ class D_CourseController extends Controller
         $faculty       = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
         $semester_id   = $last_semester->semester_id;
-
+        $id            = $staff_dean->id;
         $course_reviewer = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
@@ -38,7 +38,10 @@ class D_CourseController extends Controller
                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('courses.semester','=',$semester_id)
-                    ->where('courses.reviewer', '=', $staff_dean->id)
+                    ->Where(function($query) use ($id) {
+                        $query->orWhere('courses.verified_by', '=', $id)
+                              ->orWhere('courses.approved_by', '=', $id);
+                    })
                     ->where('courses.status','=','Active')
                     ->get();
 
@@ -51,7 +54,8 @@ class D_CourseController extends Controller
                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('courses.semester','=',$semester_id)
-                    ->where('courses.reviewer', '!=', $staff_dean->id)
+                    ->where('courses.verified_by', '!=', $id)
+                    ->where('courses.approved_by', '!=', $id)
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')
                     ->get();

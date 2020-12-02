@@ -316,10 +316,12 @@ $option4 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    @if($row->position=="HoD"&&$row->faculty_id==$faculty_id)
-                                                        <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                    @else
-                                                        <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @if($row->position=="HoD")
+                                                        @if($row->faculty_id==$faculty_id)
+                                                            <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                        @else
+                                                            <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -344,10 +346,12 @@ $option4 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    @if($row->position=="Dean"&&$row->faculty_id==$faculty_id)
-                                                        <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                    @else
-                                                        <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @if($row->position=="Dean")
+                                                        @if($row->faculty_id==$faculty_id)
+                                                            <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                        @else
+                                                            <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -357,7 +361,6 @@ $option4 = "id='selected-sidebar'";
                                 </div>
                             </div>
                         </div>
-                        
                         <input type="hidden" name="lecturer" id="lecturer">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">

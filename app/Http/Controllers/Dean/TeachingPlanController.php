@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Staff;
+use App\User;
 use App\Teaching_Plan;
 use App\Plan_Topic;
 use App\Subject;
@@ -21,15 +22,22 @@ class TeachingPlanController extends Controller
 {
    	public function viewTeachingPlan($id){
    		$user_id       = auth()->user()->user_id;
-        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-        $faculty_id    = $staff_dean->faculty_id;
-        $course = DB::table('courses')
+      $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+      $faculty_id    = $staff_dean->faculty_id;
+      $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
+
+      $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
+      $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+
+      $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+      $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
+
         $TP = DB::table('teaching_plan')
         	->select('teaching_plan.*')
         	->where('teaching_plan.course_id','=',$id)
@@ -58,7 +66,7 @@ class TeachingPlanController extends Controller
                   ->get();
 
         if(count($course)>0){
-            return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action'));
+            return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by','approved_person_name'));
         }else{
             return redirect()->back();
         }
@@ -638,32 +646,38 @@ class TeachingPlanController extends Controller
       $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
       $faculty_id    = $staff_dean->faculty_id;
 
-    $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes','subjects.programme_id','=','programmes.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('staffs','staffs.id','=','courses.lecturer')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','programmes.*','staffs.*','users.*')
-                 ->where('lecturer', '=', $staff_dean->id)
-                 ->where('course_id', '=', $id)
-                 ->get();
+      $course = DB::table('courses')
+                   ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                   ->join('programmes','subjects.programme_id','=','programmes.programme_id')
+                   ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                   ->join('staffs','staffs.id','=','courses.lecturer')
+                   ->join('users','staffs.user_id','=','users.user_id')
+                   ->select('courses.*','subjects.*','semesters.*','programmes.*','staffs.*','users.*')
+                   ->where('lecturer', '=', $staff_dean->id)
+                   ->where('course_id', '=', $id)
+                   ->get();
 
-    $TP = DB::table('teaching_plan')
-          ->select('teaching_plan.*')
-          ->where('teaching_plan.course_id','=',$id)
-          ->get();
+      $TP = DB::table('teaching_plan')
+            ->select('teaching_plan.*')
+            ->where('teaching_plan.course_id','=',$id)
+            ->get();
 
-    $TP_Ass = DB::table('tp_assessment_method')
-              ->select('tp_assessment_method.*')
-              ->where('course_id', '=', $id)
-              ->get();
+      $TP_Ass = DB::table('tp_assessment_method')
+                ->select('tp_assessment_method.*')
+                ->where('course_id', '=', $id)
+                ->get();
 
-    $TP_CQI = DB::table('tp_cqi')
-              ->select('tp_cqi.*')
-              ->where('course_id', '=', $id)
-              ->where('status','=','Active')
-              ->get();
+      $TP_CQI = DB::table('tp_cqi')
+                ->select('tp_cqi.*')
+                ->where('course_id', '=', $id)
+                ->where('status','=','Active')
+                ->get();
+
+      $action = DB::table('action_v_a')
+                  ->select('action_v_a.*')
+                  ->where('course_id', '=', $id)
+                  ->orderBy('action_id')
+                  ->get();
 
         $path = storage_path('private/syllabus/'.$course[0]->syllabus);
         $array = (new syllabusRead)->toArray($path);
@@ -983,15 +997,21 @@ class TeachingPlanController extends Controller
                  ->where('staffs.id', '=', $course[0]->moderator)
                  ->get();
 
+    $verified_by = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('staffs.id', '=', $course[0]->verified_by)
+                 ->get();
+
     $table->addRow(1);
     $table->addCell(4000)->addText('Name: '.$course[0]->name.'<w:br/>Course Coordinator',null, $noSpaceAndLeft);
     $table->addCell(4000)->addText('Name: '.$Moderator[0]->name.'<w:br/>Moderator', null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Name: <w:br/>Head of Department', null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Name: '.$verified_by[0]->name.'<w:br/>'.$verified_by[0]->position, null, $noSpaceAndLeft);
 
     $table->addRow(1);
-    $table->addCell(4000)->addText('Date: '.date("j / n / Y"),null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Date: ',null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Date: ',null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Date: '.$action[0]->prepared_date,null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Date: '.$action[0]->verified_date,null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Date: '.$action[0]->approved_date,null, $noSpaceAndLeft);
 
     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
     $objWriter->save($course[0]->subject_code." ".$course[0]->subject_name.'.docx');
@@ -1012,10 +1032,11 @@ class TeachingPlanController extends Controller
               ->get();
     if(count($course)>0){
       $action = new Action_V_A([
-        'course_id'   => $id,
-        'action_type' => "TP",
-        'status'      => "Waiting For Verified",
-        'for_who'     => "Moderator",
+        'course_id'     => $id,
+        'action_type'   => "TP",
+        'status'        => "Waiting For Verified",
+        'for_who'       => "Moderator",
+        'prepared_date' => date("Y-j-n"),
       ]);
       $action->save();
       return redirect()->back()->with('success','Teaching Plan Submitted to Moderator Successfully');

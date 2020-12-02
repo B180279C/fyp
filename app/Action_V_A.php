@@ -11,6 +11,6 @@ class Action_V_A extends Model
 	protected $primaryKey = 'action_id';
 	
     protected $fillable = [
-        'course_id','action_type', 'status','for_who','remarks'
+        'course_id','action_type', 'status','for_who','remarks','prepared_date','verified_date','approved_date'
     ];
 }

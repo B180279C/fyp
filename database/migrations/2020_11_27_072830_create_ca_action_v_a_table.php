@@ -22,6 +22,8 @@ class CreateCaActionVATable extends Migration
             $table->string('self_declaration')->nullable();
             $table->text('suggest')->nullable();
             $table->text('remarks')->nullable();
+            $table->date('moderator_date')->nullable();
+            $table->text('verified_date')->nullable();
             $table->timestamps();
         });
     }

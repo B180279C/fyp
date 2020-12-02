@@ -117,7 +117,7 @@ $option4 = "id='selected-sidebar'";
               if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
                 break;
               }
-                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['reviewer_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['lecturer_staff_id']!=response[i]['moderator_staff_id'])&&(response[i]['lecturer_staff_id']!=response[i]['reviewer_staff_id'])&&(response[i]['moderator_staff_id']!=response[i]['reviewer_staff_id'])){
+                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['verified_by_staff_id']!=null)&&(response[i]['approved_by_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['lecturer_staff_id']!=response[i]['moderator_staff_id'])){
                   var row = table.insertRow(1+i);
                   var cell = row.insertCell(0);
                   var cell1 = row.insertCell(1);
@@ -125,19 +125,22 @@ $option4 = "id='selected-sidebar'";
                   var cell3 = row.insertCell(3);
                   var cell4 = row.insertCell(4);
                   var cell5 = row.insertCell(5);
+                  var cell6 = row.insertCell(6);
                   cell.innerHTML  = (i+1);
                   cell1.innerHTML = response[i]['semester']+ " : " +response[i]['programme_short_form_name']+" / "+response[i]['subject_code'] +" "+ response[i]['subject_name']
                   cell2.innerHTML = response[i]['credit'];
                   cell3.innerHTML = response[i]['lecturer_staff_id'];
                   cell4.innerHTML = response[i]['moderator_staff_id'];
-                  cell5.innerHTML = response[i]['reviewer_staff_id'];
+                  cell5.innerHTML = response[i]['verified_by_staff_id'];
+                  cell6.innerHTML = response[i]['approved_by_staff_id'];
                   cell.className  = 'tablebody';
                   cell1.className = 'tablebody';
                   cell2.className = 'tablebody';
                   cell3.className = 'tablebody';
                   cell4.className = 'tablebody';
                   cell5.className = 'tablebody';
-                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='reviewer"+i+"' name='reviewer"+i+"' value='"+response[i]['reviewer_staff_id']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'>");
+                  cell6.className = 'tablebody';
+                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='verified_by"+i+"' name='verified_by"+i+"' value='"+response[i]['verified_by_staff_id']+"'><input type='hidden' id='approved_by"+i+"' name='approved_by"+i+"' value='"+response[i]['approved_by_staff_id']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'>");
                   $('#showData').show();
                   $('#errorData').hide();
                 }else{
@@ -322,7 +325,8 @@ $option4 = "id='selected-sidebar'";
               <th style="padding-left: 10px;">Credit</th>
               <th style="padding-left: 10px;">Lecturer</th>
               <th style="padding-left: 10px;">Moderator</th>
-              <th style="padding-left: 10px;">Reviewer</th>
+              <th style="padding-left: 10px;">Verified By</th>
+              <th style="padding-left: 10px;">Approved By</th>
             </tr>
           </thead>
         </table>

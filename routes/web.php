@@ -431,6 +431,13 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/Dean/lectureNote/{id}','Dean\Dean\D_LectureNoteController@DeanLectureNote');
 	Route::post('/Dean/lectureNote/searchFiles', 'Dean\Dean\D_LectureNoteController@searchDeanLN');
 	Route::get('/Dean/lectureNote/folder/{ln_id}','Dean\Dean\D_LectureNoteController@DeanLNFolderView');
+	//Moderator Teaching Plan
+	Route::get('/Dean/teachingPlan/{id}','Dean\Dean\D_TeachingPlanController@DeanTeachingPlan');
+	Route::post('/Dean/teachingPlan/approve/','Dean\Dean\D_TeachingPlanController@D_TP_VerifyAction');
+	//Moderator Assessment
+	Route::get('/Dean/Assessment/{id}','Dean\Dean\D_AssessmentController@DeanAssessment');
+	Route::post('/Dean/Assessment/approve/','Dean\Dean\D_AssessmentController@D_Ass_Verify_Action');
+	Route::get('/Dean/Assessment/report/{actionCA_id}','Dean\Dean\D_AssessmentController@ModerationFormReport');
 
 	
 });

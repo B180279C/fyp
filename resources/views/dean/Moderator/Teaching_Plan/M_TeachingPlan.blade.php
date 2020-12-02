@@ -69,7 +69,6 @@ function Submit_Action(Action){
             alert("If you select the reject button, that need to inactive one or more verify checkbox.");
         }
     }
-    
 }
 function w3_open() {
     document.getElementById("action_sidebar").style.display = "block";
@@ -148,6 +147,7 @@ function w3_close() {
             $action_count = count($action);
             $c = 1;
             $c_more = 1;
+            $now = "Verified";
             $button_verify = "No";
             $checkbox_M = '<input type="checkbox" checked class="group_verify" value="1"><b style="color: green"> Verify</b>';
             $checkbox_C = '<input type="checkbox" checked class="group_verify" value="2"><b style="color: green"> Verify</b>';
@@ -161,23 +161,17 @@ function w3_close() {
                         echo "<a href='' style='display:block;border:0px solid black;margin-top:-20px;padding:0px 10px 10px 10px;' class='more' id='less'>Less...</a>";
                         $c_more++;
                     }
-                    if($row_action->status=="Waiting For Verified"){
-                        $status = '<span style="color:#3C5AFF;">Waiting For Verified</span>';
-                        $tp_count = 0;
-                        $remarks = "";
-                        $color = "black";
-                    }else if($row_action->status=="Waiting For Approved"){
-                        $status = '<span style="color:green;">Waiting For Approved</span>';
-                        $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
-                        $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
-                        $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
-                        $tp_count = 3;
-                        $color = "green";
-                    }else{
+                    if($row_action->status=="Rejected"){
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
-                        $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who;
+                        if($row_action->verified_date==Null){
+                            $person = "";
+                        }else{
+                            $now = "Approved";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                        }
+                        $status = '<span style="color:red;">Rejected</span>'.$person;
                         $color = "red";
                         $remarks_count = explode('///',$row_action->remarks);
                         $remarks = $remarks_count[1];
@@ -194,14 +188,12 @@ function w3_close() {
                         $tp_count = count($verified_count)-1;
                     }
                     echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : <span style="color: grey;">'.$status.'</span></span></div>';
-                    if($remarks!=""){
-                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
-                    }
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">'.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
                     echo '</div>';
                 }
 
@@ -213,24 +205,31 @@ function w3_close() {
                         $color = 'black';
                         $button_verify = "Yes";
                     }else if($row_action->status=="Waiting For Approved"){
-                        $status = '<span style="color:green;">Waiting For HOD to Approve</span>';
+                        $status = '<span style="color:green;">Waiting For ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) to Approve</span>';
                         $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $tp_count = 3;
                         $remarks = $row_action->remarks;
                         $color = 'green';
+                        $now = "Verified";
                         $checkbox_M = '<b style="color: green"> Verified</b>';
                         $checkbox_C = '<b style="color: green"> Verified</b>';
                         $checkbox_W = '<b style="color: green"> Verified</b>';
-                    }else{
+                    }else if($row_action->status=="Rejected"){
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $checkbox_M = '<b style="color: red"> Rejected</b>';
                         $checkbox_C = '<b style="color: red"> Rejected</b>';
                         $checkbox_W = '<b style="color: red"> Rejected</b>';
-                        $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who;
+                        if($row_action->verified_date==Null){
+                            $person = "";
+                        }else{
+                            $now = "Approved";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                        }
+                        $status = '<span style="color:red;">Rejected</span>'.$person;
                         $remarks_count = explode('///',$row_action->remarks);
                         $remarks = $remarks_count[1];
                         $color = 'red';
@@ -248,18 +247,33 @@ function w3_close() {
                             }
                         }
                         $tp_count = count($verified_count)-1;
+                    }else{
+                        $now = "Approved";
+                        $status = '<span style="color:green;">Approved</span>';
+                        $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
+                        $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
+                        $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
+                        $tp_count = 3;
+                        $remarks = $row_action->remarks;
+                        $color = 'green';
+                        $checkbox_M = '<b style="color: green"> Approved</b>';
+                        $checkbox_C = '<b style="color: green"> Approved</b>';
+                        $checkbox_W = '<b style="color: green"> Approved</b>';
                     }
                     if($action_count != 1){
                         echo "<a href='' style='border:0px solid black;margin-top:-20px;padding:0px 10px 10px 10px;display:block;' class='more' id='more'>More...</a>";
                     }
                     echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';                
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : <span style="color: grey;">'.$status.'</span></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">'.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    if($row_action->approved_date!=Null){
+                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Approved By : <b> ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) </b></span></div>';    
+                    }
                     if($remarks!=""){
-                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
                     }
                     echo '</div>';
                 }
@@ -300,7 +314,7 @@ function w3_close() {
                     <div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : {!!$pending!!}</span></div>
             </div>
             @endif
-            <hr style="margin: 3px 5px;background-color:black;">
+            <hr style="margin: 5px 5px;background-color:black;">
             @if(count($TP_Ass)>0)
             <div class="row">
                 <h5 style="position: relative;top:4px;left: 10px;" class="tp_title col-10" id="1">

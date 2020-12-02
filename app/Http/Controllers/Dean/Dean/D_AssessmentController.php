@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dean\Moderator;
+namespace App\Http\Controllers\Dean\Dean;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,9 +15,9 @@ use App\Imports\syllabusRead;
 use App\TP_Assessment_Method;
 use App\ActionCA_V_A;
 
-class M_AssessmentController extends Controller
+class D_AssessmentController extends Controller
 {
-	public function ModeratorAssessment($id)
+	public function DeanAssessment($id)
 	{
 		$user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
@@ -57,52 +57,56 @@ class M_AssessmentController extends Controller
                   ->orderByDesc('actionCA_id')
                   ->get();
 
-        $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
+		$moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
 
         $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
         if(count($course)>0){
-            return view('dean.Moderator.Assessment.M_AssessmentList',compact('course','assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big'));
+            return view('dean.Dean.Assessment.D_AssessmentList',compact('course','assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big'));
         }else{
             return redirect()->back();
         }
 	}
 
-	public function M_Ass_Moderate_Action(Request $request)
-	{
-		$actionCA_id = $request->get('actionCA_id');
-		$count_CLO = $request->get('count_CLO');
-		$course_id =  $request->get('course_id');
 
-		$assessments = DB::table('assessments')
-                    ->select('assessments.*')
-                    ->where('course_id', '=', $course_id)
-                    ->where('status', '=', 'Active')
-                    ->orderBy('assessments.assessment_name')
-                    ->get();
-        $AccOrRec = "";
-		for($i = 1;$i<=$count_CLO;$i++){
-			foreach ($assessments as $row) {
-				if($request->get('CLO_'.$i.'_'.$row->ass_id)!=Null){
-					$AccOrRec .= 'CLO_'.$i.'_'.$row->ass_id."::".$request->get('CLO_'.$i.'_'.$row->ass_id)."///";
-				}
-			}
+	public function D_Ass_Verify_Action(Request $request)
+	{
+		$course_id = $request->get('course_id');
+		$verify = $request->get('verify');
+		$remarks = $request->get('remarks');
+		$result = $request->get('result');
+
+		if($remarks == "<p><br></p>"){
+			$remarks = "";
 		}
-		$remark = "";
-		for($c = 1;$c<=(count($assessments));$c++){
-			$ass_id  = $request->get('ass_id_'.$c);
-			$remark .= $ass_id."<???>".$request->get('remark_'.$c)."///NextAss///";
-		}
-		$action = ActionCA_V_A::where('actionCA_id', '=', $actionCA_id)->firstOrFail();
-		$action->AccOrRec  = $AccOrRec;
-		$action->suggest = $remark;
-		$action->status = "Waiting For Rectification";
-		$action->for_who = "Lecturer";
-		$action->moderator_date = date("Y-j-n");
-		$action->save();
-        return redirect()->back()->with('success','Continuous Assessment Moderation Form Created Successfully');
+
+		$action = DB::table('actionca_v_a')
+                  ->select('actionca_v_a.*')
+                  ->where('course_id', '=', $course_id)
+                  ->where('status','=','Waiting For Verified')
+                  ->where('for_who','=','HOD')
+                  ->orderByDesc('actionCA_id')
+                  ->get();
+
+        $action_save = ActionCA_V_A::where('actionCA_id', '=', $action[0]->actionCA_id)->firstOrFail();
+
+        if($result=="Verify"){
+        	$action_save->status  = "Verified";
+        	$action_save->for_who = "HOD";
+	    	$action_save->remarks = $remarks;
+          	$action_save->verified_date = date("Y-j-n");
+        }else{
+        	$action_save->status  = "Rejected";
+	    	$action_save->remarks = $verify."///".$remarks;
+        }
+	    $action_save->save();
+	    if($result=="Verify"){
+	    	return redirect()->back()->with('success','Continuous Assessment Moderation Form Have been Verified.');
+	    }else{
+	    	return redirect()->back()->with('success','Continuous Assessment Moderation Form has been Rejected.');
+	    }
 	}
 
 	public function ModerationFormReport($actionCA_id)

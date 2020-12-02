@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Image;
+use App\User;
 use App\Staff;
 use App\Subject;
 use App\Department;
@@ -49,8 +50,14 @@ class AssessmentController extends Controller
                   ->orderBy('actionCA_id')
                   ->get();
 
+        $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
+        $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
+
+        $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+
         if(count($course)>0){
-            return view('dean.Assessment.viewAssessment',compact('course','assessments','action'));
+            return view('dean.Assessment.viewAssessment',compact('course','assessments','action','moderator_person_name','verified_person_name'));
         }else{
             return redirect()->back();
         }
