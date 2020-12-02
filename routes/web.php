@@ -157,7 +157,7 @@ Route::middleware('is_dean')->group(function(){
 
 	//Course PortFolio
 	Route::get('/CoursePortFolio', 'Dean\C_PortFolioController@index')->name('dean.C_potrfolio.index');
-	Route::post('/searchCourse', 'Dean\C_PortFolioController@searchCourse');
+	
 
 	// CourseList
 	Route::post('/uploadCourses', 'Dean\CourseController@importExcel')->name('dropzone.uploadCourses');
@@ -254,7 +254,7 @@ Route::middleware('is_dean')->group(function(){
     Route::get('/assessment/AllZipFiles/{id}/{download}','Dean\AssessmentController@AllZipFileDownload');
     Route::get('/assessment/download/zipFiles/{ass_id}/{download}','Dean\AssessmentController@zipFileDownload');
     Route::get('/assessment/Action/Submit/{id}', 'Dean\AssessmentController@AssessmentSubmitAction');
-
+	Route::post('/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form');
 
     // Continuous Assessment Student Result
     Route::get('/AssessmentResult/{id}/question/{question}', [
@@ -288,7 +288,7 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/FinalExamination/{id}/', [
     'as' => 'viewFinalExamination', 'uses' => 'Dean\FinalExaminationController@viewFinalExamination']);
     Route::post('/FinalExamination/getSyllabusData', 'Dean\FinalExaminationController@getSyllabusData');
-    Route::get('/FinalExamination/question/{id}/', [
+    Route::get('/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'createQuestion', 'uses' => 'Dean\FinalExaminationController@create_question']);
     Route::post('/FinalExamination/openNewAssessment', 'Dean\FinalExaminationController@openNewAssessment');
     Route::post('/FinalExamination/AssessmentNameEdit', 'Dean\FinalExaminationController@AssessmentNameEdit');
@@ -310,7 +310,8 @@ Route::middleware('is_dean')->group(function(){
 	Route::get('/FinalExamination/download/{ass_fx_id}', 'Dean\FinalExaminationController@downloadFiles');
 	Route::get('/FinalExamination/AllZipFiles/{id}/{download}','Dean\FinalExaminationController@AllZipFileDownload');
 	Route::get('/FinalExamination/download/zipFiles/{fx_id}/{download}','Dean\FinalExaminationController@zipFileDownload');
-
+	Route::get('/FinalExamination/Action/Submit/{id}','Dean\FinalExaminationController@FASubmitAction');
+	Route::post('/FinalExamination/Action/HOD/', 'Dean\FinalExaminationController@SubmitSelf_D_Form');
 
 	// Final Examination Result
 	Route::get('/FinalResult/{id}', [
@@ -412,7 +413,26 @@ Route::middleware('is_dean')->group(function(){
 	Route::post('/Moderator/teachingPlan/verify/','Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction');
 	//Moderator Assessment
 	Route::get('/Moderator/Assessment/{id}','Dean\Moderator\M_AssessmentController@ModeratorAssessment');
+	Route::post('/Moderator/Assessment/Moderation/','Dean\Moderator\M_AssessmentController@M_Ass_Moderate_Action');
+	Route::get('/Moderator/Assessment/report/{actionCA_id}','Dean\Moderator\M_AssessmentController@ModerationFormReport');
+	//Moderator Final Assessment
+	Route::get('/Moderator/FinalExamination/{id}','Dean\Moderator\M_FinalExamController@ModeratorFinalExam');
+	Route::post('/Moderator/FinalExamination/Moderation/','Dean\Moderator\M_FinalExamController@M_FX_Moderate_Action');
+	Route::get('/Moderator/FinalExamination/report/{actionFA_id}','Dean\Moderator\M_FinalExamController@ModerationFormReport');
 
+	//Dean
+	Route::get('Dean','Dean\Dean\D_CourseController@index');
+	Route::post('/searchCourse', 'Dean\Dean\D_CourseController@searchCourse');
+	Route::get('/Dean/course/{id}','Dean\Dean\D_CourseController@DeanAction');
+	//Dean Student list
+	Route::get('/Dean/assign/student/{id}','Dean\Dean\D_StudentListController@DeanStudent');
+	Route::post('/searchDeanStudent', 'Dean\Dean\D_StudentListController@searchDeanStudent');
+	//Dean Lecture Note
+	Route::get('/Dean/lectureNote/{id}','Dean\Dean\D_LectureNoteController@DeanLectureNote');
+	Route::post('/Dean/lectureNote/searchFiles', 'Dean\Dean\D_LectureNoteController@searchDeanLN');
+	Route::get('/Dean/lectureNote/folder/{ln_id}','Dean\Dean\D_LectureNoteController@DeanLNFolderView');
+
+	
 });
 
 

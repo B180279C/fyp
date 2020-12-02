@@ -103,6 +103,7 @@ function loadImage() {
                             ?>
                             @if(count($TP_Ass)>0)
                                 @foreach($TP_Ass as $row)
+                                <input type="hidden" name="am_id_{{$i}}" value="{{$row->am_id}}">
                                 <p class="col-12 align-self-center week" id="{{$i}}" style="padding:10px 10px;font-size: 20px;margin: 0px;">
                                     <i class="fa fa-plus" id="icon_{{$i}}" aria-hidden="true" style="font-size: 20px;color: #0d2f81"></i> CLO {{$i}}
                                 </p>

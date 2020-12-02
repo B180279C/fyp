@@ -81,12 +81,21 @@ class CourseController extends Controller
                     ->where('users.status','=','Active')
                     ->get();
 
+        $reviewer = DB::table('staffs')
+                    ->join('users', 'staffs.user_id', '=', 'users.user_id')
+                    ->select('staffs.*', 'users.*')
+                    ->where('users.status','=','Active')
+                    ->where('users.position','!=','Teacher')
+                    ->where('users.position','!=','Student')
+                    ->where('users.position','!=','admin')
+                    ->get();
+
         $semester = DB::table('semesters')
                     ->select('semesters.*')
                     ->orderByDesc('semesters.semester_name')
                     ->get();
         $faculty = Faculty::all()->toArray();
-        return view('dean.CourseCreate', compact('programme', 'staffs','lct','faculty','faculty_name','semester','moderator'));
+        return view('dean.CourseCreate', compact('programme', 'staffs','lct','faculty','faculty_name','semester','moderator','reviewer','faculty_id'));
     }
 
     /**
@@ -118,11 +127,13 @@ class CourseController extends Controller
                 'semester'          => $request->get('semester'),
                 'lecturer'          => $request->get('lecturer'),
                 'moderator'         => $request->get('moderator'),
+                'verified_by'       => $request->get('verified_by'),
+                'approved_by'       => $request->get('approved_by'),
                 'credit'            => $request->get('credit'),
                 'status'            => "Active",
             ]);
             $course->save();
-            return redirect()->route('dean.C_potrfolio.index')->with('success','Data Added');
+            return redirect()->back()->with('success','Data Added');
         }else{
             return redirect()->back()->with('failed','The Subject has been existed');
         }
@@ -199,7 +210,17 @@ class CourseController extends Controller
                     ->select('staffs.*', 'users.*')
                     ->where('users.status','=','Active')
                     ->get();
-        return view('dean.CourseEdit', compact('programme', 'staffs','lct','faculty','faculty_name','semester','group','subjects','course','count_staff_InFaculty','moderator', 'id'));
+
+        $reviewer = DB::table('staffs')
+                    ->join('users', 'staffs.user_id', '=', 'users.user_id')
+                    ->select('staffs.*', 'users.*')
+                    ->where('users.status','=','Active')
+                    ->where('users.position','!=','Teacher')
+                    ->where('users.position','!=','Student')
+                    ->where('users.position','!=','admin')
+                    ->get();
+
+        return view('dean.CourseEdit', compact('programme', 'staffs','lct','faculty','faculty_name','semester','group','subjects','course','count_staff_InFaculty','moderator', 'id','reviewer'));
     }
 
     /**
@@ -230,8 +251,9 @@ class CourseController extends Controller
         $course->credit        = $request->get('credit');
         $course->lecturer      = $request->get('lecturer');
         $course->moderator     = $request->get('moderator');
+        $course->reviewer     = $request->get('reviewer');
         $course->save();
-        return redirect()->route('dean.C_potrfolio.index')->with('success','Data Updated');
+        return redirect()->back()->with('success','Data Updated');
     }
     /**
      * Remove the specified resource from storage.
@@ -339,6 +361,7 @@ class CourseController extends Controller
             $credit         = $request->get('credit'.$i);
             $lecturer       = $request->get('lecturer'.$i);
             $moderator      = $request->get('moderator'.$i);
+            $reviewer      = $request->get('reviewer'.$i);
             $programme_name = $request->get('programme'.$i);
             $programme = Programme::where('programme_name', '=', $programme_name)->first();
 
@@ -355,13 +378,18 @@ class CourseController extends Controller
             $moderatorStaff_id = explode("(",$moderator);
             $second_moderatorStaff_id = explode(")",$moderatorStaff_id[1]);
 
+            $reviewerStaff_id = explode("(",$reviewer);
+            $second_reviewerStaff_id = explode(")",$reviewerStaff_id[1]);
+
             $staff = Staff::where('staff_id', "=", $secondStaff_id[0])->first();
 
             $moderator_staff = Staff::where('staff_id', "=", $second_moderatorStaff_id[0])->first();
 
+            $reviewer_staff = Staff::where('staff_id', "=", $second_reviewerStaff_id[0])->first();
+
             if(isset($subject[0])){
-                if(($semester === null)||($staff === null)||($moderator_staff === null)){
-                   $failed .= "In No ".($i+1)." , the semester or staff or moderator got something wrong.";
+                if(($semester === null)||($staff === null)||($moderator_staff === null)||($reviewer_staff === null)){
+                   $failed .= "In No ".($i+1)." , the semester or staff(Lecturer,moderator,reviewer) got something wrong.";
                 }else{
                     $checkexists = DB::table('courses')
                             ->select('courses.*')
@@ -379,6 +407,7 @@ class CourseController extends Controller
                             'credit'            => $credit,
                             'lecturer'          => $staff->id,
                             'moderator'         => $moderator_staff->id,
+                            'reviewer'          => $reviewer_staff->id,
                             'status'            => "Active",
                         ]);
                         $course->save();
@@ -391,9 +420,9 @@ class CourseController extends Controller
             }
         }
         if($failed==""){
-            return redirect()->route('dean.C_potrfolio.index')->with('success','Data Added');
+            return redirect()->back()->with('success','Data Added');
         }else{
-            return redirect()->route('dean.C_potrfolio.index')->with('failed', $failed);
+            return redirect()->back()->with('failed', $failed);
         }
     }
 

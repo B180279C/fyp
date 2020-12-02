@@ -29,7 +29,9 @@ class AssessmentController extends Controller
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->select('courses.*','subjects.*','semesters.*')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','users.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
@@ -187,7 +189,7 @@ class AssessmentController extends Controller
             'course_id'         =>  $course_id,
             'assessment'        =>  $assessment,
             'assessment_name'   =>  $ass_name,
-            'CLO'               =>  $CLO_List."///".$CLO_ALL,
+            'CLO'               =>  $CLO_List,
             'coursemark'        =>  $total,
             'coursework'        =>  $coursework,
             'status'            =>  'Active',
@@ -230,7 +232,7 @@ class AssessmentController extends Controller
         }
         $assessment = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
         $assessment->assessment_name  = $request->get('assessment_name');
-        $assessment->CLO  = $CLO_List."///".$CLO_ALL;
+        $assessment->CLO  = $CLO_List;
         $assessment->coursemark  = $request->get('total');
         $assessment->coursework  = $request->get('coursework');
 
@@ -832,6 +834,33 @@ class AssessmentController extends Controller
           return redirect()->back()->with('success','Continuous Assessment Submitted to Moderator Successfully');
         }else{
           return redirect()->back();
+        }
+    }
+
+    public function SubmitSelf_D_Form(Request $request)
+    {
+        $actionCA_id = $request->get('actionCA_id');
+        $status = $request->get('status');
+        $course_id = $request->get('course_id');
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                  ->select('courses.*','subjects.*','semesters.*')
+                  ->where('lecturer', '=', $staff_dean->id)
+                  ->where('course_id', '=', $course_id)
+                  ->get();
+        if(count($course)>0){
+            $action = ActionCA_V_A::where('actionCA_id', '=', $actionCA_id)->firstOrFail();
+            $action->status  = 'Waiting For Verified';
+            $action->for_who = 'HOD';
+            $action->self_declaration = $status;
+            $action->save();
+            return redirect()->back()->with('success','Continuous Assessment Submitted to HOD Successfully');
+        }else{
+            return redirect()->back();
         }
     }
 }

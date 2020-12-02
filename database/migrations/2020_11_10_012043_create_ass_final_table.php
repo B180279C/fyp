@@ -17,6 +17,9 @@ class CreateAssFinalTable extends Migration
             $table->id('fx_id');
             $table->string('course_id');
             $table->string('coursework');
+            $table->string('coursemark');
+            $table->string('CLO');
+            $table->text('topic');
             $table->string('assessment_name');
             $table->string('status');
             $table->timestamps();

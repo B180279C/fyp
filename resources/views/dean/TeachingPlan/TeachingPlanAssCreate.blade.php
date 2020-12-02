@@ -90,7 +90,7 @@ $option1 = "id='selected-sidebar'";
             <div class="details" style="padding: 0px 5px 0px 5px;">
                 <div class="row" style="padding:0px;"> 
                     <div class="col-md-12" style="padding:0px;">
-                        <form method="post" action="{{action('Dean\TeachingPlanController@storeTPAss', $course[0]->course_id)}}" id="form">
+                        <form method="post" action="{{action('Dean\TeachingPlanController@storeTPAssNew', $course[0]->course_id)}}" id="form">
                             {{csrf_field()}}
                             <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
                         </form>         

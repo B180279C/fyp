@@ -112,9 +112,69 @@ $option1 = "id='selected-sidebar'";
             url:'/FinalExamination/AssessmentNameEdit',
             data:{value : num[2]},
             success:function(data){
+              var clo = data[0].CLO;
+              var clo_list = clo.split(",");
+              var option = "";
+              for(var c = 0;c<=(data[2].length-1);c++){
+                var assessment_list = data[2][c].assessment.split('///');
+                var markdown = data[2][c].markdown.split(',');
+                var assessment = assessment_list[0].split(',');
+                for(var i = 0; i<=assessment.length-1;i++){
+                  var assessment_rep = assessment[i].replace(' ','');
+                  if(assessment_rep=="FinalExamination"){
+                    if(markdown[i]=="yes"){
+                      var selected = false;
+                      for(var d = 0;d<=(clo_list.length-1);d++){
+                        if(clo_list[d]==("CLO"+(c+1))){
+                          var selected = true;
+                        }
+                      }
+                      if(selected==true){
+                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"' selected>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
+                      }else{
+                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"'>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
+                      }
+                    }
+                  }
+                }
+              }
+              $("#CLO").html(option);
+              $('#CLO').selectpicker('refresh');
+
+              var topic = data[0].topic;
+              var topic_selected = topic.split(',');
+              var option = "";
+              for(var c = 0;c<=(data[3].length-1);c++){
+                var sel = false;
+                var topic_num = (data[3][c].lecture_topic).split('///');
+                // var title = "Topic "+topic_num[0];
+                for(var d = 0;d<=(topic_selected.length-1);d++){
+                  var selected = topic_selected[d];
+                  if(selected==("Topic"+topic_num[0])){
+                    sel = true;
+                  }
+                } 
+                if(sel == true){
+                  option += "<option class='option' title='Topic "+topic_num[0]+"' value="+data[3][c].topic_id+" selected>Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
+                }else{
+                  option += "<option class='option' title='Topic "+topic_num[0]+"' value="+data[3][c].topic_id+">Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
+                } 
+              }
+              $("#topic").html(option);
+              $('#topic').selectpicker('refresh');
+
+              var mark = 0;
+              for(var i = 0;i<=(data[1].length-1);i++){
+                var mark = mark+parseInt(data[1][i].coursework);
+              }
+              // console.log(mark);
+              var full_mark = '{{$coursework}}';
               document.getElementById('fx_id').value = num[2];
-              document.getElementById('coursework').value = data.coursework;
-              document.getElementById('folder_name').value = data.assessment_name;
+              document.getElementById('mark_record').innerHTML = "The Final Examination of coursework is {{$coursework}}%, It already insert "+(mark-parseInt(data[0].coursework))+"%.";
+              document.getElementById('mark_record_2').innerHTML = "So, It Cannot insert over "+(full_mark-(mark-parseInt(data[0].coursework)))+"% of coursework.";
+              document.getElementById("coursework").max = (full_mark-(mark-parseInt(data[0].coursework)));
+              document.getElementById('folder_name').value = data[0].assessment_name;
+              document.getElementById('coursework').value = data[0].coursework;
             } 
           });
           $('#folderNameEdit').modal('show');
@@ -240,7 +300,7 @@ $option1 = "id='selected-sidebar'";
               ?>
               @foreach($ass_final as $row)
                 <div class="col-12 row align-self-center" id="course_list">
-                    <div class="col-8 row align-self-center" style="padding-left: 20px;">
+                    <div class="col-9 row align-self-center" style="padding-left: 20px;">
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" name="group{{$row->fx_id}}" value="{{$row->fx_id}}" class="group_download">
                       </div>
@@ -253,7 +313,7 @@ $option1 = "id='selected-sidebar'";
                         </div>
                       </a>
                     </div>
-                    <div class="col-4" id="course_action_two">
+                    <div class="col-3" id="course_action_two">
                       <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
                       <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                     </div>
@@ -325,6 +385,65 @@ $option1 = "id='selected-sidebar'";
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-list-alt" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Course Learning Outcome ( CLO )</label>
+                      <select class="selectpicker form-control" name="CLO[]" data-width="100%" title="Choose one" multiple required>
+                        <?php
+                          $num = 1;
+                          $check = "";
+                          foreach($TP_Ass as $row){
+                            $assessment_list = explode('///',$row->assessment);
+                            $markdown = explode(',',$row->markdown);
+                            $assessment = explode(',',$assessment_list[0]);
+                            for($i = 0; $i<=count($assessment)-1;$i++){
+                              $assessment_rep = str_replace(' ','',$assessment[$i]);
+                              if($assessment_rep=="FinalExamination"){
+                                if($markdown[$i]=="yes"){
+                                  $check .= $row->am_id.',';
+                                  echo "<option title='CLO ".$num."' class='option' value='CLO".$num."'>CLO ".$num." : ".$row->CLO." ( ".$row->domain_level." , ".$row->PO." ) </option>";
+                                }
+                              }
+                            }
+                            $num++;
+                          }
+                      ?>
+                      </select>
+                      <input type="hidden" name="CLO_ALL" value="{{$check}}">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Topic(s) Covered</label>
+                      <select class="selectpicker form-control" name="topic[]" data-width="100%" title="Choose one" multiple required>
+                        @foreach($tp as $row)
+                          @if($row->lecture_topic!=NULL)
+                            <?php
+                              $topic_num = explode('///',$row->lecture_topic)
+                            ?>
+                            <option class="option" title="Topic {{$topic_num[0]}}" value="Topic{{$topic_num[0]}}">Topic {{$topic_num[0]}} : {{$topic_num[1]}}</option>
+                          @endif
+                        @endforeach
+                      </select>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
@@ -334,7 +453,10 @@ $option1 = "id='selected-sidebar'";
                 <div class="col-11" style="padding-left: 20px;">
                 <div class="form-group">
                       <label for="subject_type" class="bmd-label-floating">Coursework</label>
-                      <input type="text" name="coursework" class="form-control" required/>
+                      <input type="hidden" name="total" value="{{$coursework}}">
+                      <input type="number" name="coursework" min="0" max="{{$coursework-$mark}}" class="form-control" required/>
+                      <span class="bmd-help" id="mark_record">The Final Examination of coursework is {{$coursework}}%, It already insert {{$mark}}%.</span>
+                      <span class="bmd-help" id="mark_record_2">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
                 </div>
             </div>
         </div>
@@ -384,13 +506,47 @@ $option1 = "id='selected-sidebar'";
         <div class="row">
             <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-list-alt" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Course Learning Outcome ( CLO )</label>
+                      <select class="selectpicker form-control" name="CLO[]" data-width="100%" id="CLO" title="Choose one" multiple required>
+                      </select>
+                      <input type="hidden" name="CLO_ALL" id="CLO_ALL">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="bmd-label-floating">Topic(s) Covered</label>
+                      <select class="selectpicker form-control" name="topic[]" data-width="100%" id="topic" title="Choose one" multiple required>
+                      </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                     <i class="fa fa-percent" aria-hidden="true" style="font-size: 18px;"></i>
                 </p>
             </div>
                 <div class="col-11" style="padding-left: 20px;">
                 <div class="form-group">
                       <label for="subject_type" class="label">Coursework</label>
-                      <input type="text" name="coursework" class="form-control" id="coursework" required/>
+                      <input type="hidden" name="total" value="{{$coursework}}">
+                      <input type="number" name="coursework" min="0" max="{{$coursework-$mark}}" class="form-control" id="coursework" required/>
+                      <span class="bmd-help" id="mark_record">The Final Examination of coursework is {{$coursework}}%, It already insert {{$mark}}%.</span>
+                      <span class="bmd-help" id="mark_record_2">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
                 </div>
             </div>
         </div>

@@ -18,8 +18,8 @@ class CreateCaActionVATable extends Migration
             $table->string('course_id');
             $table->string('status');
             $table->string('for_who');
-            $table->string('AccOrRec');
-            $table->string('self_declaration');
+            $table->string('AccOrRec')->nullable();
+            $table->string('self_declaration')->nullable();
             $table->text('suggest')->nullable();
             $table->text('remarks')->nullable();
             $table->timestamps();

@@ -7,7 +7,6 @@ $option1 = "id='selected-sidebar'";
 @section('content')
 <style type="text/css">
 .question_link:hover{
-    background-color: #d9d9d9;
     text-decoration: none;
     color: #0d2f81;
 }
@@ -71,9 +70,11 @@ $option1 = "id='selected-sidebar'";
     $(document).on("click",".more", function(){
       $('#more').hide();
       $('#less').show();
+      $('.action_list').css('borderBottom','0px solid black');
       $('.action_list').slideToggle("slow", function(){
         // check paragraph once toggle effect is completed
         if($('.action_list').is(":visible")){
+          $('.action_list').css('borderBottom','1px solid black');
           $('#more').hide();
           $('#less').show();
         }else{
@@ -82,7 +83,7 @@ $option1 = "id='selected-sidebar'";
         }
       });
       return false;
-    });
+  });
     $(document).on('click', '.download_button', function(){
         var id = $(this).attr("id");
         var num = id.split("_");
@@ -104,7 +105,21 @@ $option1 = "id='selected-sidebar'";
         if(confirm('Please ensure your assessment is fixed all error and full complete already. Are you sure want to submit again to moderator.')) {
             window.location = "/assessment/Action/Submit/"+course_id; 
         }
-    }
+  }
+
+  function submitActionThird(){
+    $('#openDocumentModal').modal('show');
+  }
+
+  function submitSelfD_form(status){
+    $('#self_status').val(status);
+    document.getElementById("self_declaration_form").submit();
+  }
+
+function ModerationForm(actionCA_id){
+  window.location = "/Moderator/Assessment/report/"+actionCA_id;
+  return false;
+}
 
   function w3_close() {
       document.getElementById("action_sidebar").style.display = "none";
@@ -194,14 +209,19 @@ $option1 = "id='selected-sidebar'";
                 $('.mark_color').css('color', 'red');
                 $('.status').html("<span style='color:red'>Not Complete</span>");
               }
-              // var row = table.insertRow(count+1);
-              // var cell = row.insertCell(0);
-              // var cell1 = row.insertCell(1);
-              // cell1.style.textAlign  = "center";
-              // cell1.id = "myTd";
-              // document.getElementById("myTd").colSpan = "4";
-              // cell.innerHTML  = "<b>Continuous Assessment ( CA ) Moderation</b>";
-              // cell1.innerHTML  = "<a href='' id='show_image_link' style='width:100%;display:block;'' class='question_link'><b>Continuous Assessment Moderation Form</b></a>";
+              var moderation_done = $('#moderation_done').val();
+              var actionCA_id = $('#actionCA_id').val();
+              if(moderation_done=="Yes"){
+                var row = table.insertRow(count+1);
+                var cell = row.insertCell(0);
+                var cell1 = row.insertCell(1);
+                cell.style.borderLeft  = "1px solid #d9d9d9";
+                cell1.style.textAlign  = "center";
+                cell1.id = "myTd";
+                document.getElementById("myTd").colSpan = "4";
+                cell.innerHTML  = "<b>Continuous Assessment ( CA ) Moderation</b>";
+                cell1.innerHTML  = "<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;margin:0px;' onclick='ModerationForm("+actionCA_id+")'><b><i class='fa fa-download'></i> Continuous Assessment Moderation Form</b></button>";
+              }
             }
         });
     });
@@ -241,24 +261,26 @@ $option1 = "id='selected-sidebar'";
                 $action_count = count($action);
                 $c = 1;
                 $c_more = 1;
+                $moderation_done = "No";
+                $actionCA_id = "";
+                $self = "";
                 foreach($action as $row_action){
                     if($action_count!=$c){
                         if($c_more==1){
                             echo "<a href='' style='display:block;border:0px solid black;margin-top:-15px;padding:0px 10px 10px 10px;' class='more' id='less'>Less...</a>";
                             $c_more++;
                         }
-                        if($row_action->status=="Waiting For Moderation"){
-                            $status = '<span style="color:#3C5AFF;">Waiting For Moderation</span>';
-                            $remarks = "";
-                        }else if($row_action->status=="Waiting For Approved"){
-                            $status = '<span style="color:green;">Waiting For Approved</span>';
-                        }else{
-                            $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who;
+                        if($row_action->status=="Rejected"){
+                            $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who.'&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:5px 10px;" onclick="ModerationForm('.$row_action->actionCA_id.')">Previous Moderation Form</button>';
                             $remarks = $row_action->remarks;
+                            $self = $row_action->self_declaration;
                         }
-                        echo '<div class="row action_list" style="border-bottom:1px solid black;margin:-10px 0px 10px 0px;padding:0px;display:none;">';
+                        echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
                         echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Continuous Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
                         echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span>'.$status.'</span></span></div>';
+                        if($self!=""){
+                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
+                        }
                         echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
                         echo '</div>';
                     }
@@ -267,12 +289,21 @@ $option1 = "id='selected-sidebar'";
                         if($row_action->status=="Waiting For Moderation"){
                             $status = '<span style="color:#3C5AFF;">Waiting For Moderation</span>';
                             $remarks = "";
-                        }else if($row_action->status=="Waiting For Approved"){
-                            $status = '<span style="color:green;">Waiting For HOD to Approve</span>';
+                        }else if($row_action->status=="Waiting For Verified"){
+                            $status = '<span style="color:green;">Waiting For HOD to verify</span>';
                             $remarks = $row_action->remarks;
+                            $moderation_done = "Yes";
+                            $actionCA_id = $row_action->actionCA_id;
+                            $self = $row_action->self_declaration;
+                        }else if($row_action->status=="Waiting For Rectification"){
+                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:5px 10px;" onclick="submitActionThird()">Submit to HOD for verify</button>';
+                            $remarks = $row_action->remarks;
+                            $moderation_done = "Yes";
+                            $actionCA_id = $row_action->actionCA_id;
                         }else{
                             $status = $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitActionSecond()'>Submit Again to Moderator</button>";
                             $remarks = $row_action->remarks;
+                            $self = $row_action->self_declaration;
                         }
                         if($action_count != 1){
                             // echo '<hr style="margin: -10px 5px 0px 5px;background-color:black;">';
@@ -281,6 +312,9 @@ $option1 = "id='selected-sidebar'";
                         echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
                         echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Continuous Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
                         echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span>'.$status.'</span></span></div>';
+                        if($self!=""){
+                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
+                        }
                         if($remarks!=""){
                             echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
                         }
@@ -291,10 +325,12 @@ $option1 = "id='selected-sidebar'";
                 ?>
                 @if(count($action)==0)
                 <div class="row" style="border: 0px solid black;margin:-10px 0px 0px 0px;padding:0px;">
-                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Continuous Assessment : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Continuous Assessment ( CA ) : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
                   <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span class="status"></span></span></div>
                 </div>
                 @endif
+                <input type="hidden" id="moderation_done" value="{{$moderation_done}}">
+                <input type="hidden" id="actionCA_id" value="{{$actionCA_id}}">
                 <hr style="margin: 5px 5px 0px 5px;background-color:black;">
                 <p style="padding: 5px 5px 5px 12px;margin: 0px;font-size: 18px;">Assessment List</p>
                 <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
@@ -317,5 +353,38 @@ $option1 = "id='selected-sidebar'";
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content content2">
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Self-Declaration</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form style="padding: 0px;margin: 0px;" id="self_declaration_form" method="post" action="{{action('Dean\AssessmentController@SubmitSelf_D_Form')}}">
+        {{csrf_field()}}
+      <div class="row" style="margin: 0px;padding: 15px 10px 10px 10px;">
+        <input type="hidden" name="actionCA_id" value="{{$actionCA_id}}">
+        <input type="hidden" name="status" id="self_status">
+        <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
+        <p class="col-12">I hereby declared that the Continuous Assessment Question Paper has been moderated by Internal / External Moderator and I have corrected all the amendments according to the comments from Internal / External Moderator.</p>
+        <p class="col-12" style="margin: 0px;padding:0px 15px;">
+          Name : {{$course[0]->name}}
+        </p>
+        <p class="col-12" style="margin: 0px;padding:0px 15px;">
+          Date : {{date("j / n / Y")}}
+        </p>
+      </div>
+      </form>
+      <div class="modal-footer" style="border:0px solid black;padding-top: 0px;padding-bottom: 10px;">
+        <input type="button" class="btn btn-raised btn-success" onclick="submitSelfD_form('Yes')" style="color: white;" value="Yes">&nbsp;
+        <button type="button" class="btn btn-raised btn-danger" onclick="submitSelfD_form('No')" style="margin-right: 20px;">No</button>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection

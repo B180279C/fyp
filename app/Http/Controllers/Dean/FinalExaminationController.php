@@ -16,6 +16,7 @@ use App\AssessmentFinal;
 use App\Imports\syllabusRead;
 use ZipArchive;
 use File;
+use App\ActionFA_V_A;
 
 class FinalExaminationController extends Controller
 {
@@ -28,24 +29,28 @@ class FinalExaminationController extends Controller
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->select('courses.*','subjects.*','semesters.*')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','users.*')
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
 
-        $previous_semester = DB::table('courses')
-                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                    ->select('subjects.*','courses.*','semesters.*')
-                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
-                    ->where('courses.course_id','!=',$id)
-                    ->where('courses.status', '=', 'Active')
-                    ->orderByDesc('courses.semester')
-                    ->groupBy('courses.course_id')
+        $ass_final = DB::table('ass_final')
+                    ->select('ass_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('ass_final.assessment_name')
                     ->get();
 
+        $action = DB::table('actionfa_v_a')
+                  ->select('actionfa_v_a.*')
+                  ->where('course_id', '=', $id)
+                  ->orderBy('actionFA_id')
+                  ->get();
+
         if(count($course)>0){
-            return view('dean.FinalExam.viewFinalExam',compact('course','previous_semester'));
+            return view('dean.FinalExam.viewFinalExam',compact('course','ass_final','action'));
         }else{
             return redirect()->back();
         }
@@ -65,17 +70,26 @@ class FinalExaminationController extends Controller
                  ->where('course_id', '=', $id)
                  ->get();
 
+        $lecturer_result = DB::table('assessment_final_result')
+                 ->join('students','students.student_id', '=', 'assessment_final_result.student_id')
+                 ->join('users','users.user_id', '=', 'students.user_id')
+                 ->select('assessment_final_result.*','students.*','users.*')
+                 ->where('assessment_final_result.course_id', '=', $id)
+                 ->where('assessment_final_result.submitted_by','=', 'Lecturer')
+                 ->where('assessment_final_result.status','=','Active')
+                 ->groupBy('assessment_final_result.student_id')
+                 ->get();
+
         if(count($course)>0){
             $path = storage_path('private/syllabus/'.$course[0]->syllabus);
             $array = (new syllabusRead)->toArray($path);
-            // return response()->json([$array[0],$course]);
-            return response()->json($array[0]);
+            return response()->json([$array[0],$lecturer_result]);
         }else{
             return redirect()->back();
         }      
     }
 
-    public function create_question($id)
+    public function create_question($coursework,$id)
     {
     	$user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
@@ -95,9 +109,26 @@ class FinalExaminationController extends Controller
                     ->where('status', '=', 'Active')
                     ->orderBy('ass_final.assessment_name')
                     ->get();
+
+        $mark = 0;
+        foreach ($ass_final as $row){
+            $mark = $mark+$row->coursework;
+        }
          	        
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+        $tp = DB::table('teaching_plan')
+                  ->join('plan_topics','teaching_plan.tp_id','=','plan_topics.tp_id')
+                  ->select('teaching_plan.*','plan_topics.*')
+                  ->where('teaching_plan.course_id', '=', $id)
+                  ->groupBy('plan_topics.lecture_topic')
+                  ->get();
+
         if(count($course)>0){
-            return view('dean.FinalExam.createFinalQuestion',compact('course','ass_final'));
+            return view('dean.FinalExam.createFinalQuestion',compact('course','mark','coursework','ass_final','TP_Ass','tp'));
         }else{
             return redirect()->back();
         }
@@ -143,10 +174,32 @@ class FinalExaminationController extends Controller
     public function openNewAssessment(Request $request){
         $course_id    = $request->get('course_id');
         $ass_name     = $request->get('assessment_name');
-        $coursework   = $request->get('coursework');
+        $CLO = array();
+        $CLO = $request->get('CLO');
+        $coursework = $request->get('coursework');
+        $CLO_ALL = $request->get('CLO_ALL');
+        $total = $request->get('total');
+        $CLO_List = "";
+        if($CLO!=null){  
+          foreach($CLO as $value){
+            $CLO_List .= $value.',';
+          }
+        }
+
+        $topic = array();
+        $topic = $request->get('topic');
+        $topic_List = "";
+        if($topic!=null){  
+          foreach($topic as $value){
+            $topic_List .= $value.',';
+          }
+        }
 
         $final = new AssFinal([
             'course_id'         =>  $course_id,
+            'topic'             =>  $topic_List,
+            'CLO'               =>  $CLO_List,
+            'coursemark'        =>  $total,
             'coursework'        =>  $coursework,
             'assessment_name'   =>  $ass_name,
             'status'            =>  'Active',
@@ -159,16 +212,59 @@ class FinalExaminationController extends Controller
     public function AssessmentNameEdit(Request $request){
         $fx_id = $request->get('value');
         $folder = AssFinal::find($fx_id);
-        return $folder;
+
+        $ass_final = DB::table('ass_final')
+                    ->select('ass_final.*')
+                    ->where('course_id', '=', $folder->course_id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('ass_final.assessment_name')
+                    ->get();
+
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $folder->course_id)
+                  ->get();
+
+        $tp = DB::table('teaching_plan')
+                  ->join('plan_topics','teaching_plan.tp_id','=','plan_topics.tp_id')
+                  ->select('teaching_plan.*','plan_topics.*')
+                  ->where('teaching_plan.course_id', '=', $folder->course_id)
+                  ->where('plan_topics.lecture_topic','!=',null)
+                  ->groupBy('plan_topics.lecture_topic')
+                  ->get();
+
+        return [$folder,$ass_final,$TP_Ass,$tp];
     }
 
     public function updateAssessmentName(Request $request){
         $fx_id   = $request->get('fx_id');
+        $CLO = array();
+        $CLO = $request->get('CLO');
+        $CLO_ALL = $request->get('CLO_ALL');
+        $CLO_List = "";
+        if($CLO!=null){  
+          foreach($CLO as $value){
+            $CLO_List .= $value.',';
+          }
+        }
+
+        $topic = array();
+        $topic = $request->get('topic');
+        $topic_List = "";
+        if($topic!=null){  
+          foreach($topic as $value){
+            $topic_List .= $value.',';
+          }
+        }
+
         $final = AssFinal::where('fx_id', '=', $fx_id)->firstOrFail();
         $final->assessment_name  = $request->get('assessment_name');
+        $final->CLO              = $CLO_List;
+        $final->topic            = $topic_List;
         $final->coursework       = $request->get('coursework');
+        $final->coursemark  = $request->get('total');
         $final->save();
-        return redirect()->back()->with('success','Edit Folder Name Successfully');
+        return redirect()->back()->with('success','Edit Assessment Detail Successfully');
     }
 
     public function FinalAssessmentImage($image_name)
@@ -717,5 +813,57 @@ class FinalExaminationController extends Controller
         }
         $zip->close();
         return response()->download($fileName);
+    }
+
+    public function FASubmitAction($id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                  ->select('courses.*','subjects.*','semesters.*')
+                  ->where('lecturer', '=', $staff_dean->id)
+                  ->where('course_id', '=', $id)
+                  ->get();
+        if(count($course)>0){
+          $action = new ActionFA_V_A([
+            'course_id'   => $id,
+            'status'      => "Waiting For Moderation",
+            'for_who'     => "Moderator",
+          ]);
+          $action->save();
+          return redirect()->back()->with('success','Final Assessment Submitted to Moderator Successfully');
+        }else{
+          return redirect()->back();
+        }
+    }
+
+    public function SubmitSelf_D_Form(Request $request)
+    {
+        $actionFA_id = $request->get('actionFA_id');
+        $status = $request->get('status');
+        $course_id = $request->get('course_id');
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                  ->select('courses.*','subjects.*','semesters.*')
+                  ->where('lecturer', '=', $staff_dean->id)
+                  ->where('course_id', '=', $course_id)
+                  ->get();
+        if(count($course)>0){
+            $action = ActionFA_V_A::where('actionFA_id', '=', $actionFA_id)->firstOrFail();
+            $action->status  = 'Waiting For Verified';
+            $action->for_who = 'HOD';
+            $action->self_declaration = $status;
+            $action->save();
+            return redirect()->back()->with('success','Continuous Assessment Submitted to HOD Successfully');
+        }else{
+            return redirect()->back();
+        }
     }
 }

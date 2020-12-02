@@ -132,7 +132,6 @@ $option1 = "id='selected-sidebar'";
                                                 <label class="label">Lecture Topic</label>
                                                 <input type="hidden" id="lecture_topic_data_{{$i}}_{{$m}}" value="{{$row_topic->lecture_topic}}">
                                                 <select class="selectpicker form-control" name="lecture_topic_{{$i}}_{{$m}}" title="Choose One" data-width="100%" id="lecture_topic_{{$i}}_{{$m}}">
-
                                                 </select>
                                             </div>
                                         </div>
@@ -480,8 +479,8 @@ $option1 = "id='selected-sidebar'";
                                     var str = response[num][2];
                                     var first = str.split("\n");
                                     var sentence = first[0].split(". ");
-                                    $('#lecture_topic_'+run+'_1').append('<option class="option" value="'+sentence[1]+'">'+sentence[1]+'</option>');
-                                    result = result+"<option class='option' value='"+sentence[1]+"'>"+sentence[1]+"</option>";
+                                    $('#lecture_topic_'+run+'_1').append('<option class="option" value="'+sentence[0]+'///'+sentence[1]+'">'+sentence[1]+'</option>');
+                                    result = result+"<option class='option' value='"+sentence[0]+'///'+sentence[1]+"'>"+sentence[1]+"</option>";
                                     $('#lecture_topic_'+run+'_1').selectpicker('refresh');
                                 }
                             }
@@ -500,11 +499,11 @@ $option1 = "id='selected-sidebar'";
                                         var sentence = first[0].split(". ");
                                         if(response[num][2]!="Continuous Assessment"){
                                             if(sentence[1]==data){
-                                                $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[1]+'" selected>'+sentence[1]+'</option>');
+                                                $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[0]+'///'+sentence[1]+'" selected>'+sentence[1]+'</option>');
                                             }else{
-                                                $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[1]+'">'+sentence[1]+'</option>');
+                                                $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[0]+'///'+sentence[1]+'">'+sentence[1]+'</option>');
                                             }
-                                            result = result+"<option class='option' value='"+sentence[1]+"'>"+sentence[1]+"</option>";
+                                            result = result+"<option class='option' value='"+sentence[0]+'///'+sentence[1]+"'>"+sentence[1]+"</option>";
                                         }
                                         $('#lecture_topic_'+run+'_'+m).selectpicker('refresh');
                                     }

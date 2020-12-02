@@ -1,5 +1,5 @@
 <?php
-$title = "Course";
+$title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
 @extends('layouts.nav_dean')

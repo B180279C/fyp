@@ -22,6 +22,8 @@ class CreateCoursesTable extends Migration
             $table->string('credit');
             $table->string('lecturer');
             $table->string('moderator');
+            $table->string('verified_by');
+            $table->string('approved_by');
             $table->string('created_by');
             $table->timestamps();
         });

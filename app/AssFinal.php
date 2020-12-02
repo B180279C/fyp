@@ -11,7 +11,7 @@ class AssFinal extends Model
 	protected $primaryKey = 'fx_id';
 	
     protected $fillable = [
-        'course_id','coursework', 'assessment_name','status'
+        'course_id','coursework','coursemark','CLO','topic', 'assessment_name','status'
     ];
 }
 

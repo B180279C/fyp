@@ -432,7 +432,7 @@ $option1 = "id='selected-sidebar'";
             <a href="/course_list">Courses </a>/
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <a href="/FinalExamination/{{$course[0]->course_id}}">Final Assessment</a>/
-            <a href="/FinalExamination/question/{{$course[0]->course_id}}/">Final ( Q & S )</a>/
+            <a href="/FinalExamination/question/{{$final->coursemark}}/{{$course[0]->course_id}}/">Final ( Q & S )</a>/
             <span class="now_page">{{$final->assessment_name}}</span>/
         </p>
         <hr class="separate_hr">

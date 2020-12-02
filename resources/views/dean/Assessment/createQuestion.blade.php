@@ -113,29 +113,40 @@ $option1 = "id='selected-sidebar'";
             data:{value : num[2]},
             success:function(data){
               var clo = data[0].CLO;
-              var clo_list = clo.split("///");
-              var clo_selected = clo_list[0].split(',');
-              var clo_full = clo_list[1].split(',');
+              var clo_list = clo.split(",");
               var option = "";
+              var question = '{{$question}}';
               for(var c = 0;c<=(data[2].length-1);c++){
-                  for(var d = 0;d<=(clo_full.length-1);d++){
-                    if(data[2][c].am_id==clo_full[d]){
-                      if(clo_selected[d]==clo_full[d]){
-                        option += "<option title='CLO "+(c+1)+"' class='option' value="+data[2][c].am_id+" selected>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
+                var assessment_list = data[2][c].assessment.split('///');
+                var markdown = data[2][c].markdown.split(',');
+                var assessment = assessment_list[0].split(',');
+                for(var i = 0; i<=assessment.length-1;i++){
+                  var assessment_rep = assessment[i].replace(' ','');
+                  if(assessment_rep==question){
+                    if(markdown[i]=="yes"){
+                      var selected = false;
+                      for(var d = 0;d<=(clo_list.length-1);d++){
+                        if(clo_list[d]==("CLO"+(c+1))){
+                          var selected = true;
+                        }
+                      }
+                      if(selected==true){
+                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"' selected>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
                       }else{
-                        option += "<option title='CLO "+(c+1)+"' class='option' value="+data[2][c].am_id+">CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
+                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"'>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
                       }
                     }
                   }
+                }
               }
               $("#CLO").html(option);
               $('#CLO').selectpicker('refresh');
-              $('#CLO_ALL').val(clo_full);
+              // $('#CLO_ALL').val(clo_full);
               var mark = 0;
               for(var i = 0;i<=(data[1].length-1);i++){
                 var mark = mark+parseInt(data[1][i].coursework);
               }
-              console.log(mark);
+              // console.log(mark);
               var full_mark = '{{$coursework}}';
               document.getElementById('ass_id').value = num[2];
               document.getElementById('mark_record').innerHTML = "The {{$question}} of coursework is {{$coursework}}%, It already insert "+(mark-parseInt(data[0].coursework))+"%.";
@@ -384,8 +395,8 @@ $option1 = "id='selected-sidebar'";
                               $assessment_rep = str_replace(' ','',$assessment[$i]);
                               if($assessment_rep==$question){
                                 if($markdown[$i]=="yes"){
-                                  $check .= $row->am_id.',';
-                                  echo "<option title='CLO ".$num."' class='option' value=".$row->am_id.">CLO ".$num." : ".$row->CLO." ( ".$row->domain_level." , ".$row->PO." ) </option>";
+                                  $check .= 'CLO'.$num.',';
+                                  echo "<option title='CLO ".$num."' class='option' value='CLO".$num."'>CLO ".$num." : ".$row->CLO." ( ".$row->domain_level." , ".$row->PO." ) </option>";
                                 }
                               }
                             }
@@ -393,7 +404,6 @@ $option1 = "id='selected-sidebar'";
                           }
                       ?>
                       </select>
-                      <input type="hidden" name="CLO_ALL" value="{{$check}}">
                 </div>
             </div>
         </div>

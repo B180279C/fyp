@@ -71,6 +71,33 @@ $option1 = "id='selected-sidebar'";
       document.getElementById("action_sidebar").style.display = "none";
       document.getElementById("button_open").style.display = "block";
   }
+
+  function submitAction(){
+    var course_id = $('#course_id').val();
+    window.location = "/FinalExamination/Action/Submit/"+course_id; 
+  }
+
+  function submitActionSecond(){
+    var course_id = $('#course_id').val();
+    if(confirm('Please ensure your Final Assessment is fixed all error and full complete already. Are you sure want to submit again to moderator.')) {
+      window.location = "/FinalExamination/Action/Submit/"+course_id; 
+    }
+  }
+
+  function submitActionThird(){
+    $('#openDocumentModal').modal('show');
+  }
+
+  function submitSelfD_form(status){
+    $('#self_status').val(status);
+    document.getElementById("self_declaration_form").submit();
+  }
+
+  function ModerationForm(actionFA_id){
+    window.location = "/Moderator/FinalExamination/report/"+actionFA_id;
+    return false;
+  }
+
   $(document).ready(function(){
     $.ajaxSetup({
       headers: {
@@ -83,31 +110,43 @@ $option1 = "id='selected-sidebar'";
             url:'/FinalExamination/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
-              // console.log(response);
               var count = 0;
               var new_count = 0;
               var table = document.getElementById("table");
+              var status = false;
               
-              for(var i = 0;i<=(response.length-1);i++){
-                  if((response[i][1]==null)&&(response[i][2]!=null)&&(response[i][3]!=null)&&(response[i][9]!=null)){
-                    var name = response[i][3];
-                    var percentage = response[i][9];
+              for(var i = 0;i<=(response[0].length-1);i++){
+                  if((response[0][i][1]==null)&&(response[0][i][2]!=null)&&(response[0][i][3]!=null)&&(response[0][i][9]!=null)){
+                    var name = response[0][i][3];
+                    var percentage = response[0][i][9];
                   }
               }
+
+              $('.total').html(percentage);
+              var mark = document.getElementById('mark').innerHTML;
+              if(mark==percentage){
+                $('.mark_color').css('color', 'green');
+                $('.status').html("<span style='color:green'>Complete</span>&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitAction()'>Submit to Moderator</button>");
+                status = true;
+              }else{
+                $('.mark_color').css('color', 'red');
+                $('.status').html("<span style='color:red'>Not Complete</span>");
+              }
+
               var row = table.insertRow(0);
               var cell = row.insertCell(0);
               var cell1 = row.insertCell(1);
               var cell2 = row.insertCell(2);
+              cell.style.backgroundColor = "#d9d9d9";
+              cell1.style.backgroundColor = "#d9d9d9";
+              cell2.style.backgroundColor = "#d9d9d9";
               cell1.style.textAlign  = "center";
               cell2.style.textAlign  = "center";
               cell1.style.width  = "15%";
               cell2.style.width  = "15%";
-              cell.style.backgroundColor  = "#e9ecef";
-              cell1.style.backgroundColor  = "#e9ecef";
-              cell2.style.backgroundColor  = "#e9ecef";
               cell.innerHTML  = "<b>"+name+" ( "+percentage+ "% )</b>";
               cell1.innerHTML = '<b>Add</b>';
-              cell2.innerHTML = '<b>Status</b>';
+              cell2.innerHTML = '<b>Status & Count</b>';
 
               var row_paper = table.insertRow(1);
               var cell = row_paper.insertCell(0);
@@ -115,9 +154,21 @@ $option1 = "id='selected-sidebar'";
               var cell2 = row_paper.insertCell(2);
               cell1.style.textAlign  = "center";
               cell2.style.textAlign  = "center";
+              cell.style.borderLeft  = "1px solid #d9d9d9";
+              cell.style.borderBottom  = "1px solid #d9d9d9";
+              cell1.style.borderLeft  = "1px solid #d9d9d9";
+              cell1.style.borderBottom  = "1px solid #d9d9d9";
+              cell2.style.borderLeft  = "1px solid #d9d9d9";
+              cell2.style.borderBottom  = "1px solid #d9d9d9";
+              cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Question Paper & Solution";
-              cell1.innerHTML = '<a href="/FinalExamination/question/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
-              cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
+              cell1.innerHTML = '<a href="/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              if(status==true){
+                cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
+              }else{
+                cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
+              }
+              
 
               var row_result = table.insertRow(2);
               var cell = row_result.insertCell(0);
@@ -125,9 +176,30 @@ $option1 = "id='selected-sidebar'";
               var cell2 = row_result.insertCell(2);
               cell1.style.textAlign  = "center";
               cell2.style.textAlign  = "center";
+              cell.style.borderLeft  = "1px solid #d9d9d9";
+              cell.style.borderBottom  = "1px solid #d9d9d9";
+              cell1.style.borderLeft  = "1px solid #d9d9d9";
+              cell1.style.borderBottom  = "1px solid #d9d9d9";
+              cell2.style.borderLeft  = "1px solid #d9d9d9";
+              cell2.style.borderBottom  = "1px solid #d9d9d9";
+              cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Student Result";
               cell1.innerHTML = '<a href="/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
-              cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
+              cell2.innerHTML = response[1].length;
+
+              var moderation_done = $('#moderation_done').val();
+              var actionFA_id = $('#actionFA_id').val();
+              if(moderation_done=="Yes"){
+                var row = table.insertRow(3);
+                var cell = row.insertCell(0);
+                var cell1 = row.insertCell(1);
+                cell.style.borderLeft  = "1px solid #d9d9d9";
+                cell1.style.textAlign  = "center";
+                cell1.id = "myTd";
+                document.getElementById("myTd").colSpan = "4";
+                cell.innerHTML  = "<b>Final Assessment ( FA ) Moderation</b>";
+                cell1.innerHTML  = "<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;margin:0px;' onclick='ModerationForm("+actionFA_id+")'><b><i class='fa fa-download'></i> Final Examination Moderation Form</b></button>";
+              }
             }
   });
 });
@@ -146,52 +218,139 @@ $option1 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
              <p class="page_title">Final Assessment</p>
+             @if(\Session::has('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
             <div class="details" style="padding: 0px 5px 0px 5px;">
               <div style="overflow-x: auto;padding:15px 0px 5px 0px;">
+                <?php
+                $mark = 0;
+                foreach($ass_final as $row){
+                  $mark = $mark+$row->coursework;
+                }
+                ?>
                 <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
+                <?php
+                $action_count = count($action);
+                $c = 1;
+                $c_more = 1;
+                $moderation_done = "No";
+                $actionFA_id = "";
+                $self = "";
+                foreach($action as $row_action){
+                    if($action_count!=$c){
+                        if($c_more==1){
+                            echo "<a href='' style='display:block;border:0px solid black;margin-top:-15px;padding:0px 10px 10px 10px;' class='more' id='less'>Less...</a>";
+                            $c_more++;
+                        }
+                        if($row_action->status=="Rejected"){
+                            $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who.'&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:5px 10px;" onclick="ModerationForm('.$row_action->actionFA_id.')">Previous Moderation Form</button>';
+                            $remarks = $row_action->remarks;
+                            $self = $row_action->self_declaration;
+                        }
+                        echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Final Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span>'.$status.'</span></span></div>';
+                        if($self!=""){
+                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
+                        }
+                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        echo '</div>';
+                    }
+
+                    if($action_count==$c){
+                        if($row_action->status=="Waiting For Moderation"){
+                            $status = '<span style="color:#3C5AFF;">Waiting For Moderation</span>';
+                            $remarks = "";
+                        }else if($row_action->status=="Waiting For Verified"){
+                            $status = '<span style="color:green;">Waiting For HOD to verify</span>';
+                            $remarks = $row_action->remarks;
+                            $moderation_done = "Yes";
+                            $actionFA_id = $row_action->actionFA_id;
+                            $self = $row_action->self_declaration;
+                        }else if($row_action->status=="Waiting For Rectification"){
+                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:5px 10px;" onclick="submitActionThird()">Submit to HOD for verify</button>';
+                            $remarks = $row_action->remarks;
+                            $moderation_done = "Yes";
+                            $actionFA_id = $row_action->actionFA_id;
+                        }else{
+                            $status = $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitActionSecond()'>Submit Again to Moderator</button>";
+                            $remarks = $row_action->remarks;
+                            $self = $row_action->self_declaration;
+                        }
+                        if($action_count != 1){
+                            // echo '<hr style="margin: -10px 5px 0px 5px;background-color:black;">';
+                            echo "<a href='' style='border:0px solid black;margin-top:-15px;padding:0px 10px 10px 10px;display:block;' class='more' id='more'>More...</a>";
+                        }
+                        echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Final Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span>'.$status.'</span></span></div>';
+                        if($self!=""){
+                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
+                        }
+                        if($remarks!=""){
+                            echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        }
+                        echo '</div>';     
+                    }
+                    $c++;
+                }
+                ?>
+                @if(count($action)==0)
+                <div class="row" style="border: 0px solid black;margin:-10px 0px 0px 0px;padding:0px;">
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Final Assessment ( FA ) : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span class="status"></span></span></div>
+                </div>
+                @endif
+                <input type="hidden" id="moderation_done" value="{{$moderation_done}}">
+                <input type="hidden" id="actionFA_id" value="{{$actionFA_id}}">
+                <hr style="margin: 5px 5px 0px 5px;background-color:black;">
+                <p style="padding: 5px 5px 5px 12px;margin: 0px;font-size: 18px;">Final Assessment List</p>
+                <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
                 </table>
+                </div>
               </div>
             </div>
-
-            <!-- <hr style="margin: 5px 5px;background-color:#d9d9d9;">
-            <h5 style="position: relative;top:10px;left: 10px;">Final Assessment of Other Semester</h5>
-            <br>
-            <div class="details" style="padding: 0px 5px 5px 5px;">
-                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -30px;">
-                    <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                        <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                            <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
-                        </p>
-                    </div>
-                    <div class="col-11" style="padding-left: 20px;">
-                        <div class="form-group">
-                            <label for="full_name" class="bmd-label-floating">Search</label>
-                            <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
-                        </div>
-                    </div>
-                </div>
-                <div class="row" id="assessments" style="position: relative;top: -25px;">
-                  @foreach($previous_semester as $row)
-                  <div class="col-12 row align-self-center" id="course_list">
-                    <a href="" id="show_image_link" class="col-9 row align-self-center">
-                      <div class="col-12 row" style="padding:10px;color:#0d2f81;">
-                        <div class="col-1" style="position: relative;top: -2px;">
-                          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
-                        </div>
-                        <div class="col-10" id="course_name">
-                          <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->semester_name}}</b></p>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                  @endforeach
-                </div>
-            </div> -->
-
-
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content content2">
+      <div class="modal-header header2">
+        <h5 class="modal-title title2" id="exampleModalLabel">Self-Declaration</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form style="padding: 0px;margin: 0px;" id="self_declaration_form" method="post" action="{{action('Dean\FinalExaminationController@SubmitSelf_D_Form')}}">
+        {{csrf_field()}}
+      <div class="row" style="margin: 0px;padding: 15px 10px 10px 10px;">
+        <input type="hidden" name="actionFA_id" value="{{$actionFA_id}}">
+        <input type="hidden" name="status" id="self_status">
+        <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
+        <p class="col-12">I hereby declared that the Final Examination Question Paper has been moderated by Internal / External Moderator and I have corrected all the amendments according to the comments from Internal / External Moderator.</p>
+        <p class="col-12" style="margin: 0px;padding:0px 15px;">
+          Name : {{$course[0]->name}}
+        </p>
+        <p class="col-12" style="margin: 0px;padding:0px 15px;">
+          Date : {{date("j / n / Y")}}
+        </p>
+      </div>
+      </form>
+      <div class="modal-footer" style="border:0px solid black;padding-top: 0px;padding-bottom: 10px;">
+        <input type="button" class="btn btn-raised btn-success" onclick="submitSelfD_form('Yes')" style="color: white;" value="Yes">&nbsp;
+        <button type="button" class="btn btn-raised btn-danger" onclick="submitSelfD_form('No')" style="margin-right: 20px;">No</button>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection

@@ -14,6 +14,8 @@ $option4 = "id='selected-sidebar'";
         $("#form_lct").hide();
         $("#form_other_lct").hide();
         $("#form_moderator").hide();
+        $("#form_hod").hide();
+        $("#form_dean").hide();
 
         $.ajaxSetup({
           headers: {
@@ -66,13 +68,16 @@ $option4 = "id='selected-sidebar'";
             $("#form_credit").show();
             $("#form_tch").show();
             $("#form_lct").show();
+            $("#form_hod").show();
+            $("#form_dean").show();
         });
     });
     function checkLCT_MOD(){
         var lecturer = $('#lecturer').val();
         var moderator = $('#moderator').val();
-        if(lecturer==moderator){
-            document.getElementById('error-message').innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><Strong>The lecturer and moderator cannot be same.</Strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+        var reviewer = $('#reviewer').val();
+        if(lecturer==moderator||lecturer==reviewer||moderator==reviewer){
+            document.getElementById('error-message').innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><Strong>The lecturer, moderator and Last Reviewer cannot have been same.</Strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
         }else{
             document.getElementById("myForm").submit();
         }
@@ -83,7 +88,7 @@ $option4 = "id='selected-sidebar'";
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty_name->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/CoursePortFolio">Courses</a>/
+            <a href="/Dean">Courses</a>/
             <span class="now_page">Add Course</span>/
         </p>
         <hr class="separate_hr">
@@ -296,6 +301,63 @@ $option4 = "id='selected-sidebar'";
                             </div>
                         </div>
 
+
+                        <div class="row" id="form_hod">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="label">Verified By</label>
+                                    <select class="selectpicker form-control" data-width="100%" title="Choose One" data-live-search="true" name="verified_by" id="reviewer">
+                                        @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                            @foreach($reviewer as $row)
+                                                @if($row_faculty['faculty_id']==$row->faculty_id)
+                                                    @if($row->position=="HoD"&&$row->faculty_id==$faculty_id)
+                                                        <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @else
+                                                        <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" id="form_dean">
+                            <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                                    <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
+                                </p>
+                            </div>
+                            <div class="col-11" style="padding-left: 20px;">
+                                <div class="form-group">
+                                    <label for="full_name" class="label">Approved By</label>
+                                    <select class="selectpicker form-control" data-width="100%" title="Choose One" data-live-search="true" name="approved_by" id="reviewer">
+                                        @foreach($faculty as $row_faculty)
+                                        <optgroup label="{{ $row_faculty['faculty_name']}}">
+                                            @foreach($reviewer as $row)
+                                                @if($row_faculty['faculty_id']==$row->faculty_id)
+                                                    @if($row->position=="Dean"&&$row->faculty_id==$faculty_id)
+                                                        <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @else
+                                                        <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @endif
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <input type="hidden" name="lecturer" id="lecturer">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">

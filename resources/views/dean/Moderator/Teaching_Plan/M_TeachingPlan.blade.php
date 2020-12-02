@@ -25,19 +25,21 @@ $option3 = "id='selected-sidebar'";
         });
         $('#less').hide();
         $(document).on("click",".more", function(){
-            $('#more').hide();
-            $('#less').show();
-            $('.action_list').slideToggle("slow", function(){
-                // check paragraph once toggle effect is completed
-                if($('.action_list').is(":visible")){
-                    $('#more').hide();
-                    $('#less').show();
-                }else{
-                    $('#more').show();
-                    $('#less').hide();
-                }
-            });
-            return false;
+          $('#more').hide();
+          $('#less').show();
+          $('.action_list').css('borderBottom','0px solid black');
+          $('.action_list').slideToggle("slow", function(){
+            // check paragraph once toggle effect is completed
+            if($('.action_list').is(":visible")){
+              $('.action_list').css('borderBottom','1px solid black');
+              $('#more').hide();
+              $('#less').show();
+            }else{
+              $('#more').show();
+              $('#less').hide();
+            }
+          });
+          return false;
         });
     });
 
@@ -191,7 +193,7 @@ function w3_close() {
                         }
                         $tp_count = count($verified_count)-1;
                     }
-                    echo '<div class="row action_list" style="border-bottom:1px solid black;margin:-10px 0px 10px 0px;padding:0px;display:none;">';
+                    echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
                     echo '<div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
