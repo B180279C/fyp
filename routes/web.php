@@ -336,7 +336,7 @@ Route::middleware('is_dean')->group(function(){
 
     //E_Portfolio
 	Route::get('/E_Portfolio/{id}', [
-    'as' => 'viewE_Portfolio', 'uses' => 'Dean\E_PortfolioResultController@viewE_Portfolio']);
+    'as' => 'viewE_Portfolio', 'uses' => 'Dean\E_PortfolioController@viewE_Portfolio']);
 
     //Past Year CA Question
     Route::get('/PastYear/assessment/{id}','Dean\PastYearController@PastYearAssessment')->name('dean.pastYear');
