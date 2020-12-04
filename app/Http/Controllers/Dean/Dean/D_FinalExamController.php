@@ -31,7 +31,7 @@ class D_FinalExamController extends Controller
                  ->join('staffs', 'staffs.id','=','courses.lecturer')
                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                  ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
-                 ->where('courses.moderator', '=', $staff_dean->id)
+                 ->where('faculty.faculty_id','=',$faculty_id)
                  ->where('courses.course_id', '=', $id)
                  ->get();
 
@@ -86,43 +86,43 @@ class D_FinalExamController extends Controller
         }
 	}
 
-	public function D_FX_Verify_Action(Request $request)
-	{
-		$course_id = $request->get('course_id');
-    $verify = $request->get('verify');
-    $remarks = $request->get('remarks');
-    $result = $request->get('result');
+	// public function D_FX_Verify_Action(Request $request)
+	// {
+	// 	$course_id = $request->get('course_id');
+ //    $verify = $request->get('verify');
+ //    $remarks = $request->get('remarks');
+ //    $result = $request->get('result');
 
-    if($remarks == "<p><br></p>"){
-      $remarks = "";
-    }
+ //    if($remarks == "<p><br></p>"){
+ //      $remarks = "";
+ //    }
 
-    $action = DB::table('actionfa_v_a')
-                  ->select('actionfa_v_a.*')
-                  ->where('course_id', '=', $course_id)
-                  ->where('status','=','Waiting For Verified')
-                  ->where('for_who','=','HOD')
-                  ->orderByDesc('actionFA_id')
-                  ->get();
+ //    $action = DB::table('actionfa_v_a')
+ //                  ->select('actionfa_v_a.*')
+ //                  ->where('course_id', '=', $course_id)
+ //                  ->where('status','=','Waiting For Verified')
+ //                  ->where('for_who','=','HOD')
+ //                  ->orderByDesc('actionFA_id')
+ //                  ->get();
 
-        $action_save = ActionFA_V_A::where('actionFA_id', '=', $action[0]->actionFA_id)->firstOrFail();
+ //        $action_save = ActionFA_V_A::where('actionFA_id', '=', $action[0]->actionFA_id)->firstOrFail();
 
-        if($result=="Verify"){
-          $action_save->status  = "Waiting For Approve";
-          $action_save->for_who = "Dean";
-          $action_save->remarks = $remarks;
-          $action_save->verified_date = date("Y-j-n");
-        }else{
-          $action_save->status  = "Rejected";
-          $action_save->remarks = $verify."///".$remarks;
-        }
-      $action_save->save();
-      if($result=="Verify"){
-        return redirect()->back()->with('success','Final Examination Moderation Form has been Verified.');
-      }else{
-        return redirect()->back()->with('success','Final Examination Moderation Form has been Rejected.');
-      }
-	}
+ //        if($result=="Verify"){
+ //          $action_save->status  = "Waiting For Approve";
+ //          $action_save->for_who = "Dean";
+ //          $action_save->remarks = $remarks;
+ //          $action_save->verified_date = date("Y-j-n");
+ //        }else{
+ //          $action_save->status  = "Rejected";
+ //          $action_save->remarks = $verify."///".$remarks;
+ //        }
+ //      $action_save->save();
+ //      if($result=="Verify"){
+ //        return redirect()->back()->with('success','Final Examination Moderation Form has been Verified.');
+ //      }else{
+ //        return redirect()->back()->with('success','Final Examination Moderation Form has been Rejected.');
+ //      }
+	// }
 
   public function D_FX_Approve_Action(Request $request)
   {
@@ -146,7 +146,7 @@ class D_FinalExamController extends Controller
         $action_save = ActionFA_V_A::where('actionFA_id', '=', $action[0]->actionFA_id)->firstOrFail();
 
         if($result=="Approve"){
-          $action_save->status  = "Approve";
+          $action_save->status  = "Approved";
           $action_save->for_who = "";
           $action_save->remarks_dean = $remarks;
           $action_save->approved_date = date("Y-j-n");

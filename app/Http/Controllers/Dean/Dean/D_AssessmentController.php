@@ -30,7 +30,7 @@ class D_AssessmentController extends Controller
                  ->join('staffs', 'staffs.id','=','courses.lecturer')
                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                  ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
-                 ->where('courses.moderator', '=', $staff_dean->id)
+                 ->where('faculty.faculty_id','=',$faculty_id)
                  ->where('courses.course_id', '=', $id)
                  ->get();
 
@@ -135,7 +135,6 @@ class D_AssessmentController extends Controller
 	                 ->join('staffs','staffs.id','=','courses.lecturer')
 	                 ->join('users','staffs.user_id','=','users.user_id')
 	                 ->select('courses.*','subjects.*','semesters.*','programmes.*','staffs.*','users.*','faculty.*')
-	                 ->where('courses.moderator', '=', $staff_dean->id)
 	                 ->where('course_id', '=', $action->course_id)
 	                 ->get();
 
