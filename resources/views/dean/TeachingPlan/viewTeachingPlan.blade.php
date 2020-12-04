@@ -131,7 +131,7 @@ $option1 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <p class="page_title">Teaching Planning</p>
+            <p class="page_title">Teaching Plan</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -177,7 +177,7 @@ $option1 = "id='selected-sidebar'";
                         if($row_action->verified_date==Null){
                             $person = "( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                         }else{
-                            $person = "( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                            $person = "( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
                         }
                         $status = '<span style="color:red;">Rejected</span> by '.$person;
                         $remarks_count = explode('///',$row_action->remarks);
@@ -195,12 +195,12 @@ $option1 = "id='selected-sidebar'";
                         $tp_count = count($verified_count)-1;
                     }
                     echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';
+                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : '.$status.'</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                     echo '</div>';
                 }
 
@@ -211,7 +211,8 @@ $option1 = "id='selected-sidebar'";
                         $remarks = "";
                         $color = 'red';
                     }else if($row_action->status=="Waiting For Approved"){
-                        $status = '<span style="color:green;">Waiting For ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) to Approve</span>';
+                        // $status = '<span style="color:green;">Waiting For ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) to Approve</span>';
+                        $status = '<span style="color:green;">Waiting For ( HOD ) to Approve</span>';
                         $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
@@ -227,7 +228,7 @@ $option1 = "id='selected-sidebar'";
                         if($row_action->verified_date==Null){
                             $person = "( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                         }else{
-                            $person = "( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                            $person = "( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
                             $now = "Approved";
                         }
                         $status = '<span style="color:red;">Rejected</span> by '.$person."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;margin-top:5px;' onclick='submitActionSecond()'>Submit Again to Moderator ( ".$verified_person_name->position." : ".$verified_person_name->name." )</button>";
@@ -253,26 +254,25 @@ $option1 = "id='selected-sidebar'";
                         $tp_count = 3;
                         $remarks = $row_action->remarks;
                         $color = 'green';
-                        $person = '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Verified By : <span style="font-weight:bold;">'.$verified_person_name->name." ( ".$verified_by->staff_id." )</span>".'</span></div><div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Approved By : <span style="font-weight:bold;">'.$approved_person_name->name." ( ".$approved_by->staff_id." )</span>".'</span></div>';
                     }
                     if($action_count != 1){
                         // echo '<hr style="margin: -10px 5px 0px 5px;background-color:black;">';
                         echo "<a href='' style='border:0px solid black;margin-top:-20px;padding:0px 10px 10px 10px;display:block;' class='more' id='more'>More...</a>";
                     }
                     echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';                
+                    echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : '.$status.'</span></div>';                
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">'.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> '.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
                     if($row_action->verified_date!=Null){
-                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';    
+                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';    
                     }
                     if($row_action->approved_date!=Null){
-                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Approved By : <b> ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) </b></span></div>';    
+                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Approved By : <b> ( '.$approved_by[0]->position." : ".$approved_by[0]->name.' ) </b></span></div>';    
                     }
                     if($remarks!=""){
-                        echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                     }
                     echo '</div>';
                     
@@ -315,7 +315,7 @@ $option1 = "id='selected-sidebar'";
                 <div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : {!!$pending!!}</span></div>
             </div>
             @endif
-            <hr style="margin: 3px 5px;background-color:black;">
+            <hr style="margin: 6px 5px 5px 5px;background-color:black;">
             @if(count($TP_Ass)>0)
             <h5 style="position:relative;margin-top: 10px;left: 10px;">Methods of Assessment</h5>
             <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
@@ -470,7 +470,14 @@ $option1 = "id='selected-sidebar'";
                                         <div class="col-11" style="padding-left: 20px;">
                                             <div class="form-group">
                                                 <label class="label">Lecture Topic</label>
+                                                @if($row_topic->lecture_topic!="")
+                                                <?php
+                                                    $lecture_topic = explode('///',$row_topic->lecture_topic);
+                                                ?>
+                                                <input type="text" class="form-control" placeholder="Topic" readonly value="{{$lecture_topic[1]}}" style="background-color: white;">
+                                                @else
                                                 <input type="text" class="form-control" placeholder="Topic" readonly value="{{$row_topic->lecture_topic}}" style="background-color: white;">
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dean\Moderator;
+namespace App\Http\Controllers\Dean\Dean;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,9 +15,9 @@ use App\Imports\syllabusRead;
 use App\TP_Assessment_Method;
 use App\ActionFA_V_A;
 
-class M_FinalExamController extends Controller
+class D_FinalExamController extends Controller
 {
-	public function ModeratorFinalExam($id)
+	public function DeanFinalExam($id)
 	{
 		$user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
@@ -79,44 +79,88 @@ class M_FinalExamController extends Controller
                  ->where('staffs.department_id','=',$department_id)
                  ->get();
 
-        $approved_person_name = User::where('user_id', '=', $user_id)->firstOrFail();
-
         if(count($course)>0){
-            return view('dean.Moderator.Final_Exam.M_FinalExamList',compact('course','ass_final','TP_Ass','tp','action','moderator_person_name','verified_by','approved_person_name','action_big'));
+            return view('dean.Dean.Final_Exam.D_FinalExamList',compact('course','ass_final','TP_Ass','tp','action','action_big','moderator_person_name','verified_by'));
         }else{
             return redirect()->back();
         }
 	}
 
-	public function M_FX_Moderate_Action(Request $request)
+	public function D_FX_Verify_Action(Request $request)
 	{
-		$actionFA_id = $request->get('actionFA_id');
-		$course_id =  $request->get('course_id');
-		$degree = "";
-		for($i = 1; $i<=12;$i++){
-			$degree .= $i."_".$request->get('degree'.$i)."///";
-		}
+		$course_id = $request->get('course_id');
+    $verify = $request->get('verify');
+    $remarks = $request->get('remarks');
+    $result = $request->get('result');
 
-		$remark = "";
-		$count_assessemnt = $request->get('count_assessemnt');
-		for($c = 1;$c<=$count_assessemnt;$c++){
-			$fx_id  = $request->get('fx_id_'.$c);
-			$r_u = $request->get('r_u_'.$c);
-			$a_a = $request->get('a_a_'.$c);
-			$e_c = $request->get('e_c_'.$c);
-			$remark .= $fx_id."<???>".$request->get('remark_'.$c)."%-PER-%".$r_u.",".$a_a.",".$e_c."///NextAss///";
-		}
+    if($remarks == "<p><br></p>"){
+      $remarks = "";
+    }
 
-		$action = ActionFA_V_A::where('actionFA_id', '=', $actionFA_id)->firstOrFail();
-		$action->degree  = $degree;
-		$action->suggest = $remark;
-		$action->feedback = $request->get('feedback');
-    $action->moderator_date = date("Y-j-n");
-		$action->status = "Waiting For Rectification";
-		$action->for_who = "Lecturer";
-		$action->save();
-    return redirect()->back()->with('success','Final Examination Moderation Form Created Successfully');
+    $action = DB::table('actionfa_v_a')
+                  ->select('actionfa_v_a.*')
+                  ->where('course_id', '=', $course_id)
+                  ->where('status','=','Waiting For Verified')
+                  ->where('for_who','=','HOD')
+                  ->orderByDesc('actionFA_id')
+                  ->get();
+
+        $action_save = ActionFA_V_A::where('actionFA_id', '=', $action[0]->actionFA_id)->firstOrFail();
+
+        if($result=="Verify"){
+          $action_save->status  = "Waiting For Approve";
+          $action_save->for_who = "Dean";
+          $action_save->remarks = $remarks;
+          $action_save->verified_date = date("Y-j-n");
+        }else{
+          $action_save->status  = "Rejected";
+          $action_save->remarks = $verify."///".$remarks;
+        }
+      $action_save->save();
+      if($result=="Verify"){
+        return redirect()->back()->with('success','Final Examination Moderation Form has been Verified.');
+      }else{
+        return redirect()->back()->with('success','Final Examination Moderation Form has been Rejected.');
+      }
 	}
+
+  public function D_FX_Approve_Action(Request $request)
+  {
+    $course_id = $request->get('course_id');
+    $verify = $request->get('verify');
+    $remarks = $request->get('remarks');
+    $result = $request->get('result');
+
+    if($remarks == "<p><br></p>"){
+      $remarks = "";
+    }
+
+    $action = DB::table('actionfa_v_a')
+                  ->select('actionfa_v_a.*')
+                  ->where('course_id', '=', $course_id)
+                  ->where('status','=','Waiting For Approve')
+                  ->where('for_who','=','Dean')
+                  ->orderByDesc('actionFA_id')
+                  ->get();
+
+        $action_save = ActionFA_V_A::where('actionFA_id', '=', $action[0]->actionFA_id)->firstOrFail();
+
+        if($result=="Approve"){
+          $action_save->status  = "Approve";
+          $action_save->for_who = "";
+          $action_save->remarks_dean = $remarks;
+          $action_save->approved_date = date("Y-j-n");
+        }else{
+          $action_save->status  = "Rejected";
+          $action_save->remarks_dean = $verify."///".$remarks;
+        }
+      $action_save->save();
+      if($result=="Approve"){
+        return redirect()->back()->with('success','Final Examination Moderation Form has been Approval For Printing.');
+      }else{
+        return redirect()->back()->with('success','Final Examination Moderation Form has been Rejected.');
+      }
+  }
 
   public function ModerationFormReport($actionFA_id)
   {
@@ -124,7 +168,6 @@ class M_FinalExamController extends Controller
     $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
     $faculty_id    = $staff_dean->faculty_id;
     $department_id = $staff_dean->department_id;
-
     $action = ActionFA_V_A::where('actionFA_id', '=', $actionFA_id)->firstOrFail();
 
     $course = DB::table('courses')

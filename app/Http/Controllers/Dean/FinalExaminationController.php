@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Image;
+use App\User;
 use App\Staff;
 use App\Subject;
 use App\Department;
@@ -22,9 +23,10 @@ class FinalExaminationController extends Controller
 {
     public function viewFinalExamination($id)
     {
-    	$user_id       = auth()->user()->user_id;
-        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-        $faculty_id    = $staff_dean->faculty_id;
+    	$user_id     = auth()->user()->user_id;
+      $staff_dean  = Staff::where('user_id', '=', $user_id)->firstOrFail();
+      $faculty_id  = $staff_dean->faculty_id;
+      $department_id = $staff_dean->department_id;
 
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -49,8 +51,23 @@ class FinalExaminationController extends Controller
                   ->orderBy('actionFA_id')
                   ->get();
 
+        $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
+        $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
+
+        $verified_by = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('users.position', '=', 'HoD')
+                 ->where('staffs.department_id','=',$department_id)
+                 ->get();
+
+        // $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        // $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+
+        $approved_person_name = User::where('user_id', '=', $user_id)->firstOrFail();
+
         if(count($course)>0){
-            return view('dean.FinalExam.viewFinalExam',compact('course','ass_final','action'));
+            return view('dean.FinalExam.viewFinalExam',compact('course','ass_final','action','moderator_person_name','verified_by','approved_person_name'));
         }else{
             return redirect()->back();
         }
@@ -860,6 +877,7 @@ class FinalExaminationController extends Controller
             $action->status  = 'Waiting For Verified';
             $action->for_who = 'HOD';
             $action->self_declaration = $status;
+            $action->self_date = date("Y-j-n");
             $action->save();
             return redirect()->back()->with('success','Continuous Assessment Submitted to HOD Successfully');
         }else{

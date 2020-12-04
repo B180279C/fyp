@@ -155,9 +155,9 @@ $option1 = "id='selected-sidebar'";
                   }
                 } 
                 if(sel == true){
-                  option += "<option class='option' title='Topic "+topic_num[0]+"' value="+data[3][c].topic_id+" selected>Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
+                  option += "<option class='option' title='Topic "+topic_num[0]+"' value='Topic"+topic_num[0]+"' selected>Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
                 }else{
-                  option += "<option class='option' title='Topic "+topic_num[0]+"' value="+data[3][c].topic_id+">Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
+                  option += "<option class='option' title='Topic "+topic_num[0]+"' value='Topic"+topic_num[0]+"'>Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
                 } 
               }
               $("#topic").html(option);

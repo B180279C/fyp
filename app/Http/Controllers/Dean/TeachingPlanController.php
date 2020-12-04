@@ -24,6 +24,8 @@ class TeachingPlanController extends Controller
    		$user_id       = auth()->user()->user_id;
       $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
       $faculty_id    = $staff_dean->faculty_id;
+      $department_id = $staff_dean->department_id;
+      
       $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -35,8 +37,15 @@ class TeachingPlanController extends Controller
       $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
       $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-      $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-      $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
+      $approved_by = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('users.position', '=', 'HoD')
+                 ->where('staffs.department_id','=',$department_id)
+                 ->get();
+
+      // $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+      // $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
         $TP = DB::table('teaching_plan')
         	->select('teaching_plan.*')
@@ -66,7 +75,7 @@ class TeachingPlanController extends Controller
                   ->get();
 
         if(count($course)>0){
-            return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by','approved_person_name'));
+            return view('dean.TeachingPlan.viewTeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by'));
         }else{
             return redirect()->back();
         }
@@ -645,6 +654,7 @@ class TeachingPlanController extends Controller
       $user_id       = auth()->user()->user_id;
       $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
       $faculty_id    = $staff_dean->faculty_id;
+      $department_id = $staff_dean->department_id;
 
       $course = DB::table('courses')
                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -951,7 +961,13 @@ class TeachingPlanController extends Controller
               $table->addCell(null,$cellRowContinue);
             }
         $L_topic = $table->addCell(5200);
-        \PhpOffice\PhpWord\Shared\Html::addHtml($L_topic,"<b>Topic: ".$row_topic->lecture_topic.'</b>',false);
+        $lecture_topic = "";
+        if($row_topic->lecture_topic!=""){
+          $lecture_topic = explode('///',$row_topic->lecture_topic);
+          \PhpOffice\PhpWord\Shared\Html::addHtml($L_topic,"<b>Topic: ".$lecture_topic[1].'</b>',false);
+        }else{
+          \PhpOffice\PhpWord\Shared\Html::addHtml($L_topic,"<b>Topic: ".$row_topic->lecture_topic.'</b>',false);
+        }
         $html = str_replace("<br>","<br/>",$row_topic->sub_topic);
 
         \PhpOffice\PhpWord\Shared\Html::addHtml($L_topic,$html,false);
@@ -997,10 +1013,17 @@ class TeachingPlanController extends Controller
                  ->where('staffs.id', '=', $course[0]->moderator)
                  ->get();
 
+    // $verified_by = DB::table('staffs')
+    //              ->join('users','staffs.user_id','=','users.user_id')
+    //              ->select('staffs.*','users.*')
+    //              ->where('staffs.id', '=', $course[0]->verified_by)
+    //              ->get();
+
     $verified_by = DB::table('staffs')
                  ->join('users','staffs.user_id','=','users.user_id')
                  ->select('staffs.*','users.*')
-                 ->where('staffs.id', '=', $course[0]->verified_by)
+                 ->where('users.position', '=', 'HoD')
+                 ->where('staffs.department_id','=',$department_id)
                  ->get();
 
     $table->addRow(1);

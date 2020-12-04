@@ -41,7 +41,47 @@ class M_CourseController extends Controller
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')
                     ->get();
-        return view('dean.Moderator.M_CourseIndex',compact('course'));
+
+        $action = DB::table('action_v_a')
+                  ->join('courses','courses.course_id','=','action_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('action_v_a.*','courses.*','subjects.*','staffs.*','users.*')
+                  ->where('courses.semester','=',$semester_id)
+                  ->where('courses.moderator', '=', $staff_dean->id)
+                  ->where('courses.status','=','Active')
+                  ->where('action_v_a.status','=','Waiting For Verified')
+                  ->where('action_v_a.for_who','=','Moderator')
+                  ->get();
+
+        $action2 = DB::table('actionca_v_a')
+                  ->join('courses','courses.course_id','=','actionca_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionca_v_a.*','courses.*','subjects.*','staffs.*','users.*')
+                  ->where('courses.semester','=',$semester_id)
+                  ->where('courses.moderator', '=', $staff_dean->id)
+                  ->where('courses.status','=','Active')
+                  ->where('actionca_v_a.status','=','Waiting For Moderation')
+                  ->where('actionca_v_a.for_who','=','Moderator')
+                  ->get();
+
+        $action3 = DB::table('actionfa_v_a')
+                  ->join('courses','courses.course_id','=','actionfa_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionfa_v_a.*','courses.*','subjects.*','staffs.*','users.*')
+                  ->where('courses.semester','=',$semester_id)
+                  ->where('courses.moderator', '=', $staff_dean->id)
+                  ->where('courses.status','=','Active')
+                  ->where('actionfa_v_a.status','=','Waiting For Moderation')
+                  ->where('actionfa_v_a.for_who','=','Moderator')
+                  ->get();
+
+        return view('dean.Moderator.M_CourseIndex',compact('course','action','action2','action3'));
 	}
 
 	public function searchModeratorCourse(Request $request)

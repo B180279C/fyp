@@ -81,21 +81,24 @@ $option4 = "id='selected-sidebar'";
                             </center>
                         </a>
                     </div>
+                </div>
+                <p class="page_title">Moderation</p>
+                <div class="row" style="margin-top: 5px;">
                     <div class="col-md-3" style="margin-bottom: 20px">
                         <a href="/Dean/Assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
                             <br>
-                            <p style="color: #0d2f81;">Continuous Assessment</p>
+                            <p style="color: #0d2f81;">Moderation Form <br/>( Coutinuous Assessment )</p>
                             </center>
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
                         <a href="/Dean/FinalExamination/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
-                            <img src="{{url('image/final.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 10px;"/>
+                            <img src="{{url('image/final.png')}}" width="70px" height="70px" style="margin-top: 60px;margin-left: 10px;"/>
                             <br>
-                            <p style="color: #0d2f81;">Final Assessment</p>
+                            <p style="color: #0d2f81;">Moderation Form <br/>( Final Assessment )</p>
                             </center>
                         </a>
                     </div>

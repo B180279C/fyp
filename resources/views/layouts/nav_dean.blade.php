@@ -281,11 +281,11 @@
                         <a href="/course_list">
                             <li class="sidebar-li" <?php if(isset($option1)){ echo $option1;};?>>
                                     <i class="fa fa-book sidebar-icon" aria-hidden="true"></i>
-                                    <span style="padding-left: 20px;font-weight: bold;">Courses</span>
+                                    <span style="padding-left: 20px;font-weight: bold;">My Courses</span>
                             </li>
                         </a>
                     </ul>
-                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Function</p>
+                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Moderation Function</p>
                     <ul class="sidebar-ul">
                         <a href="/Moderator">
                             <li class="sidebar-li" <?php if(isset($option3)){ echo $option3;};?>>
@@ -296,14 +296,14 @@
                         <a href="/Dean">
                             <li class="sidebar-li" <?php if(isset($option4)){ echo $option4;};?>>
                                 <i class="fa fa-info sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
-                                <span style="padding-left: 20px;font-weight: bold;">Audit Committee</span>
+                                <span style="padding-left: 20px;font-weight: bold;">Dean</span>
                             </li>
                         </a>
                     </ul>
                     <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Portfolio</p>
                     <ul class="sidebar-ul">
                     <a href="/CoursePortFolio">
-                        <li class="sidebar-li" <?php if(isset($option5)){ echo $option5;};?>>
+                        <li class="sidebar-li" <?php if(isset($option6)){ echo $option6;};?>>
                                 <i class="fa fa-folder-open-o sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
                                 <span style="padding-left: 20px;font-weight: bold;">E - Portfoio</span>
                         </li>
@@ -314,6 +314,16 @@
                                 <span style="padding-left: 20px;font-weight: bold;">Faculty Portfolio</span>
                         </li>
                     </a>
+                    </ul>
+                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Management</p>
+                    <ul class="sidebar-ul">
+                    <a href="/CoursePortFolio">
+                        <li class="sidebar-li" <?php if(isset($option5)){ echo $option5;};?>>
+                                <i class="fa fa-book sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
+                                <span style="padding-left: 20px;font-weight: bold;">Course</span>
+                        </li>
+                    </a>
+                    </ul>
                     <input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->user_id}}">
                     <table id="sidebar-table" style="background-color: #e5e7e8; border:none;width: 100.1%;padding:0px;margin: 0px; position: absolute; bottom: 0px;">
                         <tr>

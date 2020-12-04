@@ -126,7 +126,7 @@ function w3_close() {
     </div>
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">
-            <p class="page_title">Teaching Planning</p>
+            <p class="page_title">Teaching Plan</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -171,7 +171,7 @@ function w3_close() {
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         if($row_action->verified_date==Null){
-                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                            $person = " By ( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
                         }else{
                             $person = "";
                         }
@@ -192,12 +192,12 @@ function w3_close() {
                         $tp_count = count($verified_count)-1;
                     }
                     echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';
+                    echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : '.$status.'</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                     echo '</div>';
                 }
 
@@ -208,14 +208,17 @@ function w3_close() {
                         $remarks = "";
                         $color = 'black';
                     }else if($row_action->status=="Waiting For Approved"){
-                        $status = '<span style="color:green;">Waiting For Approved</span>';
+                        $checkbox_M = '<b style="color: green"> Verified</b>';
+                        $checkbox_C = '<b style="color: green"> Verified</b>';
+                        $checkbox_W = '<b style="color: green"> Verified</b>';
+                        $status = '<span style="color:green;">Waiting For ( HOD ) to Approve</span>';
                         $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                         $tp_count = 3;
                         $remarks = $row_action->remarks;
                         $color = 'green';
-                        $button_verify = "Yes";
+                        // $button_verify = "Yes";
                     }else if($row_action->status=="Rejected"){
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
@@ -224,10 +227,11 @@ function w3_close() {
                         $checkbox_C = '<b style="color: red"> Rejected</b>';
                         $checkbox_W = '<b style="color: red"> Rejected</b>';
                         if($row_action->verified_date==Null){
-                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                            $person = " By ( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
                         }else{
-                            $person = "";
+                            $person = " By ( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                         }
+
                         $status = '<span style="color:red;">Rejected</span>'.$person;
                         $remarks_count = explode('///',$row_action->remarks);
                         $remarks = $remarks_count[1];
@@ -264,16 +268,16 @@ function w3_close() {
                         echo "<a href='' style='border:0px solid black;margin-top:-20px;padding:0px 10px 10px 10px;display:block;' class='more' id='more'>More...</a>";
                     }
                     echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
-                    echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Status : '.$status.'</span></div>';                
+                    echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : '.$status.'</span></div>';                
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">'.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> '.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
                     if($row_action->approved_date==Null&&$row_action->verified_date!=Null){
-                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;">Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';    
+                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';    
                     }
                     if($remarks!=""){
-                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                     }
                     echo '</div>';
                 }
@@ -490,11 +494,16 @@ function w3_close() {
                             @if($row_topic->tp_id == $row->tp_id)
                             <?php
                             $i++;
+                            $l_topic = "";
+                            if($row_topic->lecture_topic!=""){
+                                $lecture_topic = explode('///',$row_topic->lecture_topic);
+                                $l_topic = $lecture_topic[1];
+                            }
                             ?>
                                 @if($i==1)
                                     <tr>
                                         <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row->week}}</td>
-                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>Topic : {{$row_topic->lecture_topic}}</b><br/>{!!$row_topic->sub_topic!!}</td>
+                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>Topic : {{$l_topic}}</b><br/>{!!$row_topic->sub_topic!!}</td>
                                         <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_topic->lecture_hour}}</td>
                                         <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{!!$row->tutorial!!}</td>
                                         <td rowspan="{{$array[$array_count]}}" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{!!$row->assessment!!}</td>
@@ -502,7 +511,7 @@ function w3_close() {
                                     </tr>
                                 @else
                                     <tr>
-                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>Topic : {{$row_topic->lecture_topic}}</b><br/>{!!$row_topic->sub_topic!!}</td>
+                                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>Topic : {{$l_topic}}</b><br/>{!!$row_topic->sub_topic!!}</td>
                                         <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row_topic->lecture_hour}}</td>
                                     </tr>
                                 @endif

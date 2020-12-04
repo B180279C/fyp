@@ -308,9 +308,9 @@ function ModerationForm(actionCA_id){
                         // echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Accepted Or Rectification</span></div>';
                         // echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Suggestion for improvement</span></div>';
                         // echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> '.$now.' : <b style="color:'.$color.'">'.$tp_count.' / 3</b></span></div>';
-                        if($row_action->verified_date!=Null){
-                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';
-                        }
+                        // if($row_action->verified_date!=Null){
+                        //     echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';
+                        // }
                         echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                         echo '</div>';
                     }
@@ -326,7 +326,8 @@ function ModerationForm(actionCA_id){
                             $tp_count = 0;
                             $self = "";
                         }else if($row_action->status=="Waiting For Verified"){
-                            $status = '<span style="color:green;">Waiting For ( '.$verified_person_name->position.' : '.$verified_person_name->name.' ) to verify</span>';
+                            // $status = '<span style="color:green;">Waiting For ( '.$verified_person_name->position.' : '.$verified_person_name->name.' ) to verify</span>';
+                            $status = '<span style="color:green;">Waiting For ( HOD ) to verify</span>';
                             $remarks = $row_action->remarks;
                             $moderation_done = "Yes";
                             $actionCA_id = $row_action->actionCA_id;
@@ -337,7 +338,7 @@ function ModerationForm(actionCA_id){
                             echo '<input type="hidden" id="actionCA_id" value='.$actionCA_id.'>';
                             $tp_count = 0;
                         }else if($row_action->status=="Waiting For Rectification"){
-                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;margin-top:1px;" onclick="submitActionThird()">Submit to ( '.$verified_person_name->position.' : '.$verified_person_name->name.' ) for verify</button>';
+                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;margin-top:1px;" onclick="submitActionThird()">Submit to ( '.$verified_by[0]->position.' : '.$verified_by[0]->name.' ) for verify</button>';
                             $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                             $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                             $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
@@ -360,13 +361,13 @@ function ModerationForm(actionCA_id){
                                 $person = "";
                             }else{
                                 $now = "Approved";
-                                $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                                $person = " By ( ".$verified_by[0]->position.' : '.$verified_by[0]->name." )";
                             }
                             $moderation_done = "Yes";
                             $action_AORR = $row_action->AccOrRec;
                             $suggest = $row_action->suggest;
                             $now = "Verified of Moderation Form ( CA )";
-                            $status = '<span style="color:red;">Rejected</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;" onclick="submitActionSecond()">Submit Again to Moderator ( '.$moderator_person_name->position.' : '.$moderator_person_name->name.' )</button>';
+                            $status = '<span style="color:red;">Rejected</span>'.$person.'&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;" onclick="submitActionSecond()">Submit Again to Moderator ( '.$moderator_person_name->position.' : '.$moderator_person_name->name.' )</button>';
                             $remarks_count = explode('///',$row_action->remarks);
                             $remarks = $remarks_count[1];
                             $color = 'red';
@@ -417,15 +418,11 @@ function ModerationForm(actionCA_id){
                         if($self!=""){
                           echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
                         }
-                        // echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Assessment List & Method</span></div>';
-                        // echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Accepted Or Rectification</span></div>';
-                        // echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Suggestion for improvement</span></div>';
-                        // echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> '.$now.' : <b style="color:'.$color.'">'.$tp_count.' / 3</b></span></div>';
                         if($row_action->moderator_date!=Null){
                             echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Moderated By : <b> ( '.$moderator_person_name->position." : ".$moderator_person_name->name.' ) </b></span></div>';    
                         }
                         if($row_action->verified_date!=Null){
-                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';
+                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_by[0]->position.' : '.$verified_by[0]->name.' ) </b></span></div>';
                         }
                         if($remarks!=""){
                             echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
@@ -437,8 +434,8 @@ function ModerationForm(actionCA_id){
                 ?>
                 @if(count($action)==0)
                 <div class="row" style="border: 0px solid black;margin:-10px 0px 0px 0px;padding:0px;">
-                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Continuous Assessment ( CA ) : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
-                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span class="status"></span></span></div>
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> The Continuous Assessment ( CA ) : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : <span class="status"></span></span></div>
                 </div>
                 @endif
                 <input type="hidden" id="moderation_done" value="{{$moderation_done}}">

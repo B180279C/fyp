@@ -23,6 +23,11 @@ class CreateFaActionVATable extends Migration
             $table->text('suggest')->nullable();
             $table->text('feedback')->nullable();
             $table->text('remarks')->nullable();
+            $table->date('moderator_date')->nullable();
+            $table->date('verified_date')->nullable();
+            $table->date('self_date')->nullable();
+            $table->date('approved_date')->nullable();
+            $table->text('remarks_dean')->nullable();
             $table->timestamps();
         });
     }

@@ -492,13 +492,14 @@ $option1 = "id='selected-sidebar'";
                             for(var m=1;m<=topic_count;m++){
                                 var result = "";
                                 var data = $('#lecture_topic_data_'+run+'_'+m).val();
+                                console.log(data);
                                 for(var num = count;num<=(count+list+3);num++){
                                     if(response[num][2]!=null){
                                         var str = response[num][2];
                                         var first = str.split("\n");
                                         var sentence = first[0].split(". ");
                                         if(response[num][2]!="Continuous Assessment"){
-                                            if(sentence[1]==data){
+                                            if(sentence[0]+'///'+sentence[1]==data){
                                                 $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[0]+'///'+sentence[1]+'" selected>'+sentence[1]+'</option>');
                                             }else{
                                                 $('#lecture_topic_'+run+'_'+m).append('<option class="option" value="'+sentence[0]+'///'+sentence[1]+'">'+sentence[1]+'</option>');

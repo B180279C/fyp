@@ -38,30 +38,27 @@ class D_CourseController extends Controller
                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('courses.semester','=',$semester_id)
-                    ->Where(function($query) use ($id) {
-                        $query->orWhere('courses.verified_by', '=', $id)
-                              ->orWhere('courses.approved_by', '=', $id);
-                    })
+                    ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
                     ->get();
 
-        $course = DB::table('courses')
-                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
-                    ->join('staffs', 'staffs.id','=','courses.lecturer')
-                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
-                    ->where('courses.semester','=',$semester_id)
-                    ->where('courses.verified_by', '!=', $id)
-                    ->where('courses.approved_by', '!=', $id)
-                    ->where('courses.status','=','Active')
-                    ->orderBy('programmes.programme_id')
-                    ->get();
+        $action3 = DB::table('actionfa_v_a')
+                  ->join('courses','courses.course_id','=','actionfa_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                  ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionfa_v_a.*','courses.*','subjects.*','staffs.*','users.*')
+                  ->where('courses.semester','=',$semester_id)
+                  ->where('departments.faculty_id','=',$faculty_id)
+                  ->where('courses.status','=','Active')
+                  ->where('actionfa_v_a.status','=','Waiting For Approve')
+                  ->where('actionfa_v_a.for_who','=','Dean')
+                  ->get();
 
-        if($course[0]->position=="Dean"){
-        	return view('dean.Dean.D_CourseIndex',compact('course','course_reviewer'));	
+        if($course_reviewer[0]->position=="Dean"){
+        	return view('dean.Dean.D_CourseIndex',compact('course_reviewer','action3'));	
         }else{
         	return redirect()->back();
         }

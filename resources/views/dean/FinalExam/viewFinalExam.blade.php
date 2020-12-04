@@ -17,6 +17,9 @@ $option1 = "id='selected-sidebar'";
 .plus:hover{
     background-color: #f2f2f2;
 }
+.more:hover{
+    text-decoration:none;
+}
 @media only screen and (max-width: 600px) {
   #course_name{
     padding-top: 0px;
@@ -97,8 +100,25 @@ $option1 = "id='selected-sidebar'";
     window.location = "/Moderator/FinalExamination/report/"+actionFA_id;
     return false;
   }
-
   $(document).ready(function(){
+    $('#less').hide();
+      $(document).on("click",".more", function(){
+        $('#more').hide();
+        $('#less').show();
+        $('.action_list').css('borderBottom','0px solid black');
+        $('.action_list').slideToggle("slow", function(){
+          // check paragraph once toggle effect is completed
+          if($('.action_list').is(":visible")){
+            $('.action_list').css('borderBottom','1px solid black');
+            $('#more').hide();
+            $('#less').show();
+          }else{
+            $('#more').show();
+            $('#less').hide();
+          }
+        });
+        return false;
+    });
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -126,7 +146,7 @@ $option1 = "id='selected-sidebar'";
               var mark = document.getElementById('mark').innerHTML;
               if(mark==percentage){
                 $('.mark_color').css('color', 'green');
-                $('.status').html("<span style='color:green'>Complete</span>&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitAction()'>Submit to Moderator</button>");
+                $('.status').html("<span style='color:green'>Complete</span>&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:1px 15px;' onclick='submitAction()'>Submit to Moderator ( {{$moderator_person_name->position}} : {{$moderator_person_name->name}} )</button>");
                 status = true;
               }else{
                 $('.mark_color').css('color', 'red');
@@ -249,52 +269,106 @@ $option1 = "id='selected-sidebar'";
                             $c_more++;
                         }
                         if($row_action->status=="Rejected"){
-                            $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who.'&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:5px 10px;" onclick="ModerationForm('.$row_action->actionFA_id.')">Previous Moderation Form</button>';
-                            $remarks = $row_action->remarks;
-                            $self = $row_action->self_declaration;
+                          if($row_action->verified_date==Null){
+                            $person = " By ( ".$verified_by[0]->position." : ".$verified_by[0]->name." )";
+                          }else{
+                            $now = "Approved";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                          }
+                          $status = '<span style="color:red;">Rejected</span>'.$person.'&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;" onclick="ModerationForm('.$row_action->actionFA_id.')">Previous Moderation Form</button>';
+                          $remarks_count = explode('///',$row_action->remarks);
+                          $remarks = $remarks_count[1];
+                          $self = $row_action->self_declaration;
                         }
                         echo '<div class="row action_list" style="margin:-10px 0px 10px 0px;padding:0px;display:none;">';
-                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Final Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
-                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span>'.$status.'</span></span></div>';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : <span>'.$status.'</span></span></div>';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> The Continuous Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
                         if($self!=""){
-                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
+                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
                         }
-                        echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                        echo '<div class="col-12" style="padding: 0px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                         echo '</div>';
                     }
 
                     if($action_count==$c){
                         if($row_action->status=="Waiting For Moderation"){
-                            $status = '<span style="color:#3C5AFF;">Waiting For Moderation</span>';
+                            $status = '<span style="color:#3C5AFF;">Waiting For ( '.$moderator_person_name->position.' : '.$moderator_person_name->name.' ) to Moderation</span>';
                             $remarks = "";
+                            $actionFA_id = $row_action->actionFA_id;
+                            echo '<input type="hidden" id="actionFA_id" value='.$actionFA_id.'>';
+                            $self = "";
                         }else if($row_action->status=="Waiting For Verified"){
-                            $status = '<span style="color:green;">Waiting For HOD to verify</span>';
+                            // $status = '<span style="color:green;">Waiting For ( '.$verified_person_name->position.' : '.$verified_person_name->name.' ) to verify</span>';
+                            $status = '<span style="color:green;">Waiting For ( HOD ) to verify</span>';
                             $remarks = $row_action->remarks;
                             $moderation_done = "Yes";
                             $actionFA_id = $row_action->actionFA_id;
+                            echo '<input type="hidden" id="actionFA_id" value='.$actionFA_id.'>';
                             $self = $row_action->self_declaration;
                         }else if($row_action->status=="Waiting For Rectification"){
-                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:5px 10px;" onclick="submitActionThird()">Submit to HOD for verify</button>';
+                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;margin-top:1px;" onclick="submitActionThird()">Submit to ( HOD ) for verify</button>';
                             $remarks = $row_action->remarks;
                             $moderation_done = "Yes";
                             $actionFA_id = $row_action->actionFA_id;
-                        }else{
-                            $status = $status = '<span style="color:red;">Rejected</span> by '.$row_action->for_who."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitActionSecond()'>Submit Again to Moderator</button>";
-                            $remarks = $row_action->remarks;
+                            echo '<input type="hidden" id="actionFA_id" value='.$actionFA_id.'>';
+                            $self = "";
+                        }else if($row_action->status=="Rejected"){
+                            if($row_action->verified_date==Null){
+                              $person = " By ( ".$verified_by[0]->position." : ".$verified_by[0]->name." )";
+                            }else{
+                              $now = "Approved";
+                              $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
+                            }
+                            $status = '<span style="color:red;">Rejected</span>'.$person.'&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;" onclick="submitActionSecond()">Submit Again to Moderator ( '.$moderator_person_name->position.' : '.$moderator_person_name->name.' )</button>';
+                            $remarks_count = explode('///',$row_action->remarks);
+                            $remarks = $remarks_count[1];
                             $self = $row_action->self_declaration;
+                            $moderation_done = "Yes";
+                            $action_degree = $row_action->degree;
+                            $feedback = $row_action->feedback;
+                            $suggest = $row_action->suggest;
+                        }else if($row_action->status=="Waiting For Approve"){
+                            $self = $row_action->self_declaration;
+                            $status = '<span style="color:green;">Waiting For ( Dean ) to Approve</span>';
+                            $moderation_done = "Yes";
+                            $remarks = $row_action->remarks;
+                            $action_degree = $row_action->degree;
+                            $feedback = $row_action->feedback;
+                            $suggest = $row_action->suggest;
+                            $actionFA_id = $row_action->actionFA_id;
+                            echo '<input type="hidden" id="actionFA_id" value='.$actionFA_id.'>';
+                        }else{
+                            $self = $row_action->self_declaration;
+                            $status = '<span style="color:green;">Approval For Printing</span>';
+                            $moderation_done = "Yes";
+                            $action_degree = $row_action->degree;
+                            $feedback = $row_action->feedback;
+                            $suggest = $row_action->suggest;
+                            $remarks = "";
+                            $actionFA_id = $row_action->actionFA_id;
+                            echo '<input type="hidden" id="actionFA_id" value='.$actionFA_id.'>';
                         }
                         if($action_count != 1){
                             // echo '<hr style="margin: -10px 5px 0px 5px;background-color:black;">';
                             echo "<a href='' style='border:0px solid black;margin-top:-15px;padding:0px 10px 10px 10px;display:block;' class='more' id='more'>More...</a>";
                         }
                         echo '<div class="row" style="border: 0px solid black;margin:-10px 0px 1px 0px;padding:0px;">';
-                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Final Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
-                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span>'.$status.'</span></span></div>';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> The Final Assessment : <b class="mark_color"> <span id="mark">'.$mark.'</span> / <span class="total"></span></b></span></div>';
+                        echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : <span>'.$status.'</span></span></div>';
                         if($self!=""){
-                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
+                          echo '<div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Self-Declaration : <span><b>'.$self.'</b></span></span></div>';
                         }
+                        if($row_action->moderator_date!=Null){
+                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Moderated By : <b> ( '.$moderator_person_name->position." : ".$moderator_person_name->name.' ) </b></span></div>';    
+                        }
+                        if($row_action->verified_date!=Null){
+                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_by[0]->position." : ".$verified_by[0]->name.' ) </b></span></div>';
+                        }
+                        if($row_action->approved_date!=Null){
+                              echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Approved By : <b> ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) </b></span></div>';
+                          }
                         if($remarks!=""){
-                            echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;">Remark : </span>'.$remarks.'</div>';
+                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remarks from ( Verifier ) : </span>'.$remarks.'</div>';
                         }
                         echo '</div>';     
                     }
@@ -303,8 +377,8 @@ $option1 = "id='selected-sidebar'";
                 ?>
                 @if(count($action)==0)
                 <div class="row" style="border: 0px solid black;margin:-10px 0px 0px 0px;padding:0px;">
-                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">The Final Assessment ( FA ) : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
-                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;">Status : <span class="status"></span></span></div>
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> The Final Assessment ( FA ) : <b class="mark_color"> <span id="mark">{{$mark}}</span> / <span class="total"></span></b></span></div>
+                  <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : <span class="status"></span></span></div>
                 </div>
                 @endif
                 <input type="hidden" id="moderation_done" value="{{$moderation_done}}">

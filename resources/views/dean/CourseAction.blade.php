@@ -85,12 +85,31 @@ $option1 = "id='selected-sidebar'";
                             </center>
                         </a>
                     </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/E_Portfolio/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/portfolio.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 0px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">E - PortFolio</p>
+                            </center>
+                        </a>
+                    </div>
                 </div>
             </div>
             <hr class="row" style="background-color: black;padding: 0px; margin:0px;">
             <p class="page_title">Past Year</p>
             <div class="details" style="padding: 5px 5px 0px 5px;">
                 <div class="row">
+
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/PastYearNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/note.png')}}" width="75px" height="80px" style="margin-top: 60px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Lecture Note</p>
+                            </center>
+                        </a>
+                    </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
                         <a href="/PastYear/assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
@@ -109,17 +128,6 @@ $option1 = "id='selected-sidebar'";
                             </center>
                         </a>
                     </div>
-
-                    <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/PastYearNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
-                            <center>
-                            <img src="{{url('image/note.png')}}" width="75px" height="80px" style="margin-top: 60px;"/>
-                            <br>
-                            <p style="color: #0d2f81;">Lecture Note</p>
-                            </center>
-                        </a>
-                    </div>
-
                     <!-- <div class="col-md-3" style="margin-bottom: 20px">
                         <a href="/PastYearTP/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>

@@ -316,12 +316,10 @@ $option4 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    @if($row->position=="HoD")
-                                                        @if($row->faculty_id==$faculty_id)
-                                                            <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                        @else
-                                                            <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                        @endif
+                                                    @if($row->faculty_id==$faculty_id)
+                                                        <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
+                                                    @else
+                                                        <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -332,7 +330,7 @@ $option4 = "id='selected-sidebar'";
                             </div>
                         </div>
 
-                        <div class="row" id="form_dean">
+                        <!-- <div class="row" id="form_dean">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
@@ -360,7 +358,7 @@ $option4 = "id='selected-sidebar'";
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <input type="hidden" name="lecturer" id="lecturer">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">

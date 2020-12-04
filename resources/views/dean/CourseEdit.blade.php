@@ -345,9 +345,7 @@ $option4 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    @if($row->position=="HoD")
-                                                        <option <?php if($row->id==$course[0]->verified_by){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                    @endif
+                                                    <option <?php if($row->id==$course[0]->verified_by){ echo "selected"; }?> value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
                                                 @endif
                                             @endforeach
                                         </optgroup>
@@ -357,7 +355,7 @@ $option4 = "id='selected-sidebar'";
                             </div>
                         </div>
 
-                        <div class="row" id="form_dean">
+                        <!-- <div class="row" id="form_dean">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
@@ -381,7 +379,7 @@ $option4 = "id='selected-sidebar'";
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <input type="hidden" name="lecturer" id="lecturer" value="{{$course[0]->lecturer}}">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">

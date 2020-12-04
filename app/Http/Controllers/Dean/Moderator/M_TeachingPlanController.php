@@ -25,6 +25,7 @@ class M_TeachingPlanController extends Controller
 		$user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -40,8 +41,15 @@ class M_TeachingPlanController extends Controller
         $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
+        $approved_by = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('users.position', '=', 'HoD')
+                 ->where('staffs.department_id','=',$department_id)
+                 ->get();
+
+        // $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        // $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
         $TP = DB::table('teaching_plan')
         	->select('teaching_plan.*')
@@ -72,7 +80,7 @@ class M_TeachingPlanController extends Controller
                   ->get();
 
         if(count($course)>0){
-            return view('dean.Moderator.Teaching_Plan.M_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by','approved_person_name'));
+            return view('dean.Moderator.Teaching_Plan.M_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by'));
         }else{
             return redirect()->back();
         }
