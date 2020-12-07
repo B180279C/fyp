@@ -11,6 +11,6 @@ class Staff extends Model
 	protected $primaryKey = 'id';
 	
     protected $fillable = [
-        'user_id','staff_id', 'department_id','faculty_id','staff_image','lecturer_CV'
+        'user_id','staff_id', 'department_id','faculty_id','staff_image','lecturer_CV','staff_sign'
     ];
 }

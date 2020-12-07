@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Image;
 use App\Staff;
 use App\User;
 use App\Teaching_Plan;
@@ -686,7 +687,7 @@ class TeachingPlanController extends Controller
       $action = DB::table('action_v_a')
                   ->select('action_v_a.*')
                   ->where('course_id', '=', $id)
-                  ->orderBy('action_id')
+                  ->orderByDesc('action_id')
                   ->get();
 
         $path = storage_path('private/syllabus/'.$course[0]->syllabus);
@@ -714,7 +715,6 @@ class TeachingPlanController extends Controller
     // New section
     $section = $phpWord->addSection(array('marginLeft' => 700, 'marginRight' => 700,'marginTop' => 1000, 'marginBottom' => 1000));
     $header = $section->addHeader();
-
     $styleTable = array('borderSize' => 6, 'borderColor' => 'black', 'cellMargin' => 10);
     $phpWord->addTableStyle('header', $styleTable);
     $table = $header->addTable('header');
@@ -1002,22 +1002,11 @@ class TeachingPlanController extends Controller
     $phpWord->addTableStyle('Sign Table', $styleTable);
     $table = $section->addTable('Sign Table');
     $styleCell = array('valign' => 'center');
-    $table->addRow(1000);
-    $table->addCell(4000)->addText('Prepared By: ',null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Moderated By: ', null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Approved By: ', null, $noSpaceAndLeft);
-
     $Moderator = DB::table('staffs')
                  ->join('users','staffs.user_id','=','users.user_id')
                  ->select('staffs.*','users.*')
                  ->where('staffs.id', '=', $course[0]->moderator)
                  ->get();
-
-    // $verified_by = DB::table('staffs')
-    //              ->join('users','staffs.user_id','=','users.user_id')
-    //              ->select('staffs.*','users.*')
-    //              ->where('staffs.id', '=', $course[0]->verified_by)
-    //              ->get();
 
     $verified_by = DB::table('staffs')
                  ->join('users','staffs.user_id','=','users.user_id')
@@ -1026,10 +1015,50 @@ class TeachingPlanController extends Controller
                  ->where('staffs.department_id','=',$department_id)
                  ->get();
 
+    // $verified_by = DB::table('staffs')
+    //              ->join('users','staffs.user_id','=','users.user_id')
+    //              ->select('staffs.*','users.*')
+    //              ->where('staffs.id', '=', $course[0]->verified_by)
+    //              ->get();
+
     $table->addRow(1);
-    $table->addCell(4000)->addText('Name: '.$course[0]->name.'<w:br/>Course Coordinator',null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Name: '.$Moderator[0]->name.'<w:br/>Moderator', null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Name: '.$verified_by[0]->name.'<w:br/>'.$verified_by[0]->position, null, $noSpaceAndLeft);
+    if($action[0]->prepared_date!=NULL){
+      if($course[0]->staff_sign!=NULL){
+        $s_p = storage_path('/private/staffSign/'.$course[0]->staff_sign);
+        $table->addCell(4000)->addImage($s_p,array('width'=>80, 'height'=>40, 'align'=>'center'));
+      }else{
+        $table->addCell(4000,$styleCell)->addText($course[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+      }
+    }else{
+      $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
+    }
+
+    if($action[0]->verified_date!=NULL){
+      if($Moderator[0]->staff_sign!=NULL){
+        $s_m = storage_path('/private/staffSign/'.$Moderator[0]->staff_sign);
+        $table->addCell(4000)->addImage($s_m,array('width'=>80, 'height'=>40, 'align'=>'center'));
+      }else{
+        $table->addCell(4000,$styleCell)->addText($Moderator[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+      }
+    }else{
+      $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
+    }
+
+    if($action[0]->approved_date!=NULL){
+      if($verified_by[0]->staff_sign!=NULL){
+        $s_v = storage_path('/private/staffSign/'.$verified_by[0]->staff_sign);
+        $table->addCell(4000)->addImage($s_v,array('width'=>80, 'height'=>40, 'align'=>'center'));
+      }else{
+        $table->addCell(4000,$styleCell)->addText($verified_by[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+      }
+    }else{
+      $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
+    }
+
+    $table->addRow(1);
+    $table->addCell(4000)->addText('Prepared By : '.$course[0]->name.'<w:br/>Course Coordinator',null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Moderated By: '.$Moderator[0]->name.'<w:br/>Moderator', null, $noSpaceAndLeft);
+    $table->addCell(4000)->addText('Approved By : '.$verified_by[0]->name.'<w:br/>'.$verified_by[0]->position, null, $noSpaceAndLeft);
 
     $table->addRow(1);
     $table->addCell(4000)->addText('Date: '.$action[0]->prepared_date,null, $noSpaceAndLeft);
@@ -1059,7 +1088,7 @@ class TeachingPlanController extends Controller
         'action_type'   => "TP",
         'status'        => "Waiting For Verified",
         'for_who'       => "Moderator",
-        'prepared_date' => date("Y-j-n"),
+        'prepared_date' => date("Y-n-j"),
       ]);
       $action->save();
       return redirect()->back()->with('success','Teaching Plan Submitted to Moderator Successfully');

@@ -254,6 +254,9 @@
                         <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('Profile') }}">
+                            Profile
+                        </a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                 document.getElementById('logout-form').submit();">
@@ -317,10 +320,10 @@
                     </ul>
                     <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Management</p>
                     <ul class="sidebar-ul">
-                    <a href="/CoursePortFolio">
+                    <a href="/CourseList">
                         <li class="sidebar-li" <?php if(isset($option5)){ echo $option5;};?>>
                                 <i class="fa fa-book sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
-                                <span style="padding-left: 20px;font-weight: bold;">Course</span>
+                                <span style="padding-left: 20px;font-weight: bold;">Courses</span>
                         </li>
                     </a>
                     </ul>

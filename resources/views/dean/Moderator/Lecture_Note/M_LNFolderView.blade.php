@@ -223,7 +223,7 @@ $option3 = "id='selected-sidebar'";
 </style>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
             <a href="/Moderator/">Moderator </a>/

@@ -208,7 +208,7 @@ class FinalExaminationResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_All" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="/FinalResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -263,7 +263,7 @@ class FinalExaminationResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_Lecturer" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="/FinalResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -296,7 +296,7 @@ class FinalExaminationResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$sow->student_id.'_Students" class="group_student group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/view/student/'.$sow->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="/FinalResult/view/student/'.$sow->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';

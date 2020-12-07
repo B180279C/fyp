@@ -168,7 +168,7 @@ $(document).on('click', '#checkDownloadAction', function(){
             <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <a href="/AssessmentResult/{{$course[0]->course_id}}/question/{{$assessments->assessment}}">{{$assessments->assessment}} ( R )</a>/
-            <a href="/AssessmentResult/studentResult/{{$assessments->ass_id}}/" class="first_page">{{$assessments->assessment_name}}</a>/
+            <a href="/AssessmentResult/studentResult/{{$assessments->ass_id}}/">{{$assessments->assessment_name}}</a>/
             <span class="now_page">{{$assessment_result_student->student_id}}</span>/
         </p>
         <hr class="separate_hr">

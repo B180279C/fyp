@@ -6,11 +6,6 @@ $option1 = "id='selected-sidebar'";
 
 @section('content')
 <style type="text/css">
-.question_link:hover{
-    background-color: #d9d9d9;
-    text-decoration: none;
-    color: #0d2f81;
-}
 #show_image_link:hover{
     text-decoration: none;
 }
@@ -97,7 +92,7 @@ $option1 = "id='selected-sidebar'";
   }
 
   function ModerationForm(actionFA_id){
-    window.location = "/Moderator/FinalExamination/report/"+actionFA_id;
+    window.location = "/FinalExamination/report/"+actionFA_id;
     return false;
   }
   $(document).ready(function(){

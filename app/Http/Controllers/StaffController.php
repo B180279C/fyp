@@ -118,20 +118,6 @@ class StaffController extends Controller
         return Image::make($storagePath)->response();
     }
 
-    public function profileImage($image_name)
-    {
-        $user_id    = auth()->user()->user_id;
-        $checkImageFaculty = Staff::where('staff_image', '=', $image_name)->firstOrFail();
-        $image_user_id = $checkImageFaculty->user_id;
-        if($user_id==$image_user_id){
-            $storagePath = storage_path('/private/staffImage/' . $image_name);
-            return Image::make($storagePath)->response();
-        }else{
-            return redirect()->route('login');
-        }
-        // $storagePath = storage_path('/private/staffImage/' . $image_name);
-        // return Image::make($storagePath)->response();
-    }
 
     public function downloadCV($id)
     {

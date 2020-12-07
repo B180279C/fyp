@@ -51,7 +51,7 @@ $option3 = "id='selected-sidebar'";
                 </table>
             </div>
             <hr class="row" style="background-color: black;padding: 0px; margin:0px;">
-            <p class="page_title">Detail</p>
+            <p class="page_title">Materials</p>
             <div class="details" style="padding: 5px 5px 0px 5px;">
                 <div class="row">
                     <div class="col-md-3" style="margin-bottom: 20px">
@@ -81,7 +81,35 @@ $option3 = "id='selected-sidebar'";
                             </center>
                         </a>
                     </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/Moderator/viewAssessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Continuous Assessment</p>
+                            </center>
+                        </a>
+                    </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/Moderator/FinalExam/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/final.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 10px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Final Assessment</p>
+                            </center>
+                        </a>
+                    </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="/Moderator/E_Portfolio/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/portfolio.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 0px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">E - PortFolio</p>
+                            </center>
+                        </a>
+                    </div>
                 </div>
+                <hr class="row" style="background-color: black;padding: 0px; margin:0px;">
                 <p class="page_title">Moderation</p>
                 <div class="row" style="margin-top: 5px;">
                     <div class="col-md-3" style="margin-bottom: 20px">

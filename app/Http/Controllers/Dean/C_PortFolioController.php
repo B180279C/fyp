@@ -35,7 +35,7 @@ class C_PortFolioController extends Controller
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')
                     ->get();
-        return view('dean.CoursePortFolio',compact('faculty','course'));
+        return view('dean.CoursePortFolio.CoursePortFolio',compact('faculty','course'));
     }
 
     public function searchCourse(Request $request)
@@ -123,5 +123,33 @@ class C_PortFolioController extends Controller
             }
         }
         return $result;
+    }
+
+    public function CourseListAction($id)
+    {
+        $user_id     = auth()->user()->user_id;
+        $staff_dean  = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id  = $staff_dean->faculty_id;
+        $faculty     = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
+        $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
+        $semester_id = $last_semester->semester_id;
+        $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                    ->where('courses.course_id','=',$id)
+                    ->where('courses.status','=','Active')
+                    ->orderBy('programmes.programme_id')
+                    ->get();
+
+        if(count($course)>0){
+            return view('dean.CoursePortFolio.CourseListAction',compact('course','id'));
+        }else{
+            return redirect()->back();
+        }
     }
 }

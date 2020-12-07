@@ -197,7 +197,6 @@ $option1 = "id='selected-sidebar'";
         <div class="col-md-4">
             <div class="img">
                 <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
-                <hr style="margin: 0px;">
                 <center>
                     @if($staff->staff_image == "")
                     <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
@@ -207,7 +206,7 @@ $option1 = "id='selected-sidebar'";
                     <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                     </form>
                     @else
-                        <div style="margin: 50px 0px 20px 0px;" id="form_image">
+                        <div style="margin: 20px 0px 20px 0px;" id="form_image">
                             <input type="hidden" id="image" value="{{$staff->staff_image}}">
                             <img src="{{ action('StaffController@show',$staff->staff_image) }}" width="auto" height="100px" style="border-radius:10%;" />
                             <br>
@@ -224,7 +223,6 @@ $option1 = "id='selected-sidebar'";
             <hr>
             <div class="CV">
                 <p class="page_title" style="position: relative;left: 0px ;top: -10px;">Staff CV</p>
-                <hr style="margin: 0px;">
                 <center>
                 @if($staff->lecturer_CV == "")
                 <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
@@ -234,7 +232,7 @@ $option1 = "id='selected-sidebar'";
                     <input type="hidden" name="staff_id" value="{{$id}}">
                 </form>
                 @else
-                    <div style="margin: 50px 0px 20px 0px;" id="form_CV">
+                    <div style="margin: 0px 0px 20px 0px;" id="form_CV">
                             <input type="hidden" id="CV" value="{{$staff->lecturer_CV}}">
                             <?php
                             $ext = "";
@@ -242,7 +240,7 @@ $option1 = "id='selected-sidebar'";
                                 $ext = explode(".", $staff->lecturer_CV);
                             }
                             ?>
-                            <a href="{{ action('StaffController@downloadCV',$staff->staff_id) }}" id="download_link">
+                            <a href="/staff/CV/{{$staff->staff_id}}" id="download_link">
                             <div id="download">
                             @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
@@ -271,7 +269,6 @@ $option1 = "id='selected-sidebar'";
         <div class="col-md-8" >
             <div id="box" class="details" style="padding-bottom: 0px;">
                 <p class="page_title" style="position: relative;left: -5px ;top: 0px;">Staff Details</p>
-                <hr style="margin: 0px;">
                     @if(count($errors) > 0)
                         <div class="alert alert-danger">
                             <ul>
@@ -310,7 +307,7 @@ $option1 = "id='selected-sidebar'";
                                     <i class="fa fa-id-badge" aria-hidden="true" style="font-size: 18px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="row">
                                     <div class="col">
                                         <div class="form-group">
@@ -333,7 +330,7 @@ $option1 = "id='selected-sidebar'";
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="full_name" class="bmd-label-floating">Name</label>
                                     <input type="text" name="name" value="{{$user->name}}" class="form-control full_name" id="input" onkeyup="myFunction()" required>
@@ -346,7 +343,7 @@ $option1 = "id='selected-sidebar'";
                                     <i class="fa fa-briefcase" aria-hidden="true" style="font-size: 17px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="Position" class="label">Position</label>
                                     <select class="selectpicker form-control" name="position" id="position" data-width="100%" title="Choose one" required>
@@ -363,7 +360,7 @@ $option1 = "id='selected-sidebar'";
                                     <i class="fa fa-home" aria-hidden="true" style="font-size: 20px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="faculty" class="label">{{ __('Faculty') }}</label>
                                     <select class="selectpicker form-control" name="faculty" id="faculty" data-width="100%" title="Choose one" required>
@@ -385,7 +382,7 @@ $option1 = "id='selected-sidebar'";
                                     <i class="fa fa-address-book" aria-hidden="true" style="font-size: 17px;padding-left: 1px;"></i>
                                 </p>
                             </div>
-                            <div class="col-10" style="padding-left: 20px;">
+                            <div class="col-11" style="padding-left: 20px;">
                                 <div class="form-group">
                                     <label for="department" class="label">{{ __('Department ') }}</label>
                                     <select class="selectpicker form-control" name="department" data-width="100%" title="Choose one" data-live-search="true" id="department" required>

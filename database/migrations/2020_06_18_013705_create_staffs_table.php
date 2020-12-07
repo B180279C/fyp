@@ -21,6 +21,7 @@ class CreateStaffsTable extends Migration
             $table->string('faculty_id');
             $table->text('staff_image')->nullable();
             $table->text('lecturer_CV')->nullable();
+            $table->text('staff_sign')->nullable();
             $table->timestamps();
         });
     }

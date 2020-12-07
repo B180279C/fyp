@@ -339,6 +339,10 @@ ul.sidebar-action-ul a:hover{
   color: black!important;
   text-decoration: underline;
 }
+#edit_Sign:hover{
+  color: black!important;
+  text-decoration: underline;
+}
 
 .dz-image img{
   width: 100px;

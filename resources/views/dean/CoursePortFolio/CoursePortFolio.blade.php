@@ -1,6 +1,6 @@
 <?php
-$title = "Department";
-$option4 = "id='selected-sidebar'";
+$title = "CoursePortfolio";
+$option5 = "id='selected-sidebar'";
 ?>
 @extends('layouts.nav_dean')
 
@@ -26,7 +26,7 @@ $option4 = "id='selected-sidebar'";
           var value = $('.search').val();
           $.ajax({
               type:'POST',
-              url:'/searchCourse',
+              url:'/searchCPCourse',
               data:{value:value},
               success:function(data){
                 document.getElementById("course").innerHTML = data;
@@ -37,7 +37,7 @@ $option4 = "id='selected-sidebar'";
             var value = $('.search').val();
             $.ajax({
                type:'POST',
-               url:'/searchCourse',
+               url:'/searchCPCourse',
                data:{value:value},
                success:function(data){
                     document.getElementById("course").innerHTML = data;
@@ -50,14 +50,14 @@ $option4 = "id='selected-sidebar'";
         $(document).on('click', '.edit_action', function(){
             var id = $(this).attr("id");
             var num = id.split("_");
-            window.location="/course/"+num[2]+"";
+            window.location="/CourseList/"+num[2]+"";
             return false;
         });
         $(document).on('click', '.remove_action', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
           if(confirm('Are you sure you want to remove the it?')) {
-            window.location = "/course/remove/"+num[2];
+            window.location = "/CourseList/remove/"+num[2];
           }
           return false;
         });
@@ -112,35 +112,29 @@ $option4 = "id='selected-sidebar'";
         },
         success: function(file, response) {
             console.log(response);
-            var table = document.getElementById("dtBasicExample");
+            var table = document.getElementById("table");
             for(var i = 0; i<response.length; i++){
               if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
                 break;
               }
-                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['verified_by_staff_id']!=null)&&(response[i]['approved_by_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['lecturer_staff_id']!=response[i]['moderator_staff_id'])){
+                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['lecturer_staff_id']!=response[i]['moderator_staff_id'])){
                   var row = table.insertRow(1+i);
                   var cell = row.insertCell(0);
                   var cell1 = row.insertCell(1);
                   var cell2 = row.insertCell(2);
                   var cell3 = row.insertCell(3);
                   var cell4 = row.insertCell(4);
-                  var cell5 = row.insertCell(5);
-                  var cell6 = row.insertCell(6);
                   cell.innerHTML  = (i+1);
                   cell1.innerHTML = response[i]['semester']+ " : " +response[i]['programme_short_form_name']+" / "+response[i]['subject_code'] +" "+ response[i]['subject_name']
                   cell2.innerHTML = response[i]['credit'];
                   cell3.innerHTML = response[i]['lecturer_staff_id'];
                   cell4.innerHTML = response[i]['moderator_staff_id'];
-                  cell5.innerHTML = response[i]['verified_by_staff_id'];
-                  cell6.innerHTML = response[i]['approved_by_staff_id'];
-                  cell.className  = 'tablebody';
+                  cell.className  = 'tablebodyCenter';
                   cell1.className = 'tablebody';
-                  cell2.className = 'tablebody';
-                  cell3.className = 'tablebody';
-                  cell4.className = 'tablebody';
-                  cell5.className = 'tablebody';
-                  cell6.className = 'tablebody';
-                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='verified_by"+i+"' name='verified_by"+i+"' value='"+response[i]['verified_by_staff_id']+"'><input type='hidden' id='approved_by"+i+"' name='approved_by"+i+"' value='"+response[i]['approved_by_staff_id']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'>");
+                  cell2.className = 'tablebodyCenter';
+                  cell3.className = 'tablebodyCenter';
+                  cell4.className = 'tablebodyCenter';
+                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'>");
                   $('#showData').show();
                   $('#errorData').hide();
                 }else{
@@ -181,10 +175,13 @@ $option4 = "id='selected-sidebar'";
   padding-left: 25px;
 }
 .tablebody{
-  background-color: white!important;
-  color: black;
-  height: 60px;
-  padding-left: 10px;
+  border-left:1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+.tablebodyCenter{
+  border-left:1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  text-align: center;
 }
 .tablehead{
   background-color: #0d2f81!important; color: gold;
@@ -197,23 +194,23 @@ $option4 = "id='selected-sidebar'";
 </style>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Dean</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Courses</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <span class="now_page">All Courses</span>/
+            <span class="now_page">Courses</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px;">
         <div class="col-md-12">
-             <p class="page_title">All Courses</p>
+             <p class="page_title">Courses In {{$faculty->faculty_name}}</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
-                      <a href='course/create'><li class="sidebar-action-li"><i class="fa fa-book" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Course</li></a>
+                      <a href='CourseList/create'><li class="sidebar-action-li"><i class="fa fa-book" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Course</li></a>
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Add Multple Courses</li></a>
                   </ul>
             </div>
@@ -257,24 +254,8 @@ $option4 = "id='selected-sidebar'";
                   <div class="col-md-12">
                     <p style="font-size: 18px;margin:0px 0px 0px 10px;">Newest Semester of Courses</p>
                   </div>
-                  @foreach($course_reviewer as $row)
-                        <a href="/Dean/course/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
-                              <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
-                            </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;"><b>{{$row->semester_name}}</b> : {{$row->short_form_name}} / {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</p>
-                            </div>
-                            <div class="col-1" id="course_action">
-                                <i class="fa fa-wrench edit_action" aria-hidden="true" id="edit_button_{{$row->course_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                                <i class="fa fa-times remove_action" aria-hidden="true" id="remove_button_{{$row->course_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                            </div>
-                          </div>
-                        </a>
-                      @endforeach
                       @foreach($course as $row)
-                        <a href="/Dean/course/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
+                        <a href="/CourseList/action/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 3px;">
                               <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
@@ -317,16 +298,14 @@ $option4 = "id='selected-sidebar'";
         @csrf
       </form>
       <div id="showData" style="padding: 0px 20px 20px 20px;overflow-x:auto;">
-        <table id="dtBasicExample" style="box-shadow: 0px 2px 5px #aaaaaa;border:none;width:100%;">
-          <thead class="tablehead">
-            <tr style="height: 60px;text-align: left;">
-              <th style="padding-left: 10px;">No</th>
-              <th style="padding-left: 10px;">Subject</th>
-              <th style="padding-left: 10px;">Credit</th>
-              <th style="padding-left: 10px;">Lecturer</th>
-              <th style="padding-left: 10px;">Moderator</th>
-              <th style="padding-left: 10px;">Verified By</th>
-              <th style="padding-left: 10px;">Approved By</th>
+        <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
+          <thead>
+            <tr style="background-color: #d9d9d9;">
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>No</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Subject</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b><center>Credit</center></b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b><center>Lecturer</center></b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b><center>Moderator</center></b></th>
             </tr>
           </thead>
         </table>

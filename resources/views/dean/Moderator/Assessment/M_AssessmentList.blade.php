@@ -124,7 +124,7 @@ function Submit_Moderation(){
 $(document).ready(function(){
   $(document).on("click","#downloadReport", function(){
     var actionCA_id = $('#actionCA_id').val();
-    window.location = "/Dean/Assessment/report/"+actionCA_id;
+    window.location = "/Moderator/Assessment/report/"+actionCA_id;
   });
   $('#less').hide();
     $(document).on("click",".more", function(){
@@ -196,10 +196,10 @@ $(document).ready(function(){
 </script>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Courses </a>/
+            <a href="/Moderator">Moderator </a>/
             <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Continuous Assessment</span>/
         </p>

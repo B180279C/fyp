@@ -1,6 +1,6 @@
 <?php
-$title = "Department";
-$option4 = "id='selected-sidebar'";
+$title = "CoursePortFolio";
+$option5 = "id='selected-sidebar'";
 ?>
 @extends('layouts.nav_dean')
 
@@ -88,7 +88,7 @@ $option4 = "id='selected-sidebar'";
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty_name->faculty_name}}</p>
         <p class="pass_page">
             <a href="/home" class="first_page"> Home </a>/
-            <a href="/Dean">Courses</a>/
+            <a href="/CourseList">Courses</a>/
             <span class="now_page">Add Course</span>/
         </p>
         <hr class="separate_hr">
@@ -302,7 +302,7 @@ $option4 = "id='selected-sidebar'";
                         </div>
 
 
-                        <div class="row" id="form_hod">
+                        <!-- <div class="row" id="form_hod">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
@@ -328,7 +328,7 @@ $option4 = "id='selected-sidebar'";
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- <div class="row" id="form_dean">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">

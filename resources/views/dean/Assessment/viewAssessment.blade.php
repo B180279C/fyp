@@ -117,7 +117,7 @@ $option1 = "id='selected-sidebar'";
   }
 
 function ModerationForm(actionCA_id){
-  window.location = "/Moderator/Assessment/report/"+actionCA_id;
+  window.location = "/Assessment/report/"+actionCA_id;
   return false;
 }
 
@@ -443,7 +443,7 @@ function ModerationForm(actionCA_id){
                 <hr style="margin: 5px 5px 0px 5px;background-color:black;">
                 <p style="padding: 5px 5px 5px 12px;margin: 0px;font-size: 18px;">Assessment List</p>
                 <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
-                  <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
+                  <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table table-hover">
                     <thead>
                         <tr style="background-color: #d9d9d9;">
                           <td><b>Continuous Assessment List ( {{$course[0]->semester_name}} )</b></td>

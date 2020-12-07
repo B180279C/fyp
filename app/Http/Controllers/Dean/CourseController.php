@@ -95,7 +95,7 @@ class CourseController extends Controller
                     ->orderByDesc('semesters.semester_name')
                     ->get();
         $faculty = Faculty::all()->toArray();
-        return view('dean.CourseCreate', compact('programme', 'staffs','lct','faculty','faculty_name','semester','moderator','reviewer','faculty_id'));
+        return view('dean.CoursePortFolio.CourseCreate', compact('programme', 'staffs','lct','faculty','faculty_name','semester','moderator','reviewer','faculty_id'));
     }
 
     /**
@@ -220,7 +220,7 @@ class CourseController extends Controller
                     ->where('users.position','!=','admin')
                     ->get();
 
-        return view('dean.CourseEdit', compact('programme', 'staffs','lct','faculty','faculty_name','semester','group','subjects','course','count_staff_InFaculty','moderator', 'id','reviewer'));
+        return view('dean.CoursePortFolio.CourseEdit', compact('programme', 'staffs','lct','faculty','faculty_name','semester','group','subjects','course','count_staff_InFaculty','moderator', 'id','reviewer'));
     }
 
     /**

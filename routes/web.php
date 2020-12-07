@@ -54,7 +54,6 @@ Route::middleware('is_admin')->group(function(){
 	     'middleware' => 'auth',
 	]);
 	Route::get('/staff/CV/{id}','StaffController@downloadCV')->name('admin.downloadCV');
-
 	Route::get('/staff/{id}','StaffController@edit')->name('admin.staff_list.edit');
 	Route::post('/staff/{id}','StaffController@update')->name('staff_list.update.submit');
 	Route::post('/staffFaculty', 'StaffController@staffFaculty');
@@ -122,6 +121,7 @@ Route::middleware('is_hod')->group(function(){
 	Route::get('hod/home', 'HomeController@hodHome')->name('hod.home');
 });
 Route::middleware('is_dean')->group(function(){
+	
 	include('dean.php');
 });
 
