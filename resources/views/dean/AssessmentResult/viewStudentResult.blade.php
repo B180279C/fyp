@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -134,7 +134,7 @@ $option1 = "id='selected-sidebar'";
     if(checkedValue!=""){
       var ass_id = $('#ass_id').val();
       var id = ass_id+"---"+checkedValue;
-      window.location = "/AssessmentResult/download/zipFiles/"+id+"/checked";
+      window.location = "{{$character}}/AssessmentResult/download/zipFiles/"+id+"/checked";
     }else{
       alert("Please select the document first.");
     }
@@ -205,7 +205,7 @@ $option1 = "id='selected-sidebar'";
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
                 type: 'POST',
-                url: '{{ url("/ass_rs_destoryFiles") }}',
+                url: '{{ url($character."/ass_rs_destoryFiles") }}',
                 data: {filename: name},
                 success: function (data){
                     console.log("File has been successfully removed!!");
@@ -302,7 +302,7 @@ $option1 = "id='selected-sidebar'";
       var ass_id = $('#ass_id').val();
       $.ajax({
           type:'POST',
-          url: "/AssessmentResult/searchStudentList/",
+          url: "{{$character}}/AssessmentResult/searchStudentList/",
           data:{value:value,course_id:course_id,ass_id:ass_id},
           success:function(data){
             document.getElementById("student_list").innerHTML = data;
@@ -326,7 +326,7 @@ $option1 = "id='selected-sidebar'";
         var ass_id = $('#ass_id').val();
         $.ajax({
            type:'POST',
-           url: "/AssessmentResult/searchStudentList/",
+           url: "{{$character}}/AssessmentResult/searchStudentList/",
            data:{value:value,course_id:course_id,ass_id:ass_id},
            success:function(data){
               document.getElementById("student_list").innerHTML = data;
@@ -350,16 +350,16 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
-            <a href="/AssessmentResult/{{$course[0]->course_id}}/question/{{$assessments->assessment}}">{{$assessments->assessment}} ( R )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/AssessmentResult/{{$course[0]->course_id}}/question/{{$assessments->assessment}}">{{$assessments->assessment}} ( R )</a>/
             <span class="now_page">{{$assessments->assessment_name}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
             <p class="page_title">{{$assessments->assessment_name}}</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -372,7 +372,7 @@ $option1 = "id='selected-sidebar'";
                       @if((count($lecturer_result)!=0)||(count($student_result)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/AssessmentResult/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/AssessmentResult/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   	</ul>
                 </div>
@@ -425,7 +425,7 @@ $option1 = "id='selected-sidebar'";
                           <div class="checkbox_style align-self-center">
                             <input type="checkbox" name="group{{$lr_row->ar_stu_id}}" value="{{$lr_row->student_id}}_Lecturer" class="group_lecturer group_download">
                           </div>
-			                    <a href='/AssessmentResult/view/student/{{$lr_row->ar_stu_id}}/' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
+			                    <a href='{{$character}}/AssessmentResult/view/student/{{$lr_row->ar_stu_id}}/' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
 			                      <div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">
 			                        <div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">
 			                          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
@@ -460,7 +460,7 @@ $option1 = "id='selected-sidebar'";
                           <div class="checkbox_style align-self-center">
                             <input type="checkbox" name="group{{$sr_row->ar_stu_id}}" value="{{$sr_row->student_id}}_Students" class="group_student group_download">
                           </div>
-			                    <a href='/AssessmentResult/view/student/{{$sr_row->ar_stu_id}}/' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
+			                    <a href='{{$character}}/AssessmentResult/view/student/{{$sr_row->ar_stu_id}}/' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
 			                      <div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">
 			                        <div class="col-1" style="position: relative;top: -2px; padding-left: 2px;">
 			                          <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
@@ -497,11 +497,11 @@ $option1 = "id='selected-sidebar'";
         </button>
       </div>
       <div id="error-message" style="margin: 5px 20px;"></div>
-      <form method="post" action="{{action('Dean\AssessmentResultController@uploadFiles')}}" enctype="multipart/form-data"
+      <form method="post" action="{{$character}}/ass_rs_uploadFiles" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin:0px 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
       </form>
-      <form method="post" action="{{action('Dean\AssessmentResultController@storeFiles')}}" id="myForm">
+      <form method="post" action="{{$character}}/ass_rs_storeFiles" id="myForm">
         {{csrf_field()}}
         <input type="hidden" name="count{{$assessments->ass_id}}" value="0" id="count">
         <input type="hidden" value="{{$course[0]->course_id}}" name="course_id">

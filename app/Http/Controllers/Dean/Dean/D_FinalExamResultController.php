@@ -21,19 +21,35 @@ class D_FinalExamResultController extends Controller
     	$user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+       if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         $lecturer_result = DB::table('assessment_final_result')
                  ->join('students','students.student_id', '=', 'assessment_final_result.student_id')
@@ -56,7 +72,7 @@ class D_FinalExamResultController extends Controller
                  ->get();
 
         if(count($course)>0){
-            return view('dean.Dean.FinalExamResult.viewFinalResult',compact('course','lecturer_result','student_result'));
+            return view('dean.Reviewer.FinalExamResult.viewFinalResult',compact('course','lecturer_result','student_result'));
         }else{
             return redirect()->back();
         }
@@ -67,23 +83,39 @@ class D_FinalExamResultController extends Controller
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
         $assessment_final_result = AssessmentFinalResult::where('fxr_id', '=', $fxr_id)->firstOrFail();
         $student_id = $assessment_final_result->student_id;
         $course_id = $assessment_final_result->course_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $course_id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         $lecturer_result = DB::table('assessment_final_result')
                  ->join('students','students.student_id', '=', 'assessment_final_result.student_id')
@@ -108,7 +140,7 @@ class D_FinalExamResultController extends Controller
                  ->get();
 
         if(count($course)>0){
-            return view('dean.Dean.FinalExamResult.viewResultList',compact('course','assessment_final_result','lecturer_result','student_result'));
+            return view('dean.Reviewer.FinalExamResult.viewResultList',compact('course','assessment_final_result','lecturer_result','student_result'));
         }else{
             return redirect()->back();
         }
@@ -119,6 +151,12 @@ class D_FinalExamResultController extends Controller
     {
         $value         = $request->get('value');
         $course_id     = $request->get('course_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
 
         $result = "";
         if($value!=""){
@@ -155,7 +193,7 @@ class D_FinalExamResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_All" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/Dean/FinalResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/Reviewer/FinalResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -210,7 +248,7 @@ class D_FinalExamResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_Lecturer" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/Dean/FinalResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/Reviewer/FinalResult/view/student/'.$row->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -243,7 +281,7 @@ class D_FinalExamResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$sow->student_id.'_Students" class="group_student group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/Dean/FinalResult/view/student/'.$sow->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/Reviewer/FinalResult/view/student/'.$sow->fxr_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -267,22 +305,38 @@ class D_FinalExamResultController extends Controller
     	$user_id    = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
         $checkCSSID = AssessmentFinalResult::where('document', '=', $image_name)->firstOrFail();
         $course_id = $checkCSSID->course_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $course_id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         if(count($course)>0){
             $storagePath = storage_path('/private/Final_Result/' . $image_name);
@@ -297,23 +351,39 @@ class D_FinalExamResultController extends Controller
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
         $checkCID = AssessmentFinalResult::where('fxr_id', '=', $fxr_id)->firstOrFail();
         $course_id = $checkCID->course_id;
         $submitted_by = $checkCID->submitted_by;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $course_id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         $assessment_result_list = DB::table('assessment_final_result')
                                 ->select('assessment_final_result.*')
@@ -322,7 +392,7 @@ class D_FinalExamResultController extends Controller
                                 ->where('assessment_final_result.student_id','=',$checkCID->student_id)
                                 ->get();
         if(count($course)>0){
-            return view('dean.FinalExamResult.viewWholePaper', compact('assessment_result_list','checkCID','submitted_by'));
+            return view('dean.Reviewer.FinalExamResult.viewWholePaper', compact('assessment_result_list','checkCID','submitted_by'));
         }else{
             return redirect()->back();
         }
@@ -333,23 +403,39 @@ class D_FinalExamResultController extends Controller
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
         $assessment_final_result = AssessmentFinalResult::where('fxr_id', '=', $fxr_id)->firstOrFail();
         $course_id = $assessment_final_result->course_id;
         $student_id = $assessment_final_result->student_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $course_id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $course_id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         if(count($course)>0){
             $ext = "";

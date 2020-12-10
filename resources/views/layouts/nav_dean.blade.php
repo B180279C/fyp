@@ -62,7 +62,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
     <link rel="stylesheet" href="{{ asset('ekko-lightbox.css')}}">
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.js" crossorigin="anonymous"></script>
-    <script type="text/javascript">
+    <!-- <script type="text/javascript">
         $().ready(function() {
            $('[data-toggle="lightbox"]').click(function(event) {
              event.preventDefault();
@@ -98,6 +98,9 @@
                      data_title.css('font-size','18px');
 
                      body.css('padding-top','0px');
+                     body.css('padding-bottom','0px');
+                     body.css('margin', "0px 24px");
+                     body.css('background-color', "white");
                      content.css('background', "none");
                      content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
                      content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
@@ -107,8 +110,7 @@
                  });
            });
          });
-    </script>
-
+    </script> -->
     <!-- OCR function -->
     <script src='https://unpkg.com/tesseract.js@2.1.3/dist/tesseract.min.js'></script>
     <!-- // const exampleImage = 'https://tesseract.projectnaptha.com/img/eng_bw.png';
@@ -296,7 +298,7 @@
                                 <span style="padding-left: 20px;font-weight: bold;">Moderator</span>
                             </li>
                         </a>
-                        <a href="/Dean">
+                        <a href="/Reviewer">
                             <li class="sidebar-li" <?php if(isset($option4)){ echo $option4;};?>>
                                 <i class="fa fa-info sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
                                 <span style="padding-left: 20px;font-weight: bold;">Dean</span>

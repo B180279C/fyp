@@ -2,14 +2,9 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
-<script type="text/javascript">
-function loadImage() {
-  alert("Image is loaded");
-}
-</script>
 <style type="text/css">
 .short-div{
     height: 200px;
@@ -51,10 +46,10 @@ function loadImage() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
             <span class="now_page">Manage Assessment Method</span>/
         </p>
         <hr class="separate_hr">
@@ -69,7 +64,7 @@ function loadImage() {
                     </div>
                   <ul class="sidebar-action-ul">
                     <a id="checkAction"><li class="sidebar-action-li"><i class="fa fa-fast-backward" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Previous of Assessment Method</li></a>
-                    <a href="/teachingPlan/create/new/assessment/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-list-ol" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Create New Assessment Method</li></a>
+                    <a href="{{$character}}/teachingPlan/create/new/assessment/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-list-ol" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Create New Assessment Method</li></a>
                   </ul>
                 </div>
             <br>
@@ -95,7 +90,7 @@ function loadImage() {
             <div class="details" style="padding: 0px 5px 0px 5px;">
                 <div class="row" style="padding:0px;"> 
                     <div class="col-md-12" style="padding:0px;">
-                         <form method="post" action="{{action('Dean\TeachingPlanController@storeTPAss', $course[0]->course_id)}}" id="form">
+                         <form method="post" action="{{$character}}/teachingPlan/create/assessment/{{$course[0]->course_id}}" id="form">
                             {{csrf_field()}}
                             <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
                             <?php
@@ -251,7 +246,7 @@ function loadImage() {
     $(document).on('click', '#checkAction', function(){
       var course_id = $('#course_id').val();
       if(confirm('Are you sure want to use previous semester of assessment method? (Important : If the course is a long semester, you will get the last long semester of the assessment method. On the contrary, if it is a short semester, you will get the last short semester.')) {
-        window.location = "/teachingPlan/create/previous/assessment/"+course_id;
+        window.location = "{{$character}}/teachingPlan/create/previous/assessment/"+course_id;
       }
       return false;
     });

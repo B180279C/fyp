@@ -2,7 +2,7 @@
 $title = "E-Portfolio";
 $option6 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 
@@ -43,8 +43,8 @@ $(document).ready(function() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/E_Portfolio/course/List/">E - Portfolio </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/E_Portfolio/course/List/">E - Portfolio </a>/
             <span class="now_page">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</span>/
             
         </p>
@@ -60,7 +60,7 @@ $(document).ready(function() {
                     </div>
                   <ul class="sidebar-action-ul">
                       <p class="title_method">Download</p>
-                      <a href='/E_Portfolio/report/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>E-Portfolio Report</li></a>
+                      <a href='{{$character}}/E_Portfolio/report/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>E-Portfolio Report</li></a>
                   </ul>
             </div>
             <br>

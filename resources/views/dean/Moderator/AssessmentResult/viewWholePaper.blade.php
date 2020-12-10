@@ -45,10 +45,10 @@ $i=1;
 ?>
 @if(($ext[1] != "pdf")&&($ext[1] != "docx")&&($ext[1] != "xlsx")&&($ext[1] != "pptx"))
 <center>
-<img src="/images/AssessmentResult/{{$row->document}}" width="600px" height="auto">
+<img src="{{$character}}/Moderator/images/AssessmentResult/{{$row->document}}" width="600px" height="auto">
 <br>
 <?php
-// echo $i;
+echo $row->document;
 ?>
 </center>
 <?php

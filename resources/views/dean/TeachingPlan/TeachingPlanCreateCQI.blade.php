@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 
@@ -29,7 +29,7 @@ $(document).on('click', '.edit_button', function(){
     });
     $.ajax({
         type:'POST',
-        url:'/teachingPlan/CQI/Edit/',
+        url:'{{$character}}/teachingPlan/CQI/Edit/',
         data:{value : num[2]},
         success:function(data){
           document.getElementById('CQI_id').value = num[2];
@@ -44,7 +44,7 @@ $(document).on('click', '.remove_button', function(){
     var id = $(this).attr("id");
     var num = id.split("_");
     if(confirm('Are you sure you want to remove the it?')) {
-        window.location = "/teachingPlan/CQIRemove/"+num[2];
+        window.location = "{{$character}}/teachingPlan/CQIRemove/"+num[2];
     }
     return false;
 });
@@ -100,10 +100,10 @@ $(document).on('click', '.btn_remove', function(){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
             <span class="now_page">Manage CQI</span>/
         </p>
         <hr class="separate_hr">
@@ -195,7 +195,7 @@ $(document).on('click', '.btn_remove', function(){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('Dean\TeachingPlanController@storeTPCQI')}}">
+      <form method="post" action="{{$character}}/teachingPlan/store/CQI/">
         {{csrf_field()}}
         <input type="hidden" name="count" id="count" value="1">
         <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
@@ -252,7 +252,7 @@ $(document).on('click', '.btn_remove', function(){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('Dean\TeachingPlanController@CQIUpdate')}}">
+      <form method="post" action="{{$character}}/teachingPlan/CQIUpdate/">
         {{csrf_field()}}
         <input type="hidden" name="CQI_id" id="CQI_id">
         <div id="CQI" style="padding:5px 20px 0px 20px">

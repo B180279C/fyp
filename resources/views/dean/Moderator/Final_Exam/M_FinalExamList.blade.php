@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -170,13 +170,13 @@ function Submit_Moderation(){
 }
 
 function ModerationForm(actionFA_id){
-  window.location = "/Moderator/FinalExamination/report/"+actionFA_id;
+  window.location = "{{$character}}/Moderator/FinalExamination/report/"+actionFA_id;
 }
 
 $(document).ready(function(){
   $(document).on("click","#downloadReport", function(){
     var actionFA_id = $('#actionFA_id').val();
-    window.location = "/Dean/FinalExamination/report/"+actionFA_id;
+    window.location = "{{$character}}/Moderator/FinalExamination/report/"+actionFA_id;
   });
   $('#less').hide();
     $(document).on("click",".more", function(){
@@ -215,7 +215,7 @@ $(document).ready(function(){
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/FinalExamination/getSyllabusData',
+            url:'{{$character}}/Moderator/FinalExamination/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
               var count = 0;
@@ -245,9 +245,9 @@ $(document).ready(function(){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Courses </a>/
-            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Courses </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Final Assessment</span>/
         </p>
         <hr class="separate_hr">
@@ -426,7 +426,7 @@ $(document).ready(function(){
                       </tr>
                       @foreach($ass_final as $row)
                         <tr>
-                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;"><a href='/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;"><a href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
                           {{$row->topic}}
                           </td>
@@ -694,7 +694,7 @@ $(document).ready(function(){
                   <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                     <input type="hidden" name="fx_id_{{$num}}" value="{{$row->fx_id}}">
                     <tr style="background-color: #d9d9d9;">
-                      <td colspan="2" class="td_table" style="text-align: left;"><a href='/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                      <td colspan="2" class="td_table" style="text-align: left;"><a href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
                     </tr>
                     <tr>
                       <td colspan="2" class="td_table" style="text-align: left;">
@@ -739,7 +739,7 @@ $(document).ready(function(){
               </div>
                 @endif
                 @if($button_verify=="Yes")
-                <form id="myForm" method="post" action="{{action('Dean\Moderator\M_FinalExamController@M_FX_Moderate_Action')}}" style="margin: 0px;">
+                <form id="myForm" method="post" action="{{$character}}/Moderator/FinalExamination/Moderation/" style="margin: 0px;">
                   {{csrf_field()}}
                   <input type="hidden" name="actionFA_id" value="{{$actionFA_id}}">
                   <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
@@ -890,7 +890,7 @@ $(document).ready(function(){
                   <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                     <input type="hidden" name="fx_id_{{$num}}" value="{{$row->fx_id}}">
                     <tr style="background-color: #d9d9d9;">
-                      <td colspan="2" class="td_table" style="text-align: left;"><a href='/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                      <td colspan="2" class="td_table" style="text-align: left;"><a href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
                     </tr>
                     <tr>
                       <td colspan="2" class="td_table" style="text-align: left;">

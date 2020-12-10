@@ -127,8 +127,8 @@ class CourseController extends Controller
                 'semester'          => $request->get('semester'),
                 'lecturer'          => $request->get('lecturer'),
                 'moderator'         => $request->get('moderator'),
-                'verified_by'       => $request->get('verified_by'),
-                'approved_by'       => $request->get('approved_by'),
+                // 'verified_by'       => $request->get('verified_by'),
+                // 'approved_by'       => $request->get('approved_by'),
                 'credit'            => $request->get('credit'),
                 'status'            => "Active",
             ]);
@@ -479,7 +479,7 @@ class CourseController extends Controller
                     $result .= '<img src="'.url("image/subject.png").'" width="25px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col" id="course_name" style="padding-top: 2px;">';
-                    $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name.'</p>';
+                    $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name." ( ".$row->short_form_name.' ) </p>';
                     $result .= '<p id="mark_data">
                                   <i class="fa fa-check correct" aria-hidden="true"></i>
                                   <i class="fa fa-check correct" aria-hidden="true"></i>
@@ -520,7 +520,7 @@ class CourseController extends Controller
                 $result .= '<img src="'.url("image/subject.png").'" width="25px" height="25px"/>';
                 $result .= '</div>';
                 $result .= '<div class="col" id="course_name" style="padding-top: 2px;">';
-                $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name.'</p>';
+                $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name." ( ".$row->short_form_name.' ) </p>';
                 $result .= '<p id="mark_data">
                                 <i class="fa fa-check correct" aria-hidden="true"></i>
                                 <i class="fa fa-check correct" aria-hidden="true"></i>

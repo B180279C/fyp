@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -72,13 +72,13 @@ $option1 = "id='selected-sidebar'";
 
   function submitAction(){
     var course_id = $('#course_id').val();
-    window.location = "/FinalExamination/Action/Submit/"+course_id; 
+    window.location = "{{$character}}/FinalExamination/Action/Submit/"+course_id; 
   }
 
   function submitActionSecond(){
     var course_id = $('#course_id').val();
     if(confirm('Please ensure your Final Assessment is fixed all error and full complete already. Are you sure want to submit again to moderator.')) {
-      window.location = "/FinalExamination/Action/Submit/"+course_id; 
+      window.location = "{{$character}}/FinalExamination/Action/Submit/"+course_id; 
     }
   }
 
@@ -92,7 +92,7 @@ $option1 = "id='selected-sidebar'";
   }
 
   function ModerationForm(actionFA_id){
-    window.location = "/FinalExamination/report/"+actionFA_id;
+    window.location = "{{$character}}/FinalExamination/report/"+actionFA_id;
     return false;
   }
   $(document).ready(function(){
@@ -122,7 +122,7 @@ $option1 = "id='selected-sidebar'";
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/FinalExamination/getSyllabusData',
+            url:'{{$character}}/FinalExamination/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
               var count = 0;
@@ -177,7 +177,7 @@ $option1 = "id='selected-sidebar'";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Question Paper & Solution";
-              cell1.innerHTML = '<a href="/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="{{$character}}/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               if(status==true){
                 cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
               }else{
@@ -199,7 +199,7 @@ $option1 = "id='selected-sidebar'";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Student Result";
-              cell1.innerHTML = '<a href="/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="{{$character}}/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               cell2.innerHTML = response[1].length;
 
               var moderation_done = $('#moderation_done').val();
@@ -223,9 +223,9 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Final Assessment</span>/
         </p>
         <hr class="separate_hr">
@@ -400,7 +400,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form style="padding: 0px;margin: 0px;" id="self_declaration_form" method="post" action="{{action('Dean\FinalExaminationController@SubmitSelf_D_Form')}}">
+      <form style="padding: 0px;margin: 0px;" id="self_declaration_form" method="post" action="{{$character}}/FinalExamination/Action/HOD/">
         {{csrf_field()}}
       <div class="row" style="margin: 0px;padding: 15px 10px 10px 10px;">
         <input type="hidden" name="actionFA_id" value="{{$actionFA_id}}">

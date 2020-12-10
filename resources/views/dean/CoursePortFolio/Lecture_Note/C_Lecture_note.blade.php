@@ -2,7 +2,7 @@
 $title = "CoursePortfolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -26,7 +26,7 @@ $option5 = "id='selected-sidebar'";
       if(checkedValue!=""){
         var course_id = $('#course_id').val();
         var id = course_id+"---"+checkedValue;
-        window.location = "/lectureNote/download/zipFiles/"+id+"/checked";
+        window.location = "{{$character}}/lectureNote/download/zipFiles/"+id+"/checked";
       }else{
           alert("Please select the document first.");
       }

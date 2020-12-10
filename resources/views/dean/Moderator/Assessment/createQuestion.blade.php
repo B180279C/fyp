@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -98,72 +98,11 @@ $option3 = "id='selected-sidebar'";
             $('#openDocumentModal').modal('show');
         });
 
-        $(document).on('keyup', '.filename', function(){  
-          var id = $(this).attr("id");
-          var value = document.getElementById(id).value;
-          $("#form"+id).val(value);
-        });
-
-        $(document).on('click', '.edit_button', function(){
-          var id = $(this).attr("id");
-          var num = id.split("_");
-          $.ajax({
-            type:'POST',
-            url:'/assessment/AssessmentNameEdit',
-            data:{value : num[2]},
-            success:function(data){
-              var clo = data[0].CLO;
-              var clo_list = clo.split(",");
-              var option = "";
-              var question = '{{$question}}';
-              for(var c = 0;c<=(data[2].length-1);c++){
-                var assessment_list = data[2][c].assessment.split('///');
-                var markdown = data[2][c].markdown.split(',');
-                var assessment = assessment_list[0].split(',');
-                for(var i = 0; i<=assessment.length-1;i++){
-                  var assessment_rep = assessment[i].replace(' ','');
-                  if(assessment_rep==question){
-                    if(markdown[i]=="yes"){
-                      var selected = false;
-                      for(var d = 0;d<=(clo_list.length-1);d++){
-                        if(clo_list[d]==("CLO"+(c+1))){
-                          var selected = true;
-                        }
-                      }
-                      if(selected==true){
-                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"' selected>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
-                      }else{
-                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"'>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
-                      }
-                    }
-                  }
-                }
-              }
-              $("#CLO").html(option);
-              $('#CLO').selectpicker('refresh');
-              // $('#CLO_ALL').val(clo_full);
-              var mark = 0;
-              for(var i = 0;i<=(data[1].length-1);i++){
-                var mark = mark+parseInt(data[1][i].coursework);
-              }
-              // console.log(mark);
-              var full_mark = '{{$coursework}}';
-              document.getElementById('ass_id').value = num[2];
-              document.getElementById('mark_record').innerHTML = "The {{$question}} of coursework is {{$coursework}}%, It already insert "+(mark-parseInt(data[0].coursework))+"%.";
-              document.getElementById('mark_record_2').innerHTML = "So, It Cannot insert over "+(full_mark-(mark-parseInt(data[0].coursework)))+"% of coursework.";
-              document.getElementById("coursework").max = (full_mark-(mark-parseInt(data[0].coursework)));
-              document.getElementById('folder_name').value = data[0].assessment_name;
-              document.getElementById('coursework').value = data[0].coursework;
-            } 
-          });
-          $('#folderNameEdit').modal('show');
-          return false;
-        });
 
         $(document).on('click', '.download_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
-          window.location = "/Moderator/assessment/download/"+num[2];
+          window.location = "{{$character}}/Moderator/assessment/download/"+num[2];
         });
 
         $(document).on('click', '#checkDownloadAction', function(){
@@ -177,7 +116,7 @@ $option3 = "id='selected-sidebar'";
             if(checkedValue!=""){
               var course_id = $('#course_id').val();
               var id = course_id+"_"+checkedValue;
-              window.location = "/assessment/AllZipFiles/"+id+"/checked";
+              window.location = "{{$character}}/assessment/AllZipFiles/"+id+"/checked";
             }else{
               alert("Please select the document first.");
             }
@@ -196,7 +135,7 @@ $option3 = "id='selected-sidebar'";
           var question = $('#question').val();
           $.ajax({
               type:'POST',
-              url:'/Moderator/assessment/searchAssessmentList/',
+              url:'{{$character}}/Moderator/assessment/searchAssessmentList/',
               data:{value:value,course_id:course_id,question:question},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -209,7 +148,7 @@ $option3 = "id='selected-sidebar'";
             var question = $('#question').val();
             $.ajax({
                type:'POST',
-               url:'/Moderator/assessment/searchAssessmentList/',
+               url:'{{$character}}/Moderator/assessment/searchAssessmentList/',
                data:{value:value,course_id:course_id,question:question},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;
@@ -222,10 +161,10 @@ $option3 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Moderator </a>/
-            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
-            <a href="/Moderator/viewAssessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/Moderator/viewAssessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <span class="now_page">{{$question}} ( Q & S )</span>/
         </p>
         <hr class="separate_hr">
@@ -242,7 +181,7 @@ $option3 = "id='selected-sidebar'";
                       @if((count($assessments)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/assessment/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/assessment/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   </ul>
                 </div>
@@ -283,7 +222,7 @@ $option3 = "id='selected-sidebar'";
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" name="group{{$row->ass_id}}" value="{{$row->ass_id}}" class="group_download">
                       </div>
-                      <a href='/Moderator/assessment/view_list/{{$row->ass_id}}' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href='{{$character}}/Moderator/assessment/view_list/{{$row->ass_id}}' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>

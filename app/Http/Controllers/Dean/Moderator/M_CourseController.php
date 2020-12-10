@@ -95,6 +95,12 @@ class M_CourseController extends Controller
 
         $value = $request->get('value');
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
+
         $result = "";
         if($value!=""){
             $course = DB::table('courses')
@@ -120,7 +126,7 @@ class M_CourseController extends Controller
             $result .= '</div>';
             if ($course->count()) {
                 foreach($course as $row){
-                    $result .= '<a href="/Moderator/course/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
+                    $result .= '<a href="'.$character.'/Moderator/course/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                     $result .= '<div class="col-md-12 row" style="padding:13px 10px;color:#0d2f81;">';
                     $result .= '<div class="col-1">';
                     $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
@@ -151,7 +157,7 @@ class M_CourseController extends Controller
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Newest Semester of Courses</p>';
             $result .= '</div>';
             foreach($course as $row){
-                $result .= '<a href="/Moderator/course/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
+                $result .= '<a href="'.$character.'/Moderator/course/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                     $result .= '<div class="col-md-12 row" style="padding:13px 10px;color:#0d2f81;">';
                     $result .= '<div class="col-1">';
                     $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
@@ -186,11 +192,11 @@ class M_CourseController extends Controller
                  ->where('status','=','Active')
                  ->get();
 
-		$note = DB::table('lecture_notes')
-                 ->select('lecture_notes.*')
-                 ->where('course_id', '=', $id)
-                 ->where('status','=','Active')
-                 ->get();
+    		$note = DB::table('lecture_notes')
+                     ->select('lecture_notes.*')
+                     ->where('course_id', '=', $id)
+                     ->where('status','=','Active')
+                     ->get();
 
         $tp = DB::table('teaching_plan')
                  ->select('teaching_plan.*')

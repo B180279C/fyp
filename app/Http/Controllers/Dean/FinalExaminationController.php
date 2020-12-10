@@ -448,6 +448,12 @@ class FinalExaminationController extends Controller
         $value         = $request->get('value');
         $course_id     = $request->get('course_id');
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
+
         $result = "";
         if($value!=""){
             $final = DB::table('ass_final')
@@ -465,7 +471,7 @@ class FinalExaminationController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" name="group'.$row->fx_id.'" value="'.$row->fx_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/FinalExamination/view_list/'.$row->fx_id.'" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
+                    $result .= '<a href="'.$character.'/FinalExamination/view_list/'.$row->fx_id.'" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
@@ -500,7 +506,7 @@ class FinalExaminationController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" name="group'.$row->fx_id.'" value="'.$row->fx_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/FinalExamination/view_list/'.$row->fx_id.'" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
+                    $result .= '<a href="'.$character.'/FinalExamination/view_list/'.$row->fx_id.'" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
@@ -543,6 +549,12 @@ class FinalExaminationController extends Controller
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $course_id)
                  ->get();
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
 
         $result = "";
         if($value!=""){
@@ -587,7 +599,7 @@ class FinalExaminationController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_fx_id.'_'.$row->ass_fx_type.'" class="group_'.$row_group->ass_fx_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/final_assessment/'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$final->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='."/final_assessment/view/whole_paper/".$row->ass_fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/images/final_assessment/'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$final->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='.$character."/final_assessment/view/whole_paper/".$row->fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -645,7 +657,7 @@ class FinalExaminationController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_fx_id.'_'.$row->ass_fx_type.'" class="group_'.$row_group->ass_fx_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/final_assessment/'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$final->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='."/final_assessment/view/whole_paper/".$row->ass_fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/images/final_assessment/'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$final->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='.$character."/final_assessment/view/whole_paper/".$row->fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -1536,7 +1548,11 @@ class FinalExaminationController extends Controller
 
       $table->addRow(1);
       $table->addCell(100,array('borderLeftSize' => 6))->addText('', null, $noSpaceAndLeft);
-      $table->addCell(1000,array('borderSize' => 6))->addText('Y', array("color"=>"green",'bold' => true), $noSpaceAndCenter);
+      if($action->approved_date!=NULL){
+        $table->addCell(1000,array('borderSize' => 6))->addText('Y', array("color"=>"green",'bold' => true), $noSpaceAndCenter);
+      }else{
+         $table->addCell(1000,array('borderSize' => 6))->addText('', array("color"=>"green",'bold' => true), $noSpaceAndCenter);
+      }
       $table->addCell(3000)->addText('Approval For Printing', null, $noSpaceAndLeft);
       $table->addCell(7000)->addText('', null, $noSpaceAndLeft);
       $table->addCell(100,array('borderRightSize' => 6))->addText('', null, $noSpaceAndLeft);

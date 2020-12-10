@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -21,7 +21,7 @@ $option3 = "id='selected-sidebar'";
           var value = $('.search').val();
           $.ajax({
               type:'POST',
-              url:'/searchModeratorCourse',
+              url:'{{$character}}/searchModeratorCourse',
               data:{value:value},
               success:function(data){
                 document.getElementById("course").innerHTML = data;
@@ -32,7 +32,7 @@ $option3 = "id='selected-sidebar'";
             var value = $('.search').val();
             $.ajax({
                type:'POST',
-               url:'/searchModeratorCourse',
+               url:'{{$character}}/searchModeratorCourse',
                data:{value:value},
                success:function(data){
                     document.getElementById("course").innerHTML = data;
@@ -74,7 +74,7 @@ $option3 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Moderator</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
             <span class="now_page">Moderator</span>/
         </p>
         <hr class="separate_hr">
@@ -123,7 +123,7 @@ $option3 = "id='selected-sidebar'";
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</td>
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">Teaching Plan</td>
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">Verification</td>
-                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="/Moderator/teachingPlan/{{$row->course_id}}" class="view" target='_blank'><i class="fa fa-long-arrow-right" aria-hidden="true"></i> View</a></td>
+                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{$character}}/Moderator/teachingPlan/{{$row->course_id}}" class="view" target='_blank'><i class="fa fa-long-arrow-right" aria-hidden="true"></i> View</a></td>
                 </tr>
                 <?php
                 $num++;
@@ -135,7 +135,7 @@ $option3 = "id='selected-sidebar'";
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row2->subject_code}} {{$row2->subject_name}} ( {{$row2->name}} )</td>
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">Coutinuous Assessment ( CA )</td>
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">Moderation</td>
-                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="/Moderator/Assessment/{{$row2->course_id}}" class="view" target='_blank'><i class="fa fa-long-arrow-right" aria-hidden="true"></i> View</a></td>
+                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{$character}}/Moderator/Assessment/{{$row2->course_id}}" class="view" target='_blank'><i class="fa fa-long-arrow-right" aria-hidden="true"></i> View</a></td>
                 </tr>
                 <?php
                 $num++;
@@ -147,7 +147,7 @@ $option3 = "id='selected-sidebar'";
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">{{$row3->subject_code}} {{$row3->subject_name}} ( {{$row3->name}} )</td>
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">Final Assessment ( FA )</td>
                   <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">Moderation</td>
-                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="/Moderator/FinalExamination/{{$row3->course_id}}" class="view" target='_blank'><i class="fa fa-long-arrow-right" aria-hidden="true"></i> View</a></td>
+                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{$character}}/Moderator/FinalExamination/{{$row3->course_id}}" class="view" target='_blank'><i class="fa fa-long-arrow-right" aria-hidden="true"></i> View</a></td>
                 </tr>
                 <?php
                 $num++;
@@ -183,7 +183,7 @@ $option3 = "id='selected-sidebar'";
                     </p>
                   </div>
                       @foreach($course as $row)
-                        <a href="/Moderator/course/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
+                        <a href="{{$character}}/Moderator/course/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:13px 10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 0px;">
                               <img src="{{url('image/folder2.png')}}" width="25px" height="24px"/>

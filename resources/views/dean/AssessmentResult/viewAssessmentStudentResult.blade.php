@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -110,7 +110,7 @@ $option1 = "id='selected-sidebar'";
     if(checkedValue!=""){
       var course_id = $('#course_id').val();
       var id = course_id+"_"+checkedValue;
-      window.location = "/AssessmentResult/AllZipFiles/"+id+"/checked";
+      window.location = "{{$character}}/AssessmentResult/AllZipFiles/"+id+"/checked";
     }else{
       alert("Please select the document first.");
     }
@@ -135,7 +135,7 @@ $option1 = "id='selected-sidebar'";
       lastNum = getIdNum[1];
       var i = 0;
       $("#dropzoneFile"+lastNum).dropzone({
-          url: '{{ url("/ass_rs_uploadFiles") }}',
+          url: '{{ url($character."/ass_rs_uploadFiles") }}',
           acceptedFiles: ".pdf,.xlsx,.docx,.pptx,.jpg,.jpeg,.png",
           addRemoveLinks: true,
           timeout: 50000,
@@ -203,7 +203,7 @@ $option1 = "id='selected-sidebar'";
                       'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                   },
                   type: 'POST',
-                  url: '{{ url("/ass_rs_destoryFiles") }}',
+                  url: '{{ url($character."/ass_rs_destoryFiles") }}',
                   data: {filename: name},
                   success: function (data){
                       console.log("File has been successfully removed!!");
@@ -301,7 +301,7 @@ function writeInput(id,num,name,ext,fake){
       var question = $('#question').val();
       $.ajax({
           type:'POST',
-          url: "/AssessmentResult/searchAssessmentForm/",
+          url: "{{$character}}/AssessmentResult/searchAssessmentForm/",
           data:{value:value,course_id:course_id,question:question},
           success:function(data){
             document.getElementById("assessments").innerHTML = data;
@@ -314,7 +314,7 @@ function writeInput(id,num,name,ext,fake){
         var question = $('#question').val();
         $.ajax({
            type:'POST',
-           url: "/AssessmentResult/searchAssessmentForm/",
+           url: "{{$character}}/AssessmentResult/searchAssessmentForm/",
            data:{value:value,course_id:course_id,question:question},
            success:function(data){
               document.getElementById("assessments").innerHTML = data;
@@ -327,15 +327,15 @@ function writeInput(id,num,name,ext,fake){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <span class="now_page">{{$question}} ( R )</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">{{$question}} ( R )</p>
              @if((count($assessments)!=0))
@@ -347,7 +347,7 @@ function writeInput(id,num,name,ext,fake){
                   <ul class="sidebar-action-ul">
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                      
                   </ul>
                 </div>
@@ -389,7 +389,7 @@ function writeInput(id,num,name,ext,fake){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" name="group{{$row->ass_id}}" value="{{$row->ass_id}}" class="group_download">
                       </div>
-                      <a href='/AssessmentResult/studentResult/{{$row->ass_id}}/' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href='{{$character}}/AssessmentResult/studentResult/{{$row->ass_id}}/' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
@@ -430,7 +430,7 @@ function writeInput(id,num,name,ext,fake){
       </div>
       <div style="padding:20px 20px 0px 20px;">
       <div id="error-message"></div>
-      <form method="post" action="{{action('Dean\AssessmentResultController@storeFiles')}}" id="myForm" style="margin: 0px;">
+      <form method="post" action="{{$character}}/ass_rs_storeFiles" id="myForm" style="margin: 0px;">
       {{csrf_field()}}
       @foreach($assessments as $row_model)
       <div class="dropzone" id="dropzoneFile{{$row_model->ass_id}}" style="padding:25px;display: none;font-size: 20px;color:#a6a6a6;border-style: double;">

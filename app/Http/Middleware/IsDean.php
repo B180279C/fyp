@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use Illuminate\Support\Facades\View;
 
 use Closure;
 
@@ -17,6 +18,8 @@ class IsDean
     {
         if(auth()->user()){
             if(auth()->user()->position == "Dean"){
+                View::share('character','');
+                View::share('cha','Dean');
                 return $next($request);
             }
         }

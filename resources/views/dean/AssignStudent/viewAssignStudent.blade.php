@@ -2,7 +2,8 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -38,7 +39,7 @@ $option1 = "id='selected-sidebar'";
       var id = $(this).attr("id");
       var num = id.split("_");
       if(confirm('Are you sure you want to remove the it?')) {
-        window.location = "/assignStudent/remove/"+num[2];
+        window.location = "{{$character}}/assignStudent/remove/"+num[2];
       }
       return false;
     });
@@ -57,7 +58,7 @@ $option1 = "id='selected-sidebar'";
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'/searchAssignStudent',
+              url:'{{$character}}/searchAssignStudent',
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assign_student").innerHTML = data;
@@ -69,7 +70,7 @@ $option1 = "id='selected-sidebar'";
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'/searchAssignStudent',
+               url:'{{$character}}/searchAssignStudent',
                data:{value:value,course_id:course_id},
                success:function(data){
                     document.getElementById("assign_student").innerHTML = data;
@@ -84,7 +85,7 @@ $option1 = "id='selected-sidebar'";
         if(programme!=""&&semester!=""&&intake!=""){
           $.ajax({
               type:'POST',
-              url:'/showStudent',
+              url:'{{$character}}/showStudent',
               data:{programme:programme,semester:semester,intake:intake},
               success:function(data){
                 $("#student").html(data);
@@ -140,7 +141,7 @@ $option1 = "id='selected-sidebar'";
         },
         success: function(file, response) {
             console.log(response);
-            var table = document.getElementById("dtBasicExample");
+            var table = document.getElementById("table");
             for(var i = 0; i<response.length; i++){
                 if((response[i]['student_id']!=null)&&(response[i]['student_name']!=null)){
                   var row = table.insertRow(1+i);
@@ -193,28 +194,19 @@ $option1 = "id='selected-sidebar'";
 .InModel{
   padding-left: 25px;
 }
-.tablebody{
-  background-color: white!important;
-  color: black;
-  height: 60px;
-  padding-left: 10px;
-}
-.tablehead{
-  background-color: #0d2f81!important; color: gold;
-}
 </style>
 <div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Student List</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Student List ( {{count($assign_student)}} )</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -295,6 +287,11 @@ $option1 = "id='selected-sidebar'";
                       </div>
                     </div>
                     @endforeach
+                    @if($i==0)
+                    <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 10px 0px 0px 0px;">
+                      <center>Empty</center>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -413,17 +410,17 @@ $option1 = "id='selected-sidebar'";
         <p><b>  2. </b>Delete the example data.</p>
         <p><b>  3. </b>Fill in the student ID and other details in file.</p>
       </div>
-      <form method="post" action="{{route('dropzone.uploadAssignStudent')}}" enctype="multipart/form-data"
+      <form method="post" action="/hod/uploadAssignStudent" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
       </form>
-      <div id="showData" style="padding: 0px 20px 20px 20px;overflow-x:auto;">
-        <table id="dtBasicExample" style="box-shadow: 0px 2px 5px #aaaaaa;border:none;width:100%;">
-          <thead class="tablehead">
-            <tr style="height: 60px;text-align: left;">
-              <th style="padding-left: 10px;">No</th>
-              <th style="padding-left: 10px;">Student ID</th>
-              <th style="padding-left: 10px;">Student Name</th>
+      <div id="showData" style="padding: 0px 20px 0px 20px;overflow-x:auto;">
+        <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
+          <thead>
+            <tr style="background-color: #d9d9d9;">
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>No</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Student ID</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Student Name</b></th>
             </tr>
           </thead>
         </table>
@@ -431,15 +428,14 @@ $option1 = "id='selected-sidebar'";
         {{csrf_field()}}
           <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
           <div id="writeInput"></div>
-          <br>
           <div style="text-align: right;">
           <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
           &nbsp;
-          <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin:0px;" value="Save Changes">
+          <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;" value="Save Changes">
           </div>
         </form>
       </div>
-      <div id="errorData" style="padding: 0px 20px 20px 20px;">
+      <div id="errorData" style="padding: 0px 20px 0px 20px;">
         <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
       </div>
     </div>

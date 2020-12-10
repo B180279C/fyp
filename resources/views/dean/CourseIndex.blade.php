@@ -2,7 +2,8 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -24,7 +25,7 @@ $option1 = "id='selected-sidebar'";
           var value = $('.search').val();
           $.ajax({
               type:'POST',
-              url:'/searchTeachCourse',
+              url:'{{$character}}/searchTeachCourse',
               data:{value:value},
               success:function(data){
                 document.getElementById("course").innerHTML = data;
@@ -35,7 +36,7 @@ $option1 = "id='selected-sidebar'";
             var value = $('.search').val();
             $.ajax({
                type:'POST',
-               url:'/searchTeachCourse',
+               url:'{{$character}}/searchTeachCourse',
                data:{value:value},
                success:function(data){
                     document.getElementById("course").innerHTML = data;
@@ -53,7 +54,7 @@ $option1 = "id='selected-sidebar'";
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Courses of Teaching</p>
              <!-- <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -114,7 +115,7 @@ $option1 = "id='selected-sidebar'";
                     </p> 
                   </div>
                       @foreach($course as $row)
-                        <a href="course/action/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
+                        <a href="{{$character}}/course/action/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
                           <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
                             <div class="col-1" style="padding-top: 0px;">
                               <img src="{{url('image/subject.png')}}" width="25px" height="24px"/>

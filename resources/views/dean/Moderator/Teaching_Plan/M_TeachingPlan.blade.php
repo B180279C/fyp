@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -112,9 +112,9 @@ function w3_close() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Moderator </a>/
-            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Teaching Plan</span>/
         </p>
         <hr class="separate_hr">
@@ -129,7 +129,7 @@ function w3_close() {
                     </div>
                   <ul class="sidebar-action-ul">
                     <p class="title_method">Report</p>
-                    <a href="/Moderator/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
+                    <a href="{{$character}}/Moderator/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
                   </ul>
             </div>
             <br>
@@ -165,7 +165,7 @@ function w3_close() {
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
-                        if($row_action->verified_date==Null){
+                        if($row_action->verified_date==NULL){
                             $person = "";
                         }else{
                             $now = "Approved";
@@ -532,7 +532,7 @@ function w3_close() {
             <hr style="margin: 5px 5px;background-color:black;">
             @if($button_verify=="Yes")
             <div class="row" style="height: auto;margin: 5px -10px 10px -10px;">
-                <form id="myForm" method="post" action="{{action('Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction')}}" style="width: 100%;margin: 0px;">
+                <form id="myForm" method="post" action="{{$character}}/Moderator/teachingPlan/verify/" style="width: 100%;margin: 0px;">
                     {{csrf_field()}}
                     <input type="hidden" name="verify" id="verify">
                     <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">

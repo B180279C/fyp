@@ -490,6 +490,12 @@ class LectureNoteController extends Controller
     	$value         = $request->get('value');
     	$place         = $request->get('place');
         $course_id     = $request->get('course_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
             
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -544,7 +550,7 @@ class LectureNoteController extends Controller
                         $result .= '<div class="checkbox_style align-self-center">';
                         $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                         $result .= '</div>';
-                        $result .= '<a href="/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                        $result .= '<a href="'.$character.'/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                         $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
                         $result .= '</div>';
@@ -563,7 +569,7 @@ class LectureNoteController extends Controller
                         $result .= '</div>';
                         $result .= '<div class="col-3" id="course_action_two">';
                             if($row->used_by==null){
-                                $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;';
+                                $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
                             }
                             $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
                         $result .= '</div>';
@@ -579,7 +585,7 @@ class LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<a href="'.$character.'/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($ext[1]=="pdf"){
                                 $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -623,7 +629,7 @@ class LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -641,7 +647,7 @@ class LectureNoteController extends Controller
                             $result .= '</a>';
                             $result .= '</div>';
                             $result .= '<div class="col-3" id="course_action_two">';
-                            $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;&nbsp;<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
                             $result .= '</div>';
                             $result .= '</div>';
                         }
@@ -686,7 +692,7 @@ class LectureNoteController extends Controller
                           $result .= '<div class="checkbox_style align-self-center">';
                           $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                           $result .= '</div>';
-                          $result .= '<a href="/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                          $result .= '<a href="'.$character.'/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                           $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                           $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
                           $result .= '</div>';
@@ -705,7 +711,7 @@ class LectureNoteController extends Controller
                           $result .= '</div>';
                           $result .= '<div class="col-3" id="course_action_two">';
                             if($row->used_by==null){
-                                $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;';
+                                $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
                             }
                                 $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
                         $result .= '</div>';
@@ -721,7 +727,7 @@ class LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<a href="'.$character.'/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($ext[1]=="pdf"){
                                 $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -754,7 +760,7 @@ class LectureNoteController extends Controller
                             if($row->used_by!=null){
                                 foreach($all_note as $all_row){
                                     if(($row->used_by)==($all_row->ln_id)){
-                                        $semester_name = '<span style="color: grey;">( Used In : '.$all_row->semester_name.' )</span>';
+                                        $semester_name = " <span style='color: grey;'>( Used In : ".$all_row->semester_name." )</span>";
                                     }
                                 }
                             }else{
@@ -765,7 +771,7 @@ class LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -783,7 +789,7 @@ class LectureNoteController extends Controller
                             $result .= '</a>';
                             $result .= '</div>';
                             $result .= '<div class="col-3" id="course_action_two">';
-                            $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;&nbsp;<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
                             $result .= '</div>';
                             $result .= '</div>';
                         }

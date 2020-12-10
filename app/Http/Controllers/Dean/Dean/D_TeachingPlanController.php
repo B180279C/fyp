@@ -27,18 +27,33 @@ class D_TeachingPlanController extends Controller
         $faculty_id    = $staff_dean->faculty_id;
         $department_id = $staff_dean->department_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
@@ -82,49 +97,49 @@ class D_TeachingPlanController extends Controller
                   ->get();
 
         if(count($course)>0){
-            return view('dean.Dean.Teaching_Plan.D_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by'));
+            return view('dean.Reviewer.Teaching_Plan.D_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by'));
         }else{
             return redirect()->back();
         }
 	}
 
-	// public function D_TP_VerifyAction(Request $request)
-	// {
-	// 	$course_id = $request->get('course_id');
-	// 	$verify    = $request->get('verify');
-	// 	$remarks   = $request->get('remarks');
-	// 	$result    = $request->get('result');
+	public function D_TP_VerifyAction(Request $request)
+	{
+		$course_id = $request->get('course_id');
+		$verify    = $request->get('verify');
+		$remarks   = $request->get('remarks');
+		$result    = $request->get('result');
 
-	// 	if($remarks == "<p><br></p>"){
-	// 		$remarks = "";
-	// 	}
-	// 	$action = DB::table('action_v_a')
- //                  ->select('action_v_a.*')
- //                  ->where('course_id', '=', $course_id)
- //                  ->where('action_type','=','TP')
- //                  ->where('status','=','Waiting For Approved')
- //                  ->where('for_who','=','HOD')
- //                  ->orderByDesc('action_id')
- //                  ->get();
+		if($remarks == "<p><br></p>"){
+			$remarks = "";
+		}
+		$action = DB::table('action_v_a')
+                  ->select('action_v_a.*')
+                  ->where('course_id', '=', $course_id)
+                  ->where('action_type','=','TP')
+                  ->where('status','=','Waiting For Approved')
+                  ->where('for_who','=','HOD')
+                  ->orderByDesc('action_id')
+                  ->get();
 
- //        $action_save = Action_V_A::where('action_id', '=', $action[0]->action_id)->firstOrFail();
+        $action_save = Action_V_A::where('action_id', '=', $action[0]->action_id)->firstOrFail();
 
- //        if($result=="Approve"){
- //        	$action_save->status  = "Approved";
- //        	$action_save->for_who = "";
-	//     	  $action_save->remarks = $remarks;
- //          $action_save->approved_date = date("Y-n-j");
- //        }else{
- //        	$action_save->status  = "Rejected";
-	//     	  $action_save->remarks = $verify."///".$remarks;
- //        }
-	//     $action_save->save();
-	//     if($result=="Approve"){
-	//     	return redirect()->back()->with('success','The Teaching Plan has been Approved.');
-	//     }else{
-	//     	return redirect()->back()->with('success','The Teaching Plan has been Rejected.');
-	//     }
-	// }
+        if($result=="Approve"){
+        	$action_save->status  = "Approved";
+        	$action_save->for_who = "";
+	    	  $action_save->remarks = $remarks;
+          $action_save->approved_date = date("Y-n-j");
+        }else{
+        	$action_save->status  = "Rejected";
+	    	  $action_save->remarks = $verify."///".$remarks;
+        }
+	    $action_save->save();
+	    if($result=="Approve"){
+	    	return redirect()->back()->with('success','The Teaching Plan has been Approved.');
+	    }else{
+	    	return redirect()->back()->with('success','The Teaching Plan has been Rejected.');
+	    }
+	}
 
   
   public function TPDownload($id){
@@ -133,18 +148,33 @@ class D_TeachingPlanController extends Controller
       $faculty_id    = $staff_dean->faculty_id;
       $department_id = $staff_dean->department_id;
 
-      $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+      if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+      }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+      }
 
       $TP = DB::table('teaching_plan')
             ->select('teaching_plan.*')
@@ -501,34 +531,46 @@ class D_TeachingPlanController extends Controller
     //              ->get();
 
     $table->addRow(1);
-    if($action[0]->prepared_date!=NULL){
-      if($course[0]->staff_sign!=NULL){
-        $s_p = storage_path('/private/staffSign/'.$course[0]->staff_sign);
-        $table->addCell(4000)->addImage($s_p,array('width'=>80, 'height'=>40, 'align'=>'center'));
+    if(count($action)>0){
+      if($action[0]->prepared_date!=NULL){
+        if($course[0]->staff_sign!=NULL){
+          $s_p = storage_path('/private/staffSign/'.$course[0]->staff_sign);
+          $table->addCell(4000)->addImage($s_p,array('width'=>80, 'height'=>40, 'align'=>'center'));
+        }else{
+          $table->addCell(4000,$styleCell)->addText($course[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+        }
       }else{
-        $table->addCell(4000,$styleCell)->addText($course[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+        $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
       }
     }else{
       $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
     }
 
-    if($action[0]->verified_date!=NULL){
-      if($Moderator[0]->staff_sign!=NULL){
-        $s_m = storage_path('/private/staffSign/'.$Moderator[0]->staff_sign);
-        $table->addCell(4000)->addImage($s_m,array('width'=>80, 'height'=>40, 'align'=>'center'));
+    if(count($action)>0){
+      if($action[0]->verified_date!=NULL){
+        if($Moderator[0]->staff_sign!=NULL){
+          $s_m = storage_path('/private/staffSign/'.$Moderator[0]->staff_sign);
+          $table->addCell(4000)->addImage($s_m,array('width'=>80, 'height'=>40, 'align'=>'center'));
+        }else{
+          $table->addCell(4000,$styleCell)->addText($Moderator[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+        }
       }else{
-        $table->addCell(4000,$styleCell)->addText($Moderator[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+        $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
       }
     }else{
       $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
     }
 
-    if($action[0]->approved_date!=NULL){
-      if($verified_by[0]->staff_sign!=NULL){
-        $s_v = storage_path('/private/staffSign/'.$verified_by[0]->staff_sign);
-        $table->addCell(4000)->addImage($s_v,array('width'=>80, 'height'=>40, 'align'=>'center'));
+    if(count($action)>0){
+      if($action[0]->approved_date!=NULL){
+        if($verified_by[0]->staff_sign!=NULL){
+          $s_v = storage_path('/private/staffSign/'.$verified_by[0]->staff_sign);
+          $table->addCell(4000)->addImage($s_v,array('width'=>80, 'height'=>40, 'align'=>'center'));
+        }else{
+          $table->addCell(4000,$styleCell)->addText($verified_by[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+        }
       }else{
-        $table->addCell(4000,$styleCell)->addText($verified_by[0]->name,array('bold' => true,'size' => 16),$noSpaceAndCenter);
+        $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
       }
     }else{
       $table->addCell(4000,$styleCell)->addText("",Null,$noSpaceAndCenter);
@@ -540,9 +582,15 @@ class D_TeachingPlanController extends Controller
     $table->addCell(4000)->addText('Approved By : '.$verified_by[0]->name.'<w:br/>'.$verified_by[0]->position, null, $noSpaceAndLeft);
 
     $table->addRow(1);
-    $table->addCell(4000)->addText('Date: '.$action[0]->prepared_date,null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Date: '.$action[0]->verified_date,null, $noSpaceAndLeft);
-    $table->addCell(4000)->addText('Date: '.$action[0]->approved_date,null, $noSpaceAndLeft);
+    if(count($action)>0){
+      $table->addCell(4000)->addText('Date: '.$action[0]->prepared_date,null, $noSpaceAndLeft);
+      $table->addCell(4000)->addText('Date: '.$action[0]->verified_date,null, $noSpaceAndLeft);
+      $table->addCell(4000)->addText('Date: '.$action[0]->approved_date,null, $noSpaceAndLeft);
+    }else{
+      $table->addCell(4000)->addText('Date: ',null, $noSpaceAndLeft);
+      $table->addCell(4000)->addText('Date: ',null, $noSpaceAndLeft);
+      $table->addCell(4000)->addText('Date: ',null, $noSpaceAndLeft);
+    }
 
     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
     $objWriter->save($course[0]->subject_code." ".$course[0]->subject_name.'.docx');

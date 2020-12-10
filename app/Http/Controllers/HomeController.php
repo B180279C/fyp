@@ -67,4 +67,18 @@ class HomeController extends Controller
             return Image::make($storagePath)->response();
         }
     }
+
+    public function hodDetails($user_id){
+
+        $staff = Staff::where('user_id', '=', $user_id)->firstOrFail();
+
+        $image = $staff->staff_image;
+
+        if($image == ""){
+            return Image::make('/image/user.png')->response();
+        }else{
+            $storagePath = storage_path('/private/staffImage/' . $image);
+            return Image::make($storagePath)->response();
+        }
+    }
 }

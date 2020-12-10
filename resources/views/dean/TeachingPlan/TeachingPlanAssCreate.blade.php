@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 
@@ -47,10 +47,10 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/teachingPlan/{{$course[0]->course_id}}">Teaching Plan</a>/
             <span class="now_page">Create New Assessment Method</span>/
         </p>
         <hr class="separate_hr">
@@ -90,7 +90,7 @@ $option1 = "id='selected-sidebar'";
             <div class="details" style="padding: 0px 5px 0px 5px;">
                 <div class="row" style="padding:0px;"> 
                     <div class="col-md-12" style="padding:0px;">
-                        <form method="post" action="{{action('Dean\TeachingPlanController@storeTPAssNew', $course[0]->course_id)}}" id="form">
+                        <form method="post" action="{{$character}}/teachingPlan/create/assessment/{{$course[0]->course_id}}" id="form">
                             {{csrf_field()}}
                             <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
                         </form>         
@@ -119,7 +119,7 @@ $option1 = "id='selected-sidebar'";
         $(document).on('click', '#checkAction', function(){
           var course_id = $('#course_id').val();
           if(confirm('Are you sure want to use previous semester of assessment method? (Important : If the course is a long semester, you will get the last long semester of the assessment method. On the contrary, if it is a short semester, you will get the last short semester.')) {
-            window.location = "/teachingPlan/create/previous/assessment/"+course_id;
+            window.location = "{{$character}}/teachingPlan/create/previous/assessment/"+course_id;
           }
           return false;
         });
@@ -143,7 +143,7 @@ $option1 = "id='selected-sidebar'";
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/teachingPlan/getSyllabusData',
+            url:'{{$character}}/teachingPlan/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
                 // alert(response[1]);

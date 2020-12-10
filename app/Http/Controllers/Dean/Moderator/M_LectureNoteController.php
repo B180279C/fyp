@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Dean\Moderator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Image;
 use Auth;
 use App\Staff;
 use App\Faculty;
@@ -65,6 +67,12 @@ class M_LectureNoteController extends Controller
 		$value         = $request->get('value');
     	$place         = $request->get('place');
         $course_id     = $request->get('course_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
             
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -119,7 +127,7 @@ class M_LectureNoteController extends Controller
                         $result .= '<div class="checkbox_style align-self-center">';
                         $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                         $result .= '</div>';
-                        $result .= '<a href="/Moderator/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                        $result .= '<a href="'.$character.'/Moderator/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                         $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
                         $result .= '</div>';
@@ -148,7 +156,7 @@ class M_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<a href="'.$character.'/Moderator/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($ext[1]=="pdf"){
                                 $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -189,7 +197,7 @@ class M_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/Moderator/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -252,7 +260,7 @@ class M_LectureNoteController extends Controller
                           $result .= '<div class="checkbox_style align-self-center">';
                           $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                           $result .= '</div>';
-                          $result .= '<a href="/Moderator/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                          $result .= '<a href="'.$character.'/Moderator/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                           $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                           $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
                           $result .= '</div>';
@@ -281,7 +289,7 @@ class M_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<a href="'.$character.'/Moderator/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($ext[1]=="pdf"){
                                 $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -322,7 +330,7 @@ class M_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/Moderator/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -411,4 +419,49 @@ class M_LectureNoteController extends Controller
             return redirect()->back();
         }
 	}
+
+    public function LectureNoteImage($image_name)
+    {
+        $user_id    = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+
+        $checkCourseId = Lecture_Note::where('note', '=', $image_name)->firstOrFail();
+        $course_id = $checkCourseId->course_id;
+
+        $course = DB::table('courses')
+                 ->select('courses.*')
+                 ->where('moderator', '=', $staff_dean->id)
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+
+        if(count($course)>0){
+            $storagePath = storage_path('/private/Lecture_Note/' . $image_name);
+            return Image::make($storagePath)->response();
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
+    public function downloadLN($id)
+    {
+        $lecture_note = Lecture_Note::where('ln_id', '=', $id)->firstOrFail();
+        $course_id = $lecture_note->course_id;
+
+        $course = Course::where('course_id', '=', $course_id)->firstOrFail();
+        $moderator = $course->moderator;
+
+        $user_id    = auth()->user()->user_id;
+        $checkid    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $staff_id   = $checkid->id;
+
+        if($moderator == $staff_id){
+            $ext = "";
+            if($lecture_note->note!=""){
+                $ext = explode(".", $lecture_note->note);
+            }
+            return Storage::disk('private')->download('Lecture_Note/'.$lecture_note->note, $lecture_note->note_name.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
+        }
+    }
 }

@@ -1,4 +1,8 @@
-@extends('layouts.app')
+<?php
+$title = "Home";
+$option0 = "id='selected-sidebar'";
+?>
+@extends('layouts.nav_hod')
    
 @section('content')
 <div class="container">
@@ -7,7 +11,7 @@
             <div class="card">
                 <div class="card-header">Dashboard</div>
                 <div class="card-body">
-                    You are Head of Department.
+                    <a href="">Course List</a>
                 </div>
             </div>
         </div>

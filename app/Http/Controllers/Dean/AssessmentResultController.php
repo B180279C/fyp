@@ -277,6 +277,12 @@ class AssessmentResultController extends Controller
         $course_id     = $request->get('course_id');
         $question      = $request->get('question');
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
+
         $result = "";
         if($value!=""){
             $assessment_results = DB::table('assessments')
@@ -296,7 +302,7 @@ class AssessmentResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" name="group'.$row->ass_id.'" value="'.$row->ass_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/studentResult/'.$row->ass_id.'/" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
+                    $result .= '<a href="'.$character.'/AssessmentResult/studentResult/'.$row->ass_id.'/" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
@@ -330,7 +336,7 @@ class AssessmentResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" name="group'.$row->ass_id.'" value="'.$row->ass_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/studentResult/'.$row->ass_id.'/" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
+                    $result .= '<a href="'.$character.'/AssessmentResult/studentResult/'.$row->ass_id.'/" class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
@@ -390,6 +396,12 @@ class AssessmentResultController extends Controller
         $course_id     = $request->get('course_id');
         $ass_id     = $request->get('ass_id');
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }
+
         $result = "";
         if($value!=""){
             $result_list = DB::table('assessment_result_students')
@@ -425,7 +437,7 @@ class AssessmentResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_All" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/view/student/'.$row->ar_stu_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/AssessmentResult/view/student/'.$row->ar_stu_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -480,7 +492,7 @@ class AssessmentResultController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_Lecturer" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/AssessmentResult/view/student/'.$row->ar_stu_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/AssessmentResult/view/student/'.$row->ar_stu_id.'/" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';

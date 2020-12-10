@@ -400,14 +400,14 @@ ul.sidebar-action-ul a:hover{
 @media only screen and (max-width: 600px) {
     .changelabel{
         border:0px solid black;
-        margin-left: 40%;
+        margin-left: 50%;
         position: relative;
         top: -105px;
         margin-bottom: -10px;
     }
     .changeName{
         border:0px solid black;
-        margin-left: 40%;
+        margin-left: 50%;
         position: relative;
         top: -105px;
         margin-bottom: -50px;
@@ -517,4 +517,14 @@ ul.sidebar-action-ul a:hover{
 }
 .week:hover{
     background-color: #d9d9d9;
+}
+
+.tablebody{
+  border-left:1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+}
+.tablebodyCenter{
+  border-left:1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  text-align: center;
 }

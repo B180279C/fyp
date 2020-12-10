@@ -38,7 +38,7 @@ $i=1;
 ?>
 @foreach($assessment_list as $row)
 <center>
-<img src="/images/assessment/{{$row->ass_document}}" width="600px" height="auto">
+<img src="{{$character}}/Moderator/images/assessment/{{$row->ass_document}}" width="600px" height="auto">
 <br>
 <?php
 // echo $i;

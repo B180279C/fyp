@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use Illuminate\Support\Facades\View;
 
 use Closure;
 
@@ -17,6 +18,8 @@ class IsHoD
     {
         if(auth()->user()){
             if(auth()->user()->position == "HoD"){
+                View::share('character','/hod');
+                View::share('cha','Head Of Department');
                 return $next($request);
             }
         }

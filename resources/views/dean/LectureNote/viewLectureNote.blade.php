@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -50,7 +50,51 @@ $option1 = "id='selected-sidebar'";
     }
   }
   $(document).ready(function(){  
+    $('[data-toggle="lightbox"]').click(function(event) {
+             event.preventDefault();
+                 $(this).ekkoLightbox({
+                   type: 'image',
+                   onContentLoaded: function() {
+                     var container = $('.ekko-lightbox-container');
+                     var content = $('.modal-content');
+                     var backdrop = $('.modal-backdrop');
+                     var overlay = $('.ekko-lightbox-nav-overlay');
+                     var modal = $('.modal');
+                     var image = container.find('img');
+                     var windowHeight = $(window).height();
+                     var dialog = container.parents('.modal-dialog');
+                     var data_header = $('.modal-header');
+                     var data_title = $('.modal-title');
+                     var body = $('.modal-body');
+                     console.log(image.width());
 
+                     if((image.width() > 380) && (image.width() < 441)){
+                        dialog.css('max-width','700px');
+                        image.css('height','900px');
+                        image.css('width','700px');
+                        overlay.css('height','900px');
+                     }else{
+                        overlay.css('height','100%');
+                     }
+                     // backdrop.css('opacity','1');
+                     data_header.css('background-color','white');
+                     data_header.css('padding','10px');
+                     data_header.css('margin','0px 24px');
+                     data_header.css('border-bottom','1px solid black');
+                     data_title.css('font-size','18px');
+
+                     body.css('padding-top','10px');
+                     body.css('padding-bottom','0px');
+                     body.css('margin', "0px 24px");
+                     body.css('background-color', "white");
+                     content.css('background', "none");
+                     content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                   }
+                 });
+           });
     $(document).on('click', '#checkDownloadAction', function(){
       var checkedValue = ""; 
       var inputElements = document.getElementsByClassName('group_download_list');
@@ -62,7 +106,7 @@ $option1 = "id='selected-sidebar'";
       if(checkedValue!=""){
         var course_id = $('#course_id').val();
         var id = course_id+"---"+checkedValue;
-        window.location = "/lectureNote/download/zipFiles/"+id+"/checked";
+        window.location = "{{$character}}/lectureNote/download/zipFiles/"+id+"/checked";
       }else{
           alert("Please select the document first.");
       }
@@ -76,7 +120,7 @@ $option1 = "id='selected-sidebar'";
       var course_id = $('#course_id').val();
       $.ajax({
         type:'POST',
-        url:'/lectureNote/SelectPreviousSemester',
+        url:'{{$character}}/lectureNote/SelectPreviousSemester',
         data:{value : course_id},
         success:function(data){
           // console.log(data);
@@ -94,7 +138,7 @@ $option1 = "id='selected-sidebar'";
       var num = id.split("_");  
       $.ajax({
         type:'POST',
-        url:'/lectureNote/SelectFolderSemester',
+        url:'{{$character}}/lectureNote/SelectFolderSemester',
         data:{value : num[1]},
         success:function(data){
           document.getElementById('previous').innerHTML = "";
@@ -142,11 +186,11 @@ $option1 = "id='selected-sidebar'";
               if(data[0][i]['used_by']!=null){
                 for(var p=0;p<=(data[1].length-1);p++){
                   if((data[0][i]['used_by'])==(data[1][p]['ln_id'])){
-                    var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+" ( Used In : "+data[1][p]['semester_name']+" )</p></a>";
+                    var name_link = "<a href='{{$character}}/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+" ( Used In : "+data[1][p]['semester_name']+" )</p></a>";
                   }
                 }
               }else{
-                var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+"</p></a>";
+                var name_link = "<a href='{{$character}}/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+"</p></a>";
               }
               var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+used_by+'" id="lnId_'+data[0][i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[0][i]['ln_id']+' group_download" '+checked+'></div>';
             }
@@ -161,7 +205,7 @@ $option1 = "id='selected-sidebar'";
       var num = id.split("_");
       $.ajax({
         type:'POST',
-        url:'/lectureNote/SelectFolderPlace',
+        url:'{{$character}}/lectureNote/SelectFolderPlace',
         data:{value : num[1]},
         success:function(data){
           document.getElementById('previous').innerHTML = "";
@@ -175,7 +219,7 @@ $option1 = "id='selected-sidebar'";
           $('.href_link').html('<a style="padding:0px;margin: 0px;" class="select_semester">Semester</a> &nbsp;/&nbsp;<a style="padding:0px;margin: 0px;" class="semester" id="semester_'+place[0]+'">'+place[1]+'</a> &nbsp;/&nbsp;'+link);
           $.ajax({
             type:'POST',
-            url:'/lectureNote/SelectFolder',
+            url:'{{$character}}/lectureNote/SelectFolder',
             data:{value : place[3],course_id : place[0]},
             success:function(data){
               for(var i=0;i<=(data[0].length-1);i++){
@@ -220,11 +264,11 @@ $option1 = "id='selected-sidebar'";
                   if(data[0][i]['used_by']!=null){
                     for(var p=0;p<=(data[1].length-1);p++){
                       if((data[0][i]['used_by'])==(data[1][p]['ln_id'])){
-                        var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+" ( Used In : "+data[1][p]['semester_name']+" )</p></a>";
+                        var name_link = "<a href='{{$character}}/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+" ( Used In : "+data[1][p]['semester_name']+" )</p></a>";
                       }
                     }
                   }else{
-                    var name_link = "<a href='/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+"</p></a>";
+                    var name_link = "<a href='{{$character}}/lectureNote/download/"+data[0][i]['ln_id']+"' class='col "+type+" name' id='folder_"+data[0][i]['ln_id']+"'><p style='padding: 5px 0px;margin: 0px;'>"+data[0][i]['note_name']+"</p></a>";
                   }
                   var input = '<div class="col-1" id="checkbox"> <input type="checkbox" value="'+used_by+'" id="lnId_'+data[0][i]['ln_id']+'" onchange="checkORNot(this.value)" class="group_'+data[0][i]['ln_id']+' group_download" '+checked+'></div>';
                 }
@@ -247,7 +291,7 @@ $option1 = "id='selected-sidebar'";
     $(document).on('click', '.download_button', function(){
         var id = $(this).attr("id");
         var num = id.split("_");
-        window.location = "/lectureNote/download/"+num[2];
+        window.location = "{{$character}}/lectureNote/download/"+num[2];
     });
 
     $(document).on('keyup', '.filename', function(){  
@@ -261,7 +305,7 @@ $option1 = "id='selected-sidebar'";
       var num = id.split("_");
       $.ajax({
         type:'POST',
-        url:'/lectureNote/folderNameEdit',
+        url:'{{$character}}/lectureNote/folderNameEdit',
         data:{value : num[2]},
         success:function(data){
           document.getElementById('ln_id').value = num[2];
@@ -277,7 +321,7 @@ $option1 = "id='selected-sidebar'";
       var id = $(this).attr("id");
       var num = id.split("_");
       if(confirm('Are you sure you want to remove the it?')) {
-        window.location = "/lectureNote/remove/"+num[2];
+        window.location = "{{$character}}/lectureNote/remove/"+num[2];
       }
       return false;
     });
@@ -343,7 +387,7 @@ $option1 = "id='selected-sidebar'";
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
                 type: 'POST',
-                url: '{{ url("/note_destoryFiles") }}',
+                url: '{{ url($character."/note_destoryFiles") }}',
                 data: {filename: name},
                 success: function (data){
                     console.log("File has been successfully removed!!");
@@ -381,10 +425,55 @@ $option1 = "id='selected-sidebar'";
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'/lectureNote/searchFiles',
+              url:'{{$character}}/lectureNote/searchFiles',
               data:{value:value,course_id:course_id,place:place},
               success:function(data){
                 document.getElementById("lecture_note").innerHTML = data;
+                $('[data-toggle="lightbox"]').click(function(event) {
+                   event.preventDefault();
+                       $(this).ekkoLightbox({
+                         type: 'image',
+                         onContentLoaded: function() {
+                           var container = $('.ekko-lightbox-container');
+                           var content = $('.modal-content');
+                           var backdrop = $('.modal-backdrop');
+                           var overlay = $('.ekko-lightbox-nav-overlay');
+                           var modal = $('.modal');
+                           var image = container.find('img');
+                           var windowHeight = $(window).height();
+                           var dialog = container.parents('.modal-dialog');
+                           var data_header = $('.modal-header');
+                           var data_title = $('.modal-title');
+                           var body = $('.modal-body');
+                           console.log(image.width());
+
+                           if((image.width() > 380) && (image.width() < 441)){
+                              dialog.css('max-width','700px');
+                              image.css('height','900px');
+                              image.css('width','700px');
+                              overlay.css('height','900px');
+                           }else{
+                              overlay.css('height','100%');
+                           }
+                           // backdrop.css('opacity','1');
+                           data_header.css('background-color','white');
+                           data_header.css('padding','10px');
+                           data_header.css('margin','0px 24px');
+                           data_header.css('border-bottom','1px solid black');
+                           data_title.css('font-size','18px');
+
+                           body.css('padding-top','0px');
+                           body.css('padding-bottom','0px');
+                           body.css('margin', "0px 24px");
+                           body.css('background-color', "white");
+                           content.css('background', "none");
+                           content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                         }
+                       });
+                 });
               }
           });
         }
@@ -394,10 +483,55 @@ $option1 = "id='selected-sidebar'";
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'/lectureNote/searchFiles',
+               url:'{{$character}}/lectureNote/searchFiles',
                data:{value:value,course_id:course_id,place:place},
                success:function(data){
-                    document.getElementById("lecture_note").innerHTML = data;
+                  document.getElementById("lecture_note").innerHTML = data;
+                  $('[data-toggle="lightbox"]').click(function(event) {
+                   event.preventDefault();
+                       $(this).ekkoLightbox({
+                         type: 'image',
+                         onContentLoaded: function() {
+                           var container = $('.ekko-lightbox-container');
+                           var content = $('.modal-content');
+                           var backdrop = $('.modal-backdrop');
+                           var overlay = $('.ekko-lightbox-nav-overlay');
+                           var modal = $('.modal');
+                           var image = container.find('img');
+                           var windowHeight = $(window).height();
+                           var dialog = container.parents('.modal-dialog');
+                           var data_header = $('.modal-header');
+                           var data_title = $('.modal-title');
+                           var body = $('.modal-body');
+                           console.log(image.width());
+
+                           if((image.width() > 380) && (image.width() < 441)){
+                              dialog.css('max-width','700px');
+                              image.css('height','900px');
+                              image.css('width','700px');
+                              overlay.css('height','900px');
+                           }else{
+                              overlay.css('height','100%');
+                           }
+                           // backdrop.css('opacity','1');
+                           data_header.css('background-color','white');
+                           data_header.css('padding','10px');
+                           data_header.css('margin','0px 24px');
+                           data_header.css('border-bottom','1px solid black');
+                           data_title.css('font-size','18px');
+
+                           body.css('padding-top','0px');
+                           body.css('padding-bottom','0px');
+                           body.css('margin', "0px 24px");
+                           body.css('background-color', "white");
+                           content.css('background', "none");
+                           content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                         }
+                       });
+                 });
                }
             });
         });
@@ -556,14 +690,14 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Lecture Note</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Lecture Note</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -577,7 +711,7 @@ $option1 = "id='selected-sidebar'";
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
                       <p class="title_method">Download</p>
                       <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                      <a href='/lectureNote/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Note</li></a>
+                      <a href='{{$character}}/lectureNote/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Note</li></a>
                   </ul>
             </div>
             <br>
@@ -629,7 +763,7 @@ $option1 = "id='selected-sidebar'";
                             <div class="checkbox_style align-self-center">
                               <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
                             </div>
-                            <a href="/lectureNote/folder/{{$row->ln_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                            <a href="{{$character}}/lectureNote/folder/{{$row->ln_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                               <div class="col-1" style="position: relative;top: -2px;">
                                 <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                               </div>
@@ -666,7 +800,7 @@ $option1 = "id='selected-sidebar'";
                             <div class="checkbox_style align-self-center">
                               <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
                             </div>
-                            <a href="{{action('Dean\LectureNoteController@downloadLN',$row->ln_id)}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                            <a href="{{$character}}/lectureNote/download/{{$row->ln_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                               <div class="col-1" style="position: relative;top: -2px;">
                                @if($ext[1]=="pdf")
                                 <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
@@ -714,7 +848,7 @@ $option1 = "id='selected-sidebar'";
                               <div class="checkbox_style align-self-center">
                                   <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
                                 </div>
-                              <a href="/images/lectureNote/{{$row->note}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->note_name}} {{$semester_name}}">
+                              <a href="{{$character}}/images/lectureNote/{{$row->note}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->note_name}} {{$semester_name}}">
                                 <div class="col-1" style="position: relative;top: -2px;">
                                   <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                                 </div>
@@ -790,7 +924,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('Dean\LectureNoteController@openNewFolder')}}">
+      <form method="post" action="{{$character}}/lectureNote/openNewFolder">
         {{csrf_field()}}
       <div class="modal-body">
         <div id="message"></div>
@@ -833,7 +967,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('Dean\LectureNoteController@updateFolderName')}}">
+      <form method="post" action="{{$character}}/lectureNote/updateFolderName">
         {{csrf_field()}}
       <div class="modal-body">
         <div id="message"></div>
@@ -874,12 +1008,12 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{route('note.dropzone.uploadFiles')}}" enctype="multipart/form-data"
+      <form method="post" action="{{$character}}/note_uploadFiles" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
 
       </form>
-      <form method="post" action="{{action('Dean\LectureNoteController@storeFiles')}}">
+      <form method="post" action="{{$character}}/note_storeFiles">
         {{csrf_field()}}
         <input type="hidden" name="count" value="0" id="count">
         <input type="hidden" name="file_place" value="Note">
@@ -922,7 +1056,7 @@ $option1 = "id='selected-sidebar'";
       </div>
       @endforeach
       </div>
-      <form method="post" action="{{action('Dean\LectureNoteController@storePreviousFiles')}}" style="margin: 5px 0px;">
+      <form method="post" action="{{$character}}/note_storePreviousFiles" style="margin: 5px 0px;">
         {{csrf_field()}}
       <p style="margin: 0px 8px;">Selected Item (Count) : <span class="c_count_num"></span></p>
       <input type="hidden" id="semester_name" value="">

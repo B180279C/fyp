@@ -496,7 +496,7 @@ class E_PortfolioController extends Controller
 
     	if(count($ass_final)>0){
     		$table->addRow(1);
-	    	$table->addCell(2000,$cellRowNorSpan)->addText($num.'. '.$row->assessment_name,$fontStyle,$noSpaceAndLeft);
+	    	$table->addCell(2000,$cellRowNorSpan)->addText($num.'. Final Exam',$fontStyle,$noSpaceAndLeft);
 	    	$table->addCell(4000,$styleCell)->addText('a) Moderated Examination Paper',Null,$noSpaceAndLeft);
 	    	$f_q = 0;
 	    	if(count($assessment_final)>0){
@@ -619,11 +619,13 @@ class E_PortfolioController extends Controller
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
         $faculty       = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
         $semester_id   = $last_semester->semester_id;
 
-        $course_reviewer = DB::table('courses')
+        if(auth()->user()->position=="Dean"){
+            $course_reviewer = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
@@ -636,6 +638,20 @@ class E_PortfolioController extends Controller
                     ->where('courses.status','=','Active')
                     ->get();
 
+        }else if(auth()->user()->position=="HoD"){
+             $course_reviewer = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                    ->where('courses.semester','=',$semester_id)
+                    ->where('departments.department_id','=',$department_id)
+                    ->where('courses.status','=','Active')
+                    ->get();        
+        }
 		return view('dean.E_portfolio.E_Portfolio_List',compact('course_reviewer'));
 	}
 
@@ -644,6 +660,7 @@ class E_PortfolioController extends Controller
         $user_id     = auth()->user()->user_id;
         $staff_dean  = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id  = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
         $faculty     = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
         $semester_id = $last_semester->semester_id;
@@ -652,7 +669,9 @@ class E_PortfolioController extends Controller
 
         $result = "";
         if($value!=""){
-            $course = DB::table('courses')
+            if(auth()->user()->position=="Dean"){
+                $character = "";
+                $course = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
@@ -669,6 +688,26 @@ class E_PortfolioController extends Controller
                             ->orWhere('users.name','LIKE','%'.$value.'%');
                     })             
                     ->get();
+            }else if(auth()->user()->position=="HoD"){
+                 $character = "/hod";
+                 $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                    ->where('departments.department_id', '=', $department_id)
+                    ->where('courses.status','=','Active')
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('subjects.subject_code','LIKE','%'.$value.'%')
+                            ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
+                            ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
+                            ->orWhere('users.name','LIKE','%'.$value.'%');
+                    })             
+                    ->get();     
+            }
             $result .= '<div class="col-md-12">';
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;">Search Filter : '.$value.'</p>';
             $result .= '</div>';
@@ -679,7 +718,7 @@ class E_PortfolioController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_q group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/E_Portfolio/list/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">';
+                    $result .= '<a href="'.$character.'/E_Portfolio/list/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">';
                     $result .= '<div class="col-1 align-self-center" id="course_image">';
                     $result .= '<img src="'.url('image/portfolio.png').'" width="25px" height="25px"/>';
                     $result .= '</div>';
@@ -699,19 +738,35 @@ class E_PortfolioController extends Controller
                     $result .= '</div>';
             }
         }else{
-            $course_reviewer = DB::table('courses')
-                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
-                    ->join('staffs', 'staffs.id','=','courses.lecturer')
-                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
-                    ->where('courses.semester','=',$semester_id)
-                    ->where('departments.faculty_id','=',$faculty_id)
-                    ->where('courses.status','=','Active')
-                    ->get();
-
+            if(auth()->user()->position=="Dean"){
+                $character = "";
+                $course_reviewer = DB::table('courses')
+                        ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                        ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                        ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                        ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                        ->join('staffs', 'staffs.id','=','courses.lecturer')
+                        ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                        ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                        ->where('courses.semester','=',$semester_id)
+                        ->where('departments.faculty_id','=',$faculty_id)
+                        ->where('courses.status','=','Active')
+                        ->get();
+            }else if(auth()->user()->position=="HoD"){
+                 $character = "/hod";
+                 $course_reviewer = DB::table('courses')
+                        ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                        ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                        ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                        ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                        ->join('staffs', 'staffs.id','=','courses.lecturer')
+                        ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                        ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                        ->where('courses.semester','=',$semester_id)
+                        ->where('departments.department_id','=',$department_id)
+                        ->where('courses.status','=','Active')
+                        ->get();        
+            }
             $result .= '<div class="col-md-12">';
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;">Newest Semester of Courses</p>';
             $result .= '</div>';
@@ -721,7 +776,7 @@ class E_PortfolioController extends Controller
                 $result .= '<div class="checkbox_style align-self-center">';
                 $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_q group_download">';
                 $result .= '</div>';
-                $result .= '<a href="/E_Portfolio/list/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">';
+                $result .= '<a href="'.$character.'/E_Portfolio/list/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">';
                 $result .= '<div class="col-1 align-self-center" id="course_image">';
                 $result .= '<img src="'.url('image/portfolio.png').'" width="25px" height="25px"/>';
                 $result .= '</div>';
@@ -750,7 +805,7 @@ class E_PortfolioController extends Controller
         $fileName = storage_path('private/E-Portfolio/Zip_Files/'.$name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-        for($i=0;$i<=(count($string)-1);$i++){
+        for($i=0;$i<(count($string)-1);$i++){
             $user_id       = auth()->user()->user_id;
             $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
             $faculty_id    = $staff_dean->faculty_id;
@@ -852,6 +907,7 @@ class E_PortfolioController extends Controller
                         ->where('course_id', '=', $string[$i])
                         ->where('status', '=', 'Active')
                         ->get();
+
 
             $phpWord = new \PhpOffice\PhpWord\PhpWord();
             // New section
@@ -1138,7 +1194,7 @@ class E_PortfolioController extends Controller
 
             if(count($ass_final)>0){
                 $table->addRow(1);
-                $table->addCell(2000,$cellRowNorSpan)->addText($num.'. '.$row->assessment_name,$fontStyle,$noSpaceAndLeft);
+                $table->addCell(2000,$cellRowNorSpan)->addText($num.'. Final Exam',$fontStyle,$noSpaceAndLeft);
                 $table->addCell(4000,$styleCell)->addText('a) Moderated Examination Paper',Null,$noSpaceAndLeft);
                 $f_q = 0;
                 if(count($assessment_final)>0){
@@ -1248,7 +1304,7 @@ class E_PortfolioController extends Controller
             $zip->addFile($subject_code." ".$subject_name.'.docx',$subject_code." ".$subject_name.'.docx');
         }
         $zip->close();
-        for($i=0;$i<=(count($string)-1);$i++){
+        for($i=0;$i<(count($string)-1);$i++){
             $user_id       = auth()->user()->user_id;
             $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
             $faculty_id    = $staff_dean->faculty_id;
@@ -1266,6 +1322,7 @@ class E_PortfolioController extends Controller
                       ->where('course_id', '=', $string[$i])
                       ->where('faculty.faculty_id','=',$faculty_id)
                       ->get();
+
             foreach($course as $row){
                 $syllabus = $row->syllabus;
                 $faculty_name = $row->faculty_name;

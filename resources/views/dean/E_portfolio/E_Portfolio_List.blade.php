@@ -2,7 +2,7 @@
 $title = "E-Portfolio";
 $option6 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -17,7 +17,7 @@ function w3_close() {
 $(document).on('click', '.download_button', function(){
     var id = $(this).attr("id");
     var num = id.split("_");
-    window.location = "/E_Portfolio/report/"+num[2];
+    window.location = "{{$character}}/E_Portfolio/report/"+num[2];
     return false;
 });
 
@@ -33,7 +33,7 @@ $(document).ready(function(){
       if(checkedValue!=""){
         // var course_id = $('#course_id').val();
         var id = checkedValue;
-        window.location = "/E_Portfolio/download/zipFiles/"+id+"/checked";
+        window.location = "{{$character}}/E_Portfolio/download/zipFiles/"+id+"/checked";
       }else{
           alert("Please select the document first.");
       }
@@ -49,7 +49,7 @@ $(function () {
         var value = $('.search').val();
        	$.ajax({
             type:'POST',
-            url:'/E_Portfolio/searchCourse/',
+            url:'{{$character}}/E_Portfolio/searchCourse/',
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;
@@ -60,7 +60,7 @@ $(function () {
         var value = $('.search').val();
         $.ajax({
             type:'POST',
-            url:'/E_Portfolio/searchCourse/',
+            url:'{{$character}}/E_Portfolio/searchCourse/',
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;
@@ -241,7 +241,7 @@ $(function () {
 	                        <div class="checkbox_style align-self-center">
 	                          <input type="checkbox" value="{{$row->course_id}}" class="group_q group_download">
 	                        </div>
-	                        <a href="/E_Portfolio/list/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">
+	                        <a href="{{$character}}/E_Portfolio/list/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">
 	                          <div class="col-1 align-self-center" id="course_image">
 	                            <img src="{{url('image/portfolio.png')}}" width="25px" height="25px"/>
 	                          </div>

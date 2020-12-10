@@ -3,7 +3,7 @@
 	//Detail
 	Route::get('dean/home', 'HomeController@deanHome')->name('dean.home');
 
-	Route::get('images/home_image/{user_id}', [
+	Route::get('/dean/images/home_image/{user_id}', [
 	     'as'         => 'home_image',
 	     'uses'       => 'HomeController@deanDetails',
 	     'middleware' => 'auth',
@@ -145,11 +145,12 @@
 	Route::get('/CourseList/E_Portfolio/{id}', [
     'as' => 'viewE_Portfolio', 'uses' => 'Dean\Course\E_PortfolioController@viewE_Portfolio']);
 
+
 	//My Course
-	Route::post('/uploadCourses', 'Dean\CourseController@importExcel')->name('dropzone.uploadCourses');
-	Route::post('/course/excel/create', 'Dean\CourseController@storeCourses')->name('course.excel.submit');
+	Route::post('uploadCourses', 'Dean\CourseController@importExcel')->name('dropzone.uploadCourses');
+	Route::post('course/excel/create', 'Dean\CourseController@storeCourses')->name('course.excel.submit');
 	Route::get('course_list','Dean\CourseController@index')->name('dean.course_list.index');
-	Route::post('/searchTeachCourse', 'Dean\CourseController@searchTeachCourse');
+	Route::post('searchTeachCourse', 'Dean\CourseController@searchTeachCourse');
 	Route::get('course/action/{id}','Dean\CourseController@courseAction');
 
 	//Assign Student
@@ -402,6 +403,12 @@
 	Route::get('/Moderator/lectureNote/{id}','Dean\Moderator\M_LectureNoteController@ModeratorLectureNote');
 	Route::post('/Moderator/lectureNote/searchFiles', 'Dean\Moderator\M_LectureNoteController@searchModeratorLN');
 	Route::get('/Moderator/lectureNote/folder/{ln_id}','Dean\Moderator\M_LectureNoteController@ModeratorLNFolderView');
+	Route::get('/Moderator/images/lectureNote/{image_name}', [
+	'as'         => 'lectureNote_image',
+	'uses'       => 'Dean\M_LectureNoteController@LectureNoteImage',
+	'middleware' => 'auth',
+	]);
+	Route::get('/Moderator/lectureNote/download/{id}','Dean\M_LectureNoteController@downloadLN');
 	//Moderator Teaching Plan
 	Route::get('/Moderator/teachingPlan/{id}','Dean\Moderator\M_TeachingPlanController@ModeratorTeachingPlan');
 	Route::post('/Moderator/teachingPlan/verify/','Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction');
@@ -484,97 +491,101 @@
     Route::get('/Moderator/E_Portfolio/report/{id}', [
     'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Moderator\E_PortfolioController@Download_E_Portfolio']);
 
-	//Dean
-	Route::get('Dean','Dean\Dean\D_CourseController@index');
+	Route::get('Reviewer','Dean\Dean\D_CourseController@index');
 	Route::post('/searchCourse', 'Dean\Dean\D_CourseController@searchCourse');
-	Route::get('/Dean/course/{id}','Dean\Dean\D_CourseController@DeanAction');
+	Route::get('/Reviewer/course/{id}','Dean\Dean\D_CourseController@DeanAction');
 	//Dean Student list
-	Route::get('/Dean/assign/student/{id}','Dean\Dean\D_StudentListController@DeanStudent');
+	Route::get('/Reviewer/assign/student/{id}','Dean\Dean\D_StudentListController@DeanStudent');
 	Route::post('/searchDeanStudent', 'Dean\Dean\D_StudentListController@searchDeanStudent');
 	//Dean Lecture Note
-	Route::get('/Dean/lectureNote/{id}','Dean\Dean\D_LectureNoteController@DeanLectureNote');
-	Route::post('/Dean/lectureNote/searchFiles', 'Dean\Dean\D_LectureNoteController@searchDeanLN');
-	Route::get('/Dean/lectureNote/folder/{ln_id}','Dean\Dean\D_LectureNoteController@DeanLNFolderView');
+	Route::get('/Reviewer/lectureNote/{id}','Dean\Dean\D_LectureNoteController@DeanLectureNote');
+	Route::post('/Reviewer/lectureNote/searchFiles', 'Dean\Dean\D_LectureNoteController@searchDeanLN');
+	Route::get('/Reviewer/lectureNote/folder/{ln_id}','Dean\Dean\D_LectureNoteController@DeanLNFolderView');
+	Route::get('/Reviewer/images/lectureNote/{image_name}', [
+		'as'         => 'lectureNote_image',
+		'uses'       => 'Dean\Dean\D_LectureNoteController@LectureNoteImage',
+		'middleware' => 'auth',
+	]);
+	Route::get('/Reviewer/lectureNote/download/{id}','Dean\Dean\D_LectureNoteController@downloadLN');
 	//Dean Teaching Plan
-	Route::get('/Dean/teachingPlan/{id}','Dean\Dean\D_TeachingPlanController@DeanTeachingPlan');
-	Route::post('/Dean/teachingPlan/approve/','Dean\Dean\D_TeachingPlanController@D_TP_VerifyAction');
-	Route::get('/Dean/teachingPlan/report/{id}', 'Dean\Dean\D_TeachingPlanController@TPDownload');
+	Route::get('/Reviewer/teachingPlan/{id}','Dean\Dean\D_TeachingPlanController@DeanTeachingPlan');
+	Route::post('/Reviewer/teachingPlan/approve/','Dean\Dean\D_TeachingPlanController@D_TP_VerifyAction');
+	Route::get('/Reviewer/teachingPlan/report/{id}', 'Dean\Dean\D_TeachingPlanController@TPDownload');
 	//Dean Assessment
-	Route::get('/Dean/viewAssessment/{id}','Dean\Dean\D_AssessmentController@viewAssessment');
-	Route::post('/Dean/assessment/getSyllabusData', 'Dean\Dean\D_AssessmentController@getSyllabusData');
-	Route::get('/Dean/assessment/create/{id}/question/{coursework}/{question}', [
+	Route::get('/Reviewer/viewAssessment/{id}','Dean\Dean\D_AssessmentController@viewAssessment');
+	Route::post('/Reviewer/assessment/getSyllabusData', 'Dean\Dean\D_AssessmentController@getSyllabusData');
+	Route::get('/Reviewer/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'createQuestion', 'uses' => 'Dean\Dean\D_AssessmentController@create_question']);
-	Route::get('/Dean/assessment/view_list/{ass_id}', 'Dean\Dean\D_AssessmentController@assessment_list_view')->name('dean.ass.assessment_list_view');
-	Route::get('/Dean/assessment/view/whole_paper/{ass_id}', 'Dean\Dean\D_AssessmentController@view_wholePaper');
-	Route::get('/Dean/images/assessment/{image_name}', [
+	Route::get('/Reviewer/assessment/view_list/{ass_id}', 'Dean\Dean\D_AssessmentController@assessment_list_view')->name('dean.ass.assessment_list_view');
+	Route::get('/Reviewer/assessment/view/whole_paper/{ass_id}', 'Dean\Dean\D_AssessmentController@view_wholePaper');
+	Route::get('/Reviewer/images/assessment/{image_name}', [
 	     'as'         => 'assessment_image',
 	     'uses'       => 'Dean\Dean\D_AssessmentController@assessmentImage',
 	     'middleware' => 'auth',
 	]);
-	Route::post('/Dean/assessment/searchKey/', 'Dean\Dean\D_AssessmentController@searchKey');
-    Route::post('/Dean/assessment/searchAssessmentList/', 'Dean\Dean\D_AssessmentController@searchAssessmentList');
-    Route::get('/Dean/assessment/download/{ass_li_id}', 'Dean\Dean\D_AssessmentController@downloadFiles');
+	Route::post('/Reviewer/assessment/searchKey/', 'Dean\Dean\D_AssessmentController@searchKey');
+    Route::post('/Reviewer/assessment/searchAssessmentList/', 'Dean\Dean\D_AssessmentController@searchAssessmentList');
+    Route::get('/Reviewer/assessment/download/{ass_li_id}', 'Dean\Dean\D_AssessmentController@downloadFiles');
 
     //Assessment Result
-    Route::get('/Dean/AssessmentResult/{id}/question/{question}', [
+    Route::get('/Reviewer/AssessmentResult/{id}/question/{question}', [
     'as' => 'viewAssessmentStudentResult', 'uses' => 'Dean\Dean\D_AssessmentResultController@viewAssessmentStudentResult']);
-	Route::get('/Dean/AssessmentResult/studentResult/{ass_id}/', [
+	Route::get('/Reviewer/AssessmentResult/studentResult/{ass_id}/', [
     'as' => 'viewstudentlist', 'uses' => 'Dean\Dean\D_AssessmentResultController@viewstudentlist']);
-    Route::get('/Dean/AssessmentResult/view/student/{ar_stu_id}/', [
+    Route::get('/Reviewer/AssessmentResult/view/student/{ar_stu_id}/', [
     'as' => 'viewStudentResult', 'uses' => 'Dean\Dean\D_AssessmentResultController@viewStudentResult']);
-    Route::post('/Dean/AssessmentResult/searchAssessmentForm/', 'Dean\Dean\D_AssessmentResultController@searchAssessmentForm');
-    Route::post('/Dean/AssessmentResult/searchStudentList/', 'Dean\Dean\D_AssessmentResultController@searchStudentList');
-    Route::get('/Dean/images/AssessmentResult/{image_name}', [
+    Route::post('/Reviewer/AssessmentResult/searchAssessmentForm/', 'Dean\Dean\D_AssessmentResultController@searchAssessmentForm');
+    Route::post('/Reviewer/AssessmentResult/searchStudentList/', 'Dean\Dean\D_AssessmentResultController@searchStudentList');
+    Route::get('/Reviewer/images/AssessmentResult/{image_name}', [
 	     'as'         => 'assessmentResult_image',
 	     'uses'       => 'Dean\Dean\D_AssessmentResultController@assessmentResult_image',
 	     'middleware' => 'auth',
 	]);
-	Route::get('/Dean/AssessmentResult/view/whole_paper/{ar_stu_id}', 'Dean\Dean\D_AssessmentResultController@view_wholePaper');
-	Route::get('/Dean/AssessmentResult/result/{ar_stu_id}','Dean\Dean\D_AssessmentResultController@downloadDocument')->name('dean.downloadStudentResult');
+	Route::get('/Reviewer/AssessmentResult/view/whole_paper/{ar_stu_id}', 'Dean\Dean\D_AssessmentResultController@view_wholePaper');
+	Route::get('/Reviewer/AssessmentResult/result/{ar_stu_id}','Dean\Dean\D_AssessmentResultController@downloadDocument')->name('dean.downloadStudentResult');
 
-	Route::get('/Dean/Assessment/{id}','Dean\Dean\D_AssessmentController@DeanAssessment');
-	Route::post('/Dean/Assessment/approve/','Dean\Dean\D_AssessmentController@D_Ass_Verify_Action');
-	Route::get('/Dean/Assessment/report/{actionCA_id}','Dean\Dean\D_AssessmentController@ModerationFormReport');
+	Route::get('/Reviewer/Assessment/{id}','Dean\Dean\D_AssessmentController@DeanAssessment');
+	Route::post('/Reviewer/Assessment/approve/','Dean\Dean\D_AssessmentController@D_Ass_Verify_Action');
+	Route::get('/Reviewer/Assessment/report/{actionCA_id}','Dean\Dean\D_AssessmentController@ModerationFormReport');
 
 	//Dean Final Assessment
-	Route::get('/Dean/FinalExam/{id}/', [
+	Route::get('/Reviewer/FinalExam/{id}/', [
     'as' => 'FinalExamination', 'uses' => 'Dean\Dean\D_FinalExamController@viewFinalExamination']);
-    Route::post('/Dean/FinalExamination/getSyllabusData', 'Dean\Dean\D_FinalExamController@getSyllabusData');
-    Route::get('/Dean/FinalExamination/question/{coursework}/{id}/', [
+    Route::post('/Reviewer/FinalExamination/getSyllabusData', 'Dean\Dean\D_FinalExamController@getSyllabusData');
+    Route::get('/Reviewer/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'createQuestion', 'uses' => 'Dean\Dean\D_FinalExamController@create_question']);
     
-	Route::get('/Dean/FinalExamination/view_list/{fx_id}', 'Dean\Dean\D_FinalExamController@final_assessment_list_view')->name('dean.final.final_assessment_list_view');
-	Route::get('/Dean/images/final_assessment/{image_name}', [
+	Route::get('/Reviewer/FinalExamination/view_list/{fx_id}', 'Dean\Dean\D_FinalExamController@final_assessment_list_view')->name('dean.final.final_assessment_list_view');
+	Route::get('/Reviewer/images/final_assessment/{image_name}', [
 	     'as'         => 'assessment_final_image',
 	     'uses'       => 'Dean\Dean\D_FinalExamController@FinalAssessmentImage',
 	     'middleware' => 'auth',
 	]);
-	Route::post('/Dean/FinalExamination/searchAssessmentList/', 'Dean\Dean\D_FinalExamController@searchAssessmentList');
-	Route::post('/Dean/FinalExamination/searchKey/', 'Dean\Dean\D_FinalExamController@searchKey');
-	Route::get('/Dean/final_assessment/view/whole_paper/{fx_id}', 'Dean\Dean\D_FinalExamController@view_wholePaper');
-	Route::get('/Dean/FinalExamination/download/{ass_fx_id}', 'Dean\Dean\D_FinalExamController@downloadFiles');
+	Route::post('/Reviewer/FinalExamination/searchAssessmentList/', 'Dean\Dean\D_FinalExamController@searchAssessmentList');
+	Route::post('/Reviewer/FinalExamination/searchKey/', 'Dean\Dean\D_FinalExamController@searchKey');
+	Route::get('/Reviewer/final_assessment/view/whole_paper/{fx_id}', 'Dean\Dean\D_FinalExamController@view_wholePaper');
+	Route::get('/Reviewer/FinalExamination/download/{ass_fx_id}', 'Dean\Dean\D_FinalExamController@downloadFiles');
 	//Final Assessment Result
-	Route::get('/Dean/FinalResult/{id}', [
+	Route::get('/Reviewer/FinalResult/{id}', [
     'as' => 'viewFinalResult', 'uses' => 'Dean\Dean\D_FinalExamResultController@viewFinalResult']);
-	Route::get('/Dean/FinalResult/view/student/{fxr_id}/', [
+	Route::get('/Reviewer/FinalResult/view/student/{fxr_id}/', [
     'as' => 'viewFinalStudentResult', 'uses' => 'Dean\Dean\D_FinalExamResultController@viewFinalStudentResult']);
-    Route::get('/Dean/FinalResult/result/{fxr_id}','Dean\Dean\D_FinalExamResultController@downloadDocument')->name('dean.downloadStudentResult');
-    Route::get('/Dean/images/FinalResult/{image_name}', [
+    Route::get('/Reviewer/FinalResult/result/{fxr_id}','Dean\Dean\D_FinalExamResultController@downloadDocument')->name('dean.downloadStudentResult');
+    Route::get('/Reviewer/images/FinalResult/{image_name}', [
 	     'as'         => 'FinalResult_image',
 	     'uses'       => 'Dean\Dean\D_FinalExamResultController@FinalResult_image',
 	     'middleware' => 'auth',
 	]);
-	Route::get('/Dean/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Dean\D_FinalExamResultController@view_wholePaper');
-	Route::post('/Dean/FinalResult/searchStudentList/', 'Dean\Dean\D_FinalExamResultController@searchStudentList');
+	Route::get('/Reviewer/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Dean\D_FinalExamResultController@view_wholePaper');
+	Route::post('/Reviewer/FinalResult/searchStudentList/', 'Dean\Dean\D_FinalExamResultController@searchStudentList');
 	
-	Route::get('/Dean/FinalExamination/{id}','Dean\Dean\D_FinalExamController@DeanFinalExam');	
-	// Route::post('/Dean/FinalExamination/verify/','Dean\Dean\D_FinalExamController@D_FX_Verify_Action');
-	Route::post('/Dean/FinalExamination/approve/','Dean\Dean\D_FinalExamController@D_FX_Approve_Action');
-	Route::get('/Dean/FinalExamination/report/{actionFA_id}','Dean\Dean\D_FinalExamController@ModerationFormReport');
+	Route::get('/Reviewer/FinalExamination/{id}','Dean\Dean\D_FinalExamController@DeanFinalExam');	
+	Route::post('/Reviewer/FinalExamination/approve/','Dean\Dean\D_FinalExamController@D_FX_Approve_Action');
+	Route::get('/Reviewer/FinalExamination/report/{actionFA_id}','Dean\Dean\D_FinalExamController@ModerationFormReport');
 
 	//Dean E_PortFolio
-	Route::get('/Dean/E_Portfolio/{id}', [
+	Route::get('/Reviewer/E_Portfolio/{id}', [
     'as' => 'viewE_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@viewE_Portfolio']);
-    Route::get('/Dean/E_Portfolio/report/{id}', [
+    Route::get('/Reviewer/E_Portfolio/report/{id}', [
     'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@Download_E_Portfolio']);
 ?>

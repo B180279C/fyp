@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -71,7 +71,7 @@ $option3 = "id='selected-sidebar'";
   }
 
   function ModerationForm(actionFA_id){
-    window.location = "/Moderator/FinalExamination/report/"+actionFA_id;
+    window.location = "{{$character}}/Moderator/FinalExamination/report/"+actionFA_id;
     return false;
   }
   $(document).ready(function(){
@@ -101,7 +101,7 @@ $option3 = "id='selected-sidebar'";
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/Moderator/FinalExamination/getSyllabusData',
+            url:'{{$character}}/Moderator/FinalExamination/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
               var count = 0;
@@ -156,7 +156,7 @@ $option3 = "id='selected-sidebar'";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Question Paper & Solution";
-              cell1.innerHTML = '<a href="/Moderator/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="{{$character}}/Moderator/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               if(status==true){
                 cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
               }else{
@@ -178,7 +178,7 @@ $option3 = "id='selected-sidebar'";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Student Result";
-              cell1.innerHTML = '<a href="/Moderator/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="{{$character}}/Moderator/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               cell2.innerHTML = response[1].length;
 
               var moderation_done = $('#moderation_done').val();
@@ -202,9 +202,9 @@ $option3 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Moderator </a>/
-            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Final Assessment</span>/
         </p>
         <hr class="separate_hr">

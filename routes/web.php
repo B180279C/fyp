@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\View;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -118,12 +118,12 @@ Route::middleware('is_teacher')->group(function(){
 	Route::get('teacher/home', 'HomeController@teacherHome')->name('teacher.home');
 });
 Route::middleware('is_hod')->group(function(){
-	Route::get('hod/home', 'HomeController@hodHome')->name('hod.home');
+	include('hod.php');
 });
 Route::middleware('is_dean')->group(function(){
-	
 	include('dean.php');
 });
+
 
 
 

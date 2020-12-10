@@ -2,15 +2,15 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Moderator </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
             <span class="now_page">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</span>/
         </p>
         <hr class="separate_hr">
@@ -55,7 +55,7 @@ $option3 = "id='selected-sidebar'";
             <div class="details" style="padding: 5px 5px 0px 5px;">
                 <div class="row">
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/assign/student/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/assign/student/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/student.png')}}" width="150px" height="90px" style="margin-top: 50px;"/>
                             <br>
@@ -64,7 +64,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/lectureNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/lectureNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/note.png')}}" width="80px" height="90px" style="margin-top: 50px;"/>
                             <br>
@@ -73,7 +73,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/teachingPlan/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/teachingPlan/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
                             <br>
@@ -82,7 +82,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/viewAssessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/viewAssessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
                             <br>
@@ -91,7 +91,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/FinalExam/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/FinalExam/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/final.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 10px;"/>
                             <br>
@@ -100,7 +100,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/E_Portfolio/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/E_Portfolio/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/portfolio.png')}}" width="75px" height="80px" style="margin-top: 60px;margin-left: 0px;"/>
                             <br>
@@ -113,7 +113,7 @@ $option3 = "id='selected-sidebar'";
                 <p class="page_title">Moderation</p>
                 <div class="row" style="margin-top: 5px;">
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/Assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/Assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
                             <br>
@@ -122,7 +122,7 @@ $option3 = "id='selected-sidebar'";
                         </a>
                     </div>
                     <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/Moderator/FinalExamination/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                        <a href="{{$character}}/Moderator/FinalExamination/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/final.png')}}" width="70px" height="70px" style="margin-top: 60px;margin-left: 10px;"/>
                             <br>

@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -109,7 +109,7 @@ $option1 = "id='selected-sidebar'";
           var num = id.split("_");
           $.ajax({
             type:'POST',
-            url:'/FinalExamination/AssessmentNameEdit',
+            url:'{{$character}}/FinalExamination/AssessmentNameEdit',
             data:{value : num[2]},
             success:function(data){
               var clo = data[0].CLO;
@@ -185,7 +185,7 @@ $option1 = "id='selected-sidebar'";
           var id = $(this).attr("id");
           var num = id.split("_");
           if(confirm('Are you sure you want to remove the it?')) {
-            window.location = "/FinalExamination/remove/"+num[2];
+            window.location = "{{$character}}/FinalExamination/remove/"+num[2];
           }     
         });
 
@@ -200,7 +200,7 @@ $option1 = "id='selected-sidebar'";
             if(checkedValue!=""){
               var course_id = $('#course_id').val();
               var id = course_id+"_"+checkedValue;
-              window.location = "/FinalExamination/AllZipFiles/"+id+"/checked";
+              window.location = "{{$character}}/FinalExamination/AllZipFiles/"+id+"/checked";
             }else{
               alert("Please select the document first.");
             }
@@ -218,7 +218,7 @@ $option1 = "id='selected-sidebar'";
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'/FinalExamination/searchAssessmentList/',
+              url:'{{$character}}/FinalExamination/searchAssessmentList/',
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -230,7 +230,7 @@ $option1 = "id='selected-sidebar'";
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'/FinalExamination/searchAssessmentList/',
+               url:'{{$character}}/FinalExamination/searchAssessmentList/',
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;
@@ -243,15 +243,15 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
-            <a href="/FinalExamination/{{$course[0]->course_id}}">Final Assessment</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/FinalExamination/{{$course[0]->course_id}}">Final Assessment</a>/
             <span class="now_page">Final ( Q & S )</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">
              <p class="page_title">Final ( Q & S )</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -264,7 +264,7 @@ $option1 = "id='selected-sidebar'";
                       @if((count($ass_final)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/FinalExamination/AllZipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/FinalExamination/AllZipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   </ul>
                 </div>
@@ -304,7 +304,7 @@ $option1 = "id='selected-sidebar'";
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" name="group{{$row->fx_id}}" value="{{$row->fx_id}}" class="group_download">
                       </div>
-                      <a href='/FinalExamination/view_list/{{$row->fx_id}}' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href='{{$character}}/FinalExamination/view_list/{{$row->fx_id}}' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
@@ -366,7 +366,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('Dean\FinalExaminationController@openNewAssessment')}}">
+      <form method="post" action="{{$character}}/FinalExamination/openNewAssessment">
         {{csrf_field()}}
       <div class="modal-body body2">
         <div id="message"></div>
@@ -483,7 +483,7 @@ $option1 = "id='selected-sidebar'";
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="post" action="{{action('Dean\FinalExaminationController@updateAssessmentName')}}">
+      <form method="post" action="{{$character}}/FinalExamination/updateAssessmentName">
         {{csrf_field()}}
       <div class="modal-body body2">
         <div id="message"></div>

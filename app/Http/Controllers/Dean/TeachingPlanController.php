@@ -288,13 +288,19 @@ class TeachingPlanController extends Controller
 			       			->select('plan_topics.*')
 			       			->where('plan_topics.tp_id','=',$row->tp_id)
 			       			->get();
+
 			       	foreach($topic as $row_topic){
 			       		$result .= '<div class="col-md-8 topic" style="display: inline-block;height: 50px;">';
 	                    $result .= '<div class="row">';
 	                    $result .= '<div class="col-1 align-self-center" style="padding: 10px 0px 0px 0px;"><p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;"><i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i></p></div>';
 	                    $result .= '<div class="col-11" style="padding-left: 20px;">';
 	                    $result .= '<div class="form-group">';
-	                    $result .= '<label class="label" style="font-size:12px;padding:0px;">Lecture Topic</label><input type="text" class="form-control" placeholder="Topic" readonly value="'.$row_topic->lecture_topic.'">';
+                      if($row_topic->lecture_topic!=""){
+                          $lecture_topic = explode('///',$row_topic->lecture_topic);
+                          $result .= '<label class="label" style="font-size:12px;padding:0px;">Lecture Topic</label><input type="text" class="form-control" placeholder="Topic" readonly value="'.$lecture_topic[1].'">';
+                      }else{
+                        $result .= '<label class="label" style="font-size:12px;padding:0px;">Lecture Topic</label><input type="text" class="form-control" placeholder="Topic" readonly value="'.$row_topic->lecture_topic.'">';
+                      }
 	                    $result .= '</div></div></div></div>';
 	                    $result .= '<div class="col-md-3" style="display: inline-block;height: 80px;">';
 	                    $result .= '<div class="row">';
@@ -354,7 +360,12 @@ class TeachingPlanController extends Controller
 	                $result .= '<div class="col-1 align-self-center" style="padding: 10px 0px 0px 0px;"><p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;"><i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i></p></div>';
 	                $result .= '<div class="col-11" style="padding-left: 20px;">';
 	                $result .= '<div class="form-group">';
-	                $result .= '<label class="label" style="font-size:12px;padding:0px;">Lecture Topic</label><input type="text" class="form-control" placeholder="Topic" readonly value="'.$row_topic->lecture_topic.'">';
+	                if($row_topic->lecture_topic!=""){
+                          $lecture_topic = explode('///',$row_topic->lecture_topic);
+                          $result .= '<label class="label" style="font-size:12px;padding:0px;">Lecture Topic</label><input type="text" class="form-control" placeholder="Topic" readonly value="'.$lecture_topic[1].'">';
+                      }else{
+                        $result .= '<label class="label" style="font-size:12px;padding:0px;">Lecture Topic</label><input type="text" class="form-control" placeholder="Topic" readonly value="'.$row_topic->lecture_topic.'">';
+                      }
 	                $result .= '</div></div></div></div>';
 	                $result .= '<div class="col-md-3" style="display: inline-block;height: 80px;">';
 	                $result .= '<div class="row">';

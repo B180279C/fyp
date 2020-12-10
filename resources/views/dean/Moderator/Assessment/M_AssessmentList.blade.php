@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -81,7 +81,7 @@ function w3_close() {
   document.getElementById("button_open").style.display = "block";
 }
 function ModerationForm(actionCA_id){
-  window.location = "/Moderator/Assessment/report/"+actionCA_id;
+  window.location = "{{$character}}/Moderator/Assessment/report/"+actionCA_id;
   return false;
 }
 function Submit_Action(Action){
@@ -124,7 +124,7 @@ function Submit_Moderation(){
 $(document).ready(function(){
   $(document).on("click","#downloadReport", function(){
     var actionCA_id = $('#actionCA_id').val();
-    window.location = "/Moderator/Assessment/report/"+actionCA_id;
+    window.location = "{{$character}}/Moderator/Assessment/report/"+actionCA_id;
   });
   $('#less').hide();
     $(document).on("click",".more", function(){
@@ -159,9 +159,10 @@ $(document).ready(function(){
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/assessment/getSyllabusData',
+            url:'{{$character}}/Moderator/assessment/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
+              console.log(response);
               var count = 0;
               var new_count = 0;
               var table = document.getElementById("table");
@@ -198,9 +199,9 @@ $(document).ready(function(){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Moderator </a>/
-            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Continuous Assessment</span>/
         </p>
         <hr class="separate_hr">
@@ -474,7 +475,7 @@ $(document).ready(function(){
                       </tr>
                       <tr style="background-color: #d9d9d9;">
                         @foreach($assessments as $row)
-                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%"><a href='/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
+                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%"><a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
                         @endforeach
                       </tr>
                       <?php
@@ -514,7 +515,7 @@ $(document).ready(function(){
                       <tr style="background-color: #d9d9d9;">
                         <th style="text-align: right;color: black;" colspan="2"><b>Assessment</b></th>
                         @foreach($assessments as $row)
-                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%" colspan="2"><a href='/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
+                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%" colspan="2"><a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
                         @endforeach
                         <tr style="background-color: #d9d9d9;">
                           <th style="text-align: right;color: black;" colspan="2"><b>% of Coursework</b></th>
@@ -590,7 +591,7 @@ $(document).ready(function(){
                       }
                     ?>
                     <div class="col-12" style="margin-top: 10px;border:0px solid black">
-                           <a href='/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;"> {{$row->assessment_name}} : </a>
+                           <a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;"> {{$row->assessment_name}} : </a>
                     <div id="suggest_{{$c}}" class="editor">
                       {!!$suggest_list!!}
                     </div>
@@ -603,7 +604,7 @@ $(document).ready(function(){
                 </div>
                 @endif
                 @if($button_verify=="Yes")
-                <form id="myForm" method="post" action="{{action('Dean\Moderator\M_AssessmentController@M_Ass_Moderate_Action')}}" style="margin: 0px;">
+                <form id="myForm" method="post" action="{{$character}}/Moderator/Assessment/Moderation/" style="margin: 0px;">
                   {{csrf_field()}}
                   <input type="hidden" name="actionCA_id" value="{{$actionCA_id}}">
                   <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
@@ -614,7 +615,7 @@ $(document).ready(function(){
                       <tr style="background-color: #d9d9d9;">
                         <th style="text-align: right;color: black;" colspan="2"><b>Assessment</b></th>
                         @foreach($assessments as $row)
-                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%" colspan="2"><a href='/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
+                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%" colspan="2"><a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
                         @endforeach
                         <tr style="background-color: #d9d9d9;">
                           <th style="text-align: right;color: black;" colspan="2"><b>% of Coursework</b></th>
@@ -675,7 +676,7 @@ $(document).ready(function(){
                     ?>
                     @foreach($assessments as $row)
                     <div class="col-12" style="margin-top: 10px;border:0px solid black">
-                           <a href='/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;"> {{$row->assessment_name}} : </a>
+                           <a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;"> {{$row->assessment_name}} : </a>
                     </div>
                     <div class="col-12" style="border: 0px solid black;margin-top:10px;margin-bottom: 0px;">
                         <div id="suggest_{{$c}}" class="editor">

@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -51,13 +51,13 @@ $option1 = "id='selected-sidebar'";
 
     function submitAction(){
         var course_id = $('#course_id').val();
-        window.location = "/teachingPlan/Action/Submit/"+course_id; 
+        window.location = "{{$character}}/teachingPlan/Action/Submit/"+course_id; 
     }
 
     function submitActionSecond(){
         var course_id = $('#course_id').val();
         if(confirm('Please ensure your teaching plan is fixed all error and full complete already. Are you sure want to submit again to moderator.')) {
-            window.location = "/teachingPlan/Action/Submit/"+course_id; 
+            window.location = "{{$character}}/teachingPlan/Action/Submit/"+course_id; 
         }
     }
 
@@ -72,7 +72,7 @@ $option1 = "id='selected-sidebar'";
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'/teachingPlan/searchPlan',
+              url:'{{$character}}/teachingPlan/searchPlan',
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("tp").innerHTML = data;
@@ -84,7 +84,7 @@ $option1 = "id='selected-sidebar'";
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'/teachingPlan/searchPlan',
+               url:'{{$character}}/teachingPlan/searchPlan',
                data:{value:value,course_id:course_id},
                success:function(data){
                     document.getElementById("tp").innerHTML = data;
@@ -122,9 +122,9 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/course_list">Courses </a>/
-            <a href="/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/course_list">Courses </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <span class="now_page">Teaching Plan</span>/
         </p>
         <hr class="separate_hr">
@@ -138,11 +138,11 @@ $option1 = "id='selected-sidebar'";
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
-                    <a href="/teachingPlan/create/assessment/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-list-ol" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Assessment Method</li></a>
-                    <a href="/teachingPlan/create/CQI/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage CQI</li></a>
-                    <a href="/teachingPlan/create/weekly/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-pencil" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Weekly Plan</li></a>
+                    <a href="{{$character}}/teachingPlan/create/assessment/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-list-ol" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Assessment Method</li></a>
+                    <a href="{{$character}}/teachingPlan/create/CQI/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage CQI</li></a>
+                    <a href="{{$character}}/teachingPlan/create/weekly/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-pencil" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Manage Weekly Plan</li></a>
                     <p class="title_method">Report</p>
-                    <a href="/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
+                    <a href="{{$character}}/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
                   </ul>
             </div>
             <br>
@@ -302,7 +302,7 @@ $option1 = "id='selected-sidebar'";
 
             if($num==3){
                 $completed = '<b style="color: green;">Complete</b>';
-                $pending = $completed."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;' onclick='submitAction()'>Submit to Moderator ( ".$verified_person_name->position." : ".$verified_person_name->name." )</button>";
+                $pending = $completed."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:1px 15px;' onclick='submitAction()'>Submit to Moderator ( ".$verified_person_name->position." : ".$verified_person_name->name." )</button>";
             }else{
                 $completed = '<b style="color: red;">Not Complete</b>';
             }

@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -93,7 +93,7 @@ $option3 = "id='selected-sidebar'";
     if(checkedValue!=""){
       var course_id = $('#course_id').val();
       var id = course_id+"_"+checkedValue;
-      window.location = "/AssessmentResult/AllZipFiles/"+id+"/checked";
+      window.location = "{{$character}}/AssessmentResult/AllZipFiles/"+id+"/checked";
     }else{
       alert("Please select the document first.");
     }
@@ -111,7 +111,7 @@ $option3 = "id='selected-sidebar'";
       var question = $('#question').val();
       $.ajax({
           type:'POST',
-          url: "/Moderator/AssessmentResult/searchAssessmentForm/",
+          url: "{{$character}}/Moderator/AssessmentResult/searchAssessmentForm/",
           data:{value:value,course_id:course_id,question:question},
           success:function(data){
             document.getElementById("assessments").innerHTML = data;
@@ -124,7 +124,7 @@ $option3 = "id='selected-sidebar'";
         var question = $('#question').val();
         $.ajax({
            type:'POST',
-           url: "/Moderator/AssessmentResult/searchAssessmentForm/",
+           url: "{{$character}}/Moderator/AssessmentResult/searchAssessmentForm/",
            data:{value:value,course_id:course_id,question:question},
            success:function(data){
               document.getElementById("assessments").innerHTML = data;
@@ -137,15 +137,15 @@ $option3 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/Moderator">Moderator </a>/
-            <a href="/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
-            <a href="/Moderator/viewAssessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/Moderator/viewAssessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <span class="now_page">{{$question}} ( R )</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">{{$question}} ( R )</p>
              @if((count($assessments)!=0))
@@ -157,7 +157,7 @@ $option3 = "id='selected-sidebar'";
                   <ul class="sidebar-action-ul">
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/AssessmentResult/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                      
                   </ul>
                 </div>
@@ -199,7 +199,7 @@ $option3 = "id='selected-sidebar'";
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" name="group{{$row->ass_id}}" value="{{$row->ass_id}}" class="group_download">
                       </div>
-                      <a href='/Moderator/AssessmentResult/studentResult/{{$row->ass_id}}/' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href='{{$character}}/Moderator/AssessmentResult/studentResult/{{$row->ass_id}}/' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
