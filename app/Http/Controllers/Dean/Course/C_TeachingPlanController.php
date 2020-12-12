@@ -27,31 +27,46 @@ class C_TeachingPlanController extends Controller
         $faculty_id    = $staff_dean->faculty_id;
         $department_id = $staff_dean->department_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        // $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        // $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
+        $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
-        $approved_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
+        // $approved_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
+        //          ->get();
 
         $TP = DB::table('teaching_plan')
         	->select('teaching_plan.*')
@@ -82,7 +97,7 @@ class C_TeachingPlanController extends Controller
                   ->get();
 
         if(count($course)>0){
-            return view('dean.CoursePortFolio.Teaching_Plan.C_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by'));
+            return view('dean.CoursePortFolio.Teaching_Plan.C_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','approved_person_name'));
         }else{
             return redirect()->back();
         }

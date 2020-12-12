@@ -22,10 +22,6 @@ Auth::routes(['verify' => true]);
 Route::get('student/register','StudentController@create')->name('student.create');
 Route::post('student/register', 'StudentController@store')->name('student.register.submit');
 
-Route::middleware('is_student')->group(function(){
-		Route::get('/home', 'HomeController@index')->name('home');
-});
-
 Route::middleware('is_admin')->group(function(){
 	Route::get('admin/home', 'HomeController@adminHome')->name('admin.home');
 	Route::get('student/create','StudentController@AdminCreateStudent')->name('admin.student.create');
@@ -45,7 +41,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/student/{id}','StudentController@update')->name('student_list.update.submit');
 
 	Route::get('staff/create','StaffController@create')->name('staff.create');
-	Route::post('staff/create', 'StaffController@store')->name('staff.submit');
+	Route::post('staff/store', 'StaffController@store')->name('staff.submit');
 
 	Route::get('/staff_list','StaffController@index')->name('admin.staff_list.index');
 	Route::get('images/staff/{image_name}', [
@@ -60,10 +56,10 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/checkStaffID', 'StaffController@checkStaffID');
 	Route::post('/removeImage', 'StaffController@removeImage');
 	Route::post('/removeCV', 'StaffController@removeCV');
-	Route::post('/staffUploadImage', 'StaffController@uploadImages')->name('dropzone.uploadStaffImage');
-	Route::post('/staffDestoryImage', 'StaffController@destroyImage')->name('dropzone.destoryStaffImage');
-	Route::post('/staffUploadCV', 'StaffController@uploadCV')->name('dropzone.uploadStaffCV');
-	Route::post('/staffDestoryCV', 'StaffController@destroyCV')->name('dropzone.destoryStaffCV');
+	Route::post('/admin/staff/UploadImage', 'StaffController@uploadImages')->name('admin.dropzone.StaffUploadImage');
+	Route::post('/admin/staff/DestoryImage', 'StaffController@destroyImage')->name('admin.dropzone.StaffDestoryImage');
+	Route::post('/admin/staff/UploadCV', 'StaffController@uploadCV')->name('admin.dropzone.StaffUploadCV');
+	Route::post('/admin/staff/DestoryCV', 'StaffController@destroyCV')->name('admin.dropzone.StaffDestoryCV');
 
 	Route::get('department/create','DepartmentController@create')->name('department.create');
 	Route::post('department/create', 'DepartmentController@store')->name('department.submit');
@@ -111,11 +107,11 @@ Route::middleware('is_admin')->group(function(){
 
 });
 
-// Route::middleware('is_staff')->group(function(){
-// 	Route::get('staff/home', 'HomeController@staffHome')->name('staff.home');
-// });
+Route::middleware('is_student')->group(function(){
+	include('student.php');
+});
 Route::middleware('is_teacher')->group(function(){
-	Route::get('teacher/home', 'HomeController@teacherHome')->name('teacher.home');
+	include('lecturer.php');
 });
 Route::middleware('is_hod')->group(function(){
 	include('hod.php');

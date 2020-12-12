@@ -2,7 +2,7 @@
 $title = "CoursePortfolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 
@@ -43,9 +43,9 @@ $(document).ready(function() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/CourseList">Courses </a>/
-            <a href="/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/CourseList">Courses </a>/
+            <a href="{{$character}}/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">E - Portfolio</span>/
         </p>
         <hr class="separate_hr">
@@ -60,7 +60,7 @@ $(document).ready(function() {
                     </div>
                   <ul class="sidebar-action-ul">
                       <p class="title_method">Download</p>
-                      <a href='/Dean/E_Portfolio/report/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>E-Portfolio Report</li></a>
+                      <a href='{{$character}}/Reviewer/E_Portfolio/report/{{$course[0]->course_id}}'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>E-Portfolio Report</li></a>
                   </ul>
             </div>
             <br>

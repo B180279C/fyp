@@ -74,20 +74,29 @@ class M_FinalExamController extends Controller
         $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
 
-        // $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        // $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+        $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        $verified_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
+        $approved_by = Staff::where('id', '=', $course[0]->approved_by)->firstOrFail();
+        $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
-        $approved_person_name = User::where('user_id', '=', $user_id)->firstOrFail();
+        // $verified_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
+        //          ->get();
+
+        // $approved_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'Dean')
+        //          ->where('staffs.faculty_id','=',$faculty_id)
+        //          ->get();
+
 
         if(count($course)>0){
-            return view('dean.Moderator.Final_Exam.M_FinalExamList',compact('course','ass_final','TP_Ass','tp','action','moderator_person_name','verified_by','approved_person_name','action_big'));
+            return view('dean.Moderator.Final_Exam.M_FinalExamList',compact('course','ass_final','TP_Ass','tp','action','moderator_person_name','verified_person_name','approved_person_name','action_big'));
         }else{
             return redirect()->back();
         }
@@ -151,25 +160,31 @@ class M_FinalExamController extends Controller
                  ->where('staffs.id', '=', $course[0]->moderator)
                  ->get();
 
-    // $verified_by = DB::table('staffs')
-    //              ->join('users','staffs.user_id','=','users.user_id')
-    //              ->select('staffs.*','users.*')
-    //              ->where('staffs.id', '=', $course[0]->verified_by)
-    //              ->get();
-
     $verified_by = DB::table('staffs')
                  ->join('users','staffs.user_id','=','users.user_id')
                  ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
+                 ->where('staffs.id', '=', $course[0]->verified_by)
                  ->get();
 
     $approved_by = DB::table('staffs')
                  ->join('users','staffs.user_id','=','users.user_id')
                  ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'Dean')
-                 ->where('staffs.faculty_id','=',$faculty_id)
+                 ->where('staffs.id', '=', $course[0]->approved_by)
                  ->get();
+
+    // $verified_by = DB::table('staffs')
+    //              ->join('users','staffs.user_id','=','users.user_id')
+    //              ->select('staffs.*','users.*')
+    //              ->where('users.position', '=', 'HoD')
+    //              ->where('staffs.department_id','=',$department_id)
+    //              ->get();
+
+    // $approved_by = DB::table('staffs')
+    //              ->join('users','staffs.user_id','=','users.user_id')
+    //              ->select('staffs.*','users.*')
+    //              ->where('users.position', '=', 'Dean')
+    //              ->where('staffs.faculty_id','=',$faculty_id)
+    //              ->get();
 
     $ass_final = DB::table('ass_final')
                     ->select('ass_final.*')
@@ -862,20 +877,28 @@ class M_FinalExamController extends Controller
         $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
 
-        $verified_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
+        $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        // $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        // $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+        $approved_by = Staff::where('id', '=', $course[0]->approved_by)->firstOrFail();
+        $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
-        $approved_person_name = User::where('user_id', '=', $user_id)->firstOrFail();
+        // $verified_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
+        //          ->get();
+
+        // $approved_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'Dean')
+        //          ->where('staffs.faculty_id','=',$faculty_id)
+        //          ->get();
 
         if(count($course)>0){
-            return view('dean.Moderator.FinalExam.viewFinalExam',compact('course','ass_final','action','moderator_person_name','verified_by','approved_person_name'));
+            return view('dean.Moderator.FinalExam.viewFinalExam',compact('course','ass_final','action','moderator_person_name','verified_person_name','approved_person_name'));
         }else{
             return redirect()->back();
         }

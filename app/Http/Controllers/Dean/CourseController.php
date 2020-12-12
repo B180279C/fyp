@@ -121,19 +121,23 @@ class CourseController extends Controller
                     ->get();
 
         if (count($checkexists) === 0){
-            $course = new Course([
-                'subject_id'        => $request->get('subject'),
-                'course_type'       => $course_type,
-                'semester'          => $request->get('semester'),
-                'lecturer'          => $request->get('lecturer'),
-                'moderator'         => $request->get('moderator'),
-                // 'verified_by'       => $request->get('verified_by'),
-                // 'approved_by'       => $request->get('approved_by'),
-                'credit'            => $request->get('credit'),
-                'status'            => "Active",
-            ]);
-            $course->save();
-            return redirect()->back()->with('success','Data Added');
+            if($request->get('lecturer')==$request->get('moderator')){
+               return redirect()->back()->with('failed','The Lecturer and Moderator cannot be same'); 
+            }else{
+                $course = new Course([
+                    'subject_id'        => $request->get('subject'),
+                    'course_type'       => $course_type,
+                    'semester'          => $request->get('semester'),
+                    'lecturer'          => $request->get('lecturer'),
+                    'moderator'         => $request->get('moderator'),
+                    'verified_by'       => $request->get('verified_by'),
+                    'approved_by'       => $request->get('approved_by'),
+                    'credit'            => $request->get('credit'),
+                    'status'            => "Active",
+                ]);
+                $course->save();
+                return redirect()->back()->with('success','Data Added');
+            }
         }else{
             return redirect()->back()->with('failed','The Subject has been existed');
         }
@@ -390,20 +394,33 @@ class CourseController extends Controller
 
             $moderator_staff = Staff::where('staff_id', "=", $second_moderatorStaff_id[0])->first();
 
-            $approved_staff = Staff::where('staff_id', "=", $second_approvedStaff_id[0])->first();
+            $verified_staff = DB::table('staffs')
+                    ->join('users','users.user_id','=','staffs.user_id')
+                    ->select('staffs.*','users.*')
+                    ->where('staffs.staff_id', '=', $second_verifiedStaff_id[0])
+                    ->where('users.position', '=', 'HoD')
+                    ->get();
 
-            $verified_staff = Staff::where('staff_id', "=", $second_verifiedStaff_id[0])->first();
+            $approved_staff = DB::table('staffs')
+                    ->join('users','users.user_id','=','staffs.user_id')
+                    ->select('staffs.*','users.*')
+                    ->where('staffs.staff_id', '=', $second_approvedStaff_id[0])
+                    ->where('users.position', '=', 'Dean')
+                    ->get();
 
             if(isset($subject[0])){
-                if(($semester === null)||($staff === null)||($moderator_staff === null)||($verified_staff === null)||($approved_staff === null)){
-                   $failed .= "In No ".($i+1)." , the semester or staff(Lecturer,moderator,verified_by,approved_by) got something wrong.";
+                if(($semester === null)||($staff === null)||($moderator_staff === null)){
+                   $failed .= "In No ".($i+1)." , the semester or staff(Lecturer,moderator) got something wrong.";
+                }else if(count($verified_staff)==0||count($approved_staff)==0){
+                    $failed .= "In No ".($i+1)." ,The Verified By (Staff ID) must be HoD and the Approved By (Staff ID) must be Dean";
+                }else if($secondStaff_id[0]==$second_moderatorStaff_id[0]){
+                    $failed .= "In No ".($i+1)." , the Lecturer and Moderator cannot be same.";
                 }else{
                     $checkexists = DB::table('courses')
                             ->select('courses.*')
                             ->where('courses.subject_id','=', $subject[0]->subject_id)
                             ->where('courses.semester','=', $semester->semester_id)
                             ->where('courses.lecturer','=', $staff->id)
-                            ->where('courses.moderator','=',$moderator_staff->id)
                             ->where('courses.status','=',"Active")
                             ->get();
                     if (count($checkexists) === 0) {
@@ -414,8 +431,8 @@ class CourseController extends Controller
                             'credit'            => $credit,
                             'lecturer'          => $staff->id,
                             'moderator'         => $moderator_staff->id,
-                            'verified_by'       => $verified_staff->id,
-                            'approved_by'       => $approved_staff->id,
+                            'verified_by'       => $verified_staff[0]->id,
+                            'approved_by'       => $approved_staff[0]->id,
                             'status'            => "Active",
                         ]);
                         $course->save();
@@ -445,6 +462,14 @@ class CourseController extends Controller
 
         $value = $request->get('value');
 
+        if(auth()->user()->position=="Dean"){
+            $character = "";
+        }else if(auth()->user()->position=="HoD"){
+            $character = "/hod";
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = "/lecturer";
+        }
+
         $result = "";
         if($value!=""){
             $course = DB::table('courses')
@@ -473,7 +498,7 @@ class CourseController extends Controller
                         </p>';
             if ($course->count()) {
                 foreach($course as $row){
-                    $result .= '<a href="course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
+                    $result .= '<a href="'.$character.'/course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                     $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                     $result .= '<div class="col-1">';
                     $result .= '<img src="'.url("image/subject.png").'" width="25px" height="25px"/>';
@@ -514,7 +539,7 @@ class CourseController extends Controller
                         </p>';
             $result .= '</div>';
             foreach($course as $row){
-                $result .= '<a href="course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
+                $result .= '<a href="'.$character.'/course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                 $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                 $result .= '<div class="col-1">';
                 $result .= '<img src="'.url("image/subject.png").'" width="25px" height="25px"/>';

@@ -22,19 +22,35 @@ class C_LectureNoteController extends Controller
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
 
         $lecture_note = DB::table('lecture_notes')
                     ->select('lecture_notes.*')
@@ -68,6 +84,12 @@ class C_LectureNoteController extends Controller
         $value         = $request->get('value');
         $place         = $request->get('place');
         $course_id     = $request->get('course_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = "";
+        }else if(auth()->user()->position=="HoD"){
+            $character = "/hod";
+        }
             
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -122,7 +144,7 @@ class C_LectureNoteController extends Controller
                         $result .= '<div class="checkbox_style align-self-center">';
                         $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                         $result .= '</div>';
-                        $result .= '<a href="/CourseList/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                        $result .= '<a href="'.$character.'/CourseList/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                         $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
                         $result .= '</div>';
@@ -145,13 +167,13 @@ class C_LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")){
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
                             $result .= '<div class="col-12 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<a href="'.$character.'/Reviewer/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($ext[1]=="pdf"){
                                 $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -160,6 +182,8 @@ class C_LectureNoteController extends Controller
                             }elseif($ext[1]=="xlsx"){
                                 $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
                             }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
                                 $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
                             }
                             $result .= '</div>';
@@ -192,7 +216,7 @@ class C_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/Reviewer/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -255,7 +279,7 @@ class C_LectureNoteController extends Controller
                           $result .= '<div class="checkbox_style align-self-center">';
                           $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                           $result .= '</div>';
-                          $result .= '<a href="/CourseList/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                          $result .= '<a href="'.$character.'/CourseList/lectureNote/folder/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                           $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                           $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
                           $result .= '</div>';
@@ -278,13 +302,13 @@ class C_LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")){
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
                             $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<a href="'.$character.'/Reviewer/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($ext[1]=="pdf"){
                                 $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -293,6 +317,8 @@ class C_LectureNoteController extends Controller
                             }elseif($ext[1]=="xlsx"){
                                 $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
                             }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
                                 $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
                             }
                             $result .= '</div>';
@@ -325,7 +351,7 @@ class C_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/Reviewer/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -363,21 +389,37 @@ class C_LectureNoteController extends Controller
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
 
         $lecture_note = Lecture_Note::where('ln_id', '=', $folder_id)->firstOrFail();
 
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
-                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                 ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
-                 ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
-                 ->join('staffs', 'staffs.id','=','courses.lecturer')
-                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                 ->where('courses.course_id', '=', $lecture_note->course_id)
-                 ->where('faculty.faculty_id','=',$faculty_id)
-                 ->get();
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $lecture_note->course_id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $lecture_note->course_id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
         
         $place_name = explode(',,,',($lecture_note->note_place));
         $i=1;
@@ -416,4 +458,6 @@ class C_LectureNoteController extends Controller
             return redirect()->back();
         }
     }
+
+    
 }

@@ -53,7 +53,7 @@ class LoginController extends Controller
             if (auth()->user()->position == "admin") {
                 return redirect()->route('admin.home');
 
-            }else if(auth()->user()->position == "Teacher"){
+            }else if(auth()->user()->position == "Lecturer"){
                 return redirect()->route('teacher.home');
 
             }else if(auth()->user()->position == "HoD"){
@@ -61,7 +61,6 @@ class LoginController extends Controller
 
             }else if(auth()->user()->position == "Dean"){
                 return redirect()->route('dean.home');
-
             }else{
                 return redirect()->route('home');
             }

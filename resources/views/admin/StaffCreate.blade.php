@@ -78,7 +78,7 @@ $option1 = "id='selected-sidebar'";
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
                 type: 'POST',
-                url: '{{ url("/staffDestoryImage") }}',
+                url: '{{ url("/admin/staff/DestoryImage") }}',
                 data: {filename: name},
                 success: function (data){
                     console.log("File has been successfully removed!!");
@@ -134,7 +134,7 @@ $option1 = "id='selected-sidebar'";
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                 },
                 type: 'POST',
-                url: '{{ url("/staffDestoryCV") }}',
+                url: '{{ url("/admin/staff/DestoryCV") }}',
                 data: {filename: name},
                 success: function (data){
                     console.log("File has been successfully removed!!");
@@ -167,7 +167,7 @@ $option1 = "id='selected-sidebar'";
                 <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
                 <hr style="margin: 0px;">
                 <center>
-                <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
+                <form method="post" action="{{route('admin.dropzone.StaffUploadImage')}}" enctype="multipart/form-data"
                              class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
                     @csrf
                     <input type="hidden" name="staff_id" class="dropzone_staff_id">
@@ -183,7 +183,7 @@ $option1 = "id='selected-sidebar'";
                 <p class="page_title" style="position: relative;left: 0px ;top: -10px;">Staff CV</p>
                 <hr style="margin: 0px;">
                 <center>
-                <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                <form method="post" action="{{route('admin.dropzone.StaffUploadCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
                     @csrf
                     <input type="hidden" name="staff_id" class="dropzone_staff_id">
@@ -227,7 +227,8 @@ $option1 = "id='selected-sidebar'";
                     </div>
                     @endif
 
-                    <form method="post" action="{{route('staff.submit')}}" id="details_form">                    {{csrf_field()}}
+                    <form method="post" action="/staff/store" id="details_form">
+                    {{csrf_field()}}
                     <input type="hidden" name="staff_image" id="staff_image" value="">
                     <input type="hidden" name="staff_CV" id="staff_CV" value="">
                     <div class="row">

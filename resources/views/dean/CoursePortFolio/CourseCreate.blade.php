@@ -2,7 +2,7 @@
 $title = "CoursePortFolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -87,8 +87,8 @@ $option5 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$faculty_name->faculty_name}}</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/CourseList">Courses</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/CourseList">Courses</a>/
             <span class="now_page">Add Course</span>/
         </p>
         <hr class="separate_hr">
@@ -302,7 +302,7 @@ $option5 = "id='selected-sidebar'";
                         </div>
 
 
-                        <!-- <div class="row" id="form_hod">
+                        <div class="row" id="form_hod">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
@@ -316,9 +316,7 @@ $option5 = "id='selected-sidebar'";
                                         <optgroup label="{{ $row_faculty['faculty_name']}}">
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
-                                                    @if($row->faculty_id==$faculty_id)
-                                                        <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                    @else
+                                                    @if($row->position=="HoD")
                                                         <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
                                                     @endif
                                                 @endif
@@ -328,9 +326,9 @@ $option5 = "id='selected-sidebar'";
                                     </select>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
 
-                        <!-- <div class="row" id="form_dean">
+                        <div class="row" id="form_dean">
                             <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                                 <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                                     <i class="fa fa-user" aria-hidden="true" style="font-size: 20px;"></i>
@@ -345,11 +343,7 @@ $option5 = "id='selected-sidebar'";
                                             @foreach($reviewer as $row)
                                                 @if($row_faculty['faculty_id']==$row->faculty_id)
                                                     @if($row->position=="Dean")
-                                                        @if($row->faculty_id==$faculty_id)
-                                                            <option value="{{$row->id}}" class="option-group" selected>{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                        @else
-                                                            <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
-                                                        @endif
+                                                        <option value="{{$row->id}}" class="option-group">{{$row->position}} : {{$row->name}} ({{$row->staff_id}})</option>
                                                     @endif
                                                 @endif
                                             @endforeach
@@ -358,7 +352,7 @@ $option5 = "id='selected-sidebar'";
                                     </select>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
                         <input type="hidden" name="lecturer" id="lecturer">
                         <hr>
                         <div class="form-group" style="text-align: right;margin: 0px!important;">

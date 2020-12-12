@@ -90,7 +90,7 @@ $option1 = "id='selected-sidebar'";
             <div class="details" style="padding: 0px 5px 0px 5px;">
                 <div class="row" style="padding:0px;"> 
                     <div class="col-md-12" style="padding:0px;">
-                <form method="post" action="/hod/teachingPlan/create/weekly/{{$course[0]->course_id}}" id="form">
+                <form method="post" action="{{$character}}/teachingPlan/create/weekly/{{$course[0]->course_id}}" id="form">
                 {{csrf_field()}}
                     <?php
                     $i = 1;

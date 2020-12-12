@@ -2,7 +2,7 @@
 $title = "CoursePortFolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -71,7 +71,7 @@ $option5 = "id='selected-sidebar'";
   }
 
   function ModerationForm(actionFA_id){
-    window.location = "/Dean/FinalExamination/report/"+actionFA_id;
+    window.location = "{{$character}}/Reviewer/FinalExamination/report/"+actionFA_id;
     return false;
   }
   $(document).ready(function(){
@@ -101,7 +101,7 @@ $option5 = "id='selected-sidebar'";
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/CourseList/FinalExamination/getSyllabusData',
+            url:'{{$character}}/CourseList/FinalExamination/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
               var count = 0;
@@ -156,7 +156,7 @@ $option5 = "id='selected-sidebar'";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Question Paper & Solution";
-              cell1.innerHTML = '<a href="/CourseList/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="{{$character}}/CourseList/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               if(status==true){
                 cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
               }else{
@@ -178,7 +178,7 @@ $option5 = "id='selected-sidebar'";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Student Result";
-              cell1.innerHTML = '<a href="/CourseList/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              cell1.innerHTML = '<a href="{{$character}}/CourseList/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
               cell2.innerHTML = response[1].length;
 
               var moderation_done = $('#moderation_done').val();
@@ -202,9 +202,9 @@ $option5 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/CourseList">Courses </a>/
-            <a href="/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/CourseList">Courses </a>/
+            <a href="{{$character}}/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Final Assessment</span>/
         </p>
         <hr class="separate_hr">
@@ -244,7 +244,7 @@ $option5 = "id='selected-sidebar'";
                         }
                         if($row_action->status=="Rejected"){
                           if($row_action->verified_date==Null){
-                            $person = " By ( ".$verified_by[0]->position." : ".$verified_by[0]->name." )";
+                            $person = " By ( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                           }else{
                             $now = "Approved";
                             $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
@@ -288,7 +288,7 @@ $option5 = "id='selected-sidebar'";
                             $self = "";
                         }else if($row_action->status=="Rejected"){
                             if($row_action->verified_date==Null){
-                              $person = " By ( ".$verified_by[0]->position." : ".$verified_by[0]->name." )";
+                              $person = " By ( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                             }else{
                               $now = "Approved";
                               $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
@@ -336,7 +336,7 @@ $option5 = "id='selected-sidebar'";
                             echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Moderated By : <b> ( '.$moderator_person_name->position." : ".$moderator_person_name->name.' ) </b></span></div>';    
                         }
                         if($row_action->verified_date!=Null){
-                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_by[0]->position." : ".$verified_by[0]->name.' ) </b></span></div>';
+                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';
                         }
                         if($row_action->approved_date!=Null){
                               echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Approved By : <b> ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) </b></span></div>';

@@ -265,23 +265,23 @@ class LectureNoteController extends Controller
         $count = $request->get('count');
         $place = $request->get('file_place');
         for($i=1;$i<=$count;$i++){
-
             $name = $request->get('form'.$i);
             $ext = $request->get('ext'.$i);
             $fake = $request->get('fake'.$i);
-
-            $lecture_note = new Lecture_Note([
-                'course_id'              =>  $request->get('course_id'),
-                'note_name'              =>  $name,
-                'note_type'              =>  'document',
-                'note_place'             =>  $place,
-                'note'                   =>  $fake,
-                'status'                 =>  'Active',
-            ]);
-            $lecture_note->save();
-            $fake_place = Storage::disk('private')->get("fake/lecture_note/".$fake);
-            Storage::disk('private')->put('Lecture_Note/'.$fake, $fake_place); 
-            Storage::disk('private')->delete("fake/lecture_note/".$fake);
+            if($name!=""){
+                $lecture_note = new Lecture_Note([
+                    'course_id'              =>  $request->get('course_id'),
+                    'note_name'              =>  $name,
+                    'note_type'              =>  'document',
+                    'note_place'             =>  $place,
+                    'note'                   =>  $fake,
+                    'status'                 =>  'Active',
+                ]);
+                $lecture_note->save();
+                $fake_place = Storage::disk('private')->get("fake/lecture_note/".$fake);
+                Storage::disk('private')->put('Lecture_Note/'.$fake, $fake_place); 
+                Storage::disk('private')->delete("fake/lecture_note/".$fake);
+            }
         }
         return redirect()->back()->with('success','New Document Added Successfully');
     }
@@ -495,6 +495,8 @@ class LectureNoteController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
             
         $course = DB::table('courses')
@@ -579,7 +581,7 @@ class LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")){
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
                             $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
@@ -594,6 +596,8 @@ class LectureNoteController extends Controller
                             }elseif($ext[1]=="xlsx"){
                                 $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
                             }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
                                 $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
                             }
                             $result .= '</div>';
@@ -629,7 +633,7 @@ class LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -721,7 +725,7 @@ class LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")){
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
                             $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
@@ -736,6 +740,8 @@ class LectureNoteController extends Controller
                             }elseif($ext[1]=="xlsx"){
                                 $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
                             }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
                                 $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
                             }
                             $result .= '</div>';
@@ -771,7 +777,7 @@ class LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -804,12 +810,12 @@ class LectureNoteController extends Controller
 	    return $result;
 	}
 
-    public function LectureNoteImage($image_name)
+    public function LectureNoteImage($ln_id,$image_name)
     {
         $user_id    = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
 
-        $checkCourseId = Lecture_Note::where('note', '=', $image_name)->firstOrFail();
+        $checkCourseId = Lecture_Note::where('ln_id', '=', $ln_id)->firstOrFail();
         $course_id = $checkCourseId->course_id;
 
         $course = DB::table('courses')

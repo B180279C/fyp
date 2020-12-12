@@ -14,6 +14,27 @@ $option5 = "id='selected-sidebar'";
       document.getElementById("action_sidebar").style.display = "none";
       document.getElementById("button_open").style.display = "block";
     }
+
+    $(document).on('click', '.edit_action', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        window.location = "/CourseList/"+num[2];
+        return false;
+    });
+
+    $(document).on('click', '.remove_action', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        if(confirm('Are you sure want to remove it')){
+          window.location = "/CourseList/remove/"+num[2];
+        }
+        return false;
+    });
+
+    $(document).on('click', '#open_document', function(){
+      $('#openDocumentModal').modal('show');
+    });
+
     $(function () {
         $('#showData').hide();
         $('#errorData').hide();
@@ -45,6 +66,90 @@ $option5 = "id='selected-sidebar'";
             });
         });
     });
+
+    Dropzone.options.dropzoneFile =
+    {
+        acceptedFiles: ".xlsx,xls",
+        maxFiles:1,
+        timeout: 50000,
+        renameFile: function(file) {
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(file.name)[1];
+            var newName = new Date().getTime() +"___"+file.name;
+            return newName;
+        },
+        init: function() {
+            this.on("maxfilesexceeded", function(file) {
+                    this.removeAllFiles();
+                    this.addFile(file);
+                    $(".tablebody").remove(); 
+            });
+            this.on("addedfile", function(file){
+              var re = /(?:\.([^.]+))?$/;
+              var ext = re.exec(file.upload.filename)[0];
+              var filename = file.upload.filename.split(ext);
+              var name_without_time = filename[0].split("___");
+              file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
+                  file._captionBox = Dropzone.createElement("<div class='changeName'><input id='syllabus' type='text' name='syllabus' value='"+name_without_time[1]+"' class='form-control filename'></div>");
+              file.previewElement.appendChild(file._captionLabel);
+              file.previewElement.appendChild(file._captionBox);
+              $(".dz-remove").addClass("InModel");
+              $(".dz-preview").addClass("dropzoneModel");
+            });
+        },
+        accept: function(file, done) {
+            switch (file.type) {
+              case 'application/pdf':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pdf.png')}}");
+                break;
+              case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/docs.png')}}");
+                break;
+              case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/excel.png')}}");
+                 break;
+            }
+            done();
+        },
+        success: function(file, response) {
+            console.log(response);
+            var table = document.getElementById("table");
+            for(var i = 0; i<response.length; i++){
+              if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
+                break;
+              }
+                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['verified_by_staff_id']!=null)&&(response[i]['approved_by_staff_id']!=null)){
+                  var row = table.insertRow(1+i);
+                  var cell = row.insertCell(0);
+                  var cell1 = row.insertCell(1);
+                  var cell2 = row.insertCell(2);
+                  var cell3 = row.insertCell(3);
+                  var cell4 = row.insertCell(4);
+                  cell.innerHTML  = (i+1);
+                  cell1.innerHTML = response[i]['programme_short_form_name']+" / "+response[i]['subject_code'] +" "+ response[i]['subject_name'] +" ( "+response[i]['semester'] +" ) ";
+                  cell2.innerHTML = response[i]['credit'];
+                  cell3.innerHTML = response[i]['lecturer_staff_id'];
+                  cell4.innerHTML = response[i]['moderator_staff_id'];
+                  cell.className  = 'tablebody';
+                  cell1.className = 'tablebody';
+                  cell2.className = 'tablebody';
+                  cell3.className = 'tablebody';
+                  cell4.className = 'tablebody';
+                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='verified_by"+i+"' name='verified_by"+i+"' value='"+response[i]['verified_by_staff_id']+"'><input type='hidden' id='approved_by"+i+"' name='approved_by"+i+"' value='"+response[i]['approved_by_staff_id']+"'>");
+                  $('#showData').show();
+                  $('#errorData').hide();
+                }else{
+                  $('#showData').hide();
+                  $('#errorData').show();
+                  break;
+                }
+          }
+          $("#writeInput").append("<input type='hidden' name='count' value='"+(i-1)+"'>");
+        },
+        error: function(file, response) {
+            console.log(response);
+        }
+    };
 </script>
 <style type="text/css">
 .dropzoneModel{
@@ -92,12 +197,12 @@ $option5 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Courses</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
             <span class="now_page">Courses</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              @if($character=="")
              <p class="page_title">Courses In {{$faculty->faculty_name}}</p>
@@ -178,6 +283,55 @@ $option5 = "id='selected-sidebar'";
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Upload Files</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div style="margin: 20px 20px 0px 20px;">
+        <p style="color:#0d2f81; "><b>Template:</b></p>
+        <p><b>  1. </b>Please download Template by clicking <a href='{{asset("/templete/multiple_courses.xlsx")}}' id="templete_link">Template</a>.</p>
+        <p><b>  2. </b>Delete the example data.</p>
+        <p><b>  3. </b>Fill in the Subject details and other details in file.</p>
+      </div>
+      <form method="post" action="{{route('dropzone.uploadCourses')}}" enctype="multipart/form-data"
+        class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
+        @csrf
+      </form>
+      <div id="showData" style="padding: 0px 20px 20px 20px;overflow-x:auto;">
+        <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
+          <thead>
+            <tr style="background-color: #d9d9d9;">
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>No</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Subject</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Credit</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Lecturer</b></th>
+              <th style="border-left:1px solid #e6e6e6;color:black;"><b>Moderator</b></th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div id="errorData" style="padding: 0px 20px 20px 20px;">
+        <p><b>Something going wrong. </b>Please Check Again the excel file of data. <br/>(<b>Important : </b>All result cannot be empty cannot be same.)</p>
+      </div>
+      <form method="post" action="{{action('Dean\CourseController@storeCourses')}}">
+        {{csrf_field()}}
+        <div id="writeInput"></div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
+        &nbsp;
+        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin-right: 13px;" value="Save Changes">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 @endsection
 

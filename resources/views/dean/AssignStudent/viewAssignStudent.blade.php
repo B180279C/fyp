@@ -410,7 +410,7 @@ $option1 = "id='selected-sidebar'";
         <p><b>  2. </b>Delete the example data.</p>
         <p><b>  3. </b>Fill in the student ID and other details in file.</p>
       </div>
-      <form method="post" action="/hod/uploadAssignStudent" enctype="multipart/form-data"
+      <form method="post" action="{{$character}}/uploadAssignStudent" enctype="multipart/form-data"
         class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
         @csrf
       </form>
@@ -424,7 +424,7 @@ $option1 = "id='selected-sidebar'";
             </tr>
           </thead>
         </table>
-        <form method="post" action="{{action('Dean\AssignStudentController@storeAssignStudent')}}">
+        <form method="post" action="{{$character}}/assignStudent/excel/create">
         {{csrf_field()}}
           <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
           <div id="writeInput"></div>
@@ -436,7 +436,7 @@ $option1 = "id='selected-sidebar'";
         </form>
       </div>
       <div id="errorData" style="padding: 0px 20px 0px 20px;">
-        <p>The Input Data are not completed. Please Check Again the excel file of data.</p>
+        <p><b>Something going wrong. </b>Please Check Again the excel file of data. <br/>(<b>Important : </b>All result cannot be empty cannot be same.)</p>
       </div>
     </div>
   </div>

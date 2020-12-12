@@ -90,10 +90,6 @@ class StaffController extends Controller
                 Storage::disk('private')->put('staffCV/'.$request->get('staff_CV'), $CV);
                 Storage::disk('private')->delete('fake/staff_CV/'.$request->get('staff_CV'));
             }
-            
-            
-            
-
             return redirect()->route('admin.staff_list.index')->with('success','Data Added');
         }else{
             if($request->get('staff_image')!=""){
@@ -285,7 +281,7 @@ class StaffController extends Controller
         $image = $request->file('file');
         $imageName = $image->getClientOriginalName();
         $image->storeAs('fake','/staff_Image/'.$imageName, 'private');
-        return response()->json(['success'=>$imageName]);  
+        return response()->json(['success'=>$imageName]);
     }
 
     public function destroyImage(Request $request)

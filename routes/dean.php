@@ -1,7 +1,7 @@
 <?php
 	
 	//Detail
-	Route::get('dean/home', 'HomeController@deanHome')->name('dean.home');
+	Route::get('/home', 'HomeController@deanHome')->name('dean.home');
 
 	Route::get('/dean/images/home_image/{user_id}', [
 	     'as'         => 'home_image',
@@ -30,7 +30,7 @@
 	Route::post('/staffDestoryCV', 'Dean\ProfileController@destroyCV')->name('dropzone.destoryStaffCV');
 	Route::post('/staffUploadSign', 'Dean\ProfileController@uploadSign')->name('dropzone.uploadStaffSign');
 	Route::post('/staffDestorySign', 'Dean\ProfileController@destroySign')->name('dropzone.destoryStaffSign');
-	Route::post('/staff/create', 'Dean\ProfileController@store')->name('staff.submit');
+	Route::post('/profile/store', 'Dean\ProfileController@store')->name('staff.submit');
 
 	// Faculty PortFolio
 	Route::get('/FacultyPortFolio', 'Dean\F_PortFolioController@index')->name('dean.F_potrfolio.index');
@@ -176,7 +176,7 @@
 	Route::post('/lectureNote/GetUsedSemester', 'Dean\LectureNoteController@GetUsedSemester');
 	Route::post('/lectureNote/updateFolderName', 'Dean\LectureNoteController@updateFolderName');
 	Route::get('/lectureNote/remove/{id}', 'Dean\LectureNoteController@removeActive');
-	Route::get('images/lectureNote/{image_name}', [
+	Route::get('images/lectureNote/{ln_id}/{image_name}', [
 	     'as'         => 'lectureNote_image',
 	     'uses'       => 'Dean\LectureNoteController@LectureNoteImage',
 	     'middleware' => 'auth',
@@ -403,9 +403,9 @@
 	Route::get('/Moderator/lectureNote/{id}','Dean\Moderator\M_LectureNoteController@ModeratorLectureNote');
 	Route::post('/Moderator/lectureNote/searchFiles', 'Dean\Moderator\M_LectureNoteController@searchModeratorLN');
 	Route::get('/Moderator/lectureNote/folder/{ln_id}','Dean\Moderator\M_LectureNoteController@ModeratorLNFolderView');
-	Route::get('/Moderator/images/lectureNote/{image_name}', [
+	Route::get('/Moderator/images/lectureNote/{ln_id}/{image_name}', [
 	'as'         => 'lectureNote_image',
-	'uses'       => 'Dean\M_LectureNoteController@LectureNoteImage',
+	'uses'       => 'Dean\Moderator\M_LectureNoteController@LectureNoteImage',
 	'middleware' => 'auth',
 	]);
 	Route::get('/Moderator/lectureNote/download/{id}','Dean\M_LectureNoteController@downloadLN');
@@ -501,7 +501,7 @@
 	Route::get('/Reviewer/lectureNote/{id}','Dean\Dean\D_LectureNoteController@DeanLectureNote');
 	Route::post('/Reviewer/lectureNote/searchFiles', 'Dean\Dean\D_LectureNoteController@searchDeanLN');
 	Route::get('/Reviewer/lectureNote/folder/{ln_id}','Dean\Dean\D_LectureNoteController@DeanLNFolderView');
-	Route::get('/Reviewer/images/lectureNote/{image_name}', [
+	Route::get('/Reviewer/images/lectureNote/{ln_id}/{image_name}', [
 		'as'         => 'lectureNote_image',
 		'uses'       => 'Dean\Dean\D_LectureNoteController@LectureNoteImage',
 		'middleware' => 'auth',

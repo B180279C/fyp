@@ -2,7 +2,7 @@
 $title = "CoursePotrFolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -44,7 +44,7 @@ $option5 = "id='selected-sidebar'";
     });
 
 function TP_Report(course_id){
-    window.location = "/teachingPlan/report/"+course_id;
+    window.location = "{{$character}}/Reviewer/teachingPlan/report/"+course_id;
 }
 
 function Submit_Action(Action){
@@ -117,9 +117,9 @@ function w3_close() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/CourseList">Courses </a>/
-            <a href="/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/CourseList">Courses </a>/
+            <a href="{{$character}}/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Teaching Plan</span>/
         </p>
         <hr class="separate_hr">
@@ -134,7 +134,7 @@ function w3_close() {
                     </div>
                   <ul class="sidebar-action-ul">
                     <p class="title_method">Report</p>
-                    <a href="/Dean/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
+                    <a href="{{$character}}/Reviewer/teachingPlan/report/{{$course[0]->course_id}}/"><li class="sidebar-action-li"><i class="fa fa-file-text-o" style="padding: 0px 10px 0px 0px;" aria-hidden="true"></i>Teaching Plan Report</li></a>
                   </ul>
             </div>
             <br>
@@ -277,7 +277,7 @@ function w3_close() {
                         echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';    
                     }
                     if($row_action->approved_date!=Null){
-                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Approved By : <b> ( '.$approved_by[0]->position." : ".$approved_by[0]->name.' ) </b></span></div>';    
+                        echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Approved By : <b> ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) </b></span></div>';    
                     }
                     if($remarks!=""){
                         echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';

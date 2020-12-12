@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use Illuminate\Support\Facades\View;
 
 use Closure;
 
@@ -17,6 +18,7 @@ class IsStudent
     {
         if(auth()->user()){
             if(auth()->user()->position == "student"){
+                View::share('character','/students');
                 return $next($request);
             }
         }

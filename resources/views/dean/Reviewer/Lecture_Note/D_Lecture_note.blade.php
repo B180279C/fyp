@@ -457,7 +457,7 @@ $option4 = "id='selected-sidebar'";
                               $ext = explode(".", $row->note);
                             }
                           ?>
-                        @if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx"))
+                        @if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt"))
                         <div class="col-12 row align-self-center" id="course_list">
                           <div class="col-12 row align-self-center">
                             <div class="checkbox_style align-self-center">
@@ -472,6 +472,8 @@ $option4 = "id='selected-sidebar'";
                                 @elseif($ext[1]=="xlsx")
                                 <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
                                 @elseif($ext[1]=="pptx")
+                                <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="ppt")
                                 <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
                                @endif
                               </div>
@@ -508,7 +510,7 @@ $option4 = "id='selected-sidebar'";
                               <div class="checkbox_style align-self-center">
                                   <input type="checkbox" value="{{$row->ln_id}}" class="group_download_list">
                                 </div>
-                              <a href="{{$character}}/Reviewer/images/lectureNote/{{$row->note}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->note_name}} {{$semester_name}}">
+                              <a href="{{$character}}/Reviewer/images/lectureNote/{{$row->ln_id}}/{{$row->note}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->note_name}} {{$semester_name}}">
                                 <div class="col-1" style="position: relative;top: -2px;">
                                   <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                                 </div>

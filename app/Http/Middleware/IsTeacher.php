@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use Illuminate\Support\Facades\View;
 
 use Closure;
 
@@ -16,7 +17,8 @@ class IsTeacher
     public function handle($request, Closure $next)
     {
         if(auth()->user()){
-            if(auth()->user()->position == "Teacher"){
+            if(auth()->user()->position == "Lecturer"){
+                View::share('character','/lecturer');
                 return $next($request);
             }
         }

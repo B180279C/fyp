@@ -66,18 +66,18 @@ class M_AssessmentController extends Controller
         $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
 
-        // $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        // $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+        $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        $verified_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
+        // $verified_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
+        //          ->get();
 
         if(count($course)>0){
-            return view('dean.Moderator.Assessment.M_AssessmentList',compact('course','assessments','TP_Ass','action','moderator_person_name','verified_by','action_big'));
+            return view('dean.Moderator.Assessment.M_AssessmentList',compact('course','assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big'));
         }else{
             return redirect()->back();
         }
@@ -146,18 +146,18 @@ class M_AssessmentController extends Controller
                  ->where('staffs.id', '=', $course[0]->moderator)
                  ->get();
 
-        $verified_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
-
         // $verified_by = DB::table('staffs')
         //          ->join('users','staffs.user_id','=','users.user_id')
         //          ->select('staffs.*','users.*')
-        //          ->where('staffs.id', '=', $course[0]->verified_by)
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
         //          ->get();
+
+        $verified_by = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('staffs.id', '=', $course[0]->verified_by)
+                 ->get();
 
         $assessments = DB::table('assessments')
                     ->select('assessments.*')
@@ -518,18 +518,18 @@ class M_AssessmentController extends Controller
         $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
 
-        // $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        // $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+        $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        $verified_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
+        // $verified_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
+        //          ->get();
 
         if(count($course)>0){
-            return view('dean.Moderator.Assessment.viewAssessment',compact('course','assessments','action','moderator_person_name','verified_by'));
+            return view('dean.Moderator.Assessment.viewAssessment',compact('course','assessments','action','moderator_person_name','verified_person_name'));
         }else{
             return redirect()->back();
         }

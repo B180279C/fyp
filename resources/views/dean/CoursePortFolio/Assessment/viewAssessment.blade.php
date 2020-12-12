@@ -2,7 +2,7 @@
 $title = "CoursePortfolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -87,7 +87,7 @@ $option5 = "id='selected-sidebar'";
     $(document).on('click', '.download_button', function(){
         var id = $(this).attr("id");
         var num = id.split("_");
-      window.location = "/CourseList/assessment/download/"+num[2];
+      window.location = "{{$character}}/CourseList/assessment/download/"+num[2];
     });
   });
   function w3_open() {
@@ -95,17 +95,6 @@ $option5 = "id='selected-sidebar'";
       document.getElementById("button_open").style.display = "none";
   }
 
-  function submitAction(){
-    var course_id = $('#course_id').val();
-    window.location = "/assessment/Action/Submit/"+course_id; 
-  }
-
-  function submitActionSecond(){
-        var course_id = $('#course_id').val();
-        if(confirm('Please ensure your assessment is fixed all error and full complete already. Are you sure want to submit again to moderator.')) {
-            window.location = "/assessment/Action/Submit/"+course_id; 
-        }
-  }
 
   function submitActionThird(){
     $('#openDocumentModal').modal('show');
@@ -117,7 +106,7 @@ $option5 = "id='selected-sidebar'";
   }
 
 function ModerationForm(actionCA_id){
-  window.location = "/Dean/Assessment/report/"+actionCA_id;
+  window.location = "{{$character}}/Reviewer/Assessment/report/"+actionCA_id;
   return false;
 }
 
@@ -134,7 +123,7 @@ function ModerationForm(actionCA_id){
         var course_id = $('#course_id').val();
         $.ajax({
             type:'POST',
-            url:'/CourseList/assessment/getSyllabusData',
+            url:'{{$character}}/CourseList/assessment/getSyllabusData',
             data:{course_id:course_id},
             success:function(response){
               // console.log(response[1]);
@@ -190,10 +179,10 @@ function ModerationForm(actionCA_id){
                     cell4.style.borderBottom  = "1px solid #d9d9d9";
                     cell4.style.borderRight  = "1px solid #d9d9d9";
                     cell.innerHTML  = response[0][i][3]+" ( "+response[0][i][9]+ "% )";
-                    cell1.innerHTML = '<a href="/CourseList/assessment/create/'+course_id+'/question/'+response[0][i][9]+'/'+response[0][i][3]+'" style="font-size:18px;margin-left:15%;width:70%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+                    cell1.innerHTML = '<a href="{{$character}}/CourseList/assessment/create/'+course_id+'/question/'+response[0][i][9]+'/'+response[0][i][3]+'" style="font-size:18px;margin-left:15%;width:70%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
                     cell2.innerHTML = '<i class="'+status+'" aria-hidden="true"></i>';
                     if(status=="fa fa-check correct"){
-                      cell3.innerHTML = '<a href="/CourseList/AssessmentResult/'+course_id+'/question/'+response[0][i][3]+'" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+                      cell3.innerHTML = '<a href="{{$character}}/CourseList/AssessmentResult/'+course_id+'/question/'+response[0][i][3]+'" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
                     }else{
                       cell3.innerHTML = '<i class="fa fa-lock wrong" aria-hidden="true" style="font-size:20px;"></i>';
                     }
@@ -230,9 +219,9 @@ function ModerationForm(actionCA_id){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/CourseList">Courses </a>/
-            <a href="/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/CourseList">Courses </a>/
+            <a href="{{$character}}/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Continuous Assessment</span>/
         </p>
         <hr class="separate_hr">
@@ -415,7 +404,7 @@ function ModerationForm(actionCA_id){
                             echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Moderated By : <b> ( '.$moderator_person_name->position." : ".$moderator_person_name->name.' ) </b></span></div>';    
                         }
                         if($row_action->verified_date!=Null){
-                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_by[0]->position.' : '.$verified_by[0]->name.' ) </b></span></div>';
+                            echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position.' : '.$verified_person_name->name.' ) </b></span></div>';
                         }
                         if($remarks!=""){
                             echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';

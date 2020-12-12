@@ -207,6 +207,6 @@ class ProfileController extends Controller
     	$staff->save();
         $user->save();
 
-        return redirect()->route('Profile')->with('success','Data Updated');
+        return redirect()->back()->with('success','Data Updated');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Staff;
 use App\User;
+use App\Student;
 use Illuminate\Support\Facades\Storage;
 use Image;
 
@@ -78,6 +79,33 @@ class HomeController extends Controller
             return Image::make('/image/user.png')->response();
         }else{
             $storagePath = storage_path('/private/staffImage/' . $image);
+            return Image::make($storagePath)->response();
+        }
+    }
+
+    public function lecturerDetails($user_id){
+
+        $staff = Staff::where('user_id', '=', $user_id)->firstOrFail();
+
+        $image = $staff->staff_image;
+
+        if($image == ""){
+            return Image::make('/image/user.png')->response();
+        }else{
+            $storagePath = storage_path('/private/staffImage/' . $image);
+            return Image::make($storagePath)->response();
+        }
+    }
+
+    public function studentDetails($user_id){
+        $student = Student::where('user_id', '=', $user_id)->firstOrFail();
+
+        $image = $student->student_image;
+
+        if($image == ""){
+            return Image::make('/image/user.png')->response();
+        }else{
+            $storagePath = storage_path('/private/studentImage/' . $image);
             return Image::make($storagePath)->response();
         }
     }

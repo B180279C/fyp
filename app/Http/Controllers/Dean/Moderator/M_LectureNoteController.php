@@ -72,6 +72,8 @@ class M_LectureNoteController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
             
         $course = DB::table('courses')
@@ -150,7 +152,7 @@ class M_LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")){
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
                             $result .= '<div class="col-12 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
@@ -165,6 +167,8 @@ class M_LectureNoteController extends Controller
                             }elseif($ext[1]=="xlsx"){
                                 $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
                             }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
                                 $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
                             }
                             $result .= '</div>';
@@ -197,7 +201,7 @@ class M_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/Moderator/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/Moderator/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -283,7 +287,7 @@ class M_LectureNoteController extends Controller
                         if($row->note){
                             $ext = explode(".", $row->note);
                         }
-                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")){
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
                             $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
@@ -298,6 +302,8 @@ class M_LectureNoteController extends Controller
                             }elseif($ext[1]=="xlsx"){
                                 $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
                             }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
                                 $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
                             }
                             $result .= '</div>';
@@ -319,7 +325,7 @@ class M_LectureNoteController extends Controller
                             if($row->used_by!=null){
                                 foreach($all_note as $all_row){
                                     if(($row->used_by)==($all_row->ln_id)){
-                                        $semester_name = '<span style="color: grey;">( Used In : '.$all_row->semester_name.' )</span>';
+                                        $semester_name = "<span style='color: grey;'> ( Used In : ".$all_row->semester_name.")</span>";
                                     }
                                 }
                             }else{
@@ -330,7 +336,7 @@ class M_LectureNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download_list">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/Moderator/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/Moderator/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -420,12 +426,12 @@ class M_LectureNoteController extends Controller
         }
 	}
 
-    public function LectureNoteImage($image_name)
+    public function LectureNoteImage($ln_id,$image_name)
     {
         $user_id    = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
 
-        $checkCourseId = Lecture_Note::where('note', '=', $image_name)->firstOrFail();
+        $checkCourseId = Lecture_Note::where('ln_id', '=', $ln_id)->firstOrFail();
         $course_id = $checkCourseId->course_id;
 
         $course = DB::table('courses')

@@ -103,7 +103,7 @@ $option1 = "id='selected-sidebar'";
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                     },
                     type: 'POST',
-                    url: '{{ url("/staffDestoryImage") }}',
+                    url: '{{ url("/admin/staff/DestoryImage") }}',
                     data: {filename: name},
                     success: function (data){
                         console.log("File has been successfully removed!!");
@@ -159,7 +159,7 @@ $option1 = "id='selected-sidebar'";
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                     },
                     type: 'POST',
-                    url: '{{ url("/staffDestoryCV") }}',
+                    url: '{{ url("/admin/staff/DestoryCV") }}',
                     data: {filename: name},
                     success: function (data){
                         console.log("File has been successfully removed!!");
@@ -173,15 +173,7 @@ $option1 = "id='selected-sidebar'";
                 return (fileRef = file.previewElement) != null ? 
                 fileRef.parentNode.removeChild(file.previewElement) : void 0;
             },
-            // success: function(file, response){
-            //     //loading function
-            //     //run OCR function
-            //     runfunction();
-            // }
     };
-    // function runfunction(){
-    //     setTimeout(function(){ console.log("aaa"); }, 3000);
-    // }
 </script>
 <div id="all">
     <div>
@@ -199,8 +191,7 @@ $option1 = "id='selected-sidebar'";
                 <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
                 <center>
                     @if($staff->staff_image == "")
-                    <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
-                                class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                    <form method="post" action="{{route('admin.dropzone.StaffUploadImage')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     @csrf
                     <input type="hidden" name="staff_id" value="{{$id}}">
                     <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
@@ -212,7 +203,7 @@ $option1 = "id='selected-sidebar'";
                             <br>
                             <p id="edit_image" style="font-size: 14px;color: #009697;">Remove file</a>
                         </div>
-                        <form method="post" action="{{route('dropzone.uploadStaffImage')}}" enctype="multipart/form-data"
+                        <form method="post" action="{{route('admin.dropzone.StaffUploadImage')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
                         @csrf
                         <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
@@ -225,7 +216,7 @@ $option1 = "id='selected-sidebar'";
                 <p class="page_title" style="position: relative;left: 0px ;top: -10px;">Staff CV</p>
                 <center>
                 @if($staff->lecturer_CV == "")
-                <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                <form method="post" action="{{route('admin.dropzone.StaffUploadCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     @csrf
                     <div class="dz-message" data-dz-message><span>Drop a File in Here. After that click the Submit button to upload<br>(optional)</span></div>
@@ -255,7 +246,7 @@ $option1 = "id='selected-sidebar'";
                             </a>
                             <p id="edit_CV" style="font-size: 14px;color: #009697;">Remove file</a>
                     </div>
-                    <form method="post" action="{{route('dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                    <form method="post" action="{{route('admin.dropzone.StaffUploadCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
                         @csrf
                         <input type="hidden" name="staff_id" value="{{$id}}">

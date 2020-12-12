@@ -58,15 +58,15 @@ class D_TeachingPlanController extends Controller
         $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        // $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
-        // $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
+        $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
-        $approved_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
+        // $approved_by = DB::table('staffs')
+        //          ->join('users','staffs.user_id','=','users.user_id')
+        //          ->select('staffs.*','users.*')
+        //          ->where('users.position', '=', 'HoD')
+        //          ->where('staffs.department_id','=',$department_id)
+        //          ->get();
 
         $TP = DB::table('teaching_plan')
         	->select('teaching_plan.*')
@@ -97,7 +97,7 @@ class D_TeachingPlanController extends Controller
                   ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.Teaching_Plan.D_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','verified_by','approved_by'));
+            return view('dean.Reviewer.Teaching_Plan.D_TeachingPlan',compact('course','TP','topic','TP_Ass','TP_CQI','action','verified_person_name','approved_person_name'));
         }else{
             return redirect()->back();
         }
@@ -517,18 +517,18 @@ class D_TeachingPlanController extends Controller
                  ->where('staffs.id', '=', $course[0]->moderator)
                  ->get();
 
-    $verified_by = DB::table('staffs')
-                 ->join('users','staffs.user_id','=','users.user_id')
-                 ->select('staffs.*','users.*')
-                 ->where('users.position', '=', 'HoD')
-                 ->where('staffs.department_id','=',$department_id)
-                 ->get();
-
     // $verified_by = DB::table('staffs')
     //              ->join('users','staffs.user_id','=','users.user_id')
     //              ->select('staffs.*','users.*')
-    //              ->where('staffs.id', '=', $course[0]->verified_by)
+    //              ->where('users.position', '=', 'HoD')
+    //              ->where('staffs.department_id','=',$department_id)
     //              ->get();
+
+    $verified_by = DB::table('staffs')
+                 ->join('users','staffs.user_id','=','users.user_id')
+                 ->select('staffs.*','users.*')
+                 ->where('staffs.id', '=', $course[0]->verified_by)
+                 ->get();
 
     $table->addRow(1);
     if(count($action)>0){

@@ -2,7 +2,7 @@
 $title = "CoursePortFolio";
 $option5 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -87,6 +87,48 @@ function w3_close() {
   document.getElementById("button_open").style.display = "block";
 }
 $(document).ready(function(){
+  $('[data-toggle="lightbox"]').click(function(event) {
+             event.preventDefault();
+                 $(this).ekkoLightbox({
+                   type: 'image',
+                   onContentLoaded: function() {
+                     var container = $('.ekko-lightbox-container');
+                     var content = $('.modal-content');
+                     var backdrop = $('.modal-backdrop');
+                     var overlay = $('.ekko-lightbox-nav-overlay');
+                     var modal = $('.modal');
+                     var image = container.find('img');
+                     var windowHeight = $(window).height();
+                     var dialog = container.parents('.modal-dialog');
+                     var data_header = $('.modal-header');
+                     var data_title = $('.modal-title');
+                     var body = $('.modal-body');
+                     console.log(image.width());
+
+                     if((image.width() > 380) && (image.width() < 441)){
+                        dialog.css('max-width','700px');
+                        image.css('height','900px');
+                        image.css('width','700px');
+                        overlay.css('height','900px');
+                     }else{
+                        overlay.css('height','100%');
+                     }
+                     // backdrop.css('opacity','1');
+                     data_header.css('background-color','white');
+                     data_header.css('padding','10px');
+                     data_header.css('margin','0px 24px');
+                     data_header.css('border-bottom','1px solid black');
+                     data_title.css('font-size','18px');
+
+                     body.css('padding-top','0px');
+                     content.css('background', "none");
+                     content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                   }
+                 });
+        });
   	$.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -118,7 +160,7 @@ $(document).ready(function(){
     $(document).on('click', '.download_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
-          window.location = "/CourseList/FinalResult/result/"+num[2];
+          window.location = "{{$character}}/CourseList/FinalResult/result/"+num[2];
     });
   });
 
@@ -149,7 +191,7 @@ $(document).on('click', '#checkDownloadAction', function(){
     var student_id = $('#student_id').val();
     var id = course_id+"_"+checkedValue;
 
-    window.location = "/FinalResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
+    window.location = "{{$character}}/FinalResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
   }else{
     alert("Please select the document first.");
   }
@@ -159,11 +201,11 @@ $(document).on('click', '#checkDownloadAction', function(){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
-            <a href="/CourseList">Courses </a>/
-            <a href="/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
-            <a href="/CourseList/FinalExamination/{{$course[0]->course_id}}/">Final Assessment</a>/
-            <a href="/CourseList/FinalResult/{{$course[0]->course_id}}/">Final ( R )</a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/CourseList">Courses </a>/
+            <a href="{{$character}}/CourseList/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
+            <a href="{{$character}}/CourseList/FinalExamination/{{$course[0]->course_id}}/">Final Assessment</a>/
+            <a href="{{$character}}/CourseList/FinalResult/{{$course[0]->course_id}}/">Final ( R )</a>/
             <span class="now_page">{{$assessment_final_result->student_id}}</span>
         </p>
         <hr class="separate_hr">
@@ -182,7 +224,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
                       <input type="hidden" id="student_id" value="{{$assessment_final_result->student_id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/FinalResult/Student/{{$assessment_final_result->student_id}}/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/FinalResult/Student/{{$assessment_final_result->student_id}}/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                     </ul>
                 </div>
             <br>
@@ -226,7 +268,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$row->fxr_id}}" class="group_lecturer group_download">
                       </div>
-                      <a href="/CourseList/FinalResult/result/{{$row->fxr_id}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{$character}}/CourseList/FinalResult/result/{{$row->fxr_id}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
@@ -250,7 +292,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                     <div class="checkbox_style align-self-center">
                       <input type="checkbox" value="{{$row->fxr_id}}" class="group_lecturer group_download">
                     </div>
-                    <a href="/CourseList/images/FinalResult/{{$row->document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->document_name}} <br> <a href='/CourseList/FinalResult/view/whole_paper/{{$row->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                    <a href="{{$character}}/CourseList/images/FinalResult/{{$row->document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->document_name}} <br> <a href='{{$character}}/CourseList/FinalResult/view/whole_paper/{{$row->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
                       <div class="col-1" style="position: relative;top: -2px;">
                         <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                       </div>
@@ -297,7 +339,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$sow->fxr_id}}" class="group_student group_download">
                       </div>
-                      <a href="/CourseList/FinalResult/result/{{$sow->fxr_id}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{$character}}/CourseList/FinalResult/result/{{$sow->fxr_id}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
@@ -321,7 +363,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                     <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$sow->fxr_id}}" class="group_student group_download">
                       </div>
-                    <a href="/CourseList/images/FinalResult/{{$sow->document}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$sow->document_name}} <br> <a href='/CourseList/FinalResult/view/whole_paper/{{$sow->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                    <a href="{{$character}}/CourseList/images/FinalResult/{{$sow->document}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$sow->document_name}} <br> <a href='{{$character}}/CourseList/FinalResult/view/whole_paper/{{$sow->fxr_id}}' class='full_question' target='_blank'>Whole paper</a>">
                       <div class="col-1" style="position: relative;top: -2px;">
                         <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                       </div>

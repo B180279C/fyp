@@ -3,10 +3,13 @@
     // $option = "id='selected-sidebar'";
     if(auth()->user()->position=="Dean"){
         $layout = 'layouts.nav_dean';
-        $character = "Dean";
+        $cha2 = "";
     }else if(auth()->user()->position=="HoD"){
         $layout = 'layouts.nav_hod';
-        $character = "HOD";
+        $cha2 = "hod.";
+    }else if(auth()->user()->position=="Lecturer"){
+        $layout = 'layouts.nav_lecturer';
+        $cha2 = "lecturer.";
     }
 ?>
 @extends($layout)
@@ -67,7 +70,7 @@
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                     },
                     type: 'POST',
-                    url: '{{ url("/staffDestoryImage") }}',
+                    url: '{{ url($character."/staffDestoryImage") }}',
                     data: {filename: name},
                     success: function (data){
                         console.log("File has been successfully removed!!");
@@ -124,7 +127,7 @@
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                     },
                     type: 'POST',
-                    url: '{{ url("/staffDestoryCV") }}',
+                    url: '{{ url($character."/staffDestoryCV") }}',
                     data: {filename: name},
                     success: function (data){
                         console.log("File has been successfully removed!!");
@@ -166,7 +169,7 @@
                         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
                     },
                     type: 'POST',
-                    url: '{{ url("/staffDestorySign") }}',
+                    url: '{{ url($character."/staffDestorySign") }}',
                     data: {filename: name},
                     success: function (data){
                         console.log("File has been successfully removed!!");
@@ -184,9 +187,9 @@
 </script>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Edit Staff Information</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Profile</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
             <span class="now_page">Profile</span>/
         </p>
         <hr class="separate_hr">
@@ -197,18 +200,18 @@
                 <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Profile Image</p>
                 <center>
                     @if($staff->staff_image == "")
-                    <form method="post" action="{{route('hod.dropzone.uploadStaffImage')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                    <form method="post" action="{{route($cha2.'dropzone.uploadStaffImage')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     {{csrf_field()}}
                     <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                     </form>
                     @else
                         <div style="margin:20px 0px 20px 0px;" id="form_image">
                             <input type="hidden" id="image" value="{{$staff->staff_image}}">
-                            <img src="{{ action($character.'\ProfileController@profileImage',$staff->staff_image) }}" width="auto" height="100px" style="border-radius:10%;" />
+                            <img src="{{$character}}/images/profile/{{$staff->staff_image}}" width="auto" height="100px" style="border-radius:10%;" />
                             <br>
                             <p id="edit_image" style="font-size: 14px;color: #009697;">Remove file</a>
                         </div>
-                        <form method="post" action="{{route('hod.dropzone.uploadStaffImage')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
+                        <form method="post" action="{{route($cha2.'dropzone.uploadStaffImage')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneForm" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
                         {{csrf_field()}}
                         <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                         </form>
@@ -220,7 +223,7 @@
                 <p class="page_title" style="position: relative;left: 0px ;top: -10px;">Staff CV</p>
                 <center>
                 @if($staff->lecturer_CV == "")
-                <form method="post" action="{{route('hod.dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                <form method="post" action="{{route($cha2.'dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     @csrf
                     <div class="dz-message" data-dz-message><span>Drop a File in Here. After that click the Submit button to upload<br>(optional)</span></div>
@@ -234,7 +237,7 @@
                                 $ext = explode(".", $staff->lecturer_CV);
                             }
                             ?>
-                            <a href="{{ action($character.'\ProfileController@ProfileDownloadCV',$staff->staff_id) }}" id="download_link">
+                            <a href="{{$character}}/profile/CV/{{$staff->staff_id}}" id="download_link">
                             <div id="download">
                             @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="100px" height="100px" style="border-radius:10%;"/>
@@ -249,7 +252,7 @@
                             </a>
                             <p id="edit_CV" style="font-size: 14px;color: #009697;">Remove file</a>
                     </div>
-                    <form method="post" action="{{route('hod.dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
+                    <form method="post" action="{{route($cha2.'dropzone.uploadStaffCV')}}" enctype="multipart/form-data"
                                 class="dropzone" id="dropzoneCV" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display:none;">
                         @csrf
                         <!-- <input type="hidden" name="staff_id" value=""> -->
@@ -263,18 +266,18 @@
                 <p class="page_title" style="position: relative;left: 0px ;top: -15px;">Signature</p>
                 <center>
               		@if($staff->staff_sign == "")
-                    <form method="post" action="{{route('hod.dropzone.uploadStaffSign')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneSign" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
+                    <form method="post" action="{{route($cha2.'dropzone.uploadStaffSign')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneSign" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;">
                     {{csrf_field()}}
                     <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                     </form>
                     @else
                         <div style="margin: 0px 0px 20px 0px;" id="form_sign">
                             <input type="hidden" id="image" value="{{$staff->staff_sign}}">
-                            <img src="{{ action($character.'\ProfileController@profileSign',$staff->staff_sign) }}" width="auto" height="100px" style="border-radius:10%;" />
+                            <img src="{{$character}}/sign/profile/{{$staff->staff_sign}}" width="auto" height="100px" style="border-radius:10%;" />
                             <br>
                             <p id="edit_Sign" style="font-size: 14px;color: #009697;">Remove file</a>
                         </div>
-                        <form method="post" action="{{route('hod.dropzone.uploadStaffSign')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneSign" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
+                        <form method="post" action="{{route($cha2.'dropzone.uploadStaffSign')}}" enctype="multipart/form-data" class="dropzone" id="dropzoneSign" style="margin: 10px 0px 0px 0px;font-size: 20px;color:#a6a6a6;border-style: double;display: none;">
                         {{csrf_field()}}
                         <div class="dz-message" data-dz-message><span>Drop a Image in Here. After that click the Submit button to upload<br>(optional)</span></div>
                         </form>
@@ -313,7 +316,7 @@
                     </div>
                     @endif
 
-                    <form method="post" action="{{action($character.'\ProfileController@store')}}" id="form">
+                    <form method="post" action="{{$character}}/profile/store" id="form">
                         <input type="hidden" name="staff_image" id="staff_image" value="">
                         <input type="hidden" name="staff_CV" id="staff_CV" value="">
                         <input type="hidden" name="staff_Sign" id="staff_Sign" value="">

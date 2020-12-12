@@ -280,7 +280,7 @@ $(document).ready(function(){
 	                        }
 	                        if($row_action->status=="Rejected"){
                               if($row_action->verified_date==Null){
-                                  $person = " By ( ".$verified_by[0]->position." : ".$verified_by[0]->name." )";
+                                  $person = " By ( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                               }else{
                                   $now = "Approved";
                                   $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
@@ -330,7 +330,7 @@ $(document).ready(function(){
 	                            $suggest = $row_action->suggest;
 	                        }else if($row_action->status=="Rejected"){
 	                            if($row_action->verified_date==Null){
-                                  $person = " By ( ".$verified_by[0]->position." : ".$verified_by[0]->name." )";
+                                  $person = " By ( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                               }else{
                                   $now = "Approved";
                                   $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
@@ -383,7 +383,10 @@ $(document).ready(function(){
                               echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Moderated By : <b> ( '.$moderator_person_name->position." : ".$moderator_person_name->name.' ) </b></span></div>';
                           }
                           if($row_action->verified_date!=Null){
-                              echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_by[0]->position." : ".$verified_by[0]->name.' ) </b></span></div>';
+                              echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified By : <b> ( '.$verified_person_name->position." : ".$verified_person_name->name.' ) </b></span></div>';
+                          }
+                          if($row_action->approved_date!=Null){
+                              echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Approved By : <b> ( '.$approved_person_name->position." : ".$approved_person_name->name.' ) </b></span></div>';
                           }
                           if($remarks!=""){
                               echo '<div class="col-12" style="padding: 0px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remarks from ( Verifier ) : </span>'.$remarks.'</div>';
