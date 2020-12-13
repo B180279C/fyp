@@ -277,7 +277,7 @@
             <!-- <input type="hidden" id="smallthan" value="0">  -->
 <!--                <hr style="margin: 0px;background-color: #0d2f81;"> -->
                     <ul class="sidebar-ul">
-                        <a href="/dean/home">
+                        <a href="/home">
                             <li class="sidebar-li" <?php if(isset($option0)){ echo $option0;};?>>
                                 <i class="fa fa-home sidebar-icon" aria-hidden="true"></i>
                                 <span style="padding-left: 20px;font-weight: bold;">Home</span>

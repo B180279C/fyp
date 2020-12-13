@@ -58,10 +58,12 @@
 	Route::get('/CourseList/{id}','Dean\CourseController@edit')->name('course.edit');
 	Route::post('CourseList/create', 'Dean\CourseController@store')->name('course.submit');
 	Route::post('/courseSubject', 'Dean\CourseController@courseSubject');
+	Route::post('/changeModerator', 'Dean\CourseController@changeModerator');
 	Route::post('/CourseList/{id}','Dean\CourseController@update')->name('course.update.submit');
 	Route::get('/CourseList/remove/{id}', 'Dean\CourseController@removeActiveCourse');
 	Route::get('/CourseList/action/{id}','Dean\C_PortFolioController@CourseListAction');
-
+	Route::get('/timetable/remove/{id}', 'Dean\CourseController@removeActiveTimetable');
+	
 
 	//All Course Action
 	//Student list

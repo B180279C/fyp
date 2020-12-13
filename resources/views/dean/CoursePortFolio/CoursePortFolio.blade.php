@@ -116,29 +116,70 @@ $option5 = "id='selected-sidebar'";
             var table = document.getElementById("table");
             for(var i = 0; i<response.length; i++){
               if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
+                // $('.submit_button').prop('disabled', true);
+                // $('#showData').hide();
+                // $('#errorData').show();
                 break;
               }
-                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['verified_by_staff_id']!=null)&&(response[i]['approved_by_staff_id']!=null)){
-                  var row = table.insertRow(1+i);
-                  var cell = row.insertCell(0);
-                  var cell1 = row.insertCell(1);
-                  var cell2 = row.insertCell(2);
-                  var cell3 = row.insertCell(3);
-                  var cell4 = row.insertCell(4);
-                  cell.innerHTML  = (i+1);
-                  cell1.innerHTML = response[i]['programme_short_form_name']+" / "+response[i]['subject_code'] +" "+ response[i]['subject_name'] +" ( "+response[i]['semester'] +" ) ";
-                  cell2.innerHTML = response[i]['credit'];
-                  cell3.innerHTML = response[i]['lecturer_staff_id'];
-                  cell4.innerHTML = response[i]['moderator_staff_id'];
-                  cell.className  = 'tablebody';
-                  cell1.className = 'tablebody';
-                  cell2.className = 'tablebody';
-                  cell3.className = 'tablebody';
-                  cell4.className = 'tablebody';
-                  $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='verified_by"+i+"' name='verified_by"+i+"' value='"+response[i]['verified_by_staff_id']+"'><input type='hidden' id='approved_by"+i+"' name='approved_by"+i+"' value='"+response[i]['approved_by_staff_id']+"'>");
-                  $('#showData').show();
-                  $('#errorData').hide();
+                if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['verified_by_staff_id']!=null)&&(response[i]['approved_by_staff_id']!=null)&&(response[i]['timetable']!=null)){
+
+                  var timetable = response[i]['timetable'];
+                  var classList = timetable.split(';');
+                  var failed = false;
+                  for(var t=0;t<(classList.length-1);t++){
+                    var timelist = classList[t].split(',');
+                    var week = $.trim(timelist[0]);
+                    var time = timelist[1].replace(' ','');
+                    var forh = timelist[2].replace(' ','');
+                    if(timelist[0]==undefined||timelist[1]==undefined||timelist[2]==undefined){
+                      failed = true;
+
+                    }else if((week!="Monday")&&(week!="Tuesday")&&(week!="Wednesday")&&(week!="Thursday")&&(week!="Friday")&&(week!="Saturday")&&(week!="Sunday")){
+                      console.log(week);
+                      failed = true;
+                    }
+                    var split_time = time.split("-");
+                    if(split_time[0]==undefined||split_time[1]==undefined){
+                      console.log('time');
+                      failed = true;
+                    }
+                    if(forh!="Full"&&forh!="Half"){
+                      console.log('forh');
+                      failed = true;
+                    }
+                  }
+
+                  if(failed==false){
+                    var row = table.insertRow(1+i);
+                    var cell = row.insertCell(0);
+                    var cell1 = row.insertCell(1);
+                    var cell2 = row.insertCell(2);
+                    var cell3 = row.insertCell(3);
+                    var cell4 = row.insertCell(4);
+                    cell.innerHTML  = (i+1);
+                    cell1.innerHTML = response[i]['programme_short_form_name']+" / "+response[i]['subject_code'] +" "+ response[i]['subject_name'] +" ( "+response[i]['semester'] +" ) ";
+                    cell2.innerHTML = response[i]['credit'];
+                    cell3.innerHTML = response[i]['lecturer_staff_id'];
+                    cell4.innerHTML = response[i]['moderator_staff_id'];
+                    cell.className  = 'tablebody';
+                    cell1.className = 'tablebody';
+                    cell2.className = 'tablebody';
+                    cell3.className = 'tablebody';
+                    cell4.className = 'tablebody';
+                    $("#writeInput").append("<input type='hidden' id='subject_code"+i+"' name='subject_code"+i+"' value='"+response[i]['subject_code']+"'><input type='hidden' id='subject_name"+i+"' name='subject_name"+i+"' value='"+response[i]['subject_name']+"'><input type='hidden' id='semester"+i+"' name='semester"+i+"' value='"+response[i]['semester']+"'><input type='hidden' id='programme"+i+"' name='programme"+i+"' value='"+response[i]['programme']+"'><input type='hidden' id='credit"+i+"' name='credit"+i+"' value='"+response[i]['credit']+"'><input type='hidden' id='lecturer"+i+"' name='lecturer"+i+"' value='"+response[i]['lecturer_staff_id']+"'><input type='hidden' id='moderator"+i+"' name='moderator"+i+"' value='"+response[i]['moderator_staff_id']+"'><input type='hidden' id='verified_by"+i+"' name='verified_by"+i+"' value='"+response[i]['verified_by_staff_id']+"'><input type='hidden' id='approved_by"+i+"' name='approved_by"+i+"' value='"+response[i]['approved_by_staff_id']+"'><input type='hidden' id='timetable"+i+"' name='timetable"+i+"' value='"+response[i]['timetable']+"'>");
+                    $('#showData').show();
+                    $('#errorData').hide();
+                    $('.submit_button').prop('disabled', false);
+                  }else{
+                    $('.submit_button').prop('disabled', true);
+                    $('#showData').hide();
+                    $('#errorData').html("<b>No. "+(i+1)+"</b>, got error the timetable data not complete. <b>Important </b>: the timetable must be in (Week,start_hour-end_hour,Full/Half;)<br/>");
+                    $('#errorData').show();
+                    break;
+                  }
                 }else{
+                  console.log("BBB");
+                  $('.submit_button').prop('disabled', true);
                   $('#showData').hide();
                   $('#errorData').show();
                   break;
@@ -235,7 +276,7 @@ $option5 = "id='selected-sidebar'";
             @if(\Session::has('failed'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
               <?php
-              $new_str = str_replace('.', '. <br />', Session::get('failed'));
+              $new_str = Session::get('failed');
               echo $new_str;
               ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -327,7 +368,7 @@ $option5 = "id='selected-sidebar'";
         <div class="modal-footer">
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
         &nbsp;
-        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin-right: 13px;" value="Save Changes">
+        <input type="submit" class="btn btn-raised btn-primary submit_button" style="background-color: #3C5AFF;color: white;margin-right: 13px;" value="Save Changes">
         </div>
       </form>
     </div>

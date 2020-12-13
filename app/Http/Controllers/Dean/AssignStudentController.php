@@ -303,6 +303,16 @@ class AssignStudentController extends Controller
             $student_id   = $request->get('student_id'.$i);
             $student_name   = $request->get('student_name'.$i);
 
+            for($c=0;$c<=$count;$c++){
+                if(($i!=$c)&&($c>=$i)){
+                    $c_student_id   = $request->get('student_id'.$c);
+                    $c_student_name   = $request->get('student_name'.$c);
+                    if($c_student_id==$student_id&&$c_student_name==$student_name){
+                        $failed = "In No. ".($i+1)." , of student details is similar with No. ".($c+1).".<br/>";
+                    }
+                }
+            }
+
             if(isset($student_id)!=""){
                 $checkexists = DB::table('assign_student_course')
                     ->select('assign_student_course.*')
@@ -311,20 +321,25 @@ class AssignStudentController extends Controller
                     ->where('assign_student_course.course_id', '=', $request->get('course_id'))
                     ->get();
                 if (count($checkexists) === 0) {
-                    $assign_student_course = new Assign_Student_Course([
-    		          'student_id'        => $student_id,
-    		          'course_id'         => $request->get('course_id'),
-    		          'status'            => "Active",
-    			    ]);
-                    $assign_student_course->save();
+
                 }else{
-                    $failed .= "The student ( ".$student_id." ) is already inserted.";
+                    $failed .= "The student ( ".$student_id." ) is already inserted.<br/>";
                 }
             }else{
-                $failed .= "The Student (".$student_id.") got something wrong.";
+                $failed .= "The Student (".$student_id.") got something wrong.<br/>";
             }
         }
         if($failed==""){
+            for($i=0;$i<=$count;$i++){
+                $student_id   = $request->get('student_id'.$i);
+                $student_name   = $request->get('student_name'.$i);
+                $assign_student_course = new Assign_Student_Course([
+                    'student_id'        => $student_id,
+                    'course_id'         => $request->get('course_id'),
+                    'status'            => "Active",
+                ]);
+                $assign_student_course->save();
+            }
             return redirect()->back()->with('success','Data Added');
         }else{
             return redirect()->back()->with('failed', $failed);

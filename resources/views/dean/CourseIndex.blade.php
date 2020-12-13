@@ -49,7 +49,7 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Courses</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
             <span class="now_page">Courses</span>/
         </p>
         <hr class="separate_hr">

@@ -233,7 +233,7 @@ $option1 = "id='selected-sidebar'";
             @if(\Session::has('failed'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <?php
-                $new_str = str_replace('.', '. <br />', Session::get('failed'));
+                $new_str = Session::get('failed');
                 echo $new_str;
                 ?>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
