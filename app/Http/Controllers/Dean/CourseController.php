@@ -373,23 +373,25 @@ class CourseController extends Controller
         $count = $request->get('count');
         for($i = 1;$i<=$count;$i++){
             $week   = $request->get('week'.$i);
-            $s_hour = $request->get('s_hour'.$i);
-            $e_hour = $request->get('e_hour'.$i);
-            $last_hour = $this->getFullTime($s_hour,$e_hour);
-            $sperate = explode(',',$last_hour);
-            for($s=0;$s<=count($sperate)-1;$s++){
-                for($m = 1;$m<=$count;$m++){
-                    if(($i!=$m)&&($m>=$i)){
-                        $m_week = $request->get('week'.$m);
-                        if($week==$m_week){
-                            $m_s_hour = $request->get('s_hour'.$m);
-                            $m_e_hour = $request->get('e_hour'.$m);
-                            $m_last_hour = $this->getFullTime($m_s_hour,$m_e_hour);
-                            $m_sperate = explode(',',$m_last_hour);
-                            $now = $sperate[$s];
-                            for($x=0;$x<=count($m_sperate)-1;$x++){ 
-                                if($now==$m_sperate[$x]){
-                                    $repeat_failed .= $m_week.":".$m_sperate[$x].',';
+            if($week!=""){
+                $s_hour = $request->get('s_hour'.$i);
+                $e_hour = $request->get('e_hour'.$i);
+                $last_hour = $this->getFullTime($s_hour,$e_hour);
+                $sperate = explode(',',$last_hour);
+                for($s=0;$s<=count($sperate)-1;$s++){
+                    for($m = 1;$m<=$count;$m++){
+                        if(($i!=$m)&&($m>=$i)){
+                            $m_week = $request->get('week'.$m);
+                            if($week==$m_week){
+                                $m_s_hour = $request->get('s_hour'.$m);
+                                $m_e_hour = $request->get('e_hour'.$m);
+                                $m_last_hour = $this->getFullTime($m_s_hour,$m_e_hour);
+                                $m_sperate = explode(',',$m_last_hour);
+                                $now = $sperate[$s];
+                                for($x=0;$x<=count($m_sperate)-1;$x++){ 
+                                    if($now==$m_sperate[$x]){
+                                        $repeat_failed .= $m_week.":".$m_sperate[$x].',';
+                                    }
                                 }
                             }
                         }
@@ -416,15 +418,17 @@ class CourseController extends Controller
                 for($s=0;$s<=count($data_sperate)-1;$s++){
                     for($i = 1;$i<=$count;$i++){
                         $week = $request->get('week'.$i);
-                        if($data_week==$week){
-                            $s_hour = $request->get('s_hour'.$i);
-                            $e_hour = $request->get('e_hour'.$i);
-                            $last_hour = $this->getFullTime($s_hour,$e_hour);
-                            $sperate = explode(',',$last_hour);
-                            $now = $data_sperate[$s];
-                            for($x=0;$x<=count($sperate)-1;$x++){ 
-                                if($now==$sperate[$x]){
-                                    $failed .= $week.":".$sperate[$x].',';
+                        if($week!=""){
+                            if($data_week==$week){
+                                $s_hour = $request->get('s_hour'.$i);
+                                $e_hour = $request->get('e_hour'.$i);
+                                $last_hour = $this->getFullTime($s_hour,$e_hour);
+                                $sperate = explode(',',$last_hour);
+                                $now = $data_sperate[$s];
+                                for($x=0;$x<=count($sperate)-1;$x++){ 
+                                    if($now==$sperate[$x]){
+                                        $failed .= $week.":".$sperate[$x].',';
+                                    }
                                 }
                             }
                         }

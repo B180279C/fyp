@@ -119,6 +119,10 @@ Route::post($character.'/CourseList/FinalResult/searchStudentList/', 'Dean\Cours
 Route::get($character.'/CourseList/E_Portfolio/{id}', [
     'as' => 'hod.C_viewE_Portfolio', 'uses' => 'Dean\Course\E_PortfolioController@viewE_Portfolio']);
 
+//Timetable
+Route::get($character.'/CourseList/timetable/{id}', [
+    'as' => 'hod.viewTimetable', 'uses' => 'Dean\Course\C_TimetableController@viewTimetable']);
+
 //My Course
 Route::get($character.'/course_list','Dean\CourseController@index');
 Route::post($character.'/searchTeachCourse', 'Dean\CourseController@searchTeachCourse');
@@ -297,6 +301,12 @@ Route::get($character.'/E_Portfolio/download/zipFiles/{course_id}/{checked}','De
 Route::get($character.'/E_Portfolio/list/{id}', [
     'as' => 'hod.viewListE_Portfolio', 'uses' => 'Dean\E_PortfolioController@viewListE_Portfolio']);
 
+//Timetable
+Route::get($character.'/Timetable/{id}', [
+    'as' => 'hod.viewTimetable', 'uses' => 'Dean\TimetableController@viewTimetable']);
+
+//Attendance
+Route::get($character.'/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
 
 //Moderator
 Route::get($character.'/Moderator','Dean\Moderator\M_CourseController@index');
@@ -396,6 +406,10 @@ Route::get($character.'/Moderator/FinalExamination/report/{actionFA_id}','Dean\M
 Route::get($character.'/Moderator/E_Portfolio/{id}','Dean\Moderator\E_PortfolioController@viewE_Portfolio');
 Route::get($character.'/Moderator/E_Portfolio/report/{id}','Dean\Moderator\E_PortfolioController@Download_E_Portfolio');
 
+//Moderator Timetable
+Route::get($character.'/Moderator/timetable/{id}', [
+	'as' => 'hod.M_timetable', 'uses' => 'Dean\Moderator\M_TimetableController@viewTimetable'
+]);
 
 //Reviewer
 Route::get($character.'/Reviewer','Dean\Dean\D_CourseController@index');
@@ -498,4 +512,8 @@ Route::get($character.'/Reviewer/E_Portfolio/{id}', [
 'as' => 'viewE_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@viewE_Portfolio']);
 Route::get($character.'/Reviewer/E_Portfolio/report/{id}', [
 'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@Download_E_Portfolio']);
+
+Route::get($character.'/Reviewer/timetable/{id}', [
+    'as' => 'hod.view_Timetable', 'uses' => 'Dean\Dean\D_TimetableController@viewTimetable'
+]);
 ?>

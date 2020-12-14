@@ -209,6 +209,12 @@ Route::get($character.'/E_Portfolio/download/zipFiles/{course_id}/{checked}','De
 Route::get($character.'/E_Portfolio/list/{id}', [
     'as' => 'lecturer.viewListE_Portfolio', 'uses' => 'Dean\E_PortfolioController@viewListE_Portfolio']);
 
+//Timetable
+Route::get($character.'/Timetable/{id}', [
+    'as' => 'lecturer.viewTimetable', 'uses' => 'Dean\TimetableController@viewTimetable']);
+
+//Attendance
+Route::get($character.'/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
 
 //Moderator
 Route::get($character.'/Moderator','Dean\Moderator\M_CourseController@index');

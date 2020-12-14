@@ -147,6 +147,9 @@
 	Route::get('/CourseList/E_Portfolio/{id}', [
     'as' => 'viewE_Portfolio', 'uses' => 'Dean\Course\E_PortfolioController@viewE_Portfolio']);
 
+    Route::get('/CourseList/timetable/{id}', [
+    'as' => 'viewTimetable', 'uses' => 'Dean\Course\C_TimetableController@viewTimetable']);
+
 
 	//My Course
 	Route::post('uploadCourses', 'Dean\CourseController@importExcel')->name('dropzone.uploadCourses');
@@ -331,6 +334,13 @@
     Route::get('/E_Portfolio/list/{id}', [
     'as' => 'viewListE_Portfolio', 'uses' => 'Dean\E_PortfolioController@viewListE_Portfolio']);
 
+    //Timetable
+    Route::get('/Timetable/{id}', [
+    'as' => 'viewTimetable', 'uses' => 'Dean\TimetableController@viewTimetable']);
+
+    //Attendance
+    Route::get('/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
+
     //Past Year CA Question
     Route::get('/PastYear/assessment/{id}','Dean\PastYearController@PastYearAssessment')->name('dean.pastYear');
     Route::get('/PastYear/assessment/{id}/assessment_name/{course_id}','Dean\PastYearController@PastYearAssessmentName')->name('dean.pastYearASSName');
@@ -493,6 +503,11 @@
     Route::get('/Moderator/E_Portfolio/report/{id}', [
     'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Moderator\E_PortfolioController@Download_E_Portfolio']);
 
+    //Moderator Timetable
+    Route::get('/Moderator/timetable/{id}', [
+    'as' => 'M_timetable', 'uses' => 'Dean\Moderator\M_TimetableController@viewTimetable']);
+
+
 	Route::get('Reviewer','Dean\Dean\D_CourseController@index');
 	Route::post('/searchCourse', 'Dean\Dean\D_CourseController@searchCourse');
 	Route::get('/Reviewer/course/{id}','Dean\Dean\D_CourseController@DeanAction');
@@ -590,4 +605,7 @@
     'as' => 'viewE_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@viewE_Portfolio']);
     Route::get('/Reviewer/E_Portfolio/report/{id}', [
     'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@Download_E_Portfolio']);
+
+    Route::get('/Reviewer/timetable/{id}', [
+    'as' => 'view_Timetable', 'uses' => 'Dean\Dean\D_TimetableController@viewTimetable']);
 ?>
