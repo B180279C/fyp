@@ -215,6 +215,9 @@ Route::get($character.'/Timetable/{id}', [
 
 //Attendance
 Route::get($character.'/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
+Route::get($character.'/Attendance/{id}/student_list/{date}', 'Dean\AttendanceController@viewStudentList');
+Route::post($character.'/Attendance/store/', 'Dean\AttendanceController@storeAttendance');
+Route::post($character.'/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
 
 //Moderator
 Route::get($character.'/Moderator','Dean\Moderator\M_CourseController@index');
@@ -313,4 +316,11 @@ Route::get($character.'/Moderator/FinalExamination/report/{actionFA_id}','Dean\M
 //Moderator E_PortFolio
 Route::get($character.'/Moderator/E_Portfolio/{id}','Dean\Moderator\E_PortfolioController@viewE_Portfolio');
 Route::get($character.'/Moderator/E_Portfolio/report/{id}','Dean\Moderator\E_PortfolioController@Download_E_Portfolio');
+
+//Moderator Timetable
+Route::get($character.'/Moderator/timetable/{id}','Dean\Moderator\M_TimetableController@viewTimetable');
+
+//Moderator Attendance
+Route::get($character.'/Moderator/Attendance/{id}','Dean\Moderator\M_AttendanceController@viewAttendance');
+Route::get($character.'/Moderator/Attendance/{id}/student_list/{date}', 'Dean\Moderator\M_AttendanceController@viewStudentList');
 ?>

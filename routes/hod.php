@@ -115,13 +115,17 @@ Route::get($character.'/CourseList/images/FinalResult/{image_name}', [
 Route::get($character.'/CourseList/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Course\C_FinalExamResultController@view_wholePaper');
 Route::post($character.'/CourseList/FinalResult/searchStudentList/', 'Dean\Course\C_FinalExamResultController@searchStudentList');
 
-//E_Portfolio
+//Course List E_Portfolio
 Route::get($character.'/CourseList/E_Portfolio/{id}', [
     'as' => 'hod.C_viewE_Portfolio', 'uses' => 'Dean\Course\E_PortfolioController@viewE_Portfolio']);
 
-//Timetable
+//Course List Timetable
 Route::get($character.'/CourseList/timetable/{id}', [
     'as' => 'hod.viewTimetable', 'uses' => 'Dean\Course\C_TimetableController@viewTimetable']);
+
+//Course List Attendance
+Route::get($character.'/CourseList/Attendance/{id}','Dean\Course\C_AttendanceController@viewAttendance');
+Route::get($character.'/CourseList/Attendance/{id}/student_list/{date}', 'Dean\Course\C_AttendanceController@viewStudentList');
 
 //My Course
 Route::get($character.'/course_list','Dean\CourseController@index');
@@ -307,6 +311,9 @@ Route::get($character.'/Timetable/{id}', [
 
 //Attendance
 Route::get($character.'/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
+Route::get($character.'/Attendance/{id}/student_list/{date}', 'Dean\AttendanceController@viewStudentList');
+Route::post($character.'/Attendance/store/', 'Dean\AttendanceController@storeAttendance');
+Route::post($character.'/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
 
 //Moderator
 Route::get($character.'/Moderator','Dean\Moderator\M_CourseController@index');
@@ -411,6 +418,10 @@ Route::get($character.'/Moderator/timetable/{id}', [
 	'as' => 'hod.M_timetable', 'uses' => 'Dean\Moderator\M_TimetableController@viewTimetable'
 ]);
 
+//Moderator Attendance
+Route::get($character.'/Moderator/Attendance/{id}','Dean\Moderator\M_AttendanceController@viewAttendance');
+Route::get($character.'/Moderator/Attendance/{id}/student_list/{date}', 'Dean\Moderator\M_AttendanceController@viewStudentList');
+
 //Reviewer
 Route::get($character.'/Reviewer','Dean\Dean\D_CourseController@index');
 Route::post($character.'/searchCourse', 'Dean\Dean\D_CourseController@searchCourse');
@@ -513,7 +524,12 @@ Route::get($character.'/Reviewer/E_Portfolio/{id}', [
 Route::get($character.'/Reviewer/E_Portfolio/report/{id}', [
 'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@Download_E_Portfolio']);
 
+//Dean Timetable
 Route::get($character.'/Reviewer/timetable/{id}', [
     'as' => 'hod.view_Timetable', 'uses' => 'Dean\Dean\D_TimetableController@viewTimetable'
 ]);
+
+//Dean Attendance
+Route::get($character.'/Reviewer/Attendance/{id}','Dean\Dean\D_AttendanceController@viewAttendance');
+Route::get($character.'/Reviewer/Attendance/{id}/student_list/{date}', 'Dean\Dean\D_AttendanceController@viewStudentList');
 ?>

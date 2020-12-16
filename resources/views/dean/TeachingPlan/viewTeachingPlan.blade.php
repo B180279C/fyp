@@ -308,11 +308,11 @@ $option1 = "id='selected-sidebar'";
             }
             ?>
             <div class="row" style="border: 0px solid black;margin:-10px 0px 0px 0px;padding:0px;">
-                <div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;">The Teaching Plan : <b>{{$num}}/3</b> ( {!!$completed!!} )</span></div>
+                <div class="col-12" style="padding: 0px 12px 8px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i>The Teaching Plan : <b>{{$num}}/3</b> ( {!!$completed!!} )</span></div>
                 <div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">{!!$iconM!!} Method of Assessment</span></div>
                 <div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">{!!$iconC!!} Continual Quality Improvement (CQI)</span></div>
                 <div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">{!!$iconW!!} Weekly Plan</span></div>
-                <div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Status : {!!$pending!!}</span></div>
+                <div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i>Status : {!!$pending!!}</span></div>
             </div>
             @endif
             <hr style="margin: 6px 5px 5px 5px;background-color:black;">

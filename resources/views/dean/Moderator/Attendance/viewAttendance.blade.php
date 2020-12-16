@@ -1,39 +1,39 @@
 <?php
-$title = "Course";
-$option1 = "id='selected-sidebar'";
+$title = "Moderator";
+$option3 = "id='selected-sidebar'";
 function getFullTime($s_hour,$e_hour){
-    $s_hour = intval($s_hour);
-    $e_hour = intval($e_hour);
-    $hour = $e_hour - $s_hour;
-    $zero = "0";
-    if($s_hour>=1000){
-        $zero = "";
-    }
-    $f_time = "";
-    $current = "";
-    for($time = 100;$time<=$hour;$time=$time+100){
-        if($current==""){
-            $current = intval($s_hour+100);
-            if($current>=1000){
-                $f_time .= $zero.$s_hour."-".($s_hour+100);
-            }else{
-                $f_time .= $zero.$s_hour."-0".($s_hour+100);
-            }
-        }else{
-            $zero = "0";
-            if($current>=1000){
-                $zero = "";
-            }
-            $added_hour = intval($current+100);
-            if($added_hour>=1000){
-                $f_time .= ",".$zero.$current."-".$added_hour;
-            }else{
-                $f_time .= ",".$zero.$current."-0".$added_hour;
-            }
-            $current = $added_hour;
-        }
-    }
-    return $f_time;
+	$s_hour = intval($s_hour);
+	$e_hour = intval($e_hour);
+	$hour = $e_hour - $s_hour;
+	$zero = "0";
+	if($s_hour>=1000){
+	    $zero = "";
+	}
+	$f_time = "";
+	$current = "";
+	for($time = 100;$time<=$hour;$time=$time+100){
+		if($current==""){
+		    $current = intval($s_hour+100);
+		    if($current>=1000){
+		        $f_time .= $zero.$s_hour."-".($s_hour+100);
+		    }else{
+		        $f_time .= $zero.$s_hour."-0".($s_hour+100);
+		    }
+		}else{
+		    $zero = "0";
+		    if($current>=1000){
+		        $zero = "";
+		    }
+		    $added_hour = intval($current+100);
+		    if($added_hour>=1000){
+		        $f_time .= ",".$zero.$current."-".$added_hour;
+		    }else{
+		        $f_time .= ",".$zero.$current."-0".$added_hour;
+		    }
+		    $current = $added_hour;
+		}
+	}
+	return $f_time;
 }
 ?>
 @extends('layouts.layout')
@@ -42,11 +42,6 @@ function getFullTime($s_hour,$e_hour){
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$.ajaxSetup({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
     $('.week').click(function(){
         var id = $(this).attr("id");
         $('#plan_detail_'+id).slideToggle("slow", function(){
@@ -60,23 +55,6 @@ $(document).ready(function(){
             }
         });
     });
-
-    $('.qr_code').click(function(){
-    	var id = $(this).attr("id");
-    	var string = id.split("?");
-    	var date = string[1];
-        var num = string[0].split("-");
-
-        $.ajax({
-            type:'POST',
-            url:'{{$character}}/Attendance/openQR_Code',
-            data:{tt_id:num[0],week:num[1],less_hour:num[2],date:date},
-            success:function(data){
-            	alert(data);
-              	// document.getElementById("course").innerHTML = data;
-            }
-        });
-    });
 });
 </script>
 <style type="text/css">
@@ -86,11 +64,11 @@ $(document).ready(function(){
 </style>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
         <p class="pass_page">
             <a href="{{$character}}/home" class="first_page"> Home </a>/
-            <a href="{{$character}}/course_list">Courses </a>/
-            <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
+            <a href="{{$character}}/Moderator">Moderator </a>/
+            <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <span class="now_page">Attendance</span>/
         </p>
         <hr class="separate_hr">
@@ -99,11 +77,26 @@ $(document).ready(function(){
         <div class="col-md-12">
              <p class="page_title">Attendance</p>
              <hr style="margin-top:5px;margin-bottom: 0px;padding: 0px;">
-             <div class="details" style="padding: 10px 5px 0px 5px;">
+             <div class="row" style="border: 0px solid black;margin:10px 0px 0px 0px;padding:0px;">
+             	<div class="col-12" style="padding: 0px 12px 0px 12px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i>
+                	<span style="font-size: 17px;">
+                		Completed of Attendance Marked : <b>{{round($completed)}} %</b>
+                	</span>
+            	</div>
+	        	<div class="col-12" style="padding: 0px 12px 5px 12px;">
+	        		<span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> The Percentage of average of student attendance (Marked) : 
+	        		@if($average==100)
+	        		<b> {{round($average)}} % </b>
+	        		@else
+	        		<b> {{round(100-$average)}} % </b>
+	        		@endif
+	        		</span>
+	        	</div>
+            </div>
+             <div class="details" style="padding: 5px 5px 0px 5px;">
              	<div class="row" style="padding:0px;"> 
                     <div class="col-md-12" style="padding:0px;">
 	             	<?php
-
 	                    if($course[0]->semester =='A'){
 	                        $weeks = 7;
 	                        $startDate = $course[0]->startDate;
@@ -111,49 +104,103 @@ $(document).ready(function(){
 	                        $weeks = 14;
 	                        $startDate = $course[0]->startDate;
 	                    }
+	                    $absent_person = 0;
+	                    $take_hour = 0;
 	                ?>
 	                 @for($i=1;$i<=$weeks;$i++)
-	                 	<?php
+	                 <?php
 	                 	$displays = "display:none;";
 	                 	$array = array();
 	                 	$count_hour = 0;
+	                 	$check = '<i class="fa fa-times wrong" aria-hidden="true" style="float:right;padding-top:5px;margin-right:15px;"></i>';
 	                 	if($i==1){
 		                    foreach($timetable as $row){
 								$week = "Next ".$row->week;
 		                   		$NewDate = date('Y-m-d', strtotime($startDate . $week));
-		                   		$date = date('Y-m-d');
 		                   		$hour = explode(',',$row->class_hour);
 		                   		$count_hour = $count_hour + count($hour);
-			                	if($NewDate==$date){
-			                		$displays = "";
-			                	}
+		                   		$take_hour = 0;
+			                	foreach($attendance as $att_row){
+			                  		if($att_row->A_week==$i){
+			                  			$s_hour = explode('-',$att_row->hour);
+	                                    $e_hour = explode('-',$att_row->hour);
+	                                    $last_hour = getFullTime($s_hour[0],$e_hour[1]);
+	                                    $timetable_hour = $att_row->class_hour;
+	                                    $explode_th = explode(',',$timetable_hour);
+	                                    $sperate = explode(',',$last_hour);
+	                                    $less_hour = $att_row->less_hour;
+	                                    if(count($sperate)>count($explode_th)){
+	                                       	$less_hour = count($explode_th)-count($sperate);
+	                                    }
+	                                        if($less_hour==0){
+	                                        	for($s=0;$s<=count($sperate)-1;$s++){
+		                                        	$take_hour++;
+		                                        }
+	                                        }else if($less_hour<0){
+	                                        	for($s=0;$s<=count($explode_th)-1;$s++){
+		                                        	$take_hour++;
+		                                        }
+	                                    	}else{
+	                                        	$take_hour= $take_hour + $less_hour;
+	                                        }
+	                                }
+	                            }
 		                    }
+		                    if($take_hour>=$count_hour&&$count_hour!=0){
+		                    	$check = '<i class="fa fa-check correct" aria-hidden="true" style="float:right;padding-top:5px;margin-right:13px;"></i>';
+		                    }
+
 		                }else{
 		                    $startDate = strtotime($course[0]->startDate);
 		                   	$add_date = $startDate+(($i-1)*(86400*7));
 		                   	$add_startDate = date('Y-m-d',$add_date);
-			                foreach($timetable as $row){
-			                	$week = "Next ".$row->week;
-			                	$NewDate = date('Y-m-d', strtotime($add_startDate . $week));
-			                	$date = date('Y-m-d');
-			                	$hour = explode(',',$row->class_hour);
-			                	if($row->F_or_H=="Full"){
-			                		$count_hour = $count_hour + count($hour);
-			                	}else{
-			                		if ($i % 2) {
-			                			$count_hour = $count_hour + count($hour);
-			                		}
-			                	}
-			                	
-			                	if($NewDate==$date){
-			                		$displays = "";
-			                	}
-		                   	}
+		                    foreach($timetable as $row){
+								$week = "Next ".$row->week;
+		                   		$NewDate = date('Y-m-d', strtotime($add_startDate . $week));
+		                   		$hour = explode(',',$row->class_hour);
+		                   		$take_hour = 0;
+		                   		if($row->F_or_H=="Full"){
+			            			$count_hour = $count_hour + count($hour);
+			            		}else{
+			            			if ($i % 2) {
+			            				$count_hour = $count_hour + count($hour);
+			            			}
+			            		}
+			                	foreach($attendance as $att_row){
+			                  		if($att_row->A_week==$i){
+			                  			$s_hour = explode('-',$att_row->hour);
+	                                    $e_hour = explode('-',$att_row->hour);
+	                                    $last_hour = getFullTime($s_hour[0],$e_hour[1]);
+	                                    $timetable_hour = $att_row->class_hour;
+	                                    $explode_th = explode(',',$timetable_hour);
+	                                    $sperate = explode(',',$last_hour);
+	                                    $less_hour = $att_row->less_hour;
+	                                    if(count($sperate)>count($explode_th)){
+	                                       	$less_hour = count($explode_th)-count($sperate);
+	                                    }
+	                                        if($less_hour==0){
+	                                        	for($s=0;$s<=count($sperate)-1;$s++){
+		                                        	$take_hour++;
+		                                        }
+	                                        }else if($less_hour<0){
+	                                        	for($s=0;$s<=count($explode_th)-1;$s++){
+		                                        	$take_hour++;
+		                                        }
+	                                    	}else{
+	                                        	$take_hour= $take_hour + $less_hour;
+	                                        }
+	                                }
+	                            }
+		                    }
+		                    if($take_hour>=$count_hour&&$count_hour!=0){
+		                    	$check = '<i class="fa fa-check correct" aria-hidden="true" style="float:right;padding-top:5px;margin-right:13px;"></i>';
+		                    }
 		                }
 	                 	?>
 	                    <p class="col-12 align-self-center week" id="{{$i}}" style="padding:10px 10px;font-size: 20px;margin: 0px;">
 	                        <i class="fa fa-plus" id="icon_{{$i}}" aria-hidden="true" style="font-size: 20px;color: #0d2f81"></i>
 	                        Week {{$i}}
+	                        {!!$check!!}
 	                   	</p>
 	                   	<div class="teachingPlan" style="border-bottom: 1px solid grey;padding:0px 20px;">
 		                   	<div class="row plan" id="plan_detail_{{$i}}" style="padding: 0px 20px;{{$displays}}">
@@ -161,16 +208,21 @@ $(document).ready(function(){
 		                   			<thead>
 		                   				<tr style="background-color: #d9d9d9;text-align: center;">
 			                   				<th style="border-left:1px solid #e6e6e6;color:black;"><b>Date & Time</b></th>
-			                   				<th style="border-left:1px solid #e6e6e6;color:black;"><b>QR Code</b></th>
 			                   				<th style="border-left:1px solid #e6e6e6;color:black;"><b>Attendance List</b></th>
+			                   				<th style="border-left:1px solid #e6e6e6;color:black;"><b>Average(Attend %)</b></th>
 			                   				<th style="border-left:1px solid #e6e6e6;color:black;"><b>Status</b></th>
 		                   				</tr>
 		                   			</thead>
-		                   		<?php
+		                   			<?php
 		                   		if($i==1){
 		                   			$take_hour = 0;
 		                   			foreach($attendance as $att_row){
+		                   				$absent_person = 0;
 			                   			if($att_row->A_week==$i){
+			                   				$students_status = $att_row->students_status;
+					                        $substr_count = substr_count($students_status, 'Absent');
+					                        $absent_person = $absent_person+$substr_count;
+					                        $average = (($count_student-$absent_person)/$count_student)*100; 
 			                   				$s_hour = explode('-',$att_row->hour);
 	                                        $e_hour = explode('-',$att_row->hour);
 	                                        $last_hour = getFullTime($s_hour[0],$e_hour[1]);
@@ -200,16 +252,18 @@ $(document).ready(function(){
 			                   				}else{
 			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
 			                   				}
-			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$att_row->tt_id."-".$i."-".$less_hour."?".$att_row->A_date."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
+
 			                   				if($less_hour<0){
 			                   					$less_hour=0;
 			                   				}
-			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$att_row->tt_id."-".$i."-".$less_hour."/student_list/".$att_row->A_date."' class='show_image_link'>List</a></center></td>";
+			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Moderator/Attendance/".$att_row->tt_id."-".$i."-".$less_hour."/student_list/".$att_row->A_date."' class='show_image_link'>List</a></center></td>";
+			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-check correct' aria-hidden='true'></i></center></td>";
 			                   				echo "</tr>";
 			                   				array_push($array,$att_row->tt_id.'/'.$last_hour);
 			                   			}
 			                   		}
+			                   		$average = 0;
 			                   		foreach($timetable as $row){
 		                   				$week = "Next ".$row->week;
 		                   				$hour = explode(',',$row->class_hour);
@@ -239,12 +293,13 @@ $(document).ready(function(){
 		                   					if($row->F_or_H=="Full"){
 					                   			echo "<tr>";
 					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
 					                   			if($take_hour<$count_hour){
-			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."-".$less_hour."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
+			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Empty</center></td>";
+			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 					                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
 			                   					}else{
 			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Skip</center></td>";
+			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 					                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-ban wrong' aria-hidden='true'></i></center></td>";
 			                   					}
 					                   			echo "</tr>";
@@ -252,12 +307,13 @@ $(document).ready(function(){
 					                   			if ($i % 2) {
 					                   				echo "<tr>";
 						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
 						                   			if($take_hour<$count_hour){
-				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."-".$less_hour."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
+				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Empty</center></td>";
+				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 						                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
 				                   					}else{
 				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Skip</center></td>";
+				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 						                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-ban wrong' aria-hidden='true'></i></center></td>";
 				                   					}
 						                   			echo "</tr>";
@@ -268,7 +324,12 @@ $(document).ready(function(){
 		                   		}else{
 		                   			$take_hour = 0;
 		                   			foreach($attendance as $att_row){
+		                   				$absent_person = 0;
 			                   			if($att_row->A_week==$i){
+			                   				$students_status = $att_row->students_status;
+					                        $substr_count = substr_count($students_status, 'Absent');
+					                        $absent_person = $absent_person+$substr_count;
+					                        $average = (($count_student-$absent_person)/$count_student)*100; 
 			                   				$s_hour = explode('-',$att_row->hour);
 	                                        $e_hour = explode('-',$att_row->hour);
 	                                        $last_hour = getFullTime($s_hour[0],$e_hour[1]);
@@ -298,8 +359,8 @@ $(document).ready(function(){
 			                   				}else{
 			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
 			                   				}
-			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
-			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$att_row->tt_id."-".$i."-".$less_hour."/student_list/".$att_row->A_date."' class='show_image_link'>List</a></center></td>";
+			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Moderator/Attendance/".$att_row->tt_id."-".$i."-".$less_hour."/student_list/".$att_row->A_date."' class='show_image_link'>List</a></center></td>";
+			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-check correct' aria-hidden='true'></i></center></td>";
 			                   				echo "</tr>";
 			                   				array_push($array,$att_row->tt_id.'/'.$last_hour);
@@ -308,6 +369,7 @@ $(document).ready(function(){
 			                   		$startDate = strtotime($course[0]->startDate);
 		                   			$add_date = $startDate+(($i-1)*(86400*7));
 		                   			$add_startDate = date('Y-m-d',$add_date);
+		                   			$average = 0;
 		                   			foreach($timetable as $row){
 		                   				$week = "Next ".$row->week;
 		                   				$hour = explode(',',$row->class_hour);
@@ -337,12 +399,13 @@ $(document).ready(function(){
 		                   					if($row->F_or_H=="Full"){
 					                   			echo "<tr>";
 					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
 					                   			if($take_hour<$count_hour){
-			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."-".$less_hour."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
+			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Empty</center></td>";
+			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 					                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
 			                   					}else{
 			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Skip</center></td>";
+			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 					                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-ban wrong' aria-hidden='true'></i></center></td>";
 			                   					}
 					                   			echo "</tr>";
@@ -350,12 +413,13 @@ $(document).ready(function(){
 					                   			if ($i % 2) {
 					                   				echo "<tr>";
 						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
 						                   			if($take_hour<$count_hour){
-				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
+				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Empty</center></td>";
+				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 						                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
 				                   					}else{
 				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>Skip</center></td>";
+				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 						                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-ban wrong' aria-hidden='true'></i></center></td>";
 				                   					}
 						                   			echo "</tr>";

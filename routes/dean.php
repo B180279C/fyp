@@ -144,12 +144,18 @@
 	Route::get('/CourseList/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Course\C_FinalExamResultController@view_wholePaper');
 	Route::post('/CourseList/FinalResult/searchStudentList/', 'Dean\Course\C_FinalExamResultController@searchStudentList');
 
+	//Course List E-PortFolio
 	Route::get('/CourseList/E_Portfolio/{id}', [
     'as' => 'viewE_Portfolio', 'uses' => 'Dean\Course\E_PortfolioController@viewE_Portfolio']);
 
+	//Course List Timetable
     Route::get('/CourseList/timetable/{id}', [
     'as' => 'viewTimetable', 'uses' => 'Dean\Course\C_TimetableController@viewTimetable']);
 
+    //Course List Attendance
+    Route::get('/CourseList/Attendance/{id}', [
+    'as' => 'M_Attendance', 'uses' => 'Dean\Course\C_AttendanceController@viewAttendance']);
+    Route::get('/CourseList/Attendance/{id}/student_list/{date}', 'Dean\Course\C_AttendanceController@viewStudentList');
 
 	//My Course
 	Route::post('uploadCourses', 'Dean\CourseController@importExcel')->name('dropzone.uploadCourses');
@@ -340,6 +346,11 @@
 
     //Attendance
     Route::get('/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
+    Route::get('/Attendance/{id}/student_list/{date}', 'Dean\AttendanceController@viewStudentList');
+    Route::post('/Attendance/store/', 'Dean\AttendanceController@storeAttendance');
+    Route::post('/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
+    Route::post('/Attendance/openQR_Code/', 'Dean\AttendanceController@openQR_Code');
+    
 
     //Past Year CA Question
     Route::get('/PastYear/assessment/{id}','Dean\PastYearController@PastYearAssessment')->name('dean.pastYear');
@@ -507,6 +518,11 @@
     Route::get('/Moderator/timetable/{id}', [
     'as' => 'M_timetable', 'uses' => 'Dean\Moderator\M_TimetableController@viewTimetable']);
 
+    //Moderator Attendance
+    Route::get('/Moderator/Attendance/{id}', [
+    'as' => 'M_Attendance', 'uses' => 'Dean\Moderator\M_AttendanceController@viewAttendance']);
+    Route::get('/Moderator/Attendance/{id}/student_list/{date}', 'Dean\Moderator\M_AttendanceController@viewStudentList');
+
 
 	Route::get('Reviewer','Dean\Dean\D_CourseController@index');
 	Route::post('/searchCourse', 'Dean\Dean\D_CourseController@searchCourse');
@@ -606,6 +622,12 @@
     Route::get('/Reviewer/E_Portfolio/report/{id}', [
     'as' => 'Download_E_Portfolio', 'uses' => 'Dean\Dean\E_PortfolioController@Download_E_Portfolio']);
 
+    //Dean Timetable
     Route::get('/Reviewer/timetable/{id}', [
     'as' => 'view_Timetable', 'uses' => 'Dean\Dean\D_TimetableController@viewTimetable']);
+
+    //Dean Attendance
+    Route::get('/Reviewer/Attendance/{id}', [
+    'as' => 'M_Attendance', 'uses' => 'Dean\Dean\D_AttendanceController@viewAttendance']);
+    Route::get('/Reviewer/Attendance/{id}/student_list/{date}', 'Dean\Dean\D_AttendanceController@viewStudentList');
 ?>

@@ -143,6 +143,9 @@ $option1 = "id='selected-sidebar'";
             console.log(response);
             var table = document.getElementById("table");
             for(var i = 0; i<response.length; i++){
+                if((response[i]['student_id']=="Empty")&&(response[i]['student_name']=="Empty")){
+                  break;
+                }
                 if((response[i]['student_id']!=null)&&(response[i]['student_name']!=null)){
                   var row = table.insertRow(1+i);
                   var cell = row.insertCell(0);

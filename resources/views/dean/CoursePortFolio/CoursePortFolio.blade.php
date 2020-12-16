@@ -116,9 +116,6 @@ $option5 = "id='selected-sidebar'";
             var table = document.getElementById("table");
             for(var i = 0; i<response.length; i++){
               if((response[i]['subject_code']=="Empty")&&(response[i]['programme']=="Empty")){
-                // $('.submit_button').prop('disabled', true);
-                // $('#showData').hide();
-                // $('#errorData').show();
                 break;
               }
                 if((response[i]['subject_code']!=null)&&(response[i]['subject_name']!=null)&&(response[i]['semester']!=null)&&(response[i]['lecturer_staff_id']!=null)&&(response[i]['programme']!=null)&&(response[i]['moderator_staff_id']!=null)&&(response[i]['verified_by_staff_id']!=null)&&(response[i]['approved_by_staff_id']!=null)&&(response[i]['timetable']!=null)){
