@@ -154,7 +154,7 @@ class PastYearNoteController extends Controller
 		                    $result .= '<div class="checkbox_style align-self-center">';
 		                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 		                    $result .= '</div>';
-		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$course_id."-".$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		                    if($ext[1]=="pdf"){
 	                            $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -191,15 +191,15 @@ class PastYearNoteController extends Controller
                                 $semester_name = '';
                             }
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
-                            $result .= '<div class="col-12 row align-self-center">';
+                            $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$course_id.'-'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
-                            $result .= '<div class="col-10" id="assessment_word">';
+                            $result .= '<div class="col-10" id="course_name_two">';
                             if($row->used_by!=null){
                                 foreach($all_note as $all_row){
                                     if(($row->used_by)==($all_row->ln_id)){
@@ -211,6 +211,9 @@ class PastYearNoteController extends Controller
                             }
                             $result .= '</div>';
                             $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;';
                             $result .= '</div>';
                             $result .= '</div>';
 	                    }
@@ -362,7 +365,7 @@ class PastYearNoteController extends Controller
 		                    $result .= '<div class="checkbox_style align-self-center">';
 		                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 		                    $result .= '</div>';
-		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$course_id."-".$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		                    if($ext[1]=="pdf"){
 	                         	$result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -399,15 +402,15 @@ class PastYearNoteController extends Controller
                                 $semester_name = '';
                             }
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
-                            $result .= '<div class="col-12 row align-self-center">';
+                            $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$course_id.'-'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
-                            $result .= '<div class="col-10" id="assessment_word">';
+                            $result .= '<div class="col-10" id="course_name_two">';
                             if($row->used_by!=null){
                                 foreach($all_note as $all_row){
                                     if(($row->used_by)==($all_row->ln_id)){
@@ -415,10 +418,13 @@ class PastYearNoteController extends Controller
                                     }
                                 }
                             }else{
-                                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$data.$row->note_name.'</b></p>';
+                                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->note_name.'</b></p>';
                             }
                             $result .= '</div>';
                             $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;';
                             $result .= '</div>';
                             $result .= '</div>';
 	                    }
@@ -473,7 +479,7 @@ class PastYearNoteController extends Controller
 		                    $result .= '<div class="checkbox_style align-self-center">';
 		                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 		                    $result .= '</div>';
-		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$course_id."-".$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		                    if($ext[1]=="pdf"){
 	                           	$result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -510,30 +516,29 @@ class PastYearNoteController extends Controller
                                 $semester_name = '';
                             }
                             $result .= '<div class="col-12 row align-self-center" id="course_list">';
-                            $result .= '<div class="col-11 row align-self-center">';
+                            $result .= '<div class="col-9 row align-self-center">';
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$course_id.'-'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-                            if($row->note_place=="Note"){
-                            	$result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
-                        	}else{
-                        		$result .= '<img src="'.url('image/folder3.png').'" width="25px" height="23px"/>';
-                        	}
+                            $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
-                            $result .= '<div class="col-10" id="assessment_word">';
+                            $result .= '<div class="col-10" id="course_name_two">';
                             if($row->used_by!=null){
                                 foreach($all_note as $all_row){
                                     if(($row->used_by)==($all_row->ln_id)){
-                                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->note_name.$semester_name.'</span></b></p>';
+                                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->note_name.$semester_name.'</span></b></p>';
                                     }
                                 }
                             }else{
-                                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->note_name.'</b></p>';
+                                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->note_name.'</b></p>';
                             }
                             $result .= '</div>';
                             $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->ln_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;';
                             $result .= '</div>';
                             $result .= '</div>';
 		                }
@@ -1265,6 +1270,7 @@ class PastYearNoteController extends Controller
                     ->where('note_place', '=', 'Note')
                     ->where('status', '=', 'Active')
                     ->orderByDesc('lecture_notes.note_type')
+                    ->orderBy('lecture_notes.used_by')
                     ->get();      
             $previous_id = $view_id;
        	}else{
@@ -1276,6 +1282,7 @@ class PastYearNoteController extends Controller
                     ->where('note_place', '=', $place)
                     ->where('status', '=', 'Active')
                     ->orderByDesc('lecture_notes.note_type')
+                    ->orderBy('lecture_notes.used_by')
                     ->get();
             $previous_id = $ln->course_id;
             $place_name = explode(',,,',($ln['note_place']));

@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">

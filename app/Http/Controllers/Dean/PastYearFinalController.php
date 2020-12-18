@@ -494,7 +494,6 @@ class PastYearFinalController extends Controller
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -797,11 +796,10 @@ class PastYearFinalController extends Controller
 
         $AssFinal = AssFinal::where('fx_id', '=', $fx_id)->firstOrFail();
 
-        $course = DB::table('courses')
+        $previous = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $AssFinal->course_id)
                  ->get();
 
@@ -848,7 +846,7 @@ class PastYearFinalController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_fx_id.'_'.$row->ass_fx_type.'" class="group_'.$row_group->ass_fx_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/final_assessment/'.$original_id.'-'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$AssFinal->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='.$character."/PastYear/final_assessment/view/whole_paper/".$original_id.'-'.$row->fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/PastYear/images/final_assessment/'.$original_id.'-'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$AssFinal->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='.$character."/PastYear/final_assessment/view/whole_paper/".$original_id.'-'.$row->fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -905,7 +903,7 @@ class PastYearFinalController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_fx_id.'_'.$row->ass_fx_type.'" class="group_'.$row_group->ass_fx_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/final_assessment/'.$original_id.'-'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$AssFinal->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='.$character."/PastYear/final_assessment/view/whole_paper/".$original_id.'-'.$row->fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/PastYear/images/final_assessment/'.$original_id.'-'.$row->ass_fx_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$AssFinal->assessment_name.' / '.$row_group->ass_fx_type.' / '.$row->ass_fx_name.' <br> <a href='.$character."/PastYear/final_assessment/view/whole_paper/".$original_id.'-'.$row->fx_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -1184,8 +1182,12 @@ class PastYearFinalController extends Controller
 
     public function zipFileDownloadResult($course_id,$download)
     {
-        $string = explode('---',$course_id);
-        $f_course_id = $string[0];
+        if($download!="All"){
+            $string = explode('---',$course_id);
+            $f_course_id = $string[0];
+        }else{
+            $f_course_id = $course_id;
+        }
 
         $subjects = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -1421,6 +1423,56 @@ class PastYearFinalController extends Controller
 		            }
 	        	}
         	}
+        }else{
+            $assessment_result = AssessmentFinalResult::where('course_id','=',$f_course_id)->firstOrFail();
+            $course_id = $assessment_result->course_id;
+            $submitted_by = $assessment_result->submitted_by;
+
+            $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+
+            $zip->addEmptyDir($course[0]->semester_name." ( ".$submitted_by." )/");
+
+            $group_result = DB::table('assessment_final_result')
+                         ->join('courses','courses.course_id','=','assessment_final_result.course_id')
+                         ->select('assessment_final_result.*','courses.*')
+                         ->where('courses.semester','=',$course[0]->semester_id)
+                         ->where('assessment_final_result.submitted_by','=',$submitted_by)
+                         ->where('assessment_final_result.status','=','Active')
+                         ->groupBy('assessment_final_result.student_id')
+                         ->get();
+
+            foreach($group_result as $row){
+                $zip->addEmptyDir($course[0]->semester_name." ( ".$submitted_by." )/");
+
+                $result_list = DB::table('assessment_final_result')
+                                     ->join('courses','courses.course_id','=','assessment_final_result.course_id')
+                                     ->select('assessment_final_result.*','courses.*')
+                                     ->where('assessment_final_result.course_id', '=', $row->course_id)
+                                     ->where('assessment_final_result.status','=','Active')
+                                     ->where('assessment_final_result.submitted_by','=',$submitted_by)
+                                     ->where('assessment_final_result.student_id','=',$row->student_id)
+                                     ->get();
+
+                foreach($result_list as $rl_row){
+                    if($rl_row->submitted_by==$submitted_by){
+                        $zip->addEmptyDir($course[0]->semester_name." ( ".$submitted_by." )/".$row->student_id);
+                    }
+                    foreach ($Resultfiles as $key => $value) {
+                        $relativeNameInZipFile = basename($value);
+                        if($rl_row->document == $relativeNameInZipFile){
+                                $ext = explode('.',$relativeNameInZipFile);
+                            if($rl_row->submitted_by==$submitted_by){
+                                $zip->addFile($value,$course[0]->semester_name." ( ".$submitted_by." )/".$row->student_id."/".$rl_row->document_name.'.'.$ext[1]);
+                            }
+                        }
+                    }
+                }
+            }
         }
         $zip->close();
     	return response()->download($fileName);
@@ -1444,7 +1496,6 @@ class PastYearFinalController extends Controller
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -1767,11 +1818,18 @@ class PastYearFinalController extends Controller
         $course_id = $assessment_final_result->course_id;
         $student_id = $assessment_final_result->student_id;
 
-        $course = DB::table('courses')
+        $check_course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -1797,7 +1855,7 @@ class PastYearFinalController extends Controller
                  ->orderBy('assessment_final_result.document_name')
                  ->get();
 
-        if(count($course)>0){
+        if(count($check_course)>0){
             return view('dean.PastYear.viewSRFinalResultList',compact('id','course','assessment_final_result','lecturer_result','student_result'));
         }else{
             return redirect()->back();
@@ -2029,9 +2087,10 @@ class PastYearFinalController extends Controller
 
         $assessment_result_list = DB::table('assessment_final_result')
                                 ->select('assessment_final_result.*')
-                                ->where('assessment_final_result.course_id','=',$string[0])
+                                ->where('assessment_final_result.course_id','=',$course_id)
                                 ->where('assessment_final_result.submitted_by','=',$checkCID->submitted_by)
                                 ->where('assessment_final_result.student_id','=',$checkCID->student_id)
+                                ->where('assessment_final_result.status','=','Active')
                                 ->get();
         if(count($course)>0){
             return view('dean.FinalExamResult.viewWholePaper', compact('assessment_result_list','checkCID','submitted_by','string'));

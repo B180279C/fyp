@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -390,6 +390,11 @@ function w3_close() {
                       </div>
                     </div>
                     @endforeach
+                    @if(count($previous_semester)<=0)
+                      <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin:5px 20px;">
+                        <center>Empty</center>
+                      </div>
+                    @endif
                   </div>
               </div>
               <hr style="margin: 5px 5px;background-color:#d9d9d9;">
@@ -430,6 +435,11 @@ function w3_close() {
                       </div>
                     </div>
                     @endforeach
+                    @if(count($previous_semester)<=0)
+                      <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin:5px 20px;">
+                        <center>Empty</center>
+                      </div>
+                    @endif
                   </div>
               </div>
         </div>

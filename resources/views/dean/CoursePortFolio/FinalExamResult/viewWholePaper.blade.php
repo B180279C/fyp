@@ -45,7 +45,17 @@ $i=1;
 ?>
 @if(($ext[1] != "pdf")&&($ext[1] != "docx")&&($ext[1] != "xlsx")&&($ext[1] != "pptx"))
 <center>
+<?php
+if(isset($string)){
+?>
+<img src="{{$character}}/CourseList/PastYear/images/FinalResult/{{$string[0]}}-{{$row->document}}" width="600px" height="auto">
+<?php
+}else{
+?>
 <img src="{{$character}}/CourseList/images/FinalResult/{{$row->document}}" width="600px" height="auto">
+<?php
+}
+?>
 <br>
 <?php
 // echo $i;

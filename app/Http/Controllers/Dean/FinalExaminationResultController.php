@@ -365,6 +365,7 @@ class FinalExaminationResultController extends Controller
                                 ->where('assessment_final_result.course_id','=',$course_id)
                                 ->where('assessment_final_result.submitted_by','=',$checkCID->submitted_by)
                                 ->where('assessment_final_result.student_id','=',$checkCID->student_id)
+                                ->where('assessment_final_result.status','=','Active')
                                 ->get();
         if(count($course)>0){
             return view('dean.FinalExamResult.viewWholePaper', compact('assessment_result_list','checkCID','submitted_by'));

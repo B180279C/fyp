@@ -1027,7 +1027,7 @@ class PastYearTPController extends Controller
                     ->join('users','staffs.user_id','=','users.user_id')
                     ->select('subjects.*','courses.*','semesters.*','staffs.*','users.*')
                     ->where('subjects.subject_id', '=', $course[0]->subject_id)
-                    ->where('courses.course_id','!=',$id)
+                    ->where('courses.course_id','!=',$course_id)
                     ->where('courses.status', '=', 'Active')
                     ->orderByDesc('semesters.semester_name')
                     ->groupBy('courses.course_id')

@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">

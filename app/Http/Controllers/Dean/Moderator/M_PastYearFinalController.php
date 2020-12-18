@@ -905,7 +905,7 @@ class M_PastYearFinalController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_Lecturer" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="'.$character.'/Moderator/PastYear/sampleResult/'.$id.'/result/'.$row->fxr_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/Moderator/PastYear/FinalSampleResult/'.$id.'/result/'.$row->fxr_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -938,7 +938,7 @@ class M_PastYearFinalController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$sow->student_id.'_Students" class="group_student group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="'.$character.'/Moderator/PastYear/sampleResult/'.$id.'/result/'.$sow->fxr_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/Moderator/PastYear/FinalSampleResult/'.$id.'/result/'.$sow->fxr_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -1174,9 +1174,10 @@ class M_PastYearFinalController extends Controller
 
         $assessment_result_list = DB::table('assessment_final_result')
                                 ->select('assessment_final_result.*')
-                                ->where('assessment_final_result.course_id','=',$string[0])
+                                ->where('assessment_final_result.course_id','=',$course_id)
                                 ->where('assessment_final_result.submitted_by','=',$checkCID->submitted_by)
                                 ->where('assessment_final_result.student_id','=',$checkCID->student_id)
+                                ->where('assessment_final_result.status','=','Active')
                                 ->get();
         if(count($course)>0){
             return view('dean.Moderator.FinalExamResult.viewWholePaper', compact('assessment_result_list','checkCID','submitted_by','string'));

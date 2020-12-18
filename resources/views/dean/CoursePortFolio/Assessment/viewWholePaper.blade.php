@@ -38,7 +38,17 @@ $i=1;
 ?>
 @foreach($assessment_list as $row)
 <center>
+<?php
+if(isset($string)){
+?>
+<img src="{{$character}}/CourseList/PastYear/images/assessment/{{$string[0]}}-{{$row->ass_document}}" width="600px" height="auto">
+<?php
+}else{
+?>
 <img src="{{$character}}/CourseList/images/assessment/{{$row->ass_document}}" width="600px" height="auto">
+<?php
+}
+?>
 <br>
 <?php
 // echo $i;

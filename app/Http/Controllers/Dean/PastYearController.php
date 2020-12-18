@@ -477,7 +477,6 @@ class PastYearController extends Controller
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -1549,7 +1548,6 @@ class PastYearController extends Controller
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -2033,7 +2031,6 @@ class PastYearController extends Controller
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -2362,11 +2359,18 @@ class PastYearController extends Controller
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
         $course_id = $assessments->course_id;
 
-        $course = DB::table('courses')
+        $check_course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
                  ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
                  ->where('course_id', '=', $course_id)
                  ->get();
 
@@ -2392,7 +2396,7 @@ class PastYearController extends Controller
                  ->orderBy('assessment_result_students.document_name')
                  ->get();
 
-        if(count($course)>0){
+        if(count($check_course)>0){
             return view('dean.PastYear.viewSRResultList',compact('id','course','assessments','assessment_result_student','lecturer_result','student_result'));
         }else{
             return redirect()->back();

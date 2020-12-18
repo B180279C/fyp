@@ -157,6 +157,87 @@
     'as' => 'M_Attendance', 'uses' => 'Dean\Course\C_AttendanceController@viewAttendance']);
     Route::get('/CourseList/Attendance/{id}/student_list/{date}', 'Dean\Course\C_AttendanceController@viewStudentList');
 
+    //Course List Past Year CA Question
+    Route::get('/CourseList/PastYear/assessment/{id}','Dean\Course\C_PastYearController@PastYearAssessment');
+    Route::get('/CourseList/PastYear/assessment/{id}/assessment_name/{course_id}','Dean\Course\C_PastYearController@PastYearAssessmentName');
+    Route::get('/CourseList/PastYear/assessment/{id}/list/{ass_id}/','Dean\Course\C_PastYearController@PastYearAssessmentList');
+	Route::post('/CourseList/PastYear/assessment/searchAssessment/', 'Dean\Course\C_PastYearController@searchAssessment');
+	Route::post('/CourseList/PastYear/assessment/name/searchAssessmentName/', 'Dean\Course\C_PastYearController@searchAssessmentName');
+	Route::post('/CourseList/PastYear/assessment/list/searchAssessmentlist/', 'Dean\Course\C_PastYearController@searchAssessmentlist');
+	Route::get('/CourseList/PastYear/assessment/view/whole_paper/{ass_id}', 'Dean\Course\C_PastYearController@view_wholePaper');
+	Route::get('/CourseList/PastYear/images/assessment/{image_name}', [
+	     'as'         => 'C_assessment_image',
+	     'uses'       => 'Dean\Course\C_PastYearController@assessmentImage',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/CourseList/PastYear/assessment/download/{ass_li_id}', 
+		'Dean\Course\C_PastYearController@downloadFiles');
+
+	//Course List Past year Final question
+	Route::get('/CourseList/PastYear/FinalAssessment/{id}',
+		'Dean\Course\C_PastYearFinalController@PastYearAssessment');
+	Route::get('/CourseList/PastYear/FinalAssessment/{id}/assessment_name/{course_id}','Dean\Course\C_PastYearFinalController@PastYearAssessmentName');
+	Route::get('/CourseList/PastYear/FinalAssessment/{id}/list/{fx_id}/','Dean\Course\C_PastYearFinalController@PastYearAssessmentList');
+	Route::post('/CourseList/PastYear/FinalAssessment/searchAssessment/', 'Dean\Course\C_PastYearFinalController@searchAssessment');
+	Route::post('/CourseList/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\Course\C_PastYearFinalController@searchAssessmentName');
+	Route::post('/CourseList/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\Course\C_PastYearFinalController@searchAssessmentlist');
+	Route::get('/CourseList/PastYear/FinalAssessment/download/{ass_fx_id}', 'Dean\Course\C_PastYearFinalController@downloadFiles');
+	Route::get('/CourseList/PastYear/images/final_assessment/{image_name}', [
+	     'as'         => 'C_assessment_final_image',
+	     'uses'       => 'Dean\Course\C_PastYearFinalController@FinalAssessmentImage',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/CourseList/PastYear/final_assessment/view/whole_paper/{fx_id}', 'Dean\Course\C_PastYearFinalController@view_wholePaper');
+
+
+	//Course List Past year CA Result
+	Route::get('/CourseList/PastYear/sampleResult/{id}/previous/{course_id}/{search}','Dean\Course\C_PastYearController@PastYearResultAssessmentList');
+	Route::get('/CourseList/PastYear/sampleResult/{id}/name/{ass_id}/{search}','Dean\Course\C_PastYearController@PastYearStudentList');
+	Route::get('/CourseList/PastYear/sampleResult/{id}/result/{ar_stu_id}','Dean\Course\C_PastYearController@PastYearResultList');
+	Route::post('/CourseList/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\Course\C_PastYearController@searchAssessmentSampleResult');
+	Route::post('/CourseList/PastYear/result/searchAssessmentResult/', 'Dean\Course\C_PastYearController@searchAssessmentResult');
+	Route::post('/CourseList/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\Course\C_PastYearController@searchStudentList');
+	Route::get('/CourseList/PastYear/images/AssessmentResult/{image_name}', [
+	     'as'         => 'M_assessmentResult_image',
+	     'uses'       => 'Dean\Course\C_PastYearController@assessmentResult_image',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/CourseList/PastYear/AssessmentResult/view/whole_paper/{ar_stu_id}', 'Dean\Course\C_PastYearController@view_wholePaperResult');
+	Route::get('/CourseList/PastYear/AssessmentResult/result/{ar_stu_id}','Dean\Course\C_PastYearController@downloadDocument');
+
+	//Course List Past Year FInal Result
+	Route::get('/CourseList/PastYear/FinalSampleResult/{id}/previous/{course_id}/{search}','Dean\Course\C_PastYearFinalController@PastYearStudentList');
+	Route::get('/CourseList/PastYear/FinalSampleResult/{id}/result/{fxr_id}','Dean\Course\C_PastYearFinalController@PastYearResultList');
+	Route::post('/CourseList/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\Course\C_PastYearFinalController@searchAssessmentResult');
+	Route::post('/CourseList/PastYear/FinalSampleResult/searchStudentList/', 'Dean\Course\C_PastYearFinalController@searchStudentList');
+	Route::get('/CourseList/PastYear/images/FinalResult/{image_name}', [
+	     'as'         => 'C_FinalResult_image',
+	     'uses'       => 'Dean\Course\C_PastYearFinalController@FinalResult_image',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/CourseList/PastYear/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Course\C_PastYearFinalController@view_wholePaperResult');
+	Route::get('/CourseList/PastYear/FinalSampleResult/download/{fxr_id}', 'Dean\Course\C_PastYearFinalController@downloadFilesResult');
+
+
+	//Course List Past Year Lecturer Note
+	Route::get('/CourseList/PastYearNote/{id}','Dean\Course\C_PastYearNoteController@PastYearNote');
+	Route::get('/CourseList/PastYearNote/{id}/{view}/{view_id}','Dean\Course\C_PastYearNoteController@PastYearNoteViewIn');
+	Route::post('/CourseList/PastYear/lectureNote/searchFiles', 'Dean\Course\C_PastYearNoteController@searchLecturerNote');
+	Route::post('/CourseList/PastYear/lectureNote/searchPreviousFiles', 'Dean\Course\C_PastYearNoteController@searchLecturerNotePrevious');
+	Route::get('/CourseList/PastYear/images/lectureNote/{ln_id}/{image_name}', [
+	'as'         => 'M_lectureNote_image',
+	'uses'       => 'Dean\Course\C_PastYearNoteController@LectureNoteImage',
+	'middleware' => 'auth',
+	]);
+	Route::get('/CourseList/PastYear/lectureNote/download/{id}','Dean\Course\C_PastYearNoteController@downloadLN');
+
+	//Course List Past Year TP
+	Route::get('/CourseList/PastYearTP/{id}','Dean\Course\C_PastYearTPController@PastYearTP');
+	Route::get('/CourseList/PastYearTP/{id}/course/{view_id}','Dean\Course\C_PastYearTPController@PastYearTPDownload');
+	Route::post('/CourseList/PastYearTP/searchFiles', 'Dean\Course\C_PastYearTPController@searchPastYearTP');
+
+
+
 	//My Course
 	Route::post('uploadCourses', 'Dean\CourseController@importExcel')->name('dropzone.uploadCourses');
 	Route::post('course/excel/create', 'Dean\CourseController@storeCourses')->name('course.excel.submit');
@@ -743,4 +824,84 @@
     Route::get('/Reviewer/Attendance/{id}', [
     'as' => 'M_Attendance', 'uses' => 'Dean\Dean\D_AttendanceController@viewAttendance']);
     Route::get('/Reviewer/Attendance/{id}/student_list/{date}', 'Dean\Dean\D_AttendanceController@viewStudentList');
+
+
+    //Reviewer Past Year CA Question
+    Route::get('/Reviewer/PastYear/assessment/{id}','Dean\Dean\D_PastYearController@PastYearAssessment');
+    Route::get('/Reviewer/PastYear/assessment/{id}/assessment_name/{course_id}','Dean\Dean\D_PastYearController@PastYearAssessmentName');
+    Route::get('/Reviewer/PastYear/assessment/{id}/list/{ass_id}/','Dean\Dean\D_PastYearController@PastYearAssessmentList');
+	Route::post('/Reviewer/PastYear/assessment/searchAssessment/', 'Dean\Dean\D_PastYearController@searchAssessment');
+	Route::post('/Reviewer/PastYear/assessment/name/searchAssessmentName/', 'Dean\Dean\D_PastYearController@searchAssessmentName');
+	Route::post('/Reviewer/PastYear/assessment/list/searchAssessmentlist/', 'Dean\Dean\D_PastYearController@searchAssessmentlist');
+	Route::get('/Reviewer/PastYear/assessment/view/whole_paper/{ass_id}', 'Dean\Dean\D_PastYearController@view_wholePaper');
+	Route::get('/Reviewer/PastYear/images/assessment/{image_name}', [
+	     'as'         => 'M_assessment_image',
+	     'uses'       => 'Dean\Dean\D_PastYearController@assessmentImage',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/Reviewer/PastYear/assessment/download/{ass_li_id}', 
+		'Dean\Dean\D_PastYearController@downloadFiles');
+
+	//Reviewer Past year Final question
+	Route::get('/Reviewer/PastYear/FinalAssessment/{id}','Dean\Dean\D_PastYearFinalController@PastYearAssessment');
+	Route::get('/Reviewer/PastYear/FinalAssessment/{id}/assessment_name/{course_id}','Dean\Dean\D_PastYearFinalController@PastYearAssessmentName');
+	Route::get('/Reviewer/PastYear/FinalAssessment/{id}/list/{fx_id}/','Dean\Dean\D_PastYearFinalController@PastYearAssessmentList');
+	Route::post('/Reviewer/PastYear/FinalAssessment/searchAssessment/', 'Dean\Dean\D_PastYearFinalController@searchAssessment');
+	Route::post('/Reviewer/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentName');
+	Route::post('/Reviewer/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentlist');
+	Route::get('/Reviewer/PastYear/FinalAssessment/download/{ass_fx_id}', 'Dean\Dean\D_PastYearFinalController@downloadFiles');
+	Route::get('/Reviewer/PastYear/images/final_assessment/{image_name}', [
+	     'as'         => 'M_assessment_final_image',
+	     'uses'       => 'Dean\Dean\D_PastYearFinalController@FinalAssessmentImage',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/Reviewer/PastYear/final_assessment/view/whole_paper/{fx_id}', 'Dean\Dean\D_PastYearFinalController@view_wholePaper');
+
+
+	//Reviewer Past year CA Result
+	Route::get('/Reviewer/PastYear/sampleResult/{id}/previous/{course_id}/{search}','Dean\Dean\D_PastYearController@PastYearResultAssessmentList');
+	Route::get('/Reviewer/PastYear/sampleResult/{id}/name/{ass_id}/{search}','Dean\Dean\D_PastYearController@PastYearStudentList');
+	Route::get('/Reviewer/PastYear/sampleResult/{id}/result/{ar_stu_id}','Dean\Dean\D_PastYearController@PastYearResultList');
+	Route::post('/Reviewer/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\Dean\D_PastYearController@searchAssessmentSampleResult');
+	Route::post('/Reviewer/PastYear/result/searchAssessmentResult/', 'Dean\Dean\D_PastYearController@searchAssessmentResult');
+	Route::post('/Reviewer/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\Dean\D_PastYearController@searchStudentList');
+	Route::get('/Reviewer/PastYear/images/AssessmentResult/{image_name}', [
+	     'as'         => 'M_assessmentResult_image',
+	     'uses'       => 'Dean\Dean\D_PastYearController@assessmentResult_image',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/Reviewer/PastYear/AssessmentResult/view/whole_paper/{ar_stu_id}', 'Dean\Dean\D_PastYearController@view_wholePaperResult');
+	Route::get('/Reviewer/PastYear/AssessmentResult/result/{ar_stu_id}','Dean\Dean\D_PastYearController@downloadDocument');
+
+	//Reviewer Past Year FInal Result
+	Route::get('/Reviewer/PastYear/FinalSampleResult/{id}/previous/{course_id}/{search}','Dean\Dean\D_PastYearFinalController@PastYearStudentList');
+	Route::get('/Reviewer/PastYear/FinalSampleResult/{id}/result/{fxr_id}','Dean\Dean\D_PastYearFinalController@PastYearResultList');
+	Route::post('/Reviewer/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentResult');
+	Route::post('/Reviewer/PastYear/FinalSampleResult/searchStudentList/', 'Dean\Dean\D_PastYearFinalController@searchStudentList');
+	Route::get('/Reviewer/PastYear/images/FinalResult/{image_name}', [
+	     'as'         => 'M_FinalResult_image',
+	     'uses'       => 'Dean\Dean\D_PastYearFinalController@FinalResult_image',
+	     'middleware' => 'auth',
+	]);
+	Route::get('/Reviewer/PastYear/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Dean\D_PastYearFinalController@view_wholePaperResult');
+	Route::get('/Reviewer/PastYear/FinalSampleResult/download/{fxr_id}', 'Dean\Dean\D_PastYearFinalController@downloadFilesResult');
+
+
+	//Reviewer Past Year Lecturer Note
+	Route::get('/Reviewer/PastYearNote/{id}','Dean\Dean\D_PastYearNoteController@PastYearNote');
+	Route::get('/Reviewer/PastYearNote/{id}/{view}/{view_id}','Dean\Dean\D_PastYearNoteController@PastYearNoteViewIn');
+	Route::post('/Reviewer/PastYear/lectureNote/searchFiles', 'Dean\Dean\D_PastYearNoteController@searchLecturerNote');
+	Route::post('/Reviewer/PastYear/lectureNote/searchPreviousFiles', 'Dean\Dean\D_PastYearNoteController@searchLecturerNotePrevious');
+	Route::get('/Reviewer/PastYear/images/lectureNote/{ln_id}/{image_name}', [
+	'as'         => 'M_lectureNote_image',
+	'uses'       => 'Dean\Dean\D_PastYearNoteController@LectureNoteImage',
+	'middleware' => 'auth',
+	]);
+	Route::get('/Reviewer/PastYear/lectureNote/download/{id}','Dean\Dean\D_PastYearNoteController@downloadLN');
+
+
+	//Reviewer Past Year TP
+	Route::get('/Reviewer/PastYearTP/{id}','Dean\Dean\D_PastYearTPController@PastYearTP');
+	Route::get('/Reviewer/PastYearTP/{id}/course/{view_id}','Dean\Dean\D_PastYearTPController@PastYearTPDownload');
+	Route::post('/Reviewer/PastYearTP/searchFiles', 'Dean\Dean\D_PastYearTPController@searchPastYearTP');
 ?>

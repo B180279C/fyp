@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -30,6 +30,13 @@ $option3 = "id='selected-sidebar'";
       }else{
           alert("Please select the document first.");
       }
+  });
+
+  $(document).on('click', '.download_button', function(){
+    var id = $(this).attr("id");
+    var num = id.split("_");
+    var course_id = $('#course_id').val();
+    window.location = "{{$character}}/Moderator/PastYear/lectureNote/download/"+course_id+"-"+num[2];
   });
 
   $(function () {
@@ -245,7 +252,10 @@ $option3 = "id='selected-sidebar'";
     padding-top: 0px;
   }
   #course_name{
-    padding-top: 0px;
+    padding-top:0px;
+  }
+  #course_name_two{
+    padding-top:0px;
   }
   #course_list{
     margin-left: 0px;
@@ -286,6 +296,10 @@ $option3 = "id='selected-sidebar'";
     }
     #course_name{
         margin-left:-18px;
+        padding-top:0px;
+    }
+    #course_name_two{
+        margin-left:-28px;
         padding-top:0px;
     }
     #course_action_two{
@@ -387,7 +401,6 @@ $option3 = "id='selected-sidebar'";
                         <div class="form-group">
                             <label for="full_name" class="bmd-label-floating">Search</label>
                             <input type="hidden" id="semester" value="{{$previous[0]->course_id}}">
-
                             <input type="hidden" id="view_place" value="{{$view_place}}">
                             <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
                         </div>
@@ -473,7 +486,7 @@ $option3 = "id='selected-sidebar'";
                             ?>
                           @endif
                           <div class="col-12 row align-self-center" id="course_list">
-                            <div class="col-12 row align-self-center">
+                            <div class="col-9 row align-self-center">
                               <div class="checkbox_style align-self-center">
                                   <input type="checkbox" value="{{$row->ln_id}}" class="group_download">
                                 </div>
@@ -481,7 +494,7 @@ $option3 = "id='selected-sidebar'";
                                 <div class="col-1" style="position: relative;top: -2px;">
                                   <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                                 </div>
-                                <div class="col-10" id="assessment_word">
+                                <div class="col-10" id="course_name_two">
                                    @if($row->used_by!=null)
                                       @foreach($all_note as $all_row)
                                         @if(($row->used_by)==($all_row->ln_id))
@@ -494,10 +507,18 @@ $option3 = "id='selected-sidebar'";
                                 </div>
                               </a>
                             </div>
+                            <div class="col-3" id="course_action_two">
+                              <i class="fa fa-download download_button" aria-hidden="true" id="download_button_{{$row->ln_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;
+                            </div>
                           </div>
                         @endif
                       @endif
                     @endforeach
+                    @if(count($lecture_note)<=0)
+                        <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin:5px 20px;">
+                          <center>Empty</center>
+                        </div>
+                      @endif
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@
 $title = "Course";
 $option1 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <style type="text/css">
@@ -411,7 +411,7 @@ function w3_close() {
                             <div class="checkbox_style align-self-center">
                               <input type="checkbox" value="{{$row->ass_li_id}}_{{$row->ass_type}}" class="group_{{$row_group->ass_type}} group_download">
                             </div>
-                            <a href="{{$character}}/images/assessment/{{$row->ass_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$previous[0]->semester_name}} : {{$assessments->assessment_name}} / {{$row_group->ass_type}} / {{$row->ass_name}} <br> <a href='{{$character}}/assessment/view/whole_paper/{{$row->ass_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                            <a href="{{$character}}/PastYear/images/assessment/{{$course[0]->course_id}}-{{$row->ass_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$previous[0]->semester_name}} : {{$assessments->assessment_name}} / {{$row_group->ass_type}} / {{$row->ass_name}} <br> <a href='{{$character}}/PastYear/assessment/view/whole_paper/{{$course[0]->course_id}}-{{$row->ass_id}}' class='full_question' target='_blank'>Whole paper</a>">
                               <div class="col-1" style="position: relative;top: -2px;">
                                 <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                               </div>

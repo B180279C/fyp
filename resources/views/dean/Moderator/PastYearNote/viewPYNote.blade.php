@@ -2,7 +2,7 @@
 $title = "Moderator";
 $option3 = "id='selected-sidebar'";
 ?>
-@extends('layouts.nav_dean')
+@extends('layouts.layout')
 
 @section('content')
 <script type="text/javascript">
@@ -14,6 +14,13 @@ $option3 = "id='selected-sidebar'";
       document.getElementById("action_sidebar").style.display = "none";
       document.getElementById("button_open").style.display = "block";
   }
+
+  $(document).on('click', '.download_button', function(){
+    var id = $(this).attr("id");
+    var num = id.split("_");
+    var course_id = $('#course_id').val();
+    window.location = "{{$character}}/Moderator/PastYear/lectureNote/download/"+course_id+"-"+num[2];
+  });
 
   $(document).on('click', '#checkDownloadAction', function(){
       var checkedValue = ""; 
@@ -202,7 +209,10 @@ $option3 = "id='selected-sidebar'";
     padding-top: 0px;
   }
   #course_name{
-    padding-top: 0px;
+    padding-top:0px;
+  }
+  #course_name_two{
+    padding-top:0px;
   }
   #course_list{
     margin-left: 0px;
@@ -243,6 +253,10 @@ $option3 = "id='selected-sidebar'";
     }
     #course_name{
         margin-left:-18px;
+        padding-top:0px;
+    }
+    #course_name_two{
+        margin-left:-28px;
         padding-top:0px;
     }
     #course_action_two{
@@ -347,6 +361,11 @@ $option3 = "id='selected-sidebar'";
                       </div>
                     </div>
                     @endforeach
+                    @if(count($previous_semester)<=0)
+                        <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin:5px 20px;">
+                          <center>Empty</center>
+                        </div>
+                      @endif
                 </div>
             </div>
         </div>

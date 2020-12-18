@@ -1004,7 +1004,7 @@ class M_PastYearTPController extends Controller
                 $result .= '<div class="checkbox_style align-self-center">';
               $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_download">';
                 $result .= '</div>';
-                $result .= '<a href="'.$character.'/PastYearTP/'.$course_id.'/course/'.$row->course_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                $result .= '<a href="'.$character.'/Moderator/PastYearTP/'.$course_id.'/course/'.$row->course_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                 $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                 $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
                 $result .= '</div>';
@@ -1030,7 +1030,7 @@ class M_PastYearTPController extends Controller
                       ->join('users','staffs.user_id','=','users.user_id')
                       ->select('subjects.*','courses.*','semesters.*','staffs.*','users.*')
                       ->where('subjects.subject_id', '=', $course[0]->subject_id)
-                      ->where('courses.course_id','!=',$id)
+                      ->where('courses.course_id','!=',$course_id)
                       ->where('courses.status', '=', 'Active')
                       ->orderByDesc('semesters.semester_name')
                       ->groupBy('courses.course_id')
@@ -1042,7 +1042,7 @@ class M_PastYearTPController extends Controller
                 $result .= '<div class="checkbox_style align-self-center">';
               $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_download">';
                 $result .= '</div>';
-                $result .= '<a href="'.$character.'/PastYearTP/'.$course_id.'/course/'.$row->course_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                $result .= '<a href="'.$character.'/Moderator/PastYearTP/'.$course_id.'/course/'.$row->course_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
                 $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                 $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
                 $result .= '</div>';
