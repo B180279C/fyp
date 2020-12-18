@@ -25,12 +25,8 @@ $option1 = "id='selected-sidebar'";
       }
       if(checkedValue!=""){
         var course_id = $('#course_id').val();
-        var id = course_id+"---"+checkedValue;
-          if($('.search').val()!=""){
-            window.location = "/PastYearNote/download/zipFiles/"+id+"/searched";
-          }else{
-            window.location = "/PastYearNote/download/zipFiles/"+id+"/checked";
-          }
+        var id = checkedValue;
+        window.location = "{{$character}}/PastYearTP/download/zipFiles/"+id+"/checked";
       }else{
           alert("Please select the document first.");
       }
@@ -44,12 +40,11 @@ $option1 = "id='selected-sidebar'";
         });
         if($('.search').val()!=""){
           var value = $('.search').val();
-          var semester = $('#semester').val();
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'/PastYearTP/searchFiles',
-              data:{value:value,course_id:course_id,semester:semester},
+              url:'{{$character}}/PastYearTP/searchFiles',
+              data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("lecture_note").innerHTML = data;
               }
@@ -57,12 +52,11 @@ $option1 = "id='selected-sidebar'";
         }
         $(".search").keyup(function(){
             var value = $('.search').val();
-            var semester = $('#semester').val();
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'/PastYearTP/searchFiles',
-               data:{value:value,course_id:course_id,semester:semester},
+               url:'{{$character}}/PastYearTP/searchFiles',
+               data:{value:value,course_id:course_id},
                success:function(data){
                     document.getElementById("lecture_note").innerHTML = data;
                }
@@ -178,12 +172,12 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/course/action/{{$course[0]->course_id}}" class="first_page"> Past Year </a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}" class="first_page"> Past Year </a>/
             <span class="now_page">Teaching Plan</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Teaching Plan</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -195,7 +189,6 @@ $option1 = "id='selected-sidebar'";
                       <p class="title_method">Download</p>
                       <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/PastYearNote/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                   </ul>
             </div>
             <br>
@@ -243,7 +236,7 @@ $option1 = "id='selected-sidebar'";
                         <div class="checkbox_style align-self-center">
                           <input type="checkbox" value="{{$row->course_id}}" class="group_download">
                         </div>
-                        <a href="/PastYearTP/{{$course[0]->course_id}}/course/{{$row->course_id}}/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                        <a href="{{$character}}/PastYearTP/{{$course[0]->course_id}}/course/{{$row->course_id}}/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                           <div class="col-1" style="position: relative;top: -2px;">
                             <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
                           </div>
@@ -257,6 +250,11 @@ $option1 = "id='selected-sidebar'";
                       </div>
                     </div>
                     @endforeach
+                    @if(count($previous_semester)<=0)
+                        <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin:5px 20px;">
+                          <center>Empty</center>
+                        </div>
+                      @endif
                 </div>
             </div>
         </div>

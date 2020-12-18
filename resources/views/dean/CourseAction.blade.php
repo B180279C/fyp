@@ -119,13 +119,21 @@ $option1 = "id='selected-sidebar'";
             <p class="page_title">Past Year</p>
             <div class="details" style="padding: 5px 5px 0px 5px;">
                 <div class="row">
-
                     <div class="col-md-3" style="margin-bottom: 20px">
                         <a href="{{$character}}/PastYearNote/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/note.png')}}" width="75px" height="80px" style="margin-top: 60px;"/>
                             <br>
                             <p style="color: #0d2f81;">Lecture Note</p>
+                            </center>
+                        </a>
+                    </div>
+                    <div class="col-md-3" style="margin-bottom: 20px">
+                        <a href="{{$character}}/PastYearTP/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
+                            <center>
+                            <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
+                            <br>
+                            <p style="color: #0d2f81;">Teaching Plan</p>
                             </center>
                         </a>
                     </div>
@@ -147,15 +155,6 @@ $option1 = "id='selected-sidebar'";
                             </center>
                         </a>
                     </div>
-                    <!-- <div class="col-md-3" style="margin-bottom: 20px">
-                        <a href="/PastYearTP/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
-                            <center>
-                            <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
-                            <br>
-                            <p style="color: #0d2f81;">Teaching Plan</p>
-                            </center>
-                        </a>
-                    </div> -->
                 </div>
             </div>
         </div>

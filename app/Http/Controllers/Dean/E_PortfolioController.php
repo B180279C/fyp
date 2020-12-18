@@ -26,6 +26,7 @@ class E_PortfolioController extends Controller
         $faculty       = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
         $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
         $semester_id   = $last_semester->semester_id;
+
         $course = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
@@ -34,7 +35,7 @@ class E_PortfolioController extends Controller
                     ->join('staffs', 'staffs.id','=','courses.lecturer')
                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
-                    ->where('courses.semester','=',$semester_id)
+                    ->where('courses.course_id','=',$id)
                     ->where('courses.lecturer', '=', $staff_dean->id)
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')

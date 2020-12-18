@@ -61,16 +61,7 @@ $(document).ready(function(){
     	var student = student_list.split("/");
     	for(var i=0;i<(student.length-1);i++){
     		var $radios = $('input:radio[name=attendance'+student[i]+']');
-    		$radios.filter('[value=Present]').prop('checked', true);
-    	}
-    });
-
-    $('.absent').click(function(){
-    	var student_list = $('.student_list').val();
-    	var student = student_list.split("/");
-    	for(var i=0;i<(student.length-1);i++){
-    		var $radios = $('input:radio[name=attendance'+student[i]+']');
-    		$radios.filter('[value=Absent]').prop('checked', true);
+    		$radios.filter('[value=Pre]').prop('checked', true);
     	}
     });
 });
@@ -193,10 +184,10 @@ $(document).ready(function(){
 	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>{{$row->student_id}} </td>
 	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>{{$row->name}}</td>
 	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>{{$row->batch}}</td>
-	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Present" <?php if($status=="P"){ echo "checked";}?>> Present</td>
-	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Absent" 
+	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Pre" <?php if($status=="P"){ echo "checked";}?>> Present</td>
+	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Abs" 
 	             					<?php if($status=="A"){ echo "checked";}?>> Absent</td>
-	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Late" 
+	             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Lat" 
 	             					<?php if($status=="L"){ echo "checked";}?>> Late</td>
 	             				</tr>
 							<?php
@@ -234,9 +225,9 @@ $(document).ready(function(){
              					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>{{$row->student_id}} </td>
              					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>{{$row->name}}</td>
              					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>{{$row->batch}}</td>
-             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Present"> Present</td>
-             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Absent" checked> Absent</td>
-             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Late"> Late</td>
+             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Pre"> Present</td>
+             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Abs" checked> Absent</td>
+             					<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'><input type="radio" name="attendance{{$row->student_id}}" value="Lat"> Late</td>
              				</tr>
              				<?php
              				$student_list .= $row->student_id."/";

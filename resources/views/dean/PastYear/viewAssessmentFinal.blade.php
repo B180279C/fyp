@@ -135,7 +135,8 @@ function w3_close() {
     $(document).on('click', '.download_button', function(){
       var id = $(this).attr("id");
       var num = id.split("_");
-      window.location = "/PastYear/FinalAssessment/download/"+num[2];
+      var course_id = $('#course_id').val();
+      window.location = "{{$character}}/PastYear/FinalAssessment/download/"+course_id+'-'+num[2];
     });
     
     $(document).on('click', '#checkDownloadAction', function(){
@@ -162,19 +163,19 @@ function w3_close() {
           if($('.search').val()!=""){
             var data = $('#data').val();
             if(data=="name"){
-              window.location = "/PastYear/FinalAssessment/download/zipFiles/"+id+"/searched";
+              window.location = "{{$character}}/PastYear/FinalAssessment/download/zipFiles/"+id+"/searched";
             }else{
-              window.location = "/PastYear/FinalAssessment/download/zipFiles/"+id+"/searchedWord";
+              window.location = "{{$character}}/PastYear/FinalAssessment/download/zipFiles/"+id+"/searchedWord";
             }
           }else{
-            window.location = "/PastYear/FinalAssessment/download/zipFiles/"+id+"/checked";
+            window.location = "{{$character}}/PastYear/FinalAssessment/download/zipFiles/"+id+"/checked";
           }
         }else{
           if($('.search_result').val()!=""){
             var data = $('#data').val();
-            window.location = "/PastYear/FinalSampleResult/download/zipFiles/"+id+"/"+data;
+            window.location = "{{$character}}/PastYear/FinalSampleResult/download/zipFiles/"+id+"/"+data;
           }else{
-            window.location = "/PastYear/FinalSampleResult/download/zipFiles/"+id+"/checked";
+            window.location = "{{$character}}/PastYear/FinalSampleResult/download/zipFiles/"+id+"/checked";
           }
         }
       }else if(error=="error"){
@@ -196,7 +197,7 @@ function w3_close() {
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url: "/PastYear/FinalAssessment/searchAssessment/",
+              url: "{{$character}}/PastYear/FinalAssessment/searchAssessment/",
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -250,7 +251,7 @@ function w3_close() {
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url: "/PastYear/FinalAssessment/searchAssessment/",
+               url: "{{$character}}/PastYear/FinalAssessment/searchAssessment/",
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;
@@ -305,7 +306,7 @@ function w3_close() {
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url: "/PastYear/FinalSampleResult/searchAssessmentResult/",
+              url: "{{$character}}/PastYear/FinalSampleResult/searchAssessmentResult/",
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("results").innerHTML = data;
@@ -317,7 +318,7 @@ function w3_close() {
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url: "/PastYear/FinalSampleResult/searchAssessmentResult/",
+               url: "{{$character}}/PastYear/FinalSampleResult/searchAssessmentResult/",
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("results").innerHTML = data;
@@ -330,12 +331,12 @@ function w3_close() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/course/action/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
             <span class="now_page">Final Assessment</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Final Assessment</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -347,7 +348,7 @@ function w3_close() {
                       <p class="title_method">Download</p>
                       <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/PastYear/FinalAssessment/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/FinalAssessment/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                   </ul>
                 </div>
                 <br>
@@ -375,7 +376,7 @@ function w3_close() {
                         <div class="checkbox_style align-self-center">
                           <input type="checkbox" value="{{$row->course_id}}" class="group_q group_download">
                         </div>
-                        <a href="/PastYear/FinalAssessment/{{$course[0]->course_id}}/assessment_name/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                        <a href="{{$character}}/PastYear/FinalAssessment/{{$course[0]->course_id}}/assessment_name/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                           <div class="col-1" style="position: relative;top: -2px;">
                             <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                           </div>
@@ -415,7 +416,7 @@ function w3_close() {
                         <div class="checkbox_style align-self-center">
                           <input type="checkbox" value="{{$row->course_id}}" class="group_r group_download">
                         </div>
-                        <a href="/PastYear/FinalSampleResult/{{$course[0]->course_id}}/previous/{{$row->course_id}}/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                        <a href="{{$character}}/PastYear/FinalSampleResult/{{$course[0]->course_id}}/previous/{{$row->course_id}}/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                           <div class="col-1" style="position: relative;top: -2px;">
                             <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                           </div>

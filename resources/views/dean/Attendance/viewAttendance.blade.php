@@ -66,16 +66,17 @@ $(document).ready(function(){
     	var string = id.split("?");
     	var date = string[1];
         var num = string[0].split("-");
-
-        $.ajax({
-            type:'POST',
-            url:'{{$character}}/Attendance/openQR_Code',
-            data:{tt_id:num[0],week:num[1],less_hour:num[2],date:date},
-            success:function(data){
-            	alert(data);
-              	// document.getElementById("course").innerHTML = data;
-            }
-        });
+        if(confirm('Are you sure you want to create the qr code at now? Important: QR code just active in 15 minutes only.')){
+	        $.ajax({
+	            type:'POST',
+	            url:'{{$character}}/Attendance/openQR_Code',
+	            data:{tt_id:num[0],week:num[1],less_hour:num[2],date:date},
+	            success:function(data){
+	            	var value = data.split('-');
+	            	window.open("http://127.0.0.1:8000{{$character}}/Attendance/QR_code/"+value[0]+"/"+value[1], "_blank", "toolbar=yes, scrollbars=yes, resizable=yes");
+	            }
+	        });
+    	}
     });
 });
 </script>
@@ -194,11 +195,11 @@ $(document).ready(function(){
 	                                        }
 			                   				echo "<tr>";
 			                   				if($less_hour>0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
 			                   				}else if($less_hour<0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
 			                   				}else{
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
 			                   				}
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$att_row->tt_id."-".$i."-".$less_hour."?".$att_row->A_date."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
 			                   				if($less_hour<0){
@@ -239,7 +240,7 @@ $(document).ready(function(){
 		                   					if($row->F_or_H=="Full"){
 					                   			echo "<tr>";
 					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
+					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$row->tt_id."-".$i."-".$less_hour."?".$NewDate."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
 					                   			if($take_hour<$count_hour){
 			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."-".$less_hour."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
 					                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
@@ -252,7 +253,7 @@ $(document).ready(function(){
 					                   			if ($i % 2) {
 					                   				echo "<tr>";
 						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
+						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$row->tt_id."-".$i."-".$less_hour."?".$NewDate."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
 						                   			if($take_hour<$count_hour){
 				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."-".$less_hour."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
 						                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
@@ -292,13 +293,16 @@ $(document).ready(function(){
 	                                        }
 			                   				echo "<tr>";
 			                   				if($less_hour>0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
 			                   				}else if($less_hour<0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
 			                   				}else{
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
 			                   				}
-			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
+			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$att_row->tt_id."-".$i."-".$less_hour."?".$att_row->A_date."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
+			                   				if($less_hour<0){
+			                   					$less_hour=0;
+			                   				}
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$att_row->tt_id."-".$i."-".$less_hour."/student_list/".$att_row->A_date."' class='show_image_link'>List</a></center></td>";
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-check correct' aria-hidden='true'></i></center></td>";
 			                   				echo "</tr>";
@@ -337,7 +341,7 @@ $(document).ready(function(){
 		                   					if($row->F_or_H=="Full"){
 					                   			echo "<tr>";
 					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
+					                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$row->tt_id."-".$i."-".$less_hour."?".$NewDate."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
 					                   			if($take_hour<$count_hour){
 			                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."-".$less_hour."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
 					                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";
@@ -350,7 +354,7 @@ $(document).ready(function(){
 					                   			if ($i % 2) {
 					                   				echo "<tr>";
 						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$NewDate ."</b> ( ".$row->week." ".$s_hour[0]."-".$e_hour[1]." ) ".$less."</td>";
-						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'></td>";
+						                   			echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><a class='qr_code' id='".$row->tt_id."-".$i."-".$less_hour."?".$NewDate."'><center><img src=".url('image/qr_code.png')." width='25px' height='25px'/></center></a></td>";
 						                   			if($take_hour<$count_hour){
 				                   						echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Attendance/".$row->tt_id."-".$i."/student_list/".$NewDate."' class='show_image_link'>List</a></center></td>";
 						                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-times wrong' aria-hidden='true'></i></center></td>";

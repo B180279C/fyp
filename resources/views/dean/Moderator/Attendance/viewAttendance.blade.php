@@ -55,6 +55,11 @@ $(document).ready(function(){
             }
         });
     });
+    var average = parseInt($('#average').val());
+    var full_average = parseInt($('#full_average').val());
+
+    var s_a_a = Math.round((average/full_average)*100);
+    $('#final_average').html(s_a_a+" %");
 });
 </script>
 <style type="text/css">
@@ -85,11 +90,7 @@ $(document).ready(function(){
             	</div>
 	        	<div class="col-12" style="padding: 0px 12px 5px 12px;">
 	        		<span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> The Percentage of average of student attendance (Marked) : 
-	        		@if($average==100)
-	        		<b> {{round($average)}} % </b>
-	        		@else
-	        		<b> {{round(100-$average)}} % </b>
-	        		@endif
+	        		<span style="font-weight: bold;" id="final_average"></span>
 	        		</span>
 	        	</div>
             </div>
@@ -106,12 +107,15 @@ $(document).ready(function(){
 	                    }
 	                    $absent_person = 0;
 	                    $take_hour = 0;
+	                    $store_average = 0;
+	                    $full_average = 0;
 	                ?>
 	                 @for($i=1;$i<=$weeks;$i++)
 	                 <?php
 	                 	$displays = "display:none;";
 	                 	$array = array();
 	                 	$count_hour = 0;
+	                 	
 	                 	$check = '<i class="fa fa-times wrong" aria-hidden="true" style="float:right;padding-top:5px;margin-right:15px;"></i>';
 	                 	if($i==1){
 		                    foreach($timetable as $row){
@@ -220,7 +224,7 @@ $(document).ready(function(){
 		                   				$absent_person = 0;
 			                   			if($att_row->A_week==$i){
 			                   				$students_status = $att_row->students_status;
-					                        $substr_count = substr_count($students_status, 'Absent');
+					                        $substr_count = substr_count($students_status, 'Abs');
 					                        $absent_person = $absent_person+$substr_count;
 					                        $average = (($count_student-$absent_person)/$count_student)*100; 
 			                   				$s_hour = explode('-',$att_row->hour);
@@ -246,11 +250,11 @@ $(document).ready(function(){
 	                                        }
 			                   				echo "<tr>";
 			                   				if($less_hour>0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
 			                   				}else if($less_hour<0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
 			                   				}else{
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
 			                   				}
 
 			                   				if($less_hour<0){
@@ -261,6 +265,8 @@ $(document).ready(function(){
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-check correct' aria-hidden='true'></i></center></td>";
 			                   				echo "</tr>";
 			                   				array_push($array,$att_row->tt_id.'/'.$last_hour);
+			                   				$full_average = $full_average + 100;
+			                   				$store_average = $store_average + $average;
 			                   			}
 			                   		}
 			                   		$average = 0;
@@ -327,7 +333,7 @@ $(document).ready(function(){
 		                   				$absent_person = 0;
 			                   			if($att_row->A_week==$i){
 			                   				$students_status = $att_row->students_status;
-					                        $substr_count = substr_count($students_status, 'Absent');
+					                        $substr_count = substr_count($students_status, 'Abs');
 					                        $absent_person = $absent_person+$substr_count;
 					                        $average = (($count_student-$absent_person)/$count_student)*100; 
 			                   				$s_hour = explode('-',$att_row->hour);
@@ -353,17 +359,19 @@ $(document).ready(function(){
 	                                        }
 			                   				echo "<tr>";
 			                   				if($less_hour>0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Fill up (".$less_hour." Hour)</td>";
 			                   				}else if($less_hour<0){
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) Minus on (".$less_hour." Hour)</td>";
 			                   				}else{
-			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->week." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
+			                   					echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><b>".$att_row->A_date ."</b> ( ".$att_row->weekly." ".$s_hour[0]."-".$e_hour[1]." ) </td>";
 			                   				}
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><a href='".$character."/Moderator/Attendance/".$att_row->tt_id."-".$i."-".$less_hour."/student_list/".$att_row->A_date."' class='show_image_link'>List</a></center></td>";
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center>".$average."% </center></td>";
 			                   				echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;'><center><i class='fa fa-check correct' aria-hidden='true'></i></center></td>";
 			                   				echo "</tr>";
 			                   				array_push($array,$att_row->tt_id.'/'.$last_hour);
+			                   				$full_average = $full_average + 100;
+			                   				$store_average = $store_average + $average;
 			                   			}
 			                   		}
 			                   		$startDate = strtotime($course[0]->startDate);
@@ -433,6 +441,8 @@ $(document).ready(function(){
                    			</div>
 	                    </div>
 	                @endfor
+	                <input type="hidden" id="average" value="{{$store_average}}">
+	                <input type="hidden" id="full_average" value="{{$full_average}}">
 		            </div>
 		        </div>
              </div>

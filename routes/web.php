@@ -19,6 +19,8 @@ Route::get('/', function () {
 
 Auth::routes(['verify' => true]);
 
+Route::get('/Attendance/Student/login/{attendance_id}/{code}','Dean\AttendanceController@student_login');
+Route::post('/Attendance/Student/login/taken/','Dean\AttendanceController@taken_attendance');
 Route::get('student/register','StudentController@create')->name('student.create');
 Route::post('student/register', 'StudentController@store')->name('student.register.submit');
 

@@ -82,6 +82,48 @@ function w3_close() {
   document.getElementById("button_open").style.display = "block";
 }
 $(document).ready(function(){
+  $('[data-toggle="lightbox"]').click(function(event) {
+             event.preventDefault();
+                 $(this).ekkoLightbox({
+                   type: 'image',
+                   onContentLoaded: function() {
+                     var container = $('.ekko-lightbox-container');
+                     var content = $('.modal-content');
+                     var backdrop = $('.modal-backdrop');
+                     var overlay = $('.ekko-lightbox-nav-overlay');
+                     var modal = $('.modal');
+                     var image = container.find('img');
+                     var windowHeight = $(window).height();
+                     var dialog = container.parents('.modal-dialog');
+                     var data_header = $('.modal-header');
+                     var data_title = $('.modal-title');
+                     var body = $('.modal-body');
+                     console.log(image.width());
+
+                     if((image.width() > 380) && (image.width() < 441)){
+                        dialog.css('max-width','700px');
+                        image.css('height','900px');
+                        image.css('width','700px');
+                        overlay.css('height','900px');
+                     }else{
+                        overlay.css('height','100%');
+                     }
+                     // backdrop.css('opacity','1');
+                     data_header.css('background-color','white');
+                     data_header.css('padding','10px');
+                     data_header.css('margin','0px 24px');
+                     data_header.css('border-bottom','1px solid black');
+                     data_title.css('font-size','18px');
+
+                     body.css('padding-top','0px');
+                     content.css('background', "none");
+                     content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                   }
+                 });
+        });
   	$.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -113,7 +155,8 @@ $(document).ready(function(){
     $(document).on('click', '.download_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
-          window.location = "/PastYear/sampleResult/download/"+num[2];
+          var course_id = $('#course_id').val();
+          window.location = "{{$character}}/PastYear/AssessmentResult/result/"+course_id+'-'+num[2];
     });
   });
 
@@ -144,7 +187,7 @@ $(document).on('click', '#checkDownloadAction', function(){
     var student_id = $('#student_id').val();
     var id = ass_id+"_"+checkedValue;
 
-    window.location = "/PastYear/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
+    window.location = "{{$character}}/PastYear/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
   }else{
     alert("Please select the document first.");
   }
@@ -154,15 +197,15 @@ $(document).on('click', '#checkDownloadAction', function(){
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/course/action/{{$id}}" class="first_page">Past Year</a>/
-            <a href="/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
-            <a href="/PastYear/sampleResult/{{$id}}/previous/{{$course[0]->course_id}}/All">{{$course[0]->semester_name}}</a>/
-            <a href="/PastYear/sampleResult/{{$id}}/name/{{$assessments->ass_id}}/All">{{$assessments->assessment_name}}</a>/
+            <a href="{{$character}}/course/action/{{$id}}" class="first_page">Past Year</a>/
+            <a href="{{$character}}/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/PastYear/sampleResult/{{$id}}/previous/{{$course[0]->course_id}}/All">{{$course[0]->semester_name}}</a>/
+            <a href="{{$character}}/PastYear/sampleResult/{{$id}}/name/{{$assessments->ass_id}}/All">{{$assessments->assessment_name}}</a>/
             <span class="now_page">{{$assessment_result_student->student_id}}</span>
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
             <p class="page_title">{{$assessment_result_student->student_id}}</p>
             @if((count($lecturer_result)!=0)||(count($student_result)!=0))
@@ -175,8 +218,9 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <p class="title_method">Download</p>
                       <input type="hidden" id="ass_id" value="{{$assessments->ass_id}}">
                       <input type="hidden" id="student_id" value="{{$assessment_result_student->student_id}}">
+                      <input type="hidden" id="course_id" value="{{$id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/PastYear/Student/{{$assessment_result_student->student_id}}/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/Student/{{$assessment_result_student->student_id}}/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                     </ul>
                 </div>
             @endif
@@ -219,7 +263,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$row->ar_stu_id}}" class="group_lecturer group_download">
                       </div>
-                      <a href="{{ action('Dean\AssessmentResultController@downloadDocument',$row->ar_stu_id) }}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{$character}}/PastYear/AssessmentResult/result/{{$id}}-{{$row->ar_stu_id}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
@@ -243,7 +287,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                     <div class="checkbox_style align-self-center">
                       <input type="checkbox" value="{{$row->ar_stu_id}}" class="group_lecturer group_download">
                     </div>
-                    <a href="/images/AssessmentResult/{{$row->document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->document_name}} <br> <a href='/AssessmentResult/view/whole_paper/{{$row->ar_stu_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                    <a href="{{$character}}/PastYear/images/AssessmentResult/{{$id}}-{{$row->document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->document_name}} <br> <a href='{{$character}}/PastYear/AssessmentResult/view/whole_paper/{{$id}}-{{$row->ar_stu_id}}' class='full_question' target='_blank'>Whole paper</a>">
                       <div class="col-1" style="position: relative;top: -2px;">
                         <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                       </div>
@@ -290,7 +334,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$sow->ar_stu_id}}" class="group_student group_download">
                       </div>
-                      <a href="{{ action('Dean\AssessmentResultController@downloadDocument',$sow->ar_stu_id)}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{$character}}/AssessmentResult/result/{{$sow->ar_stu_id}}" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link">
                         <div class="col-1" style="position: relative;top: -2px;">
                           @if($ext[1]=="pdf")
                             <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
@@ -314,7 +358,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                     <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$sow->ar_stu_id}}" class="group_student group_download">
                       </div>
-                    <a href="/images/AssessmentResult/{{$sow->document}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$sow->document_name}} <br> <a href='/AssessmentResult/view/whole_paper/{{$sow->ar_stu_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                    <a href="{{$character}}/images/AssessmentResult/{{$sow->document}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$sow->document_name}} <br> <a href='{{$character}}/AssessmentResult/view/whole_paper/{{$sow->ar_stu_id}}' class='full_question' target='_blank'>Whole paper</a>">
                       <div class="col-1" style="position: relative;top: -2px;">
                         <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                       </div>

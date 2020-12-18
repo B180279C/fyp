@@ -38,13 +38,6 @@ class TeachingPlanController extends Controller
       $verified_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
       $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-      // $approved_by = DB::table('staffs')
-      //            ->join('users','staffs.user_id','=','users.user_id')
-      //            ->select('staffs.*','users.*')
-      //            ->where('users.position', '=', 'HoD')
-      //            ->where('staffs.department_id','=',$department_id)
-      //            ->get();
-
       $approved_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
       $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 

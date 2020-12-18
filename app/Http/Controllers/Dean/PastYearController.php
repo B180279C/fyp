@@ -330,6 +330,14 @@ class PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
+
         $result = "";
 
         if($value!=""){
@@ -356,7 +364,7 @@ class PastYearController extends Controller
 	                $result .= '<div class="checkbox_style align-self-center">';
 	                $result .= '<input type="checkbox" value="'.$ass_row_name->ass_id.'" class="group_q group_download">';
 	                $result .= '</div>';
-	                $result .= '<a href="/PastYear/assessment/'.$course_id.'/list/'.$ass_row_name->ass_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	                $result .= '<a href="'.$character.'/PastYear/assessment/'.$course_id.'/list/'.$ass_row_name->ass_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	                $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	                $result .= '</div>';
@@ -392,7 +400,7 @@ class PastYearController extends Controller
                         $result .= '<div class="checkbox_style align-self-center">';
                         $result .= '<input type="checkbox" value="'.$ass_row_word->ass_li_id.'" class="group_q group_download">';
                         $result .= '</div>';
-                        $result .= '<a href="/images/assessment/'.$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='."/assessment/view/whole_paper/".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                        $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$course_id.'-'.$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$course_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                         $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                         $result .= '</div>';
@@ -432,7 +440,7 @@ class PastYearController extends Controller
 	            $result .= '<div class="checkbox_style align-self-center">';
 	            $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_q group_download">';
 	            $result .= '</div>';
-	            $result .= '<a href="/PastYear/assessment/'.$course_id.'/assessment_name/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	            $result .= '<a href="'.$character.'/PastYear/assessment/'.$course_id.'/assessment_name/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	            $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 	            $result .= '</div>';
@@ -616,6 +624,15 @@ class PastYearController extends Controller
     {
     	$value         = $request->get('value');
         $course_id     = $request->get('course_id');
+        $original_id   = $request->get('original_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
 
         $subjects = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -648,7 +665,7 @@ class PastYearController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$ass_row_word->ass_li_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/images/assessment/'.$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='."/assessment/view/whole_paper/".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                    $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                     $result .= '</div>';
@@ -680,7 +697,7 @@ class PastYearController extends Controller
 	            $result .= '<div class="checkbox_style align-self-center">';
 	            $result .= '<input type="checkbox" value="'.$row->ass_id.'" class="group_download">';
 	            $result .= '</div>';
-	            $result .= '<a href="" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	            $result .= '<a href="'.$character.'/PastYear/assessment/'.$course_id.'/list/'.$row->ass_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	            $result .= '</div>';
@@ -814,6 +831,15 @@ class PastYearController extends Controller
     {
     	$value         = $request->get('value');
         $ass_id        = $request->get('ass_id');
+        $original_id   = $request->get('original_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
 
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
@@ -821,11 +847,10 @@ class PastYearController extends Controller
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
 
-        $course = DB::table('courses')
+        $previous = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $assessments->course_id)
                  ->get();
 
@@ -872,7 +897,7 @@ class PastYearController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='."/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -929,7 +954,7 @@ class PastYearController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='."/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -956,43 +981,20 @@ class PastYearController extends Controller
         return $result;	
    	}
 
-   	public function downloadFiles($ass_li_id){
-
-        $user_id       = auth()->user()->user_id;
-        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-        $faculty_id    = $staff_dean->faculty_id;
-
-        $assessment_list = AssessmentList::where('ass_li_id', '=', $ass_li_id)->firstOrFail();
-
-        $ass_id = $assessment_list->ass_id;
-
-        $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
-        $question = $assessments->assessment_name;
-
-        $course = DB::table('courses')
-                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                 ->select('courses.*','subjects.*')
-                 ->where('course_id', '=', $assessments->course_id)
-                 ->get();
-
-        if(count($course)>0){
-            $ext = "";
-            if($assessment_list->ass_document!=""){
-                $ext = explode(".", $assessment_list->ass_document);
-            }
-
-            return Storage::disk('private')->download('Assessment/'.$assessment_list->ass_document, $question."_".$assessment_list->ass_type."_".$assessment_list->ass_name.'.'.$ext[1]);
-        }else{
-            return redirect()->route('login');
-        }
-    }
-
 
     //Result
     public function searchAssessmentResult(Request $request)
     {
     	$value         = $request->get('value');
         $course_id     = $request->get('course_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
 
         $subjects = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -1027,7 +1029,7 @@ class PastYearController extends Controller
 	                $result .= '<div class="checkbox_style align-self-center">';
 	                $result .= '<input type="checkbox" value="'.$ass_row_name->ass_id.'" class="group_r group_download">';
 	                $result .= '</div>';
-	                $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/name/'.$ass_row_name->ass_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	                $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/name/'.$ass_row_name->ass_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	                $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	                $result .= '</div>';
@@ -1043,8 +1045,10 @@ class PastYearController extends Controller
 			                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
 			                 ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
 			                 ->join('courses','assessments.course_id','=','courses.course_id')
+			                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
 			                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-			                 ->select('assessment_result_students.*','students.*','courses.*','semesters.*')
+			                 ->select('assessment_result_students.*','students.*','courses.*','semesters.*','subjects.*')
+			                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
 			                 ->where('courses.course_id','!=',$course_id)
 			                 ->Where(function($query) use ($value) {
 			                    $query->orWhere('students.batch','LIKE','%'.$value.'%')
@@ -1063,7 +1067,7 @@ class PastYearController extends Controller
 		                $result .= '<div class="checkbox_style align-self-center">';
 		                $result .= '<input type="checkbox" value="'.$rs_row->ar_stu_id.'" class="group_r group_download">';
 		                $result .= '</div>';
-		                $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/previous/'.$rs_row->course_id.'/'.$rs_row->batch.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/previous/'.$rs_row->course_id.'/'.$rs_row->batch.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		                $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 		                $result .= '</div>';
@@ -1080,14 +1084,16 @@ class PastYearController extends Controller
 				                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
 				                 ->join('users','users.user_id', '=', 'students.user_id')
 				                 ->join('courses','assessments.course_id','=','courses.course_id')
+				                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
 				                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-				                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*')
-				                 ->where('courses.course_id','!=',$course_id)
+				                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*','subjects.*')
 				                 ->Where(function($query) use ($value) {
 				                    $query->orWhere('assessment_result_students.student_id','LIKE','%'.$value.'%')
 				                        ->orWhere('students.batch','LIKE','%'.$value.'%')
 				                        ->orWhere('users.name','LIKE','%'.$value.'%');
 				                 })
+				                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
+				                 ->where('courses.course_id','!=',$course_id)
 				                 ->where('assessment_result_students.status','=','Active')
 				                 ->groupBy('assessment_result_students.student_id')
 				                 ->groupBy('courses.semester')
@@ -1101,7 +1107,7 @@ class PastYearController extends Controller
 			                $result .= '<div class="checkbox_style align-self-center">';
 			                $result .= '<input type="checkbox" value="'.$stu_row->ar_stu_id.'" class="group_r group_download">';
 			                $result .= '</div>';
-			                $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/previous/'.$stu_row->course_id.'/'.$stu_row->student_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+			                $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/previous/'.$stu_row->course_id.'/'.$stu_row->student_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 			                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 			                $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 			                $result .= '</div>';
@@ -1119,11 +1125,13 @@ class PastYearController extends Controller
 				                 ->join('users','users.user_id', '=', 'students.user_id')
 				                 ->join('courses','assessments.course_id','=','courses.course_id')
 				                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-				                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*')
+				                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+				                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*','subjects.*')
 				                 ->where('courses.course_id','!=',$course_id)
 				                 ->Where(function($query) use ($value) {
 				                    $query->orWhere('assessment_result_students.submitted_by','LIKE','%'.$value.'%');
 				                 })
+				                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
 				                 ->where('assessment_result_students.status','=','Active')
 				                 ->groupBy('assessment_result_students.submitted_by')
 				                 ->groupBy('courses.semester')
@@ -1137,7 +1145,7 @@ class PastYearController extends Controller
 				                $result .= '<div class="checkbox_style align-self-center">';
 				                $result .= '<input type="checkbox" value="'.$sub_row->ar_stu_id.'" class="group_r group_download">';
 				                $result .= '</div>';
-				                $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/previous/'.$sub_row->course_id.'/'.$sub_row->submitted_by.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+				                $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/previous/'.$sub_row->course_id.'/'.$sub_row->submitted_by.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 				                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 				                $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 				                $result .= '</div>';
@@ -1176,7 +1184,7 @@ class PastYearController extends Controller
 	            $result .= '<div class="checkbox_style align-self-center">';
 	            $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_r group_download">';
 	            $result .= '</div>';
-	            $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/previous/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/previous/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	            $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 	            $result .= '</div>';
@@ -1567,6 +1575,14 @@ class PastYearController extends Controller
         $course_id     = $request->get('course_id');
         $original_id   = $request->get('original_id');
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
+
         $result = "";
 
         if($value!=""){
@@ -1593,7 +1609,7 @@ class PastYearController extends Controller
 		            $result .= '<div class="checkbox_style align-self-center">';
 		            $result .= '<input type="checkbox" value="'.$row->batch.'" class="group_download">';
 		            $result .= '</div>';
-		            $result .= '<a href="/PastYear/sampleResult/'.$original_id.'/name/'.$row->ass_id.'/'.$row->batch.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$original_id.'/name/'.$row->ass_id.'/'.$row->batch.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 		            $result .= '</div>';
@@ -1630,7 +1646,7 @@ class PastYearController extends Controller
 			            $result .= '<div class="checkbox_style align-self-center">';
 			            $result .= '<input type="checkbox" value="'.$row->student_id.'" class="group_download">';
 			            $result .= '</div>';
-			            $result .= '<a href="/PastYear/sampleResult/'.$original_id.'/result/'.$row->ar_stu_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+			            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$original_id.'/result/'.$row->ar_stu_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 			            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 			            $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 			            $result .= '</div>';
@@ -1666,7 +1682,7 @@ class PastYearController extends Controller
 				            $result .= '<div class="checkbox_style align-self-center">';
 				            $result .= '<input type="checkbox" value="'.$row->ar_stu_id.'" class="group_download">';
 				            $result .= '</div>';
-				            $result .= '<a href="/PastYear/sampleResult/'.$original_id.'/name/'.$row->ass_id.'/'.$row->submitted_by.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+				            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$original_id.'/name/'.$row->ass_id.'/'.$row->submitted_by.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 				            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 				            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 				            $result .= '</div>';
@@ -1697,7 +1713,7 @@ class PastYearController extends Controller
 		            $result .= '<div class="checkbox_style align-self-center">';
 		            $result .= '<input type="checkbox" value="'.$row->ass_id.'" class="group_download">';
 		            $result .= '</div>';
-		            $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/name/'.$row->ass_id.'/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/name/'.$row->ass_id.'/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 		            $result .= '</div>';
@@ -2054,6 +2070,14 @@ class PastYearController extends Controller
         $course_id     = $request->get('course_id');
         $ass_id        = $request->get('ass_id');
 
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
+
         $result = "";
         if($value!=""){
             $result_list = DB::table('assessment_result_students')
@@ -2106,7 +2130,7 @@ class PastYearController extends Controller
                     	$result .= '<input type="checkbox" value="'.$row->student_id.'_All" class="group_lecturer group_download">';
                     }
                     $result .= '</div>';
-                    $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/result/'.$row->ar_stu_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/result/'.$row->ar_stu_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -2161,7 +2185,7 @@ class PastYearController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$row->student_id.'_Lecturer" class="group_lecturer group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/result/'.$row->ar_stu_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/result/'.$row->ar_stu_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -2194,7 +2218,7 @@ class PastYearController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$sow->student_id.'_Students" class="group_student group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="/PastYear/sampleResult/'.$course_id.'/result/'.$sow->ar_stu_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
+                    $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/result/'.$sow->ar_stu_id.'" class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">';
                     $result .= '<div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">';
                     $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
@@ -2445,24 +2469,137 @@ class PastYearController extends Controller
         return response()->download($fileName);
     }
 
-    public function downloadFilesResult($ar_stu_id){
+    public function downloadFiles($ass_li_id){
 
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
 
-        $assessment_result_student = AssessmentResultStudent::where('ar_stu_id', '=', $ar_stu_id)->firstOrFail();
-        $ass_id = $assessment_result_student->ass_id;
-        $student_id = $assessment_result_student->student_id;
+        $string = explode('-',$ass_li_id);
+
+        $assessment_list = AssessmentList::where('ass_li_id', '=', $string[1])->firstOrFail();
+
+        $ass_id = $assessment_list->ass_id;
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
-        $course_id = $assessments->course_id;
+        $question = $assessments->assessment_name;
 
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
-                 ->where('course_id', '=', $course_id)
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $string[0])
+                 ->get();
+
+        if(count($course)>0){
+            $ext = "";
+            if($assessment_list->ass_document!=""){
+                $ext = explode(".", $assessment_list->ass_document);
+            }
+
+            return Storage::disk('private')->download('Assessment/'.$assessment_list->ass_document, $question."_".$assessment_list->ass_type."_".$assessment_list->ass_name.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
+    public function assessmentImage($image_name)
+    {
+        $user_id    = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+       	$string = explode('-',$image_name);
+
+        $checkImageASSID = AssessmentList::where('ass_document', '=', $string[1])->firstOrFail();
+        $ass_id = $checkImageASSID->ass_id;
+
+        $checkCourseId = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
+        // $course_id = $checkCourseId->course_id;
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.lecturer', '=', $staff_dean->id)
+                 ->where('courses.course_id', '=', $string[0])
+                 ->get();
+
+        if(count($course)>0){
+            $storagePath = storage_path('/private/Assessment/' . $string[1]);
+            return Image::make($storagePath)->response();
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
+    public function view_wholePaper($ass_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $string = explode('-',$ass_id);
+        $assessments = Assessments::where('ass_id', '=', $string[1])->firstOrFail();
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.lecturer', '=', $staff_dean->id)
+                 ->where('courses.course_id', '=', $string[0])
+                 ->get();
+
+        $question = $assessments->assessment;
+
+        $assessment_list = DB::table('assessment_list')
+                    ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
+                    ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->select('assessment_list.*','courses.*','semesters.*')
+                    ->where('assessment_list.ass_id', '=', $string[1])
+                    ->where('assessment_list.status', '=', 'Active')
+                    ->orderBy('assessment_list.ass_id')
+                    ->orderBy('assessment_list.ass_type')
+                    ->orderBy('assessment_list.ass_name')
+                    ->get();
+
+        if(count($course)>0){
+            return view('dean.Assessment.viewWholePaper', compact('assessments','assessment_list','question','string'));
+        }else{
+            return redirect()->back();
+        }
+    }
+
+
+    public function downloadDocument($ar_stu_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $string = explode('-',$ar_stu_id);
+
+        $assessment_result_student = AssessmentResultStudent::where('ar_stu_id', '=', $string[1])->firstOrFail();
+        $ass_id = $assessment_result_student->ass_id;
+        $student_id = $assessment_result_student->student_id;
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.lecturer', '=', $staff_dean->id)
+                 ->where('courses.course_id', '=', $string[0])
                  ->get();
 
         if(count($course)>0){
@@ -2473,6 +2610,75 @@ class PastYearController extends Controller
             return Storage::disk('private')->download('Assessment_Result/'.$assessment_result_student->document, $assessment_result_student->document_name.'.'.$ext[1]);
         }else{
             return redirect()->route('login');
+        }
+    }
+
+    public function assessmentResult_image($image_name)
+    {
+        $user_id    = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $string = explode('-',$image_name);
+
+        $checkRSID = AssessmentResultStudent::where('document', '=', $string[1])->firstOrFail();
+        $ass_id = $checkRSID->ass_id;
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.lecturer', '=', $staff_dean->id)
+                 ->where('courses.course_id', '=', $string[0])
+                 ->get();
+
+        if(count($course)>0){
+            $storagePath = storage_path('/private/Assessment_Result/' . $string[1]);
+            return Image::make($storagePath)->response();
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
+
+    public function view_wholePaperResult($ar_stu_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $string = explode('-',$ar_stu_id);
+
+        $checkARID = AssessmentResultStudent::where('ar_stu_id', '=', $string[1])->firstOrFail();
+        $ass_id = $checkARID->ass_id;
+        $submitted_by = $checkARID->submitted_by;
+
+        $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.lecturer', '=', $staff_dean->id)
+                 ->where('courses.course_id', '=', $string[0])
+                 ->get();
+
+        $assessment_result_list = DB::table('assessment_result_students')
+                                ->select('assessment_result_students.*')
+                                ->where('assessment_result_students.ass_id','=',$ass_id)
+                                ->where('assessment_result_students.submitted_by','=',$checkARID->submitted_by)
+                                ->where('assessment_result_students.student_id','=',$checkARID->student_id)
+                                ->get();
+        if(count($course)>0){
+            return view('dean.AssessmentResult.viewWholePaper', compact('assessment_result_list','assessments','checkARID','submitted_by','string'));
+        }else{
+            return redirect()->back();
         }
     }
 }

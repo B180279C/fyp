@@ -59,6 +59,14 @@ class PastYearNoteController extends Controller
     	$view_place    = $request->get('view_place');
         $course_id     = $request->get('course_id');
         
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
+
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -117,7 +125,7 @@ class PastYearNoteController extends Controller
 	                    $result .= '<div class="checkbox_style align-self-center">';
 	                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 	                    $result .= '</div>';
-	                    $result .= '<a href="/PastYearNote/'.$course_id.'/folder/'.$row->ln_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	                    $result .= '<a href="'.$character.'/PastYearNote/'.$course_id.'/folder/'.$row->ln_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	                    $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 	                    $result .= '</div>';
@@ -146,20 +154,16 @@ class PastYearNoteController extends Controller
 		                    $result .= '<div class="checkbox_style align-self-center">';
 		                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 		                    $result .= '</div>';
-		                    $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-		                    if($row->note_place=="Note"){
-		                    	if($ext[1]=="pdf"){
-	                            	$result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
-		                        }else if($ext[1]=="docx"){
-		                            $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
-		                        }else if($ext[1]=="xlsx"){
-		                            $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
-		                        }else if($ext[1]=="pptx"){
-		                            $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
-		                        }
-		                    }else{
-		                    	$result .= '<img src="'.url('image/folder3.png').'" width="25px" height="23px"/>';
+		                    if($ext[1]=="pdf"){
+	                            $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
+		                    }else if($ext[1]=="docx"){
+		                        $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
+		                    }else if($ext[1]=="xlsx"){
+		                        $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+		                    }else if($ext[1]=="pptx"){
+		                        $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
 		                    }
 		                    $result .= '</div>';
 		                    $result .= '<div class="col-10" id="assessment_word">';
@@ -191,13 +195,9 @@ class PastYearNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-                            if($row->note_place=="Note"){
-                            	$result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
-                        	}else{
-                        		$result .= '<img src="'.url('image/folder3.png').'" width="25px" height="23px"/>';
-                        	}
+                            $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
                             $result .= '<div class="col-10" id="assessment_word">';
                             if($row->used_by!=null){
@@ -242,7 +242,7 @@ class PastYearNoteController extends Controller
 		                $result .= '<div class="checkbox_style align-self-center">';
 		            	$result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_download">';
 		                $result .= '</div>';
-		                $result .= '<a href="/PastYearNote/'.$course_id.'/course/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                $result .= '<a href="'.$character.'/PastYearNote/'.$course_id.'/course/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		                $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 		                $result .= '</div>';
@@ -267,6 +267,14 @@ class PastYearNoteController extends Controller
     	$semester      = $request->get('semester');
     	$view_place    = $request->get('view_place');
         $course_id     = $request->get('course_id');
+
+        if(auth()->user()->position=="Dean"){
+            $character = '';
+        }else if(auth()->user()->position=="HoD"){
+            $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
+        }
         
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -325,7 +333,7 @@ class PastYearNoteController extends Controller
 	                    $result .= '<div class="checkbox_style align-self-center">';
 	                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 	                    $result .= '</div>';
-	                    $result .= '<a href="/PastYearNote/'.$course_id.'/folder/'.$row->ln_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	                    $result .= '<a href="'.$character.'/PastYearNote/'.$course_id.'/folder/'.$row->ln_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	                    $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 	                    $result .= '</div>';
@@ -354,20 +362,16 @@ class PastYearNoteController extends Controller
 		                    $result .= '<div class="checkbox_style align-self-center">';
 		                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 		                    $result .= '</div>';
-		                    $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-		                    if($row->note_place=="Note"){
-		                    	if($ext[1]=="pdf"){
-	                            	$result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
-		                        }else if($ext[1]=="docx"){
-		                            $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
-		                        }else if($ext[1]=="xlsx"){
-		                            $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
-		                        }else if($ext[1]=="pptx"){
-		                            $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
-		                        }
-		                    }else{
-		                    	$result .= '<img src="'.url('image/folder3.png').'" width="25px" height="23px"/>';
+		                    if($ext[1]=="pdf"){
+	                         	$result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
+		                    }else if($ext[1]=="docx"){
+		                        $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
+		                    }else if($ext[1]=="xlsx"){
+		                        $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+		                    }else if($ext[1]=="pptx"){
+		                        $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
 		                    }
 		                    $result .= '</div>';
 		                    $result .= '<div class="col-10" id="assessment_word">';
@@ -399,13 +403,9 @@ class PastYearNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
-                            if($row->note_place=="Note"){
-                            	$result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
-                        	}else{
-                        		$result .= '<img src="'.url('image/folder3.png').'" width="25px" height="23px"/>';
-                        	}
+                            $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
                             $result .= '<div class="col-10" id="assessment_word">';
                             if($row->used_by!=null){
@@ -444,7 +444,7 @@ class PastYearNoteController extends Controller
 	                    $result .= '<div class="checkbox_style align-self-center">';
 	                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 	                    $result .= '</div>';
-	                    $result .= '<a href="/PastYearNote/'.$course_id.'/folder/'.$row->ln_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	                    $result .= '<a href="'.$character.'/PastYearNote/'.$course_id.'/folder/'.$row->ln_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	                    $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 	                    $result .= '</div>';
@@ -473,7 +473,7 @@ class PastYearNoteController extends Controller
 		                    $result .= '<div class="checkbox_style align-self-center">';
 		                    $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
 		                    $result .= '</div>';
-		                    $result .= '<a href="'.action('Dean\LectureNoteController@downloadLN',$row->ln_id).'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+		                    $result .= '<a href="'.$character.'/PastYear/lectureNote/download/'.$row->ln_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		                    if($ext[1]=="pdf"){
 	                           	$result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
@@ -514,7 +514,7 @@ class PastYearNoteController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ln_id.'" class="group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="/images/lectureNote/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
+                            $result .= '<a href="'.$character.'/PastYear/images/lectureNote/'.$row->ln_id.'/'.$row->note.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->note_name.' '.$semester_name.'">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                             if($row->note_place=="Note"){
                             	$result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
@@ -1303,6 +1303,53 @@ class PastYearNoteController extends Controller
         	}
         }else{
             return redirect()->back();
+        }
+    }
+
+    public function LectureNoteImage($ln_id,$image_name)
+    {
+        $user_id    = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+
+        $string = explode('-',$ln_id);
+        $checkCourseId = Lecture_Note::where('ln_id', '=', $string[1])->firstOrFail();
+
+        $course = DB::table('courses')
+                 ->select('courses.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $string[0])
+                 ->get();
+
+        if(count($course)>0){
+            $storagePath = storage_path('/private/Lecture_Note/' . $image_name);
+            return Image::make($storagePath)->response();
+        }else{
+            return redirect()->route('login');
+        }
+    }
+
+    public function downloadLN($id)
+    {
+    	$string = explode('-',$id);
+
+        $lecture_note = Lecture_Note::where('ln_id', '=', $string[1])->firstOrFail();
+        $course_id = $lecture_note->course_id;
+
+        $course = Course::where('course_id', '=', $string[0])->firstOrFail();
+        $lecturer = $course->lecturer;
+
+        $user_id    = auth()->user()->user_id;
+        $checkid    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $staff_id   = $checkid->id;
+
+        if($lecturer == $staff_id){
+            $ext = "";
+            if($lecture_note->note!=""){
+                $ext = explode(".", $lecture_note->note);
+            }
+            return Storage::disk('private')->download('Lecture_Note/'.$lecture_note->note, $lecture_note->note_name.'.'.$ext[1]);
+        }else{
+            return redirect()->route('login');
         }
     }
 }

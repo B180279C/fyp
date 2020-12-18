@@ -190,6 +190,7 @@
                 $("#sidebar-title").hide();
                 $("#main").attr('class', 'col-md-12');
                 $("#nav_main").attr('class', 'col-md-12');
+                $("#main_container").attr('class', 'col-md-12');
                 $(".navbar-brand-second").show();
                 document.getElementById("openOclose").value = "open";
             }
@@ -352,9 +353,9 @@
                         <tr>
                     </table>
             </div>
-            <div class="col-md-9" id="main">
+            <div class="col-md-9" id="main" style="border:0px solid black;padding: 0px;margin: 0px;">
                 <br>
-                <div class="container">
+                <div class="container" id="main_container" style="border:0px solid black;">
                     @yield('content')
                 </div>
                 <br>

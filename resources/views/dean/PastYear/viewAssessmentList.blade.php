@@ -119,6 +119,48 @@ function w3_close() {
   document.getElementById("button_open").style.display = "block";
 }
   $(document).ready(function(){
+    $('[data-toggle="lightbox"]').click(function(event) {
+             event.preventDefault();
+                 $(this).ekkoLightbox({
+                   type: 'image',
+                   onContentLoaded: function() {
+                     var container = $('.ekko-lightbox-container');
+                     var content = $('.modal-content');
+                     var backdrop = $('.modal-backdrop');
+                     var overlay = $('.ekko-lightbox-nav-overlay');
+                     var modal = $('.modal');
+                     var image = container.find('img');
+                     var windowHeight = $(window).height();
+                     var dialog = container.parents('.modal-dialog');
+                     var data_header = $('.modal-header');
+                     var data_title = $('.modal-title');
+                     var body = $('.modal-body');
+                     console.log(image.width());
+
+                     if((image.width() > 380) && (image.width() < 441)){
+                        dialog.css('max-width','700px');
+                        image.css('height','900px');
+                        image.css('width','700px');
+                        overlay.css('height','900px');
+                     }else{
+                        overlay.css('height','100%');
+                     }
+                     // backdrop.css('opacity','1');
+                     data_header.css('background-color','white');
+                     data_header.css('padding','10px');
+                     data_header.css('margin','0px 24px');
+                     data_header.css('border-bottom','1px solid black');
+                     data_title.css('font-size','18px');
+
+                     body.css('padding-top','0px');
+                     content.css('background', "none");
+                     content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                     content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                   }
+                 });
+        });
     $(document).on('click', '.plus', function(){
       var id = $(this).attr("id"); 
       $('#assessment_list_'+id).slideToggle("slow", function(){
@@ -135,7 +177,8 @@ function w3_close() {
     $(document).on('click', '.download_button', function(){
       var id = $(this).attr("id");
       var num = id.split("_");
-      window.location = "/PastYear/assessment/download/"+num[2];
+      var original_id = $('#original_id').val();
+      window.location = "{{$character}}/PastYear/assessment/download/"+original_id+"-"+num[2];
     });
 
     $('.group_checkbox').click(function(){
@@ -159,7 +202,7 @@ function w3_close() {
       if(checkedValue!=""){
         var ass_id = $('#ass_id').val();
         var id = ass_id+"---"+checkedValue;
-        window.location = "/PastYear/assessment/list/download/zipFiles/"+id+"/checked";
+        window.location = "{{$character}}/PastYear/assessment/list/download/zipFiles/"+id+"/checked";
       }else{
         alert("Please select the document first.");
       }
@@ -175,10 +218,11 @@ function w3_close() {
         if($('.search').val()!=""){
           var value = $('.search').val();
           var ass_id = $('#ass_id').val();
+          var original_id = $('#original_id').val();
           $.ajax({
               type:'POST',
-              url: "/PastYear/assessment/list/searchAssessmentlist/",
-              data:{value:value,ass_id:ass_id},
+              url: "{{$character}}/PastYear/assessment/list/searchAssessmentlist/",
+              data:{value:value,ass_id:ass_id,original_id:original_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
                 $('.group_checkbox').click(function(){
@@ -239,10 +283,11 @@ function w3_close() {
         $(".search").keyup(function(){
             var value = $('.search').val();
             var ass_id = $('#ass_id').val();
+            var original_id = $('#original_id').val();
             $.ajax({
                type:'POST',
-               url: "/PastYear/assessment/list/searchAssessmentlist/",
-               data:{value:value,ass_id:ass_id},
+               url: "{{$character}}/PastYear/assessment/list/searchAssessmentlist/",
+               data:{value:value,ass_id:ass_id,original_id:original_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;
                   $('.group_checkbox').click(function(){
@@ -306,14 +351,14 @@ function w3_close() {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/course/action/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
-            <a href="/PastYear/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
-            <a href="/PastYear/assessment/{{$course[0]->course_id}}/assessment_name/{{$previous[0]->course_id}}">{{$previous[0]->semester_name}}</a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
+            <a href="{{$character}}/PastYear/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/PastYear/assessment/{{$course[0]->course_id}}/assessment_name/{{$previous[0]->course_id}}">{{$previous[0]->semester_name}}</a>/
             <span class="now_page">{{$assessments->assessment_name}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">{{$assessments->assessment_name}}</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -325,7 +370,7 @@ function w3_close() {
                       <p class="title_method">Download</p>
                       <input type="hidden" id="ass_id" value="{{$assessments->ass_id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/PastYear/assessment/list/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/assessment/list/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                   </ul>
                 </div>
                 <br>
@@ -341,6 +386,7 @@ function w3_close() {
                           <div class="form-group">
                               <label for="full_name" class="bmd-label-floating">Search</label>
                               <input type="hidden" id="ass_id" value="{{$assessments->ass_id}}">
+                              <input type="hidden" id="original_id" value="{{$course[0]->course_id}}">
                               <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
                           </div>
                       </div>
@@ -365,7 +411,7 @@ function w3_close() {
                             <div class="checkbox_style align-self-center">
                               <input type="checkbox" value="{{$row->ass_li_id}}_{{$row->ass_type}}" class="group_{{$row_group->ass_type}} group_download">
                             </div>
-                            <a href="/images/assessment/{{$row->ass_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$course[0]->semester_name}} : {{$assessments->assessment_name}} / {{$row_group->ass_type}} / {{$row->ass_name}} <br> <a href='/assessment/view/whole_paper/{{$row->ass_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                            <a href="{{$character}}/images/assessment/{{$row->ass_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$previous[0]->semester_name}} : {{$assessments->assessment_name}} / {{$row_group->ass_type}} / {{$row->ass_name}} <br> <a href='{{$character}}/assessment/view/whole_paper/{{$row->ass_id}}' class='full_question' target='_blank'>Whole paper</a>">
                               <div class="col-1" style="position: relative;top: -2px;">
                                 <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                               </div>

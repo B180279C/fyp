@@ -122,7 +122,7 @@ $option1 = "id='selected-sidebar'";
     if(checkedValue!=""){
       var ass_id = $('#ass_id').val();
       var id = ass_id+"---"+checkedValue;
-      window.location = "/PastYear/sampleResult/download/zipFiles/"+id+"/checked";
+      window.location = "{{$character}}/PastYear/sampleResult/download/zipFiles/"+id+"/checked";
     }else{
         alert("Please select the document first.");
     }
@@ -140,7 +140,7 @@ $option1 = "id='selected-sidebar'";
       var ass_id = $('#ass_id').val();
       $.ajax({
           type:'POST',
-          url: "/PastYear/assessment/sampleResult/searchStudentList/",
+          url: "{{$character}}/PastYear/assessment/sampleResult/searchStudentList/",
           data:{value:value,course_id:course_id,ass_id:ass_id},
           success:function(data){
             document.getElementById("student_list").innerHTML = data;
@@ -164,7 +164,7 @@ $option1 = "id='selected-sidebar'";
         var ass_id = $('#ass_id').val();
         $.ajax({
            type:'POST',
-           url: "/PastYear/assessment/sampleResult/searchStudentList/",
+           url: "{{$character}}/PastYear/assessment/sampleResult/searchStudentList/",
            data:{value:value,course_id:course_id,ass_id:ass_id},
            success:function(data){
               document.getElementById("student_list").innerHTML = data;
@@ -188,14 +188,14 @@ $option1 = "id='selected-sidebar'";
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
-            <a href="/course/action/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
-            <a href="/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
-            <a href="/PastYear/sampleResult/{{$course[0]->course_id}}/previous/{{$previous[0]->course_id}}/All">{{$previous[0]->semester_name}}</a>/
+            <a href="{{$character}}/course/action/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
+            <a href="{{$character}}/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
+            <a href="{{$character}}/PastYear/sampleResult/{{$course[0]->course_id}}/previous/{{$previous[0]->course_id}}/All">{{$previous[0]->semester_name}}</a>/
             <span class="now_page">{{$assessments->assessment_name}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
             <p class="page_title">{{$assessments->assessment_name}}</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -207,7 +207,7 @@ $option1 = "id='selected-sidebar'";
                       @if((count($lecturer_result)!=0)||(count($student_result)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='/PastYear/sampleResult/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/sampleResult/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                     </ul>
                 </div>
@@ -264,7 +264,7 @@ $option1 = "id='selected-sidebar'";
                           <div class="checkbox_style align-self-center">
                             <input type="checkbox" name="group{{$lr_row->ar_stu_id}}" value="{{$lr_row->student_id}}_Lecturer" class="group_lecturer group_download">
                           </div>
-                          <a href='/PastYear/sampleResult/{{$id}}/result/{{$lr_row->ar_stu_id}}' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
+                          <a href='{{$character}}/PastYear/sampleResult/{{$id}}/result/{{$lr_row->ar_stu_id}}' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
                             <div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">
                               <div class="col-1" style="position: relative;top: -2px;padding-left: 2px;">
                                 <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
@@ -299,7 +299,7 @@ $option1 = "id='selected-sidebar'";
                           <div class="checkbox_style align-self-center">
                             <input type="checkbox" name="group{{$sr_row->ar_stu_id}}" value="{{$sr_row->student_id}}_Students" class="group_student group_download">
                           </div>
-                          <a href='/PastYear/sampleResult/{{$id}}/result/{{$lr_row->ar_stu_id}}' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
+                          <a href='{{$character}}/PastYear/sampleResult/{{$id}}/result/{{$lr_row->ar_stu_id}}' class="col-11 row align-self-center" id="show_image_link" style="margin-left:0px;border:0px solid black;">
                             <div class="col-12 row" style="padding:10px 10px 10px 0px;color:#0d2f81;">
                               <div class="col-1" style="position: relative;top: -2px; padding-left: 2px;">
                                 <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
