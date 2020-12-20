@@ -218,6 +218,8 @@ Route::get($character.'/Attendance/{id}', 'Dean\AttendanceController@viewAttenda
 Route::get($character.'/Attendance/{id}/student_list/{date}', 'Dean\AttendanceController@viewStudentList');
 Route::post($character.'/Attendance/store/', 'Dean\AttendanceController@storeAttendance');
 Route::post($character.'/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
+Route::post($character.'/Attendance/openQR_Code/', 'Dean\AttendanceController@openQR_Code');
+Route::get($character.'/Attendance/QR_code/{attendance_id}/{code}', 'Dean\AttendanceController@QR_Code');
 
 //Past Year CA Question
 Route::get($character.'/PastYear/assessment/{id}','Dean\PastYearController@PastYearAssessment')->name('dean.pastYear');

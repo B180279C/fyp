@@ -255,9 +255,9 @@ class AttendanceController extends Controller
         if(count($attendance)===0){
             return redirect()->back()->with('error',"The attendance detail got error. Please scan again the QR code.");
         }else{
-            $code_active_time = date('H:i:s',strtotime($attendance[0]->code_active_time));
+            $code_active_time = date('Y-m-d H:i:s',strtotime($attendance[0]->code_active_time));
             $num_time = strtotime($code_active_time);  
-            $selectedTime = strtotime(date('H:i:s'));
+            $selectedTime = strtotime(date('Y-m-d H:i:s'));
             if($selectedTime>$num_time){
                 return view('dean.Attendance.StudentDie');
             }else{

@@ -104,7 +104,6 @@ $(document).ready(function(){
              	<div class="row" style="padding:0px;"> 
                     <div class="col-md-12" style="padding:0px;">
 	             	<?php
-
 	                    if($course[0]->semester =='A'){
 	                        $weeks = 7;
 	                        $startDate = $course[0]->startDate;

@@ -286,7 +286,7 @@
             </div>
             <hr>
         </div>
-        <div class="col-md-8" >
+        <div class="col-md-8">
             <div id="box" class="details" style="padding-bottom: 0px;">
                 <p class="page_title" style="position: relative;left: -5px ;top: 0px;">Details</p>
                     @if(count($errors) > 0)

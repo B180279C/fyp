@@ -275,8 +275,6 @@
         </div>
         <div class="row" style="height: 101%;padding: 0px; margin: 0px;">
             <div class="col-md-3 w3-animate-left" id="sidebar">
-            <!-- <input type="hidden" id="smallthan" value="0">  -->
-<!--                <hr style="margin: 0px;background-color: #0d2f81;"> -->
                     <ul class="sidebar-ul">
                         <a href="/home">
                             <li class="sidebar-li" <?php if(isset($option0)){ echo $option0;};?>>
