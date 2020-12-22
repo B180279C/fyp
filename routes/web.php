@@ -44,6 +44,7 @@ Route::middleware('is_admin')->group(function(){
 
 	Route::get('/student/{id}','StudentController@edit')->name('admin.student_list.edit');
 	Route::post('/student/{id}','StudentController@update')->name('student_list.update.submit');
+	Route::get('/student/excel/download/','StudentController@downloadExcel')->name('student.excelExport');
 
 	Route::get('staff/create','StaffController@create')->name('staff.create');
 	Route::post('staff/store', 'StaffController@store')->name('staff.submit');
@@ -65,18 +66,21 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/admin/staff/DestoryImage', 'StaffController@destroyImage')->name('admin.dropzone.StaffDestoryImage');
 	Route::post('/admin/staff/UploadCV', 'StaffController@uploadCV')->name('admin.dropzone.StaffUploadCV');
 	Route::post('/admin/staff/DestoryCV', 'StaffController@destroyCV')->name('admin.dropzone.StaffDestoryCV');
+	Route::get('/staff/excel/download/','StaffController@downloadExcel')->name('staff.excelExport');
 
 	Route::get('department/create','DepartmentController@create')->name('department.create');
 	Route::post('department/create', 'DepartmentController@store')->name('department.submit');
 	Route::get('/department_list','DepartmentController@index')->name('admin.department_list.index');
 	Route::get('/department/{id}','DepartmentController@edit')->name('admin.department_list.edit');
 	Route::post('/department/{id}','DepartmentController@update')->name('department_list.update.submit');
+	Route::get('/department/excel/download/','DepartmentController@downloadExcel')->name('department_list.excelExport');
 
 	Route::get('programme/create','ProgrammeController@create')->name('programme.create');
 	Route::post('programme/create', 'ProgrammeController@store')->name('programme.submit');
 	Route::get('/programme_list','ProgrammeController@index')->name('admin.programme_list.index');
 	Route::get('/programme/{id}','ProgrammeController@edit')->name('admin.programme_list.edit');
 	Route::post('/programme/{id}','ProgrammeController@update')->name('programme_list.update.submit');
+	Route::get('/programme/excel/download/','ProgrammeController@downloadExcel')->name('programme_list.excelExport');
 
 	Route::get('subject/create/{id}','SubjectController@create')->name('subject.create');
 	Route::post('subject/create/{id}', 'SubjectController@store')->name('subject.submit');
@@ -87,6 +91,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/syllabusPostUpload', 'SubjectController@postUpload')->name('dropzone.syllabusPostUpload');
     Route::post('/syllabusDestory', 'SubjectController@syllabusDestory')->name('dropzone.syllabusDestory');
     Route::get('/syllabus/download/{id}','SubjectController@downloadSyllabus')->name('subject.downloadSyllabus');
+    Route::get('/subject/excel/download/{id}','SubjectController@downloadExcel')->name('subject.excelExport');
 
 	Route::get('subjectsMPU/create/{level}','MPUController@create')->name('MPU.create');
 	Route::post('subjectsMPU/create/{level}', 'MPUController@store')->name('MPU.submit');
@@ -96,6 +101,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/generalStudiesUpdateModal', 'MPUController@generalStudiesUpdateModal');
 	Route::post('/generalStudiesTypeUpdateModal', 'MPUController@generalStudiesTypeUpdateModal');
 	Route::get('/MPUsyllabus/download/{id}','MPUController@downloadSyllabus')->name('MPUsubject.downloadSyllabus');
+	Route::get('/subjectsMPU/excel/download/{level}','MPUController@downloadExcel')->name('MPUsubject.excelExport');
 
 
 	Route::get('faculty/create','FacultyController@create')->name('faculty.create');
@@ -103,13 +109,29 @@ Route::middleware('is_admin')->group(function(){
 	Route::get('/faculty_list','FacultyController@index')->name('admin.faculty_list.index');
 	Route::get('/faculty/{id}','FacultyController@edit')->name('admin.faculty_list.edit');
 	Route::post('/faculty/{id}','FacultyController@update')->name('faculty_list.update.submit');
+	Route::get('/faculty/excel/download/','FacultyController@downloadExcel')->name('faculty.excelExport');
 
 	Route::get('semester/create','SemesterController@create')->name('semester.create');
 	Route::post('semester/create', 'SemesterController@store')->name('semester.submit');
 	Route::get('/semester_list','SemesterController@index')->name('admin.semester_list.index');
 	Route::get('/semester/{id}','SemesterController@edit')->name('admin.semester_list.edit');
 	Route::post('/semester/{id}','SemesterController@update')->name('semester_list.update.submit');
+	Route::get('/semester/excel/download/','SemesterController@downloadExcel')->name('semester.excelExport');
+	
+	//Course List
+	Route::get('/courses', 'CourseController@index');
+	Route::get('/courses/create','CourseController@create');
+	Route::post('/courses/courseSubject', 'CourseController@courseSubject');
+	Route::post('/courses/changeModerator', 'CourseController@changeModerator');
+	Route::get('/courses/{id}','CourseController@edit');
+	Route::post('/admin/courses/create', 'CourseController@store');
+	Route::get('/courses/timetable/remove/{id}', 'CourseController@removeActiveTimetable');
+	Route::post('/courses/{id}','CourseController@update');
 
+	Route::post('/coursesuploadCourses', 'CourseController@importExcel')->name('admin.dropzone.uploadCourses');
+	Route::post('/courses/excel/create', 'CourseController@storeCourses')->name('admin.course.excel.submit');
+	Route::get('/courses/remove/{id}', 'CourseController@removeActiveCourse');
+	Route::get('/CourseList/excel/download/', 'Dean\C_PortFolioController@downloadExcel');
 });
 
 Route::middleware('is_student')->group(function(){

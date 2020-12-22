@@ -172,7 +172,7 @@
                 @endguest
             </div>
         </div>
-        <div class="row" style="height: 101%;padding: 0px; margin: 0px;">
+        <div class="row" style="height: 111%;padding: 0px; margin: 0px;overflow-y:;">
             <div class="col-md-3 w3-animate-left" id="sidebar">
             <!-- <input type="hidden" id="smallthan" value="0">  -->
 <!--                <hr style="margin: 0px;background-color: #0d2f81;"> -->
@@ -190,6 +190,12 @@
                             <li class="sidebar-li" <?php if(isset($option7)){ echo $option7;};?>>
                                     <i class="fa fa-calendar sidebar-icon" aria-hidden="true"></i>
                                     <span style="padding-left: 20px;font-weight: bold;">Semester</span>
+                            </li>
+                        </a>
+                        <a href="/courses">
+                            <li class="sidebar-li" <?php if(isset($option8)){ echo $option8;};?>>
+                                    <i class="fa fa-book sidebar-icon" aria-hidden="true"></i>
+                                    <span style="padding-left: 20px;font-weight: bold;">Courses</span>
                             </li>
                         </a>
                     </ul>

@@ -397,6 +397,7 @@ Route::post($character.'/Attendance/store/', 'Dean\AttendanceController@storeAtt
 Route::post($character.'/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
 Route::post($character.'/Attendance/openQR_Code/', 'Dean\AttendanceController@openQR_Code');
 Route::get($character.'/Attendance/QR_code/{attendance_id}/{code}', 'Dean\AttendanceController@QR_Code');
+Route::get($character.'/Attendance/excel/download/{id}','Dean\AttendanceController@downloadExcel');
 
 
 //Past Year CA Question

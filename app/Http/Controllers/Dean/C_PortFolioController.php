@@ -11,6 +11,8 @@ use App\Department;
 use App\Programme;
 use App\Semester;
 use App\Faculty;
+use App\Exports\CourseExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class C_PortFolioController extends Controller
 {
@@ -39,7 +41,6 @@ class C_PortFolioController extends Controller
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')
                     ->get();
-
         }else if(auth()->user()->position=="HoD"){
             $course = DB::table('courses')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -237,5 +238,10 @@ class C_PortFolioController extends Controller
         }else{
             return redirect()->route('home');
         }
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new CourseExport, 'Courses.xlsx');
     }
 }

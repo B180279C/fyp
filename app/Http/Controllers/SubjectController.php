@@ -9,6 +9,9 @@ use App\Programme;
 use App\Subject;
 use App\Faculty;
 use App\Department;
+use App\Exports\SubjectExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class SubjectController extends Controller
 {
@@ -250,5 +253,10 @@ class SubjectController extends Controller
             $ext = explode(".", $subject->syllabus);
         }
         return Storage::disk('private')->download('/syllabus/'.$syllabus,$name.'.'.$ext[1]);
+    }
+
+    public function downloadExcel($id)
+    {
+        return Excel::download(new SubjectExport($id), 'Subject.xlsx');
     }
 }

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Department;
 use App\Faculty;
 use Illuminate\Support\Facades\DB;
+use App\Exports\DepartmentExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DepartmentController extends Controller
 {
@@ -116,5 +118,10 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new DepartmentExport, 'Department.xlsx');
     }
 }

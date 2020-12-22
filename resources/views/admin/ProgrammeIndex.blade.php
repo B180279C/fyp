@@ -54,7 +54,7 @@ $option5 = "id='selected-sidebar'";
                 </div>
               <ul class="sidebar-action-ul">
                   <a href="/programme/create"><li class="sidebar-action-li"><i class="fa fa-plus-circle" style="padding: 0px 10px;" aria-hidden="true"></i>Add New Programme</li></a>
-                  <a href="#"><li class="sidebar-action-li"><i class="fa fa-file-excel-o" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
+                  <a href="/programme/excel/download/"><li class="sidebar-action-li"><i class="fa fa-file-excel-o" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
               </ul>
             </div>
             <br>

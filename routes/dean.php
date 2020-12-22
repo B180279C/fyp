@@ -63,6 +63,8 @@
 	Route::get('/CourseList/remove/{id}', 'Dean\CourseController@removeActiveCourse');
 	Route::get('/CourseList/action/{id}','Dean\C_PortFolioController@CourseListAction');
 	Route::get('/timetable/remove/{id}', 'Dean\CourseController@removeActiveTimetable');
+	Route::get('/CourseList/excel/download/', 'Dean\C_PortFolioController@downloadExcel');
+	
 	
 
 	//All Course Action
@@ -432,6 +434,7 @@
     Route::post('/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
     Route::post('/Attendance/openQR_Code/', 'Dean\AttendanceController@openQR_Code');
     Route::get('/Attendance/QR_code/{attendance_id}/{code}', 'Dean\AttendanceController@QR_Code');
+    Route::get('/Attendance/excel/download/{id}','Dean\AttendanceController@downloadExcel');
     
 
     //Past Year CA Question
@@ -904,4 +907,7 @@
 	Route::get('/Reviewer/PastYearTP/{id}','Dean\Dean\D_PastYearTPController@PastYearTP');
 	Route::get('/Reviewer/PastYearTP/{id}/course/{view_id}','Dean\Dean\D_PastYearTPController@PastYearTPDownload');
 	Route::post('/Reviewer/PastYearTP/searchFiles', 'Dean\Dean\D_PastYearTPController@searchPastYearTP');
+
+
+	Route::get('/report/course/List/','Dean\ReportController@ReportAction');
 ?>

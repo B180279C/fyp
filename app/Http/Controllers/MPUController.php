@@ -9,6 +9,8 @@ use App\Programme;
 use App\Subject_MPU;
 use App\Faculty;
 use App\Department;
+use App\Exports\MPUSubjectExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class MPUController extends Controller
@@ -250,5 +252,10 @@ class MPUController extends Controller
             $ext = explode(".", $subject->syllabus);
         }
         return Storage::disk('private')->download('/syllabus/'.$syllabus,$name.'.'.$ext[1]);
+    }
+
+    public function downloadExcel($level)
+    {
+        return Excel::download(new MPUSubjectExport($level), 'MPUSubject.xlsx');
     }
 }

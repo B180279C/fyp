@@ -316,7 +316,7 @@
                         </li>
                     </a>
                     </ul>
-                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Management</p>
+                    <!-- <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Management</p>
                     <ul class="sidebar-ul">
                     <a href="/hod/CourseList">
                         <li class="sidebar-li" <?php if(isset($option5)){ echo $option5;};?>>
@@ -324,7 +324,7 @@
                                 <span style="padding-left: 20px;font-weight: bold;">Courses</span>
                         </li>
                     </a>
-                    </ul>
+                    </ul> -->
                     <input type="hidden" name="user_id" id="user_id" value="{{Auth::user()->user_id}}">
                     <table id="sidebar-table" style="background-color: #e5e7e8; border:none;width: 100.1%;padding:0px;margin: 0px; position: absolute; bottom: 0px;">
                         <tr>

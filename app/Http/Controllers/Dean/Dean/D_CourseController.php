@@ -122,14 +122,10 @@ class D_CourseController extends Controller
                       ->where('actionfa_v_a.for_who','=','HOD')
                       ->get();
         }
-        if(count($course_reviewer)>0){
-          if(auth()->user()->position=="Dean"){
-        	  return view('dean.Reviewer.D_CourseIndex',compact('course_reviewer','action3'));	
-          }else{
-            return view('dean.Reviewer.D_CourseIndex',compact('course_reviewer','action','action2','action3'));  
-          }
+        if(auth()->user()->position=="Dean"){
+        	return view('dean.Reviewer.D_CourseIndex',compact('course_reviewer','action3'));	
         }else{
-        	return redirect()->route('home');
+          return view('dean.Reviewer.D_CourseIndex',compact('course_reviewer','action','action2','action3'));  
         }
 	}
 

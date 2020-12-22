@@ -14,6 +14,8 @@ use App\Programme;
 use App\Faculty;
 use App\Semester;
 use App\Department;
+use App\Exports\StudentExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -274,5 +276,10 @@ class StudentController extends Controller
 
         Storage::disk('private')->delete('/studentImage/'.$image);
         return $image;
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new StudentExport, 'Student.xlsx');
     }
 }

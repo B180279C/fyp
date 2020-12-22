@@ -6,6 +6,14 @@ $option6 = "id='selected-sidebar'";
 
 @section('content')
 <script type="text/javascript">
+    function w3_open() {
+        document.getElementById("action_sidebar").style.display = "block";
+        document.getElementById("button_open").style.display = "none";
+    }
+    function w3_close() {
+        document.getElementById("action_sidebar").style.display = "none";
+        document.getElementById("button_open").style.display = "block";
+    }
     var split = {};
     Dropzone.autoDiscover = false;
     $(document).ready(function(){  
@@ -222,11 +230,23 @@ $option6 = "id='selected-sidebar'";
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="col-md-12">
+    <div class="row" style="padding:10px 15px 0px 20px;">
+      <div class="col-md-12">
+      <p class="page_title" style="position: relative;left: 0px ;">Add MPU Subject Information</p>
+            <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 5px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
+                <div id="action_sidebar" class="w3-animate-right" style="display: none;margin-right: 0px;width: 200px;">
+                    <div style="text-align: right;padding:10px;">
+                        <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
+                    </div>
+                  <ul class="sidebar-action-ul">
+                      <a href="/subjectsMPU/excel/download/{{$level}}"><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>     
+                  </ul>
+                </div>
+      </div>
+    </div>
+    <div class="col-md-12" style="margin-top: -10px;">
         <div class="details" style="padding: 20px 5px 5px 5px;">
-            <p class="page_title" style="position: relative;left: 0px ;top: -5px;">Add MPU Subject Information</p>
-            <hr style="margin: 0px;">
-                    
+            <hr style="margin:0px">
                     @if(\Session::has('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                       <Strong>{{\Session::get('success')}}</Strong>

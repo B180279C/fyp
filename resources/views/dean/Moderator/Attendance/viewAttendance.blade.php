@@ -41,6 +41,14 @@ function getFullTime($s_hour,$e_hour){
 @section('content')
 
 <script type="text/javascript">
+	function w3_open() {
+      document.getElementById("action_sidebar").style.display = "block";
+      document.getElementById("button_open").style.display = "none";
+    }
+    function w3_close() {
+      document.getElementById("action_sidebar").style.display = "none";
+      document.getElementById("button_open").style.display = "block";
+    }
 $(document).ready(function(){
     $('.week').click(function(){
         var id = $(this).attr("id");
@@ -81,6 +89,16 @@ $(document).ready(function(){
     <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Attendance</p>
+             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
+            <div id="action_sidebar" class="w3-animate-right" style="display: none">
+                <div style="text-align: right;padding:10px;">
+                    <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+              <ul class="sidebar-action-ul">
+                  <a href="{{$character}}/Attendance/excel/download/{{$course[0]->course_id}}"><li class="sidebar-action-li"><i class="fa fa-file-excel-o" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
+              </ul>
+            </div>
+            <br>
              <hr style="margin-top:5px;margin-bottom: 0px;padding: 0px;">
              <div class="row" style="border: 0px solid black;margin:10px 0px 0px 0px;padding:0px;">
              	<div class="col-12" style="padding: 0px 12px 0px 12px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i>

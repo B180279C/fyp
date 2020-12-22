@@ -7,6 +7,8 @@ use App\Department;
 use App\Faculty;
 use App\Programme;
 use Illuminate\Support\Facades\DB;
+use App\Exports\ProgrammeExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProgrammeController extends Controller
 {
@@ -129,5 +131,10 @@ class ProgrammeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new ProgrammeExport, 'Programme.xlsx');
     }
 }

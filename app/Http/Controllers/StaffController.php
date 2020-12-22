@@ -11,6 +11,8 @@ use App\Staff;
 use App\User;
 use App\Department;
 use App\Faculty;
+use App\Exports\StaffExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StaffController extends Controller
 {
@@ -304,5 +306,10 @@ class StaffController extends Controller
         $filename =  $request->get('filename');
         Storage::disk('private')->delete('/fake/staff_CV/'.$filename);
         return $filename;  
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new StaffExport, 'Staff.xlsx');
     }
 }

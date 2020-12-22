@@ -14,6 +14,8 @@ use App\Subject;
 use App\Course;
 use App\Timetable;
 use App\Attendance;
+use App\Exports\AttendanceExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
@@ -279,5 +281,10 @@ class AttendanceController extends Controller
                 }    
             }
         }
+    }
+
+    public function downloadExcel($id)
+    {
+        return Excel::download(new AttendanceExport($id), 'Attendance.xlsx');
     }
 }

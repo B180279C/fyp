@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use File;
 use App\Faculty;
+use App\Exports\FacultyExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FacultyController extends Controller
 {
@@ -109,5 +111,10 @@ class FacultyController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new FacultyExport, 'Faculty.xlsx');
     }
 }

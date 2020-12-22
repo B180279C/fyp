@@ -160,7 +160,7 @@ class HomeController extends Controller
                 }
             }
             }else{
-                $startDate = strtotime($course[0]->startDate);
+                $startDate = strtotime($last_semester->startDate);
                 $add_date = $startDate+(($i-1)*(86400*7));
                 $add_startDate = date('Y-m-d',$add_date);
                 foreach($timetable as $row){
@@ -234,7 +234,7 @@ class HomeController extends Controller
                 }
             }
             }else{
-                $startDate = strtotime($course[0]->startDate);
+                $startDate = strtotime($last_semester->startDate);
                 $add_date = $startDate+(($i-1)*(86400*7));
                 $add_startDate = date('Y-m-d',$add_date);
                 foreach($timetable as $row){
@@ -308,7 +308,7 @@ class HomeController extends Controller
                 }
             }
             }else{
-                $startDate = strtotime($course[0]->startDate);
+                $startDate = strtotime($last_semester->startDate);
                 $add_date = $startDate+(($i-1)*(86400*7));
                 $add_startDate = date('Y-m-d',$add_date);
                 foreach($timetable as $row){

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Semester;
+use App\Exports\SemesterExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SemesterController extends Controller
 {
@@ -106,5 +108,10 @@ class SemesterController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new SemesterExport, 'semester.xlsx');
     }
 }
