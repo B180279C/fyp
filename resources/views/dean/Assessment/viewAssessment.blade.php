@@ -338,7 +338,7 @@ function ModerationForm(actionCA_id){
                             echo '<input type="hidden" id="actionCA_id" value='.$actionCA_id.'>';
                             $tp_count = 0;
                         }else if($row_action->status=="Waiting For Rectification"){
-                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;margin-top:1px;" onclick="submitActionThird()">Submit to ( '.$verified_by[0]->position.' : '.$verified_by[0]->name.' ) for verify</button>';
+                            $status = '<span style="color:green;">Waiting For Lecturer to Rectify</span>&nbsp;&nbsp;&nbsp;<button class="btn btn-raised btn-primary" style="background-color: #3C5AFF;padding:1px 15px;margin-top:1px;" onclick="submitActionThird()">Submit to ( '.$verified_person_name->position.' : '.$verified_person_name->name.' ) for verify</button>';
                             $iconM = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                             $iconC = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
                             $iconW = '<i class="fa fa-check-circle" aria-hidden="true" style="color: green;"></i>';
@@ -361,7 +361,7 @@ function ModerationForm(actionCA_id){
                                 $person = "";
                             }else{
                                 $now = "Approved";
-                                $person = " By ( ".$verified_by[0]->position.' : '.$verified_by[0]->name." )";
+                                $person = " By ( ".$verified_person_name->position.' : '.$verified_person_name->name." )";
                             }
                             $moderation_done = "Yes";
                             $action_AORR = $row_action->AccOrRec;

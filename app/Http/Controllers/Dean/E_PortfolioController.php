@@ -280,7 +280,7 @@ class E_PortfolioController extends Controller
 
     	$course_table->addRow(1);
 	    $course_table->addCell(3000,$styleCell)->addText('Programme', null, $noSpaceAndLeft);
-    	$course_table->addCell(9000,$styleCell)->addText($course[0]->programme_name, null, $noSpaceAndLeft);
+    	$course_table->addCell(9000,$styleCell)->addText(htmlspecialchars($course[0]->programme_name), null, $noSpaceAndLeft);
 
     	$course_table->addRow(1);
 	    $course_table->addCell(3000,$styleCell)->addText('Subject Code', null, $noSpaceAndLeft);
@@ -735,7 +735,7 @@ class E_PortfolioController extends Controller
                 }
             }else{
                     $result .= '<div class="col-md-12">';
-                    $result .= '<p>Not Found</p>';
+                    $result .= '<p><center>No matching records found</center></p>';
                     $result .= '</div>';
             }
         }else{
@@ -1357,6 +1357,7 @@ class E_PortfolioController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('courses.semester','=',$semester_id)
                     ->where('courses.lecturer', '=', $staff_dean->id)
+                    ->where('course_id', '=', $id)
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')
                     ->get();

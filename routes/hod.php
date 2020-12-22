@@ -870,4 +870,25 @@ Route::get($character.'/Reviewer/PastYear/lectureNote/download/{id}','Dean\Dean\
 Route::get($character.'/Reviewer/PastYearTP/{id}','Dean\Dean\D_PastYearTPController@PastYearTP');
 Route::get($character.'/Reviewer/PastYearTP/{id}/course/{view_id}','Dean\Dean\D_PastYearTPController@PastYearTPDownload');
 Route::post($character.'/Reviewer/PastYearTP/searchFiles', 'Dean\Dean\D_PastYearTPController@searchPastYearTP');
+
+
+Route::get($character.'/report/course/List/','Dean\ReportController@ReportAction');
+Route::get($character.'/report/TP/course/List/','Dean\ReportController@TPReport');
+Route::get($character.'/report/TP/download/{id}','Dean\ReportTPController@DownloadTPReport');
+Route::get($character.'/report/TP/download/zipFiles/{id}/{download}','Dean\ReportTPController@ZipFilesDownloadTPReport');
+
+Route::get($character.'/report/assessment/','Dean\ReportController@AssessmentReport');
+Route::get($character.'/report/assessment/download/{id}','Dean\ReportAssessmentController@DownloadAssessmentReport');
+Route::get($character.'/report/assessment/download/zipFiles/{id}/{download}','Dean\ReportAssessmentController@ZipFilesDownloadAssessmentReport');
+
+Route::get($character.'/report/final_assessment/','Dean\ReportController@FinalAssessmentReport');
+Route::get($character.'/report/final_assessment/download/{id}','Dean\ReportFinalAssessmentController@DownloadFinalAssessmentReport');
+Route::get($character.'/report/final_assessment/download/zipFiles/{id}/{download}','Dean\ReportFinalAssessmentController@ZipFilesDownloadFinalAssessmentReport');
+
+Route::get($character.'/report/E_Portfolio/course/List/', [
+    'as' => 'E_Portfolio_List', 'uses' => 'Dean\ReportController@E_Portfolio_List']);
+   Route::get($character.'/E_Portfolio/list/{id}', [
+    'as' => 'viewListE_Portfolio', 'uses' => 'Dean\ReportController@viewListE_Portfolio']);
+Route::post($character.'/E_Portfolio/searchCourse/', 'Dean\E_PortfolioController@searchCourse');
+Route::get($character.'/E_Portfolio/download/zipFiles/{course_id}/{checked}','Dean\E_PortfolioController@downloadZipFiles');
 ?>

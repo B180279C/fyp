@@ -44,7 +44,8 @@ $(document).ready(function() {
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
             <a href="{{$character}}/home" class="first_page"> Home </a>/
-            <a href="{{$character}}/E_Portfolio/course/List/">E - Portfolio </a>/
+            <a href="{{$character}}/report/course/List/"> Report List </a>/
+            <a href="{{$character}}/report/E_Portfolio/course/List/">E - Portfolio </a>/
             <span class="now_page">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</span>/
             
         </p>

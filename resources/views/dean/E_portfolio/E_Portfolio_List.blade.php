@@ -22,6 +22,14 @@ $(document).on('click', '.download_button', function(){
 });
 
 $(document).ready(function(){
+    $('.group_checkbox').click(function(){
+      if($(this).prop("checked") == true){
+        $('.group_download').prop("checked", true);
+      }
+      else if($(this).prop("checked") == false){
+        $('.group_download').prop("checked", false);
+      }
+    });
     $(document).on('click', '#checkDownloadAction', function(){
       var checkedValue = ""; 
       var inputElements = document.getElementsByClassName('group_download');
@@ -155,7 +163,8 @@ $(function () {
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">E - Portfolio</p>
         <p class="pass_page">
-            <a href="/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/home" class="first_page"> Home </a>/
+            <a href="{{$character}}/report/course/List/"> Report List </a>/
             <span class="now_page">E - Portfolio</span>/
         </p>
         <hr class="separate_hr">
@@ -232,8 +241,13 @@ $(function () {
                     </div>
                 </div>
                 <div class="row" id="course" style="margin-top: -25px;">
-                  <div class="col-md-12">
-                    <p style="font-size: 18px;margin:0px 0px 0px 5px;">Newest Semester of Courses</p>
+                  <div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">
+                    <div class="checkbox_group_style align-self-center">
+                      <input type="checkbox" name="group_lecturer" id='group_lecturer' class="group_checkbox">
+                    </div>
+                    <p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">
+                      Newest Semester of Courses
+                    </p>
                   </div>
                   @foreach($course_reviewer as $row)
 	                  <div class="col-12 row align-self-center" id="course_list">
@@ -254,7 +268,7 @@ $(function () {
 	                        <i class="fa fa-download download_button" aria-hidden="true" id="download_button_{{$row->course_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>
 	                      </div>
 	                  </div>
-                      @endforeach
+                    @endforeach
                 </div>
             </div>
         </div>

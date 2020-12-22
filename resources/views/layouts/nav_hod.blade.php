@@ -306,8 +306,14 @@
                                 <span style="padding-left: 20px;font-weight: bold;">Head Of Department</span>
                             </li>
                         </a>
+                        <a href="/hod/report/course/List/">
+                            <li class="sidebar-li" <?php if(isset($option6)){ echo $option6;};?>>
+                                    <i class="fa fa-folder sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
+                                    <span style="padding-left: 20px;font-weight: bold;">Report</span>
+                            </li>
+                        </a>
                     </ul>
-                    <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Portfolio</p>
+                    <!-- <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Portfolio</p>
                     <ul class="sidebar-ul">
                     <a href="/hod/E_Portfolio/course/List/">
                         <li class="sidebar-li" <?php if(isset($option6)){ echo $option6;};?>>
@@ -315,7 +321,7 @@
                                 <span style="padding-left: 20px;font-weight: bold;">E - Portfoio</span>
                         </li>
                     </a>
-                    </ul>
+                    </ul> -->
                     <!-- <p style="padding:0px 0px 5px 10px;margin: 0px;color: #e5e7e8;">Management</p>
                     <ul class="sidebar-ul">
                     <a href="/hod/CourseList">

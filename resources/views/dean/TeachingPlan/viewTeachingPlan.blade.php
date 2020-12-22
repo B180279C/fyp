@@ -177,7 +177,7 @@ $option1 = "id='selected-sidebar'";
                         if($row_action->verified_date==Null){
                             $person = "( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                         }else{
-                            $person = "( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
+                            $person = "( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                         }
                         $status = '<span style="color:red;">Rejected</span> by '.$person;
                         $remarks_count = explode('///',$row_action->remarks);
@@ -219,7 +219,7 @@ $option1 = "id='selected-sidebar'";
                         $tp_count = 3;
                         $color = 'green';
                         $remarks = $row_action->remarks;
-                        $person = '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Verified By : <span style="font-weight:bold;">'.$verified_person_name->name." ( ".$verified_by->staff_id." )</span>".'</span></div>';
+                        $person = '<div class="col-12" style="padding: 8px 12px 0px 12px;"><span style="font-size: 17px;">Verified By : <span style="font-weight:bold;">'.$verified_person_name->name." ( ".$verified_person_name->staff_id." )</span>".'</span></div>';
                     }else if($row_action->status=="Rejected"){
                         $color = 'red';
                         $iconM = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
@@ -228,7 +228,7 @@ $option1 = "id='selected-sidebar'";
                         if($row_action->verified_date==Null){
                             $person = "( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                         }else{
-                            $person = "( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
+                            $person = "( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                             $now = "Approved";
                         }
                         $status = '<span style="color:red;">Rejected</span> by '.$person."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;margin-top:5px;' onclick='submitActionSecond()'>Submit Again to Moderator ( ".$verified_person_name->position." : ".$verified_person_name->name." )</button>";
