@@ -154,8 +154,17 @@ class AssessmentController extends Controller
                   ->where('course_id', '=', $id)
                   ->get();
 
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->where('sample_stored','=','own')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+
         if(count($course)>0){
-            return view('dean.Assessment.createQuestion',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework'));
+            return view('dean.Assessment.createQuestion',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework','sample_stored'));
         }else{
             return redirect()->back();
         }
@@ -940,6 +949,12 @@ class AssessmentController extends Controller
                     ->orderBy('assessments.assessment_name')
                     ->get();
 
+        $all_assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $action->course_id)
+                    ->orderBy('assessments.ass_id')
+                    ->get();
+
         $TP_Ass = DB::table('tp_assessment_method')
                   ->select('tp_assessment_method.*')
                   ->where('course_id', '=', $action->course_id)
@@ -1051,6 +1066,23 @@ class AssessmentController extends Controller
         // $section->addTextBreak(1);
         $title->addRow();
         $title->addCell(12000,array('bgColor' => 'cccccc'))->addText('Part B : ( CLO ) targeted in the Assessment Method',array('bold' => true),$noSpaceAndCenter);
+        $all_assessments_count = 0;
+        foreach($all_assessments as $row){
+            $get = false;
+            $AccOrRec_list = explode('///',$action->AccOrRec);
+            $array = array();
+            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+            }
+            if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                $all_assessments_count++;
+            }
+        }
 
         $textrun = $section->addTextRun();
         $textrun->addText("",null,$noSpaceAndCenter);
@@ -1062,21 +1094,52 @@ class AssessmentController extends Controller
         $table = $section->addTable('Assessment Method Table');
         $cellRowSpan = array('vMerge' => 'restart','valign' => 'center','bgColor' => 'cccccc');
         $cellRowContinue = array('vMerge' => 'continue','valign' => 'center','bgColor' => 'cccccc');
-        $cellColSpan = array('gridSpan' => count($assessments),'valign' => 'center','bgColor' => 'cccccc');
+        $cellColSpan = array('gridSpan' => $all_assessments_count,'valign' => 'center','bgColor' => 'cccccc');
         $table->addRow(1);
         $table->addCell(6000,$cellRowSpan)->addText('Course Learning Outcome covered',$fontStyle, $noSpaceAndCenter);
-        $table->addCell(6000,$cellColSpan)->addText("Continuous Assessment", $fontStyle, $noSpaceAndCenter);
+        $table->addCell(6000,$cellColSpan)->addText("Continuous Assessment<w:br/>*(New) is created after moderation*", $fontStyle, $noSpaceAndCenter);
 
         $table->addRow(1);
         $table->addCell(6000,$cellRowContinue);
-        foreach($assessments as $row){
-            $table->addCell((6000/count($assessments)),$styleThCell)->addText($row->assessment_name,$fontStyle, $noSpaceAndCenter);
+        foreach($all_assessments as $row){
+            $get = false;
+            $AccOrRec_list = explode('///',$action->AccOrRec);
+            $array = array();
+            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+            }
+            if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                $text = "";
+                if($row->status=="Remove"){
+                    $text = " (Removed)";
+                }
+                if($row->ass_id>max($array)){
+                    $text = " (New)";
+                }
+                $table->addCell((6000/$all_assessments_count),$styleThCell)->addText($row->assessment_name.$text,$fontStyle, $noSpaceAndCenter);
+            }
         }
         $num = 1;
         foreach($TP_Ass as $row_tp){
             $table->addRow(1);
             $table->addCell(6000,$styleCell)->addText('CLO '.$num." : ".$row_tp->CLO."<w:br/>( ".$row_tp->domain_level.' , '.$row_tp->PO." ) ",null, $noSpaceAndLeft);
-            foreach($assessments as $row){
+            foreach($all_assessments as $row){
+                $get = false;
+                $AccOrRec_list = explode('///',$action->AccOrRec);
+                $array = array();
+                for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                    $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+                }
                 $check = false;
                 $CLO = $row->CLO;
                 $CLO_sel = explode('///',$CLO);
@@ -1086,10 +1149,12 @@ class AssessmentController extends Controller
                         $check = true;
                     }
                }
-               if($check==true){
-                $table->addCell((6000/count($assessments)),$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
-               }else{
-                $table->addCell((6000/count($assessments)),$styleCell)->addText('N', array('bold' => true,'Color' => 'red'), $noSpaceAndCenter);
+                if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                   if($check==true){
+                    $table->addCell((6000/count($assessments)),$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+                   }else{
+                    $table->addCell((6000/count($assessments)),$styleCell)->addText('N', array('bold' => true,'Color' => 'red'), $noSpaceAndCenter);
+                   }
                }
             }
             $num++;
@@ -1114,23 +1179,69 @@ class AssessmentController extends Controller
         $styleCell = array('valign' => 'center');
         $cellColSpan = array('gridSpan' => 2,'valign' => 'center','bgColor' => 'cccccc');
         $cellColSpan_NoColor = array('gridSpan' => 2,'valign' => 'center');
-        $cellColSpan_HOD = array('gridSpan' => count($assessments)*2,'valign' => 'center');
+        $cellColSpan_HOD = array('gridSpan' => $all_assessments_count*2,'valign' => 'center');
         $table->addRow(1);
-        $table->addCell(6000,$cellColSpan)->addText('Assessment',array('bold' => true), $noSpaceAndRight);
-        foreach($assessments as $row){
-            $table->addCell((6000/count($assessments)),$cellColSpan)->addText($row->assessment_name,$fontStyle, $noSpaceAndCenter);
+        $table->addCell(6000,$cellColSpan)->addText('Assessment<w:br/>*(New) is created after moderation*',array('bold' => true), $noSpaceAndRight);
+        foreach($all_assessments as $row){
+            $get = false;
+            $AccOrRec_list = explode('///',$action->AccOrRec);
+            $array = array();
+            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+            }
+            if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                $text = "";
+                if($row->status=="Remove"){
+                    $text = " (Removed)";
+                }
+                if($row->ass_id>max($array)){
+                    $text = " (New)";
+                }
+                $table->addCell((6000/$all_assessments_count),$cellColSpan)->addText($row->assessment_name.$text,$fontStyle, $noSpaceAndCenter);
+            }
         }
         $table->addRow(1);
         $table->addCell(6000,$cellColSpan)->addText('% of Coursework',array('bold' => true), $noSpaceAndRight);
-        foreach($assessments as $row){
-            $table->addCell((6000/count($assessments)),$cellColSpan)->addText($row->coursework."%",$fontStyle, $noSpaceAndCenter);
+        foreach($all_assessments as $row){
+            $get = false;
+            $AccOrRec_list = explode('///',$action->AccOrRec);
+            $array = array();
+            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+            }
+            if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                $table->addCell((6000/$all_assessments_count),$cellColSpan)->addText($row->coursework."%",$fontStyle, $noSpaceAndCenter);
+            }
         }
         $table->addRow(1);
         $table->addCell(500,$styleCell)->addText('',array('bold' => true), $noSpaceAndRight);
         $table->addCell(5500,$styleCell)->addText('A = Accepted &amp; R = Rectification',array('bold' => true), $noSpaceAndRight);
-        foreach($assessments as $row){
-            $table->addCell((6000/(count($assessments))/2),$styleCell)->addText('A',$fontStyle, $noSpaceAndCenter);
-            $table->addCell((6000/(count($assessments))/2),$styleCell)->addText('R',$fontStyle, $noSpaceAndCenter);
+        foreach($all_assessments as $row){
+            $get = false;
+            $AccOrRec_list = explode('///',$action->AccOrRec);
+            $array = array();
+            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+            }
+            if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                $table->addCell((6000/($all_assessments_count)/2),$styleCell)->addText('A',$fontStyle, $noSpaceAndCenter);
+                $table->addCell((6000/($all_assessments_count)/2),$styleCell)->addText('R',$fontStyle, $noSpaceAndCenter);
+            }
         }
 
         $num = 1;
@@ -1138,13 +1249,19 @@ class AssessmentController extends Controller
             $table->addRow(1);
             $table->addCell(500,$styleCell)->addText($num,array('bold' => true), $noSpaceAndCenter);
             $table->addCell(5500,$styleCell)->addText('CLO '.$num." : ".$row_tp->CLO."<w:br/>( ".$row_tp->domain_level.' , '.$row_tp->PO." ) ",null, $noSpaceAndLeft);
-            foreach($assessments as $row){
+            foreach($all_assessments as $row){
                 $check = false;
+                $get = false;
                 $Acc = false;
                 $rec = false;
                 $AccOrRec_list = explode('///',$action->AccOrRec);
-                for($m = 0;$m<=(count($AccOrRec_list)-1);$m++){
+                for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
                   $AorR = explode('::',$AccOrRec_list[$m]);
+                  $action_ass_id = explode('_',$AorR[0]);
+                  if($action_ass_id[2]==$row->ass_id){
+                    $get = true;
+                  }
+                  array_push($array,$action_ass_id[2]);
                   if($AorR[0]=="CLO_".$num."_".$row->ass_id){
                     $check = true;
                     if($AorR[1]=="A"){
@@ -1154,25 +1271,40 @@ class AssessmentController extends Controller
                     }
                   }
                 }
-                if($check==true){
-                    if($Acc==true){
-                        $table->addCell((6000/(count($assessments))/2),$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
-                        $table->addCell((6000/(count($assessments))/2),$styleCell)->addText('', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+                if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                    if($check==true){
+                        if($Acc==true){
+                            $table->addCell((6000/($all_assessments_count)/2),$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+                            $table->addCell((6000/($all_assessments_count)/2),$styleCell)->addText('', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+                        }
+                        if($rec==true){
+                            $table->addCell((6000/($all_assessments_count)/2),$styleCell)->addText('', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+                            $table->addCell((6000/($all_assessments_count)/2),$styleCell)->addText('Y',array('bold' => true,'Color' => 'red'), $noSpaceAndCenter);
+                        }
+                    }else{
+                        $table->addCell((6000/($all_assessments_count)/2),$cellColSpan)->addText('',null, $noSpaceAndCenter);
                     }
-                    if($rec==true){
-                        $table->addCell((6000/(count($assessments))/2),$styleCell)->addText('', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
-                        $table->addCell((6000/(count($assessments))/2),$styleCell)->addText('Y',array('bold' => true,'Color' => 'red'), $noSpaceAndCenter);
-                    }
-                }else{
-                    $table->addCell((6000/(count($assessments))/2),$cellColSpan)->addText('',null, $noSpaceAndCenter);
                 }
             }
             $num++;
         }
         $table->addRow(1);
         $table->addCell(6000,$cellColSpan_NoColor)->addText('Signature of Internal Moderator',array('bold' => true), $noSpaceAndRight);
-        foreach($assessments as $row){
-            $table->addCell((6000/count($assessments)),$cellColSpan_NoColor)->addText('',$fontStyle, $noSpaceAndCenter);
+        foreach($all_assessments as $row){
+            $get = false;
+            $AccOrRec_list = explode('///',$action->AccOrRec);
+            $array = array();
+            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                $AorR = explode('::',$AccOrRec_list[$m]);
+                $action_ass_id = explode('_',$AorR[0]);
+                if($action_ass_id[2]==$row->ass_id){
+                $get = true;
+                }
+                array_push($array,$action_ass_id[2]);
+            }
+            if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+                $table->addCell((6000/$all_assessments_count),$cellColSpan_NoColor)->addText('',$fontStyle, $noSpaceAndCenter);
+            }
         }
         $table->addRow(1);
         $table->addCell(6000,$cellColSpan_NoColor)->addText('Verified of Head of Department',array('bold' => true), $noSpaceAndRight);
@@ -1187,9 +1319,8 @@ class AssessmentController extends Controller
         $title->addRow();
         $title->addCell(12000,array('bgColor' => 'cccccc'))->addText('Part D : Suggestion for improvement',array('bold' => true),$noSpaceAndCenter);
 
-        foreach($assessments as $row){
-            $textrun = $section->addTextRun();
-            $textrun->addText("",null,$noSpaceAndLeft);
+        foreach($all_assessments as $row){
+            $suggest_list = "";
             $full_suggest = explode('///NextAss///',$action->suggest);
             for($n = 0;$n<=(count($full_suggest)-1);$n++){
                 $getAssId = explode('<???>',$full_suggest[$n]);
@@ -1197,17 +1328,25 @@ class AssessmentController extends Controller
                     $suggest_list = $getAssId[1];
                 }
             }
-            $styleTable = array('borderSize' => 6, 'cellMargin' => 60);
-            $fontStyle = array('bold' => true);
-            $phpWord->addTableStyle($row->assessment_name.'table', $styleTable);
-            $table = $section->addTable($row->assessment_name.'table');
-            $styleCell = array('valign' => 'center');
-            $table->addRow(1);
-            $table->addCell(12000)->addText($row->assessment_name,array('bold' => true),$noSpaceAndLeft);
-            $table->addRow(1);
-            $suggest = $table->addCell(12000);
-            $html = str_replace("<br>","<br/>",$suggest_list);
-            \PhpOffice\PhpWord\Shared\Html::addHtml($suggest,'Suggestion(s): '.$html,false);
+            if($suggest_list!=""){
+                $textrun = $section->addTextRun();
+                $textrun->addText("",null,$noSpaceAndLeft);
+                $styleTable = array('borderSize' => 6, 'cellMargin' => 60);
+                $fontStyle = array('bold' => true);
+                $phpWord->addTableStyle($row->assessment_name.'table', $styleTable);
+                $table = $section->addTable($row->assessment_name.'table');
+                $styleCell = array('valign' => 'center');
+                $table->addRow(1);
+                $text = "";
+                if($row->status=="Remove"){
+                    $text = " (Removed)";
+                } 
+                $table->addCell(12000)->addText($row->assessment_name.$text,array('bold' => true),$noSpaceAndLeft);
+                $table->addRow(1);
+                $suggest = $table->addCell(12000);
+                $html = str_replace("<br>","<br/>",$suggest_list);
+                \PhpOffice\PhpWord\Shared\Html::addHtml($suggest,'Suggestion(s): '.$html,false);
+            }
         }
 
         $textrun = $section->addTextRun();
@@ -1257,5 +1396,96 @@ class AssessmentController extends Controller
         $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save($course[0]->subject_code." ".$course[0]->subject_name.'.docx');
         return response()->download(public_path($course[0]->subject_code." ".$course[0]->subject_name.'.docx'))->deleteFileAfterSend(true);
+    }
+
+
+    public function createPreviousAss($id,$question){
+
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+      $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+      if(count($TP_Ass)<=0){
+        return redirect()->back()->with('Failed',"The Teaching Plan(Assessment Method) are related with assessment list. So, Please fill in that first.");
+      }
+
+      if($course[0]->semester =='A'){
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','=','A')
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in short semester. Please write down the Assessment list for this course.";
+      }else{
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','!=',"A")
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in long semester. Please write down the Assessment list for this course.";
+      }
+
+      if(count($previous)>0){
+            $assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $previous[0]->course_id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+
+            if(count($assessments)>0){
+                $removeActive = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+
+                foreach($removeActive as $ra){
+                    $rm = Assessments::where('ass_id', '=', $ra->ass_id)->firstOrFail();
+                    $rm_list = AssessmentList::where('ass_id','=',$ra->ass_id)->update(['status' => 'Remove']);
+                    $rm->status  = "Remove";
+                    $rm->save();
+                }
+
+                foreach($assessments as $row){
+                    $assessment = new Assessments([
+                        'course_id'         =>  $id,
+                        'assessment'        =>  $question,
+                        'assessment_name'   =>  $row->assessment_name,
+                        'CLO'               =>  $row->CLO,
+                        'coursemark'        =>  $row->coursemark,
+                        'coursework'        =>  $row->coursework,
+                        'status'            =>  'Active',
+                    ]);
+                    $assessment->save();
+                }
+                return redirect()->back()->with('success','Assessment List Inserted Successfully');
+            }else{
+              return redirect()->back()->with('Failed',"Your last semester of Assessment List is empty.");
+            }
+        }else{
+            return redirect()->back()->with('Failed',$failed);
+        }
     }
 }

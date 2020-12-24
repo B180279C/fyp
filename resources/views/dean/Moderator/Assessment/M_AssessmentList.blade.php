@@ -469,6 +469,7 @@ $(document).ready(function(){
             @endif
             <hr style="margin: 5px 5px 0px 5px;background-color:black;">
             <p style="padding: 5px 5px 5px 12px;margin: 0px;font-size: 18px;">Assessment List & Method</p>
+            @if($moderation_done=="No")
             <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                   <thead>
@@ -508,30 +509,178 @@ $(document).ready(function(){
                       @endforeach
                   </thead>
                 </table>
+            </div>
+            @endif
+            @if($moderation_done=="Yes")
+            <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
+                *(New) is created after moderation*
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
+                  <thead>
+                      <tr style="background-color: #d9d9d9;">
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="50%" rowspan="2"><b>Course Learning Outcome Covered</b></th>
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" colspan="{{count($all_assessments)}}"><b>Continuous Assessment</b></th>
+                      </tr>
+                      <tr style="background-color: #d9d9d9;">
+                        @foreach($all_assessments as $row)
+                          <?php
+                            $get = false;
+                            $Acc = "";
+                            $rec = "";
+                            $AccOrRec_list = explode('///',$action_AORR);
+                            $array = array();
+                            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                              $AorR = explode('::',$AccOrRec_list[$m]);
+                              $action_ass_id = explode('_',$AorR[0]);
+                              if($action_ass_id[2]==$row->ass_id){
+                                $get = true;
+                              }
+                              array_push($array,$action_ass_id[2]);
+                            }
+                          ?>
+                          @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
+                            <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($all_assessments)}}%">
+                              @if($row->status=="Active")
+                              <a href='{{$character}}/Reviewer/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
+                              @endif
+                                {{$row->assessment_name}}
+                                @if($row->status=="Remove")
+                                  (Removed)
+                                @endif
+                                @if($row->ass_id>max($array))
+                                  (New)
+                                @endif
+                              </a>
+                          </th>
+                          @endif
+                        @endforeach
+                      </tr>
+                      <?php
+                      $num = 1;
+                      ?>
+                      @foreach($TP_Ass as $row_tp)
+                      <tr>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">CLO {{$num}} : {{$row_tp->CLO}} ( {{$row_tp->domain_level}} , {{$row_tp->PO}} )</td>
+                        @foreach($all_assessments as $row)
+                        <?php
+                          $get = false;
+                          $AccOrRec_list = explode('///',$action_AORR);
+                          $array = array();
+                          for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                            $AorR = explode('::',$AccOrRec_list[$m]);
+                            $action_ass_id = explode('_',$AorR[0]);
+                            if($action_ass_id[2]==$row->ass_id){
+                              $get = true;
+                            }
+                            array_push($array,$action_ass_id[2]);
+                          }
+                          $check = "<i class='fa fa-times' style='color:red'></i>";
+                          $CLO = $row->CLO;
+                          $CLO_sel = explode('///',$CLO);
+                          $CLO_List = explode(',',$CLO_sel[0]);
+                          for($i = 0;$i<=count($CLO_List)-1;$i++){
+                            if($CLO_List[$i]==("CLO".$num)){
+                              $check = "<i class='fa fa-check' style='color:green'></i>";
+                            }
+                          }
+                        ?>
+                          @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">{!!$check!!}</td>
+                          @endif
+                        @endforeach
+                      </tr>
+                      <?php
+                        $num++;
+                      ?>
+                      @endforeach
+                  </thead>
+                </table>
                 </div>
                 <hr style="margin: 5px 5px;background-color:black;">
-                @if($moderation_done=="Yes")
                 <p style="padding: 5px 5px 5px 12px;margin: 0px;font-size: 18px;">Accepted Or Rectification</p>
                 <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
+                  *(New) is created after moderation*
                   <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                     <thead>
                       <tr style="background-color: #d9d9d9;">
-                        <th style="text-align: right;color: black;" colspan="2"><b>Assessment</b></th>
-                        @foreach($assessments as $row)
-                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%" colspan="2"><a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
+                        <th style="text-align: right;color: black;" colspan="2" width="50%"><b>Assessment</b></th>
+                        @foreach($all_assessments as $row)
+                          <?php
+                            $get = false;
+                            $Acc = "";
+                            $rec = "";
+                            $AccOrRec_list = explode('///',$action_AORR);
+                            $array = array();
+                            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                              $AorR = explode('::',$AccOrRec_list[$m]);
+                              $action_ass_id = explode('_',$AorR[0]);
+                              if($action_ass_id[2]==$row->ass_id){
+                                $get = true;
+                              }
+                              array_push($array,$action_ass_id[2]);
+                            }
+                          ?>
+                          @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
+                            <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($all_assessments)}}%" colspan="2">
+                              @if($row->status=="Active")
+                              <a href='{{$character}}/Reviewer/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
+                              @endif
+                                {{$row->assessment_name}}
+                                @if($row->status=="Remove")
+                                  (Removed)
+                                @endif
+                                @if($row->ass_id>max($array))
+                                  (New)
+                                @endif
+                              </a>
+                            </th>
+                          @endif
                         @endforeach
                         <tr style="background-color: #d9d9d9;">
                           <th style="text-align: right;color: black;" colspan="2"><b>% of Coursework</b></th>
-                          @foreach($assessments as $row)
-                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%" colspan="2">{{$row->coursework}}%</th>
+                          @foreach($all_assessments as $row)
+                          <?php
+                            $get = false;
+                            $Acc = "";
+                            $rec = "";
+                            $AccOrRec_list = explode('///',$action_AORR);
+                            $array = array();
+                            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                              $AorR = explode('::',$AccOrRec_list[$m]);
+                              $action_ass_id = explode('_',$AorR[0]);
+                              if($action_ass_id[2]==$row->ass_id){
+                                $get = true;
+                              }
+                              array_push($array,$action_ass_id[2]);
+                            }
+                          ?>
+                          @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
+                            <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($all_assessments)}}%" colspan="2">{{$row->coursework}}%</th>
+                          @endif
                           @endforeach
                         </tr>
                         <tr>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"></td>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: right;"><b>A = Accepted & R = Rectification</b></td>
-                          @foreach($assessments as $row)
-                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><b>A</b></td>
-                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><b>R</b></td>
+                          @foreach($all_assessments as $row)
+                          <?php
+                            $get = false;
+                            $Acc = "";
+                            $rec = "";
+                            $AccOrRec_list = explode('///',$action_AORR);
+                            $array = array();
+                            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
+                              $AorR = explode('::',$AccOrRec_list[$m]);
+                              $action_ass_id = explode('_',$AorR[0]);
+                              if($action_ass_id[2]==$row->ass_id){
+                                $get = true;
+                              }
+                              array_push($array,$action_ass_id[2]);
+                            }
+                          ?>
+                          @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><b>A</b></td>
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><b>R</b></td>
+                          @endif
                           @endforeach
                         </tr>
                         <?php
@@ -539,16 +688,22 @@ $(document).ready(function(){
                         ?>
                         @foreach($TP_Ass as $row_tp)
                         <tr>
-                          <td ><b>{{$num}}</b></td>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;"><b>{{$num}}</b></td>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;">CLO {{$num}} : {{$row_tp->CLO}} ( {{$row_tp->domain_level}} , {{$row_tp->PO}} )</td>
-                          @foreach($assessments as $row)
+                          @foreach($all_assessments as $row)
                           <?php
                             $check = false;
+                            $get = false;
                             $Acc = "";
                             $rec = "";
                             $AccOrRec_list = explode('///',$action_AORR);
-                            for($m = 0;$m<=(count($AccOrRec_list)-1);$m++){
+                            for($m = 0;$m<(count($AccOrRec_list)-1);$m++){
                               $AorR = explode('::',$AccOrRec_list[$m]);
+                              $action_ass_id = explode('_',$AorR[0]);
+                              if($action_ass_id[2]==$row->ass_id){
+                                $get = true;
+                              }
+                              array_push($array,$action_ass_id[2]);
                               if($AorR[0]=="CLO_".$num."_".$row->ass_id){
                                 $check = true;
                                 if($AorR[1]=="A"){
@@ -559,12 +714,13 @@ $(document).ready(function(){
                               }
                             }
                           ?>
-                          @if($check == true)
-                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">{!!$Acc!!}</td>
-                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">{!!$rec!!}</td>
-                          @else
-                          <td colspan="2" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
-                          </td>
+                          @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
+                            @if($check == true)
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">{!!$Acc!!}</td>
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">{!!$rec!!}</td>
+                            @else
+                            <td colspan="2" style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;"></td>
+                            @endif
                           @endif
                           @endforeach
                         </tr>
@@ -583,8 +739,9 @@ $(document).ready(function(){
                     <?php 
                     $c = 1;
                     ?>
-                    @foreach($assessments as $row)
+                    @foreach($all_assessments as $row)
                     <?php
+                      $suggest_list = "";
                       $full_suggest = explode('///NextAss///',$suggest);
                       for($n = 0;$n<=(count($full_suggest)-1);$n++){
                         $getAssId = explode('<???>',$full_suggest[$n]);
@@ -593,17 +750,26 @@ $(document).ready(function(){
                         }
                       }
                     ?>
+                    @if($suggest_list!="")
                     <div class="col-12" style="margin-top: 10px;border:0px solid black">
-                           <a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;"> {{$row->assessment_name}} : </a>
-                    <div id="suggest_{{$c}}" class="editor">
-                      {!!$suggest_list!!}
+                        @if($row->status=="Active")
+                          <a href='{{$character}}/Reviewer/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;"> 
+                        @endif
+                            {{$row->assessment_name}}
+                            @if($row->status=="Remove")
+                                  (Removed)
+                            @endif : 
+                        </a>
+                      <div id="suggest_{{$c}}" class="editor">
+                        {!!$suggest_list!!}
+                      </div>
                     </div>
-                    </div>
+                    @endif
                     <?php
                     $c++
                     ?>
                     @endforeach
-                    <input type="hidden" id="count_assessemnt" value="{{count($assessments)}}">
+                    <input type="hidden" id="count_assessemnt" value="{{count($all_assessments)}}">
                 </div>
                 @endif
                 @if($button_verify=="Yes")

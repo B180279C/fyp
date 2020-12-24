@@ -47,6 +47,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
+                    ->orderByDesc('course_id')
                     ->orderByDesc('semester_name')
                     ->get();
 
@@ -76,6 +77,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.department_id','=',$department_id)
                     ->where('courses.status','=','Active')
+                    ->orderByDesc('course_id')
                     ->orderByDesc('semester_name')
                     ->get();
 
@@ -120,6 +122,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
+                    ->orderByDesc('course_id')
                     ->orderByDesc('semester_name')
                     ->get();
 
@@ -150,6 +153,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.department_id','=',$department_id)
                     ->where('courses.status','=','Active')
+                    ->orderByDesc('course_id')
                     ->orderByDesc('semester_name')
                     ->get();
 
@@ -193,6 +197,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
+                    ->orderByDesc('course_id')
                     ->orderByDesc('semester_name')
                     ->get();
 
@@ -222,6 +227,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.department_id','=',$department_id)
                     ->where('courses.status','=','Active')
+                    ->orderByDesc('course_id')
                     ->orderByDesc('semester_name')
                     ->get();
 
@@ -383,7 +389,4 @@ class ReportController extends Controller
 
         return view('dean.E_portfolio.E_Portfolio_View_List',compact('course','assessments','assessment_list','lecturer_result','ass_final','assessment_final','lecturer_fx_result','syllabus','action','ca_action','fa_action','lecture_note'));
     }
-
-
-
 }

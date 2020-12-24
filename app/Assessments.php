@@ -11,7 +11,7 @@ class Assessments extends Model
 	protected $primaryKey = 'ass_id';
 	
     protected $fillable = [
-        'course_id','assessment', 'assessment_name','CLO','coursemark','coursework','status'
+        'course_id','assessment', 'assessment_name','CLO','coursemark','coursework','sample_stored','status'
     ];
 }
 

@@ -118,6 +118,7 @@ Route::get($character.'/assessment/download/zipFiles/{ass_id}/{download}','Dean\
 Route::get($character.'/assessment/Action/Submit/{id}', 'Dean\AssessmentController@AssessmentSubmitAction');
 Route::post($character.'/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form');
 Route::get($character.'/Assessment/report/{actionCA_id}','Dean\AssessmentController@ModerationFormReport');
+Route::get($character.'/assessment/create/previous/{id}/{question}','Dean\AssessmentController@createPreviousAss');
 
 
     // Continuous Assessment Student Result
@@ -175,6 +176,7 @@ Route::get($character.'/FinalExamination/download/zipFiles/{fx_id}/{download}','
 Route::get($character.'/FinalExamination/Action/Submit/{id}','Dean\FinalExaminationController@FASubmitAction');
 Route::post($character.'/FinalExamination/Action/HOD/', 'Dean\FinalExaminationController@SubmitSelf_D_Form');
 Route::get($character.'/FinalExamination/report/{actionFA_id}','Dean\FinalExaminationController@ModerationFormReport');
+Route::get($character.'/FinalExamination/create/previous/{id}/','Dean\FinalExaminationController@createPreviousAss');
 
 // Final Examination Result
 Route::get($character.'/FinalResult/{id}', [

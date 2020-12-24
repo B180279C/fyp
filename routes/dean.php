@@ -331,6 +331,7 @@
     Route::get('/assessment/Action/Submit/{id}', 'Dean\AssessmentController@AssessmentSubmitAction');
 	Route::post('/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form');
 	Route::get('/Assessment/report/{actionCA_id}','Dean\AssessmentController@ModerationFormReport');
+	Route::get('/assessment/create/previous/{id}/{question}','Dean\AssessmentController@createPreviousAss');
 
     // Continuous Assessment Student Result
     Route::get('/AssessmentResult/{id}/question/{question}', [
@@ -389,6 +390,7 @@
 	Route::get('/FinalExamination/Action/Submit/{id}','Dean\FinalExaminationController@FASubmitAction');
 	Route::post('/FinalExamination/Action/HOD/', 'Dean\FinalExaminationController@SubmitSelf_D_Form');
 	Route::get('/FinalExamination/report/{actionFA_id}','Dean\FinalExaminationController@ModerationFormReport');
+	Route::get('/FinalExamination/create/previous/{id}/','Dean\FinalExaminationController@createPreviousAss');
 
 	// Final Examination Result
 	Route::get('/FinalResult/{id}', [

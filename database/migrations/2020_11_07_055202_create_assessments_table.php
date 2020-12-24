@@ -21,6 +21,7 @@ class CreateAssessmentsTable extends Migration
             $table->string('CLO');
             $table->string('coursemark');
             $table->string('coursework');
+            $table->string('sample_stored');
             $table->string('status');
             $table->timestamps();
         });

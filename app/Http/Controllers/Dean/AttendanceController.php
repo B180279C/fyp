@@ -257,11 +257,31 @@ class AttendanceController extends Controller
         if(count($attendance)===0){
             return redirect()->back()->with('error',"The attendance detail got error. Please scan again the QR code.");
         }else{
+            $code_active_time_inDate = date('Y-m-d',strtotime($attendance[0]->code_active_time));
             $code_active_time = date('Y-m-d H:i:s',strtotime($attendance[0]->code_active_time));
+            $num_date = strtotime($code_active_time_inDate);
             $num_time = strtotime($code_active_time);  
+            $selectedDate = strtotime(date('Y-m-d'));
             $selectedTime = strtotime(date('Y-m-d H:i:s'));
-            if($selectedTime>$num_time){
+            if($selectedDate>$num_date){
                 return view('dean.Attendance.StudentDie');
+            }else if($selectedTime>$num_time&&$selectedDate==$num_date){
+                $student_id = explode('@',$email);
+                if(auth()->attempt(array('email' => $email, 'password' => $password)))
+                {
+                    $students_status = $attendance[0]->students_status;
+                    $pos = strpos($students_status, $student_id[0], 0);
+                    $status = substr($students_status, ($pos+9),3);
+                    if($status=="Abs"){
+                        $students_status = substr_replace($students_status,'Lat',($pos+9),3);
+                        $update_attendance    = Attendance::where('attendance_id', '=', $attendance[0]->attendance_id)->firstOrFail();
+                        $update_attendance->students_status = $students_status;
+                        $update_attendance->save();
+                    }
+                    return view('dean.Attendance.StudentSuccess',compact('student_id'));
+                }else{
+                    return redirect()->back()->with('error',"Email-Address & Password Are Wrong.");
+                }
             }else{
                 $student_id = explode('@',$email);
                 if(auth()->attempt(array('email' => $email, 'password' => $password)))

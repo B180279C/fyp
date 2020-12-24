@@ -966,6 +966,12 @@ class FinalExaminationController extends Controller
                     ->orderBy('ass_final.assessment_name')
                     ->get();
 
+    $all_ass_final = DB::table('ass_final')
+                    ->select('ass_final.*')
+                    ->where('course_id', '=', $action->course_id)
+                    ->orderBy('ass_final.fx_id')
+                    ->get();
+
     $TP_Ass = DB::table('tp_assessment_method')
                   ->select('tp_assessment_method.*')
                   ->where('course_id', '=', $action->course_id)
@@ -1091,28 +1097,48 @@ class FinalExaminationController extends Controller
       $styleCell = array('valign' => 'center');
       $styleCellTH = array('valign' => 'center','bgColor' => 'cccccc');
       $table->addRow(1);
-      $table->addCell(3000,$styleCellTH)->addText('Question No.',$fontStyle, $noSpaceAndCenter);
+      $table->addCell(3000,$styleCellTH)->addText('Question No.<w:br/>*(New) is created after moderation*',$fontStyle, $noSpaceAndCenter);
       $table->addCell(4000,$styleCellTH)->addText("Topic(s) covered", $fontStyle, $noSpaceAndCenter);
       $table->addCell(6000,$styleCellTH)->addText('Course Learning Outcome (s) covered',$fontStyle, $noSpaceAndCenter);
       $table->addCell(3000,$styleCellTH)->addText("Bloom's Taxanomy Level*", $fontStyle, $noSpaceAndCenter);
 
-      foreach($ass_final as $row){
-        $table->addRow(1);
-        $table->addCell(3000,$styleCell)->addText($row->assessment_name,Null, $noSpaceAndCenter);
-        $table->addCell(3000,$styleCell)->addText($row->topic,Null, $noSpaceAndCenter);
-        $table->addCell(3000,$styleCell)->addText($row->CLO,Null, $noSpaceAndCenter);
-        $CLO_sel = explode(',',$row->CLO);
-        $domain_level = "";
-        for($i = 0; $i<=count($CLO_sel)-1;$i++){
-          $num = 1;
-          foreach($TP_Ass as $row_ass){
-            if(('CLO'.$num) == $CLO_sel[$i]){
-              $domain_level .= $row_ass->domain_level.',';
-            }
-            $num++;
+      foreach($all_ass_final as $row){
+        $get = false;
+        $array = array();
+        $full_suggest = explode('///NextAss///',$action->suggest);
+        for($n = 0;$n<=(count($full_suggest)-1);$n++){
+          $getFxId = explode('<???>',$full_suggest[$n]);
+          if($getFxId[0]==$row->fx_id){
+            $get = true;
           }
+          array_push($array,$getFxId[0]);
         }
-        $table->addCell(3000,$styleCell)->addText($domain_level,Null, $noSpaceAndCenter);
+        if((($row->fx_id>=max($array))&&($row->status!="Remove"))||($get == true)){
+          $table->addRow(1);
+          $text = "";
+          if($row->status=="Remove"){
+            $text = " (Removed)";
+          }
+          if($row->fx_id>max($array)){
+            $text = " (New)";
+          }
+
+          $table->addCell(3000,$styleCell)->addText($row->assessment_name.$text,Null, $noSpaceAndCenter);
+          $table->addCell(3000,$styleCell)->addText($row->topic,Null, $noSpaceAndCenter);
+          $table->addCell(3000,$styleCell)->addText($row->CLO,Null, $noSpaceAndCenter);
+          $CLO_sel = explode(',',$row->CLO);
+          $domain_level = "";
+          for($i = 0; $i<=count($CLO_sel)-1;$i++){
+            $num = 1;
+            foreach($TP_Ass as $row_ass){
+              if(('CLO'.$num) == $CLO_sel[$i]){
+                $domain_level .= $row_ass->domain_level.',';
+              }
+              $num++;
+            }
+          }
+          $table->addCell(3000,$styleCell)->addText($domain_level,Null, $noSpaceAndCenter);
+        }
       }
 
       $textrun = $section->addTextRun();
@@ -1333,7 +1359,9 @@ class FinalExaminationController extends Controller
       $title->addRow();
       $title->addCell(12000,array('bgColor' => 'cccccc'))->addText('Part D : Suggestion for improvement',array('bold' => true),$noSpaceAndCenter);
 
-      foreach($ass_final as $row){
+      foreach($all_ass_final as $row){
+        $suggest_list = array("");
+        $percentage = array("","","");
         $full_suggest = explode('///NextAss///',$action->suggest);
         for($n = 0;$n<=(count($full_suggest)-1);$n++){
             $getFxId = explode('<???>',$full_suggest[$n]);
@@ -1342,39 +1370,44 @@ class FinalExaminationController extends Controller
               $percentage = explode(',',$suggest_list[1]);
             }
         }
-        $textrun = $section->addTextRun();
-        $textrun->addText("",null,$noSpaceAndCenter);
-        $styleTable = array('borderSize' => 6, 'cellMargin' => 60);
-        $fontStyle = array('bold' => true);
-        $noSpaceAndLeft = array('spaceAfter' => 0,'align'=>'left');
-        $phpWord->addTableStyle('suggest Table', $styleTable);
-        $table = $section->addTable('suggest Table');
-        $styleCell = array('valign' => 'center');
-        $styleCellTH = array('valign' => 'center','bgColor' => 'cccccc','gridSpan' => 2);
-        $cellColSpan = array('gridSpan' => 2,'valign' => 'center');
+        if($suggest_list[0]!=""){
+          $textrun = $section->addTextRun();
+          $textrun->addText("",null,$noSpaceAndCenter);
+          $styleTable = array('borderSize' => 6, 'cellMargin' => 60);
+          $fontStyle = array('bold' => true);
+          $noSpaceAndLeft = array('spaceAfter' => 0,'align'=>'left');
+          $phpWord->addTableStyle('suggest Table', $styleTable);
+          $table = $section->addTable('suggest Table');
+          $styleCell = array('valign' => 'center');
+          $styleCellTH = array('valign' => 'center','bgColor' => 'cccccc','gridSpan' => 2);
+          $cellColSpan = array('gridSpan' => 2,'valign' => 'center');
+          $table->addRow(1);
+          $text = "";
+          if($row->status=="Remove"){
+            $text = " (Removed)";
+          }
+          $table->addCell(12000,$styleCellTH)->addText($row->assessment_name.$text,$fontStyle, $noSpaceAndLeft);
+          $table->addRow(1);
+          $suggest = $table->addCell(12000,$cellColSpan);
+          $html = str_replace("<br>","<br/>",$suggest_list[0]);
+          \PhpOffice\PhpWord\Shared\Html::addHtml($suggest,$html,false);
 
-        $table->addRow(1);
-        $table->addCell(12000,$styleCellTH)->addText($row->assessment_name,$fontStyle, $noSpaceAndLeft);
-        $table->addRow(1);
-        $suggest = $table->addCell(12000,$cellColSpan);
-        $html = str_replace("<br>","<br/>",$suggest_list[0]);
-        \PhpOffice\PhpWord\Shared\Html::addHtml($suggest,$html,false);
+          $table->addRow(1);
+          $table->addCell(9000,$styleCell)->addText('Percentage of work involving remembering and understanding %',Null, $noSpaceAndLeft);
+          $table->addCell(3000,$styleCell)->addText($percentage[0].'%',Null, $noSpaceAndRight);
 
-        $table->addRow(1);
-        $table->addCell(9000,$styleCell)->addText('Percentage of work involving remembering and understanding %',Null, $noSpaceAndLeft);
-        $table->addCell(3000,$styleCell)->addText($percentage[0].'%',Null, $noSpaceAndRight);
+          $table->addRow(1);
+          $table->addCell(9000,$styleCell)->addText('Percentage of work involving application &amp; analysis %',Null, $noSpaceAndLeft);
+          $table->addCell(3000,$styleCell)->addText($percentage[1].'%',Null, $noSpaceAndRight);
 
-        $table->addRow(1);
-        $table->addCell(9000,$styleCell)->addText('Percentage of work involving application &amp; analysis %',Null, $noSpaceAndLeft);
-        $table->addCell(3000,$styleCell)->addText($percentage[1].'%',Null, $noSpaceAndRight);
+          $table->addRow(1);
+          $table->addCell(9000,$styleCell)->addText('Percentage of work involving evaluation and creation %',Null, $noSpaceAndLeft);
+          $table->addCell(3000,$styleCell)->addText($percentage[2].'%',Null, $noSpaceAndRight);
 
-        $table->addRow(1);
-        $table->addCell(9000,$styleCell)->addText('Percentage of work involving evaluation and creation %',Null, $noSpaceAndLeft);
-        $table->addCell(3000,$styleCell)->addText($percentage[2].'%',Null, $noSpaceAndRight);
-
-        $table->addRow(1);
-        $table->addCell(9000,$styleCell)->addText('Total',Null, $noSpaceAndLeft);
-        $table->addCell(3000,$styleCell)->addText('100%',Null, $noSpaceAndRight);
+          $table->addRow(1);
+          $table->addCell(9000,$styleCell)->addText('Total',Null, $noSpaceAndLeft);
+          $table->addCell(3000,$styleCell)->addText('100%',Null, $noSpaceAndRight);
+        }
       }
 
       $section->addPageBreak();
@@ -1615,4 +1648,99 @@ class FinalExaminationController extends Controller
       $objWriter->save($course[0]->subject_code." ".$course[0]->subject_name.'.docx');
       return response()->download(public_path($course[0]->subject_code." ".$course[0]->subject_name.'.docx'))->deleteFileAfterSend(true);
   }
+
+  public function createPreviousAss($id){
+
+      $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+      $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+      $tp = DB::table('teaching_plan')
+                  ->join('plan_topics','teaching_plan.tp_id','=','plan_topics.tp_id')
+                  ->select('teaching_plan.*','plan_topics.*')
+                  ->where('teaching_plan.course_id', '=', $id)
+                  ->groupBy('plan_topics.lecture_topic')
+                  ->get();
+
+      if(count($TP_Ass)<=0||count($tp)<=0){
+        return redirect()->back()->with('Failed',"The Teaching Plan(Assessment Method and Weekly Plan) are related with final assessment list. So, Please fill in them first.");
+      }
+
+      if($course[0]->semester =='A'){
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','=','A')
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in short semester. Please write down the Final Assessment list for this course.";
+      }else{
+        $previous = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                 ->where('courses.course_id', '!=', $id)
+                 ->where('courses.status', '=', 'Active')
+                 ->where('semesters.semester','!=',"A")
+                 ->orderByDesc('semesters.semester_name')
+                 ->get();
+        $failed = "The course have not yet open in long semester. Please write down the Final Assessment list for this course.";
+      }
+
+      if(count($previous)>0){
+            $ass_final = DB::table('ass_final')
+                    ->select('ass_final.*')
+                    ->where('course_id', '=', $previous[0]->course_id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('ass_final.assessment_name')
+                    ->get();
+
+            if(count($ass_final)>0){
+                $removeActive = DB::table('ass_final')
+                    ->select('ass_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('ass_final.assessment_name')
+                    ->get();
+
+                foreach($removeActive as $ra){
+                    $rm = AssFinal::where('fx_id', '=', $ra->fx_id)->firstOrFail();
+                    $rm_list = AssessmentFinal::where('fx_id','=',$ra->fx_id)->update(['status' => 'Remove']);
+                    $rm->status  = "Remove";
+                    $rm->save();
+                }
+
+                foreach($ass_final as $row){
+                    $final = new AssFinal([
+                        'course_id'         =>  $id,
+                        'topic'             =>  $row->topic,
+                        'CLO'               =>  $row->CLO,
+                        'coursemark'        =>  $row->coursemark,
+                        'coursework'        =>  $row->coursework,
+                        'assessment_name'   =>  $row->assessment_name,
+                        'status'            =>  'Active',
+                    ]);
+                    $final->save();
+                }
+                return redirect()->back()->with('success','Final Assessment List Inserted Successfully');
+            }else{
+              return redirect()->back()->with('Failed',"Your last semester of Final Assessment List is empty.");
+            }
+        }else{
+            return redirect()->back()->with('Failed',$failed);
+        }
+    }
 }

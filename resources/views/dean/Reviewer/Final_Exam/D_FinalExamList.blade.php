@@ -409,7 +409,68 @@ $(document).ready(function(){
                 </h5>
                 <!-- <div class="col-2" style="text-align: right;padding:3px 35px 0px 35px;font-size: 17px;"></div> -->
             </div>
+            @if($moderation_done=="No")
+              <div style="overflow-x: auto;padding:3px 10px 5px 10px;display: none;" id="plan_detail_1">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
+                  <thead>
+                      <tr style="background-color: #d9d9d9;">
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="10%"><b>Question No.</b></th>
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="25%"><b>Topic(s)<br/>covered</b></th>
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Course Learning Outcome(s) covered</b></th>
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="25%"><b>Bloom's <br/>Taxanomy Level*</b></th>
+                      </tr>
+                      @foreach($ass_final as $row)
+                        <tr>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;"><a href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
+                          {{$row->topic}}
+                          </td>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
+                          {{$row->CLO}}
+                          </td>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
+                          <?php
+                          $CLO_sel = explode(',',$row->CLO);
+                          ?>
+                          @for($i = 0; $i<=count($CLO_sel)-1;$i++)
+                            <?php
+                              $num = 1;
+                            ?>
+                            @foreach($TP_Ass as $row_ass)
+                              @if(('CLO'.$num) == $CLO_sel[$i])
+                                {{$row_ass->domain_level}},
+                              @endif
+                              <?php
+                              $num++;
+                              ?>
+                            @endforeach
+                          @endfor
+                          </td>
+                        </tr>
+                      @endforeach
+                  </thead>
+                </table>
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
+                <?php
+                $num = 1;
+                ?>
+                @foreach($TP_Ass as $row_ass)
+                  <tr>
+                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #e6e6e6;text-align: center;vertical-align: middle;background-color: #d9d9d9;" width="10%"><b>CLO {{$num}}</b></td>  
+                  <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;vertical-align: middle;">
+                    {{$row_ass->CLO}} ( {{$row_ass->domain_level}} , {{$row_ass->PO}} )
+                  </td>
+                  </tr>
+                <?php
+              $num++;
+              ?>
+                @endforeach
+                </table>
+                </div>
+              @endif
+            @if($moderation_done=="Yes")
             <div style="overflow-x: auto;padding:3px 10px 5px 10px;display: none;" id="plan_detail_1">
+              *(New) is created after moderation*
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                   <thead>
                       <tr style="background-color: #d9d9d9;">
@@ -418,9 +479,34 @@ $(document).ready(function(){
                       	<th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Course Learning Outcome(s) covered</b></th>
                       	<th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="25%"><b>Bloom's <br/>Taxanomy Level*</b></th>
                       </tr>
-                      @foreach($ass_final as $row)
+                      @foreach($all_ass_final as $row)
+                      <?php
+                        $get = false;
+                        $array = array();
+                        $full_suggest = explode('///NextAss///',$suggest);
+                        for($n = 0;$n<=(count($full_suggest)-1);$n++){
+                          $getFxId = explode('<???>',$full_suggest[$n]);
+                          if($getFxId[0]==$row->fx_id){
+                            $get = true;
+                          }
+                          array_push($array,$getFxId[0]);
+                        }
+                      ?>
+                      @if((($row->fx_id>=max($array))&&($row->status!="Remove"))||($get == true))
                       	<tr>
-                      		<td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;"><a href='/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                      		<td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
+                            @if($row->status=="Active")
+                            <a href='{{$character}}/Reviewer/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
+                            @endif
+                              {{$row->assessment_name}}
+                              @if($row->status=="Remove")
+                                  (Removed)
+                              @endif
+                              @if($row->fx_id>max($array))
+                                  (New)
+                              @endif
+                            </a>
+                          </td>
                       		<td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
                       		{{$row->topic}}
                       		</td>
@@ -446,6 +532,7 @@ $(document).ready(function(){
                       		@endfor
                       		</td>
                       	</tr>
+                        @endif
                       @endforeach
                   </thead>
                 </table>
@@ -467,7 +554,7 @@ $(document).ready(function(){
                 </table>
                 </div>
                 <hr style="margin: 6px 5px 5px 5px;background-color:#d9d9d9;">
-                @if($moderation_done=="Yes")
+                
                 <?php
                 $degree = explode('///',$action_degree);
                 ?>
@@ -680,8 +767,10 @@ $(document).ready(function(){
                 <?php
                 $num = 1;
                 ?>
-                @foreach($ass_final as $row)
+                @foreach($all_ass_final as $row)
                 	<?php
+                      $suggest_list = array("");
+                      $percentage = array("","","");
                       $full_suggest = explode('///NextAss///',$suggest);
                       for($n = 0;$n<=(count($full_suggest)-1);$n++){
                         $getFxId = explode('<???>',$full_suggest[$n]);
@@ -691,10 +780,19 @@ $(document).ready(function(){
                         }
                       }
                     ?>
+                  @if($suggest_list[0]!="")
                 	<table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                 		<input type="hidden" name="fx_id_{{$num}}" value="{{$row->fx_id}}">
                 		<tr style="background-color: #d9d9d9;">
-                			<td colspan="2" class="td_table" style="text-align: left;"><a href='/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                			<td colspan="2" class="td_table" style="text-align: left;">
+                        @if($row->status=="Active")
+                          <a href='{{$character}}/Reviewer/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
+                        @endif
+                        {{$row->assessment_name}}
+                          @if($row->status=="Remove")
+                            (Removed)
+                          @endif
+                      </td>
                 		</tr>
                 		<tr>
                 			<td colspan="2" class="td_table" style="text-align: left;">
@@ -724,8 +822,9 @@ $(document).ready(function(){
                 	<?php
 	                $num++;
 	                ?>
+                  @endif
                 @endforeach
-                <input type="hidden" id="count_assessemnt" name="count_assessemnt" value="{{count($ass_final)}}">
+                <input type="hidden" id="count_assessemnt" name="count_assessemnt" value="{{count($all_ass_final)}}">
               	</div>
               	<hr style="margin:6px 5px 5px 5px;background-color:#d9d9d9;">
                 <div class="row">

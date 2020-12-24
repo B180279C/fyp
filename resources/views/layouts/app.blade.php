@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'University Content Management System') }}</title>
+    <title>UCMS</title>
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
