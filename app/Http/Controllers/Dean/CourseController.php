@@ -44,7 +44,60 @@ class CourseController extends Controller
                     ->where('courses.status','=','Active')
                     ->orderBy('programmes.programme_id')
                     ->get();
+
         return view('dean.CourseIndex',compact('course'));
+    }
+
+
+    public static function getAction($course_id)
+    {
+        $course_count  = 0;
+        $course_tp_action = DB::table('action_v_a')
+                  ->join('courses','courses.course_id','=','action_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('action_v_a.*','courses.*','subjects.*','staffs.*','users.*','action_v_a.status as action_status')
+                  ->where('courses.course_id','=',$course_id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('action_v_a.action_id')
+                  ->first();
+        if($course_tp_action!=""){
+            if($course_tp_action->action_status=="Rejected"){
+                $course_count++;
+            }
+        }
+        $course_CA_action = DB::table('actionca_v_a')
+                  ->join('courses','courses.course_id','=','actionca_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionca_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionca_v_a.status as action_status')
+                  ->where('courses.course_id','=',$course_id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('actionca_v_a.actionCA_id')
+                  ->first();
+        if($course_CA_action!=""){
+            if($course_CA_action->action_status=="Rejected"||$course_CA_action->action_status=="Waiting For Rectification"){
+                $course_count++;
+            }
+        }
+        $course_FA_action = DB::table('actionfa_v_a')
+                  ->join('courses','courses.course_id','=','actionfa_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionfa_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionfa_v_a.status as action_status')
+                  ->where('courses.course_id','=',$course_id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('actionfa_v_a.actionFA_id')
+                  ->first();
+        if($course_FA_action!=""){
+            if($course_FA_action->action_status=="Rejected"||$course_FA_action->action_status=="Waiting For Rectification"){
+                $course_count++;
+            }
+        }
+        return $course_count;
     }
 
     /**
@@ -946,13 +999,9 @@ class CourseController extends Controller
             $result .= '<div class="col-md-12">';
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Search Filter : '.$value.'</p>';
             $result .= '</div>';
-            $result .= '<p id="marking">
-                            <span style="padding:0px 10px;">Plan</span>
-                            <span style="padding:0px 10px;">Note</span>
-                            <span style="padding:0px 10px;">Assessment</span>
-                        </p>';
             if ($course->count()) {
                 foreach($course as $row){
+                    
                     $result .= '<a href="'.$character.'/course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                     $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                     $result .= '<div class="col-1">';
@@ -960,11 +1009,13 @@ class CourseController extends Controller
                     $result .= '</div>';
                     $result .= '<div class="col" id="course_name" style="padding-top: 2px;">';
                     $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name." ( ".$row->short_form_name.' ) </p>';
-                    $result .= '<p id="mark_data">
-                                  <i class="fa fa-check correct" aria-hidden="true"></i>
-                                  <i class="fa fa-check correct" aria-hidden="true"></i>
-                                  <i class="fa fa-times wrong" aria-hidden="true" style="width: 90px"></i>
-                              </p>';
+                    $count = $this->getAction($row->course_id);
+                    if($count>0){
+                        $result .= '<span class="notification_num">';
+                        $result .= '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                        $result .= '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                        $result .= '</span>';
+                    }
                     $result .= '</div></div></a>';
                 }
             }else{
@@ -987,13 +1038,9 @@ class CourseController extends Controller
                     ->get();
             $result .= '<div class="col-md-12">';
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Newest Semester of Courses</p>';
-            $result .= '<p id="marking">
-                            <span style="padding:0px 10px;">Plan</span>
-                            <span style="padding:0px 10px;">Note</span>
-                            <span style="padding:0px 10px;">Assessment</span>
-                        </p>';
             $result .= '</div>';
             foreach($course as $row){
+                $count = $this->getAction($row->course_id);
                 $result .= '<a href="'.$character.'/course/action/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
                 $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
                 $result .= '<div class="col-1">';
@@ -1001,11 +1048,12 @@ class CourseController extends Controller
                 $result .= '</div>';
                 $result .= '<div class="col" id="course_name" style="padding-top: 2px;">';
                 $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->subject_code." ".$row->subject_name." ( ".$row->short_form_name.' ) </p>';
-                $result .= '<p id="mark_data">
-                                <i class="fa fa-check correct" aria-hidden="true"></i>
-                                <i class="fa fa-check correct" aria-hidden="true"></i>
-                                <i class="fa fa-times wrong" aria-hidden="true" style="width: 90px"></i>
-                            </p>';
+                if($count>0){
+                    $result .= '<span class="notification_num">';
+                    $result .= '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                    $result .= '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                    $result .= '</span>';
+                }
                 $result .= '</div></div></a>';
             }
         }
@@ -1014,9 +1062,11 @@ class CourseController extends Controller
 
 
     public function courseAction($id){
+        
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
+
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -1024,13 +1074,11 @@ class CourseController extends Controller
                  ->where('lecturer', '=', $staff_dean->id)
                  ->where('course_id', '=', $id)
                  ->get();
+
         if(count($course)>0){
             return view('dean.CourseAction',compact('course','id'));
         }else{
             return redirect()->back();
         }
-    }
-
-
-    
+    }    
 }

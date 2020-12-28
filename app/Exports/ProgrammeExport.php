@@ -24,6 +24,7 @@ class ProgrammeExport implements FromView
                     ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
                     ->select('programmes.*', 'departments.department_name', 'faculty.faculty_name')
                     ->orderBy('faculty.faculty_id')
+                    ->where('programmes.status_programme','=','Active')
                     ->get();
         return view('exports.Programme', [
             'programmes' => $programmes

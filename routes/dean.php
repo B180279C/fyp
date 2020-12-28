@@ -9,6 +9,7 @@
 	     'middleware' => 'auth',
 	]);
 
+	Route::post('/notification/getNum', 'Dean\NotificationController@getNum');
 
 	Route::get('profile/', 'Dean\ProfileController@profile')->name('Profile');
 	Route::get('images/profile/{image_name}', [

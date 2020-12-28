@@ -28,6 +28,7 @@ class StaffController extends Controller
                     ->join('departments', 'staffs.department_id', '=', 'departments.department_id')
                     ->select('staffs.*', 'users.email', 'users.name','users.position', 'departments.department_name')
                     ->orderBy('staffs.id')
+                    ->where('staffs.status_staff','=','Active')
                     ->get();
 
         return view('admin.StaffIndex', ['staffs' => $staffs]);
@@ -311,5 +312,12 @@ class StaffController extends Controller
     public function downloadExcel()
     {
         return Excel::download(new StaffExport, 'Staff.xlsx');
+    }
+
+    public function removeActiveStaff($staff_id){
+        $staff = Staff::where('staff_id', '=', $staff_id)->firstOrFail();
+        $staff->status_staff  = "Remove";
+        $staff->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

@@ -17,6 +17,7 @@ class CreateDepartmentsTable extends Migration
             $table->id('department_id');
             $table->string('department_name');
             $table->string('faculty_id');
+            $table->string('status_department')->default('Active');
             $table->timestamps();
         });
     }

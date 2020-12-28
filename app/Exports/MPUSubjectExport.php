@@ -27,6 +27,7 @@ class MPUSubjectExport implements FromView
         $subjects = DB::table('subjects_mpu')
                     ->select('subjects_mpu.*')
                     ->where('subjects_mpu.level', '=', $this->level)
+                    ->where('subjects_mpu.status_subject','=','Active')
                     ->orderBy('subjects_mpu.subject_type')
                     ->get();
         return view('exports.MPUSubject', [

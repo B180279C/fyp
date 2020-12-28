@@ -5,6 +5,24 @@ $option4 = "id='selected-sidebar'";
 @extends('layouts.layout')
 
 @section('content')
+<style type="text/css">
+  @media only screen and (max-width: 800px) {
+    .notification_num{
+      float:right;
+      position:absolute;
+      top:50px;
+      right: 130px;
+    }
+  }
+  @media only screen and (min-width: 800px) {
+    .notification_num{
+      float:right;
+      position:absolute;
+      top:50px;
+      right: 80px;
+    }
+  }
+</style>
 <div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</p>
@@ -76,6 +94,15 @@ $option4 = "id='selected-sidebar'";
                         <a href="{{$character}}/Reviewer/teachingPlan/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/plan.png')}}" width="105px" height="90px" style="margin-top: 50px;"/>
+                            <?php
+                                $count = App\Http\Controllers\Dean\NotificationController::getTP_Num($id,'Reviewer');
+                                if($count>0){
+                                  echo '<span class="notification_num">';
+                                  echo '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                                  echo '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                                  echo '</span>';
+                                }
+                            ?>
                             <br>
                             <p style="color: #0d2f81;">Teaching Plan</p>
                             </center>
@@ -134,6 +161,15 @@ $option4 = "id='selected-sidebar'";
                         <a href="{{$character}}/Reviewer/Assessment/{{$id}}" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/assessment.png')}}" width="75px" height="70px" style="margin-top: 60px;"/>
+                            <?php
+                                $count = App\Http\Controllers\Dean\NotificationController::getCA_Num($id,'Reviewer');
+                                if($count>0){
+                                  echo '<span class="notification_num">';
+                                  echo '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                                  echo '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                                  echo '</span>';
+                                }
+                            ?>
                             <br>
                             <p style="color: #0d2f81;">Moderation Form <br/>( Coutinuous Assessment )</p>
                             </center>
@@ -143,6 +179,15 @@ $option4 = "id='selected-sidebar'";
                         <a href="{{$character}}/Reviewer/FinalExamination/{{$id}}/" style="border: 1px solid #cccccc;display: inline-block;height: 225px;width: 100%;border-radius: 10px;color: black;font-weight: bold;" id="download_link">
                             <center>
                             <img src="{{url('image/final.png')}}" width="70px" height="70px" style="margin-top: 60px;margin-left: 10px;"/>
+                            <?php
+                                $count = App\Http\Controllers\Dean\NotificationController::getFA_Num($id,'Reviewer');
+                                if($count>0){
+                                  echo '<span class="notification_num">';
+                                  echo '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                                  echo '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                                  echo '</span>';
+                                }
+                            ?>
                             <br>
                             <p style="color: #0d2f81;">Moderation Form <br/>( Final Assessment )</p>
                             </center>

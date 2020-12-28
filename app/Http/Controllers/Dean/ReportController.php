@@ -48,7 +48,7 @@ class ReportController extends Controller
                     ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
                     ->orderByDesc('course_id')
-                    ->orderByDesc('semester_name')
+                    ->orderByDesc('courses.semester')
                     ->get();
 
             $action = DB::table('action_v_a')
@@ -78,7 +78,7 @@ class ReportController extends Controller
                     ->where('departments.department_id','=',$department_id)
                     ->where('courses.status','=','Active')
                     ->orderByDesc('course_id')
-                    ->orderByDesc('semester_name')
+                    ->orderByDesc('courses.semester')
                     ->get();
 
             $action = DB::table('action_v_a')
@@ -123,7 +123,7 @@ class ReportController extends Controller
                     ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
                     ->orderByDesc('course_id')
-                    ->orderByDesc('semester_name')
+                    ->orderByDesc('courses.semester')
                     ->get();
 
             $action = DB::table('actionca_v_a')
@@ -154,7 +154,7 @@ class ReportController extends Controller
                     ->where('departments.department_id','=',$department_id)
                     ->where('courses.status','=','Active')
                     ->orderByDesc('course_id')
-                    ->orderByDesc('semester_name')
+                    ->orderByDesc('courses.semester')
                     ->get();
 
             $action = DB::table('actionca_v_a')
@@ -197,8 +197,7 @@ class ReportController extends Controller
                     ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
                     ->where('departments.faculty_id','=',$faculty_id)
                     ->where('courses.status','=','Active')
-                    ->orderByDesc('course_id')
-                    ->orderByDesc('semester_name')
+                    ->orderByDesc('courses.semester')
                     ->get();
 
             $action = DB::table('actionfa_v_a')
@@ -228,7 +227,7 @@ class ReportController extends Controller
                     ->where('departments.department_id','=',$department_id)
                     ->where('courses.status','=','Active')
                     ->orderByDesc('course_id')
-                    ->orderByDesc('semester_name')
+                    ->orderByDesc('courses.semester')
                     ->get();
 
             $action = DB::table('actionfa_v_a')

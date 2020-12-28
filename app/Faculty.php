@@ -11,6 +11,6 @@ class Faculty extends Model
 	protected $primaryKey = 'faculty_id';
 
     protected $fillable = [
-        'faculty_name'
+        'faculty_name','status_faculty'
     ]; 
 }

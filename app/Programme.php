@@ -11,6 +11,6 @@ class Programme extends Model
 	protected $primaryKey = 'programme_id';
 	
     protected $fillable = [
-        'programme_name','short_form_name', 'department_id','level'
+        'programme_name','short_form_name', 'department_id','level','status_programme'
     ];
 }

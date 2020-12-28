@@ -24,6 +24,7 @@ class StudentExport implements FromView
                     ->join('programmes','students.programme_id', '=', 'programmes.programme_id')
                     ->join('semesters','students.semester', '=', 'semesters.semester_id')
                     ->select('students.*', 'users.email', 'users.name', 'programmes.programme_name','programmes.short_form_name','semesters.*')
+                    ->where('students.status_stu','=','Active')
                     ->get();
         return view('exports.Student', [
             'students' => $students

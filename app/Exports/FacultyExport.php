@@ -18,7 +18,7 @@ class FacultyExport implements FromView
 
     public function view() : View
     {
-        $facultys = Faculty::all()->toArray();
+        $facultys = Faculty::where('status_faculty','=','Active')->get();
         return view('exports.Faculty', [
             'facultys' => $facultys
         ]);

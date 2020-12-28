@@ -129,6 +129,75 @@ class D_CourseController extends Controller
         }
 	}
 
+  public static function getAction($course_id)
+  {
+      $course_count  = 0;
+      if(auth()->user()->position=="Dean"){
+        $course_FA_action = DB::table('actionfa_v_a')
+                      ->join('courses','courses.course_id','=','actionfa_v_a.course_id')
+                      ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                      ->join('staffs', 'staffs.id','=','courses.lecturer')
+                      ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                      ->select('actionfa_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionfa_v_a.status as action_status')
+                      ->where('courses.course_id','=',$course_id)
+                      ->where('courses.status','=','Active')
+                      ->orderByDesc('actionfa_v_a.actionFA_id')
+                      ->first();
+        if($course_FA_action!=""){
+          if($course_FA_action->action_status=="Waiting For Approve"){
+            $course_count++;
+          }
+        }
+      }else if(auth()->user()->position=="HoD"){
+        $course_tp_action = DB::table('action_v_a')
+                  ->join('courses','courses.course_id','=','action_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('action_v_a.*','courses.*','subjects.*','staffs.*','users.*','action_v_a.status as action_status')
+                  ->where('courses.course_id','=',$course_id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('action_v_a.action_id')
+                  ->first();
+        if($course_tp_action!=""){
+            if($course_tp_action->action_status=="Waiting For Approved"){
+                $course_count++;
+            }
+        }
+        $course_CA_action = DB::table('actionca_v_a')
+                  ->join('courses','courses.course_id','=','actionca_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionca_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionca_v_a.status as action_status')
+                  ->where('courses.course_id','=',$course_id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('actionca_v_a.actionCA_id')
+                  ->first();
+        if($course_CA_action!=""){
+            if($course_CA_action->action_status=="Waiting For Verified"){
+                $course_count++;
+            }
+        }
+        $course_FA_action = DB::table('actionfa_v_a')
+                      ->join('courses','courses.course_id','=','actionfa_v_a.course_id')
+                      ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                      ->join('staffs', 'staffs.id','=','courses.lecturer')
+                      ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                      ->select('actionfa_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionfa_v_a.status as action_status')
+                      ->where('courses.course_id','=',$course_id)
+                      ->where('courses.status','=','Active')
+                      ->orderByDesc('actionfa_v_a.actionFA_id')
+                      ->first();
+        if($course_FA_action!=""){
+          if($course_FA_action->action_status=="Waiting For Verified"){
+            $course_count++;
+          }
+        }
+      }
+      return $course_count;
+  }
+
 	public function searchCourse(Request $request)
     {
         $user_id     = auth()->user()->user_id;
@@ -187,13 +256,20 @@ class D_CourseController extends Controller
             $result .= '</div>';
             if($course->count()) {
                 foreach($course as $row){
+                    $count = $this->getAction($row->course_id);
                     $result .= '<a href="'.$character.'/Reviewer/course/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
-                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                    $result .= '<div class="col-1">';
+                    $result .= '<div class="col-md-12 row" style="padding:13px 10px;color:#0d2f81;">';
+                    $result .= '<div class="col-1 align-self-center">';
                     $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
                     $result .= '</div>';
-                    $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
+                    $result .= '<div class="col" id="course_name" style="padding-top: 2px;">';
+                    $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
+                    if($count>0){
+                      $result .= '<span class="notification_num" >';
+                      $result .= '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                      $result .= '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                      $result .= '</span>';
+                    }
                     $result .= '</div>';
                     $result .= '</div></a>';
                 }
@@ -236,13 +312,20 @@ class D_CourseController extends Controller
             $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;">Newest Semester of Courses</p>';
             $result .= '</div>';
             foreach($course_reviewer as $row){
+                  $count = $this->getAction($row->course_id);
                   $result .= '<a href="'.$character.'/Reviewer/course/'.$row->course_id.'" class="col-md-12 align-self-center" id="course_list">';
-                  $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                  $result .= '<div class="col-1">';
+                  $result .= '<div class="col-md-12 row" style="padding:13px 10px;color:#0d2f81;">';
+                  $result .= '<div class="col-1 align-self-center">';
                   $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
                   $result .= '</div>';
-                  $result .= '<div class="col" id="course_name">';
-                  $result .= '<p style="margin: 0px;"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
+                  $result .= '<div class="col" id="course_name" style="padding-top: 2px;">';
+                  $result .= '<p style="margin: 0px;display: inline-block;"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.')</p>';
+                  if($count>0){
+                    $result .= '<span class="notification_num" >';
+                    $result .= '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                    $result .= '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                    $result .= '</span>';
+                  }
                   $result .= '</div>';
                   $result .= '</div></a>';
             }

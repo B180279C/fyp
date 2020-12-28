@@ -195,25 +195,38 @@
                 document.getElementById("openOclose").value = "open";
             }
         });
+        $.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
 
-        // $.ajaxSetup({
-        //   headers: {
-        //     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //   }
-        // });
-        // var value = $('#user_id').val();
-        // $.ajax({
-        //     type:'POST',
-        //     url:'/deanDetails',
-        //     data:{value:value},
-        //     success:function(data){
-        //         if(data!="null"){
-        //             document.getElementById("myImage").src = "{{URL::asset('/staffImage/')}}"+"/"+data;
-        //         }else{
-        //             document.getElementById("myImage").src = "{{URL::asset('/image/user.png')}}";
-        //         }
-        //     }
-        // });
+        var value = $('#user_id').val();
+        $('#notification_num_moderator').hide();
+        $('#notification_num_dean').hide();
+        $('#notification_num_course').hide();
+        $.ajax({
+            type:'POST',
+            url:'{{$character}}/notification/getNum',
+            data:{value:value},
+            success:function(data){
+                var count = data.split('/');
+                if(count[0]!=0){
+                    $('#notification_num_moderator').show();
+                    $('.num_moderator').html('<b>'+count[0]+"</b>");
+                }
+
+                if(count[1]!=0){
+                    $('#notification_num_dean').show();
+                    $('.num_reviewer').html('<b>'+count[1]+"</b>");
+                }
+
+                if(count[2]!=0){
+                    $('#notification_num_course').show();
+                    $('.num_course').html('<b>'+count[2]+"</b>");
+                }
+            }
+        });
     });
     </script>
 </head>
@@ -284,8 +297,12 @@
                         </a>
                         <a href="/course_list">
                             <li class="sidebar-li" <?php if(isset($option1)){ echo $option1;};?>>
-                                    <i class="fa fa-book sidebar-icon" aria-hidden="true"></i>
-                                    <span style="padding-left: 20px;font-weight: bold;">My Courses</span>
+                                <i class="fa fa-book sidebar-icon" aria-hidden="true"></i>
+                                <span style="padding-left: 20px;font-weight: bold;">My Courses</span>
+                                <span id="notification_num_course">
+                                <img src="{{url('image/notification.png')}}" width="30px" height="28px" style="position: relative;top: -12px;left: 3px;">
+                                    <span style="position: relative;top: -13px;left:-32px;font-size: 14px;display: inline-block;width: 30px;text-align: center;" class="num_course"></span>
+                                </span>
                             </li>
                         </a>
                     </ul>
@@ -295,12 +312,20 @@
                             <li class="sidebar-li" <?php if(isset($option3)){ echo $option3;};?>>
                                 <i class="fa fa-info sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
                                 <span style="padding-left: 20px;font-weight: bold;">Moderator</span>
+                                <span id="notification_num_moderator">
+                                    <img src="{{url('image/notification.png')}}" width="30px" height="28px" style="position: relative;top: -12px;left: 3px;">
+                                    <span style="position: relative;top: -13px;left:-32px;font-size: 14px;display: inline-block;width: 30px;text-align: center;" class="num_moderator"><b></b></span>
+                                </span>
                             </li>
                         </a>
                         <a href="/Reviewer">
                             <li class="sidebar-li" <?php if(isset($option4)){ echo $option4;};?>>
                                 <i class="fa fa-info sidebar-icon" aria-hidden="true" style="padding-left: 11px;"></i>
                                 <span style="padding-left: 20px;font-weight: bold;">Dean</span>
+                                <span id="notification_num_dean">
+                                    <img src="{{url('image/notification.png')}}" width="30px" height="28px" style="position: relative;top: -12px;left: 3px;">
+                                    <span style="position: relative;top: -13px;left:-32px;font-size: 14px;display: inline-block;width: 30px;text-align: center;" class="num_reviewer"><b></b></span>
+                                </span>
                             </li>
                         </a>
                         <a href="/report/course/List/">

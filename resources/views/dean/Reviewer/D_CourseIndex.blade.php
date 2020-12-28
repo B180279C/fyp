@@ -9,6 +9,20 @@ $option4 = "id='selected-sidebar'";
 .view:hover{
     text-decoration:none;
 }
+@media only screen and (max-width: 800px) {
+  .notification_num{
+    float:right;
+    position:absolute;
+    top:10px;
+  }
+}
+@media only screen and (min-width: 800px) {
+  .notification_num{
+    float:right;
+    position:absolute;
+    top:1px;
+  }
+}
 </style>
 <script type="text/javascript">
     $(function () {
@@ -118,7 +132,7 @@ $option4 = "id='selected-sidebar'";
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 8px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
             <p class="page_title">Courses of Reviewing</p>
             @if(\Session::has('success'))
@@ -238,12 +252,21 @@ $option4 = "id='selected-sidebar'";
                   </div>
                   @foreach($course_reviewer as $row)
                         <a href="{{$character}}/Reviewer/course/{{$row->course_id}}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
+                          <div class="col-md-12 row" style="padding:13px 10px;color:#0d2f81;">
+                            <div class="col-1 align-self-center" style="padding-top: 0px;">
                               <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                             </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;"><b>{{$row->semester_name}}</b> : {{$row->short_form_name}} / {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</p>
+                            <div class="col" id="course_name" style="padding-top: 2px;">
+                              <p style="margin: 0px;display: inline-block;"><b>{{$row->semester_name}}</b> : {{$row->short_form_name}} / {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</p>
+                              <?php
+                                $count = App\Http\Controllers\Dean\Dean\D_CourseController::getAction($row->course_id);
+                                if($count>0){
+                                  echo '<span class="notification_num">';
+                                  echo '<img src="'.url('image/notification.png').'" width="25px" height="23px" style="position: relative;top: -12px;left: 3px;">';
+                                  echo '<span style="position: absolute;top:-8px;left:3px;font-size: 12px;display: inline-block;width: 25px;text-align: center;color:white;"><b>'.$count.'</b></span>';
+                                  echo '</span>';
+                                }
+                              ?>
                             </div>
                           </div>
                         </a>
@@ -252,58 +275,6 @@ $option4 = "id='selected-sidebar'";
             </div>
         </div>
     </div>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Upload Files</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div style="margin: 20px 20px 0px 20px;">
-        <p style="color:#0d2f81; "><b>Template:</b></p>
-        <p><b>  1. </b>Please download Template by clicking <a href='{{asset("/templete/multiple_courses.xlsx")}}' id="templete_link">Template</a>.</p>
-        <p><b>  2. </b>Delete the example data.</p>
-        <p><b>  3. </b>Fill in the Subject details and other details in file.</p>
-      </div>
-      <form method="post" action="{{route('dropzone.uploadCourses')}}" enctype="multipart/form-data"
-        class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
-        @csrf
-      </form>
-      <div id="showData" style="padding: 0px 20px 20px 20px;overflow-x:auto;">
-        <table id="dtBasicExample" style="box-shadow: 0px 2px 5px #aaaaaa;border:none;width:100%;">
-          <thead class="tablehead">
-            <tr style="height: 60px;text-align: left;">
-              <th style="padding-left: 10px;">No</th>
-              <th style="padding-left: 10px;">Subject</th>
-              <th style="padding-left: 10px;">Credit</th>
-              <th style="padding-left: 10px;">Lecturer</th>
-              <th style="padding-left: 10px;">Moderator</th>
-              <th style="padding-left: 10px;">Verified By</th>
-              <th style="padding-left: 10px;">Approved By</th>
-            </tr>
-          </thead>
-        </table>
-      </div>
-      <div id="errorData" style="padding: 0px 20px 20px 20px;">
-        <p><b>Something going wrong. </b>Please Check Again the excel file of data. <br/>(<b>Important : </b>All result cannot be empty, Lecturer and Moderator cannot be same.)</p>
-      </div>
-      <form method="post" action="{{action('Dean\CourseController@storeCourses')}}">
-        {{csrf_field()}}
-        <div id="writeInput"></div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
-        &nbsp;
-        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin-right: 13px;" value="Save Changes">
-        </div>
-      </form>
-    </div>
-  </div>
 </div>
 @endsection
 

@@ -21,6 +21,7 @@ class CreateGsTable extends Migration
             $table->string('subject_type');
             $table->text('syllabus')->nullable();
             $table->string('syllabus_name');
+            $table->string('status_subject')->default('Active');
             $table->timestamps();
         });
     }

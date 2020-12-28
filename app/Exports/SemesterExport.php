@@ -19,7 +19,7 @@ class SemesterExport implements FromView
     public function view() : View
     {
         return view('exports.Semester', [
-            'semester' => Semester::all()
+            'semester' => Semester::orderByDesc('semester_name')->where('status_sem','=','Active')->get()
         ]);
     }
 }

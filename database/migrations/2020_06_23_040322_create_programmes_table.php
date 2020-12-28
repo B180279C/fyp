@@ -19,6 +19,7 @@ class CreateProgrammesTable extends Migration
             $table->string('short_form_name');
             $table->string('department_id');
             $table->string('level');
+            $table->string('status_programme')->default('Active');
             $table->timestamps();
         });
     }

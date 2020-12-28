@@ -27,6 +27,23 @@ $option2 = "id='selected-sidebar'";
               oTable.search($(this).val()).draw();
         });
     });
+
+    $(document).on('click', '.edit_action', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        window.location = "/student/"+num[2];
+        return false;
+    });
+
+    $(document).on('click', '.remove_action', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        if(confirm('Are you sure want to remove it')){
+          window.location = "/student/remove/"+num[2];
+        }
+        return false;
+    });
+
     function w3_open() {
       document.getElementById("action_sidebar").style.display = "block";
       document.getElementById("button_open").style.display = "none";
@@ -48,6 +65,7 @@ $option2 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
             <!-- Page Content -->
+            <p class="page_title">Student</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
             <div id="action_sidebar" class="w3-animate-right" style="display: none">
                 <div style="text-align: right;padding:10px;">
@@ -80,17 +98,18 @@ $option2 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
-                <table id="dtBasicExample" style="border:none;width: 100%;">
-                    <thead style="background-color: #0d2f81!important; color: gold;">
-                        <tr style="height: 60px;text-align: left;">
-                            <th style="padding-left: 10px;">No. </th>
-                            <th style="padding-left: 10px;">Name</th>
-                            <th style="padding-left: 10px;">Student ID</th>
-                            <th style="padding-left: 10px;">Programme</th>
-                            <th style="padding-left: 10px;">Batch</th>
-                            <th style="padding-left: 10px;">Email</th>
-                            <th style="padding-left: 10px;">Action</th>
+            <hr style="margin-top: 0px;">
+            <div style="overflow-x:auto;">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
+                    <thead style="background-color: #0d2f81!important;">
+                        <tr style="background-color: #d9d9d9;">
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">No. </th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Name</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Student ID</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Programme</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Batch</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Email</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
                         </tr>
                     </thead>
                 <?php
@@ -99,13 +118,17 @@ $option2 = "id='selected-sidebar'";
                 <tbody>
                 @foreach($students as $row)
                 <tr style="height: 60px;">
-                    <td><?php echo $i++?></td>
-                    <td>{{$row->name}}</td>
-                    <td>{{$row->student_id}}</td>
-                    <td>{{$row->programme_name}}</td>
-                    <td>{{$row->short_form_name}}_{{$row->year}}_{{$row->semester}}{{$row->intake}}</td>
-                    <td>{{$row->email}}</td>
-                    <td><a href="{{action('StudentController@edit', $row->id)}}">Edit</a></td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><?php echo $i++?></td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;">{{$row->name}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;">{{$row->student_id}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;">{{$row->programme_name}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;">{{$row->short_form_name}}_{{$row->year}}_{{$row->semester}}{{$row->intake}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;">{{$row->email}}</td>
+                    <!-- <td><a href="{{action('StudentController@edit', $row->id)}}">Edit</a></td> -->
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                        <i class="fa fa-wrench edit_action" aria-hidden="true" id="edit_button_{{$row->id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                        <i class="fa fa-times remove_action" aria-hidden="true" id="remove_button_{{$row->id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                    </td>
                 </tr>
                 @endforeach
                 </tbody>

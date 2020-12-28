@@ -22,6 +22,7 @@ class CreateStaffsTable extends Migration
             $table->text('staff_image')->nullable();
             $table->text('lecturer_CV')->nullable();
             $table->text('staff_sign')->nullable();
+            $table->string('status_staff')->default('Active');
             $table->timestamps();
         });
     }

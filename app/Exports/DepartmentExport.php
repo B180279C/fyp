@@ -22,6 +22,7 @@ class DepartmentExport implements FromView
         $departments = DB::table('departments')
                     ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
                     ->select('departments.*', 'faculty.faculty_name')
+                    ->where('departments.status_department','=','Active')
                     ->get();
         return view('exports.Department', [
             'departments' => $departments

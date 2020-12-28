@@ -171,7 +171,7 @@ function w3_close() {
                         $iconC = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         $iconW = '<i class="fa fa-times-circle" aria-hidden="true" style="color: red;"></i>';
                         if($row_action->verified_date==Null){
-                            $person = " By ( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                         }else{
                             $person = "";
                         }
@@ -229,7 +229,7 @@ function w3_close() {
                         $checkbox_C = '<b style="color: red"> Rejected</b>';
                         $checkbox_W = '<b style="color: red"> Rejected</b>';
                         if($row_action->verified_date==Null){
-                            $person = " By ( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                         }else{
                             $person = " By ( ".$verified_person_name->position." : ".$verified_person_name->name." )";
                         }

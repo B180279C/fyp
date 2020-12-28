@@ -59,6 +59,14 @@ $option6 = "id='selected-sidebar'";
       }
   });
 
+  $(document).on('click', '#remove_button_type', function(){
+    var id = document.getElementById('gs_id_modal').value;
+    if(confirm('Are you sure want to remove it')){
+      window.location = "/subjectsMPU/remove/"+id;
+    }
+    return false;
+  });
+
   $(document).on('click', '.open-modal', function(){
     var gs_id = $(this).attr("id");
     $.ajax({
@@ -421,6 +429,8 @@ $option6 = "id='selected-sidebar'";
         <br>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-raised btn-danger" id="remove_button_type">Remove</button>
+        &nbsp;
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
         &nbsp;
         <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">
@@ -464,6 +474,7 @@ $option6 = "id='selected-sidebar'";
         <br>
       </div>
       <div class="modal-footer">
+
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
         &nbsp;
         <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">

@@ -19,6 +19,7 @@ class CreateSemestersTable extends Migration
             $table->string('year');
             $table->date('startDate');
             $table->date('endDate');
+            $table->string('status_sem')->default('Active');
             $table->timestamps();
         });
     }

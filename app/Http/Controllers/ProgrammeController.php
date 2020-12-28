@@ -24,6 +24,7 @@ class ProgrammeController extends Controller
                     ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
                     ->select('programmes.*', 'departments.department_name', 'faculty.faculty_name')
                     ->orderBy('faculty.faculty_id')
+                    ->where('programmes.status_programme','=','Active')
                     ->get();
         return view('admin.ProgrammeIndex', ['programmes' => $programmes]);
     }
@@ -136,5 +137,13 @@ class ProgrammeController extends Controller
     public function downloadExcel()
     {
         return Excel::download(new ProgrammeExport, 'Programme.xlsx');
+    }
+
+
+    public function removeActiveProgramme($id){
+        $programme = Programme::where('programme_id', '=', $id)->firstOrFail();
+        $programme->status_programme  = "Remove";
+        $programme->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

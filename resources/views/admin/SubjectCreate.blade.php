@@ -102,6 +102,15 @@ $option5 = "id='selected-sidebar'";
     $('#subjectTypeModal').modal('show');
   });
 
+
+  $(document).on('click', '#remove_button_type', function(){
+    var id = document.getElementById('subject_id_modal').value;
+    if(confirm('Are you sure want to remove it')){
+      window.location = "/subject/remove/"+id;
+    }
+    return false;
+  });
+
   $(document).on('click', '.dropzone', function(){
     var className = $(this).attr("class");
     split = className.split(" ");
@@ -448,6 +457,8 @@ $option5 = "id='selected-sidebar'";
         </div>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-raised btn-danger" id="remove_button_type">Remove</button>
+        &nbsp;
         <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
         &nbsp;
         <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">
@@ -484,7 +495,7 @@ $option5 = "id='selected-sidebar'";
                       <label for="subject_type" class="label">Subject Type</label>
                       <input type="text" name="subject_type" id="subject_type_modal" class="form-control" placeholder="Category of Subject" required/>
                       <input type="hidden" name="same" id="same">
-                      <input type="hidden" name="programme_id" value="<?php echo $id?>">
+                      <input type="hidden" name="programme_id" id='programme_id' value="<?php echo $id?>">
                 </div>
             </div>
           </div>

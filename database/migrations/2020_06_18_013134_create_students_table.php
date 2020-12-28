@@ -23,6 +23,7 @@ class CreateStudentsTable extends Migration
             $table->string('intake');
             $table->string('batch');
             $table->text('student_image')->nullable();
+            $table->string('status_stu')->default('Active');
             $table->timestamps();
         });
     }

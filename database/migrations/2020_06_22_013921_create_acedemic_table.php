@@ -16,6 +16,7 @@ class CreateAcedemicTable extends Migration
         Schema::create('faculty', function (Blueprint $table) {
             $table->id('faculty_id');
             $table->string('faculty_name');
+            $table->string('status_faculty')->default('Active');
             $table->timestamps();
         });
     }

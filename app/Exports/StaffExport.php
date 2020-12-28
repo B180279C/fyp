@@ -24,6 +24,7 @@ class StaffExport implements FromView
                     ->join('departments', 'staffs.department_id', '=', 'departments.department_id')
                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
                     ->select('staffs.*', 'users.email', 'users.name','users.position', 'departments.department_name','faculty.faculty_name')
+                    ->where('staffs.status_staff','=','Active')
                     ->orderBy('staffs.id')
                     ->get();
         return view('exports.Staff', [

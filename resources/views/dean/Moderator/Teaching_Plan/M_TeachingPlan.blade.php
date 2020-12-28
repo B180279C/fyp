@@ -169,7 +169,7 @@ function w3_close() {
                             $person = "";
                         }else{
                             $now = "Approved";
-                            $person = " By ( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                         }
                         $status = '<span style="color:red;">Rejected</span>'.$person;
                         $color = "red";
@@ -192,7 +192,7 @@ function w3_close() {
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconM.' Method of Assessment</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconC.' Continual Quality Improvement (CQI)</span></div>';
                     echo '<div class="col-12" style="padding: 0px 15px;"><span style="font-size: 15px;">'.$iconW.' Weekly Plan</span></div>';
-                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Verified of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
+                    echo '<div class="col-12" style="padding: 3px 12px 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> '.$now.' of Teaching Plan : <b style="color:'.$color.'">'.$tp_count.'/3</b></span></div>';
                     echo '<div class="col-12" style="padding: 3px 12px 5px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Remark : </span>'.$remarks.'</div>';
                     echo '</div>';
                 }
@@ -228,7 +228,7 @@ function w3_close() {
                             $person = "";
                         }else{
                             $now = "Approved";
-                            $person = " By ( ".$approved_by[0]->position." : ".$approved_by[0]->name." )";
+                            $person = " By ( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                         }
                         $status = '<span style="color:red;">Rejected</span>'.$person;
                         $remarks_count = explode('///',$row_action->remarks);

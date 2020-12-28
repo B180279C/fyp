@@ -28,6 +28,7 @@ class SubjectExport implements FromView
                     ->join('programmes', 'subjects.programme_id', '=', 'programmes.programme_id')
                     ->select('subjects.*', 'programmes.programme_name','programmes.short_form_name')
                     ->where('subjects.programme_id', '=', $this->id)
+                    ->where('subjects.status_subject','=','Active')
                     ->orderBy('subjects.subject_type')
                     ->get();
         return view('exports.Subject', [

@@ -261,13 +261,17 @@ i.sidebar-icon{
 .dataTables_paginate input {
   width: 30px;
   text-align: center;
+  font-size: 13px;
 }
 .paginate_button{
-  padding:10px;
-  margin: 0px 2px;
+  padding:5px 0px;
+  margin: 10px 2px 0px 2px;
+  text-align: center;
+  font-size: 12px;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button{
   display:inline-block;
+  width: 30px;
 }
 .paginate_button:hover{
     background-color: #0d2f81!important;

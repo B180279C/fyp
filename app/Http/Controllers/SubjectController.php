@@ -37,11 +37,13 @@ class SubjectController extends Controller
                     ->join('programmes', 'subjects.programme_id', '=', 'programmes.programme_id')
                     ->select('subjects.*', 'programmes.programme_name','programmes.short_form_name')
                     ->where('subjects.programme_id', '=', $id)
+                    ->where('subjects.status_subject','=','Active')
                     ->get();
         $group = DB::table('subjects')
                     ->select('subjects.*')
                     ->where('programme_id', '=', $id)
                     ->groupBy('subject_type')
+                    ->where('subjects.status_subject','=','Active')
                     ->get();
         return view('admin.SubjectCreate', compact('programme','subjects','group', 'id'));
     }
@@ -258,5 +260,12 @@ class SubjectController extends Controller
     public function downloadExcel($id)
     {
         return Excel::download(new SubjectExport($id), 'Subject.xlsx');
+    }
+
+    public function removeActiveSubject($id){
+        $subject = Subject::where('subject_id', '=', $id)->firstOrFail();
+        $subject->status_subject  = "Remove";
+        $subject->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

@@ -35,6 +35,11 @@ $option6 = "id='selected-sidebar'";
       document.getElementById("button_open").style.display = "block";
     }
 </script>
+<style type="text/css">
+    #show_image_link:hover{
+        text-decoration-line: none;
+    }
+</style>
 <div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">General Studies</p>
@@ -45,8 +50,8 @@ $option6 = "id='selected-sidebar'";
         <hr class="separate_hr">
     </div>
 <div class="row" style="padding: 10px 10px 10px 10px;">
-
         <div class="col-md-12">
+            <p class="page_title">General Studies</p>
             <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
                 <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                     <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
@@ -68,13 +73,14 @@ $option6 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
-                <table id="dtBasicExample" style="border:none;width: 100%;">
-                    <thead style="background-color: #0d2f81!important; color: gold;">
-                        <tr style="height: 60px;text-align: left;">
-                            <th style="padding-left: 10px;">No. </th>
-                            <th style="padding-left: 10px;">Level</th>
-                            <th style="padding-left: 10px;">Course</th>
+            <hr style="margin-top: 0px;">
+            <div style="overflow-x:auto;">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
+                    <thead style="background-color: #0d2f81!important;">
+                        <tr style="background-color: #d9d9d9;">
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">No. </th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Level</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Course</th>
                         </tr>
                     </thead>
                 <?php
@@ -83,9 +89,9 @@ $option6 = "id='selected-sidebar'";
                 <tbody>
                 @foreach($programmes as $row)
                     <tr style="height: 60px;">
-                        <td><?php echo $i++?></td>
-                        <td>{{$row->level}}</td>
-                        <td><a href="{{action('MPUController@create', $row->level)}}">MPU Subject List</a></td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><?php echo $i++?></td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->level}}</td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{action('MPUController@create', $row->level)}}" id="show_image_link">MPU Subject List</a></td>
                     </tr>
                 @endforeach
                 </tbody>

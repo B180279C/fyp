@@ -21,6 +21,7 @@ class DepartmentController extends Controller
         $departments = DB::table('departments')
                     ->join('faculty', 'departments.faculty_id', '=', 'faculty.faculty_id')
                     ->select('departments.*', 'faculty.faculty_name')
+                    ->where('departments.status_department','=','Active')
                     ->get();
         return view('admin.DepartmentIndex', ['departments' => $departments]);
     }
@@ -123,5 +124,12 @@ class DepartmentController extends Controller
     public function downloadExcel()
     {
         return Excel::download(new DepartmentExport, 'Department.xlsx');
+    }
+
+    public function removeActiveDepartment($id){
+        $department = Department::where('department_id', '=', $id)->firstOrFail();
+        $department->status_department  = "Remove";
+        $department->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

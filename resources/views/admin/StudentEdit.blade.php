@@ -108,7 +108,7 @@ $option2 = "id='selected-sidebar'";
                 @endif
                 </center>
             </div>
-            <hr style="background-color: black;">
+            <hr>
         </div>
         <div class="col-md-8" >
             <div id="box" class="details" style="padding-bottom: 0px;">

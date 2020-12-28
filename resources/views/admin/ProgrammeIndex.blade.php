@@ -12,7 +12,7 @@ $option5 = "id='selected-sidebar'";
             "bLengthChange" : false,
             "bInfo": false,
             pagingType: 'input',
-            pageLength: 5,
+            pageLength: 10,
             language: {
                 oPaginate: {
                    sNext: '<i class="fa fa-forward"></i>',
@@ -26,6 +26,22 @@ $option5 = "id='selected-sidebar'";
               oTable.search($(this).val()).draw();
         });
     });
+
+    $(document).on('click', '.edit_action', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        window.location = "/programme/"+num[2];
+        return false;
+    });
+
+    $(document).on('click', '.remove_action', function(){
+        var id = $(this).attr("id");
+        var num = id.split("_");
+        if(confirm('Are you sure want to remove it')){
+          window.location = "/programme/remove/"+num[2];
+        }
+        return false;
+    });
     function w3_open() {
       document.getElementById("action_sidebar").style.display = "block";
       document.getElementById("button_open").style.display = "none";
@@ -35,6 +51,11 @@ $option5 = "id='selected-sidebar'";
       document.getElementById("button_open").style.display = "block";
     }
 </script>
+<style type="text/css">
+    #show_image_link:hover{
+        text-decoration-line: none;
+    }
+</style>
 <div id="all">
     <div>
         <p style="margin: 0px;padding:10px 20px;font-size: 30px;">Programme Listing</p>
@@ -47,6 +68,7 @@ $option5 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
             <!-- Page Content -->
+            <p class="page_title">Programme</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
             <div id="action_sidebar" class="w3-animate-right" style="display: none">
                 <div style="text-align: right;padding:10px;">
@@ -79,17 +101,17 @@ $option5 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
-                <table id="dtBasicExample" style="border:none;width: 100%;">
-                    <thead style="background-color: #0d2f81!important; color: gold;">
-                        <tr style="height: 60px;text-align: left;">
-                            <th style="padding-left: 10px;">No. </th>
-                            <th style="padding-left: 10px;">Programme Name</th>
-                            <th style="padding-left: 10px;">Faculty</th>
-                            <th style="padding-left: 10px;">Level</th>
-                            <th style="padding-left: 10px;">Subject</th>
-                            <th style="padding-left: 10px;">MPU Subject</th>
-                            <th style="padding-left: 10px;">Action</th>
+            <hr style="margin-top: 0px;">
+            <div style="overflow-x:auto;">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
+                    <thead style="background-color: #0d2f81!important;">
+                        <tr style="background-color: #d9d9d9;">
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">No. </th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Programme Name</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Level</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Subject</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">MPU Subject</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
                         </tr>
                     </thead>
                     <?php
@@ -98,13 +120,16 @@ $option5 = "id='selected-sidebar'";
                     <tbody>
                     @foreach($programmes as $row)
                         <tr style="height: 60px;">
-                            <td><?php echo $i++?></td>
-                            <td>{{$row->programme_name}}, ({{$row->short_form_name}})</td>
-                            <td>{{$row->faculty_name}}</td>
-                            <td>{{$row->level}}</td>
-                            <td><a href="{{action('SubjectController@create', $row->programme_id)}}">Subject</a></td>
-                            <td><a href="{{action('MPUController@view', $row->level)}}">MPU Subject</a></td>
-                            <td><a href="{{action('ProgrammeController@edit', $row->programme_id)}}">Edit</a></td>
+                            <td  style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><?php echo $i++?></td>
+                            <td  style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: left;">{{$row->programme_name}}, ({{$row->short_form_name}})</td>
+                            <td  style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->level}}</td>
+                            <td  style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{action('SubjectController@create', $row->programme_id)}}" id="show_image_link">Subject</a></td>
+                            <td  style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{action('MPUController@view', $row->level)}}" id="show_image_link">MPU Subject</a></td>
+                            <!-- <td  style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"><a href="{{action('ProgrammeController@edit', $row->programme_id)}}">Edit</a></td> -->
+                            <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                                <i class="fa fa-wrench edit_action" aria-hidden="true" id="edit_button_{{$row->programme_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                                <i class="fa fa-times remove_action" aria-hidden="true" id="remove_button_{{$row->programme_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>

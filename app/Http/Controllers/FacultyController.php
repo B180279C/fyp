@@ -17,7 +17,7 @@ class FacultyController extends Controller
      */
     public function index()
     {
-        $facultys = Faculty::all()->toArray();
+        $facultys = Faculty::where('status_faculty','=','Active')->get();
         return view('admin.FacultyIndex', ['facultys' => $facultys]);
     }
 
@@ -117,4 +117,12 @@ class FacultyController extends Controller
     {
         return Excel::download(new FacultyExport, 'Faculty.xlsx');
     }
+
+    public function removeActiveFaculty($id){
+        $faculty = Faculty::where('faculty_id', '=', $id)->firstOrFail();
+        $faculty->status_faculty  = "Remove";
+        $faculty->save();
+        return redirect()->back()->with('success','Remove Successfully');
+    }
 }
+

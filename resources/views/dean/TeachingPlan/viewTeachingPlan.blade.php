@@ -231,7 +231,7 @@ $option1 = "id='selected-sidebar'";
                             $person = "( ".$approved_person_name->position." : ".$approved_person_name->name." )";
                             $now = "Approved";
                         }
-                        $status = '<span style="color:red;">Rejected</span> by '.$person."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;margin-top:5px;' onclick='submitActionSecond()'>Submit Again to Moderator ( ".$verified_person_name->position." : ".$verified_person_name->name." )</button>";
+                        $status = '<span style="color:red;">Rejected</span> by '.$person."&nbsp;&nbsp;&nbsp;<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:1px 15px;' onclick='submitActionSecond()'>Submit Again to Moderator ( ".$verified_person_name->position." : ".$verified_person_name->name." )</button>";
                         $remarks_count = explode('///',$row_action->remarks);
                         $remarks = $remarks_count[1];
                         $verified_count = explode('_',$remarks_count[0]);

@@ -8,6 +8,8 @@ Route::get($character.'/images/home_image/{user_id}', [
 	     'middleware' => 'auth',
 ]);
 
+Route::post($character.'/notification/getNum', 'Dean\NotificationController@getNum');
+
 Route::get($character.'/profile/', 'Dean\ProfileController@profile')->name('hod.Profile');
 
 Route::get($character.'/images/profile/{image_name}', [

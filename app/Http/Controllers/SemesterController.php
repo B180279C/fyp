@@ -17,7 +17,7 @@ class SemesterController extends Controller
      */
     public function index()
     {
-        $semesters = Semester::orderByDesc('semester_name')->get();
+        $semesters = Semester::orderByDesc('semester_name')->where('status_sem','=','Active')->get();
         return view('admin.SemesterIndex', ['semesters' => $semesters]);
     }
 
@@ -113,5 +113,12 @@ class SemesterController extends Controller
     public function downloadExcel()
     {
         return Excel::download(new SemesterExport, 'semester.xlsx');
+    }
+
+    public function removeActiveSemester($id){
+        $semester = Semester::where('semester_id', '=', $id)->firstOrFail();
+        $semester->status_sem  = "Remove";
+        $semester->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

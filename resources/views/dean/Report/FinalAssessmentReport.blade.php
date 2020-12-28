@@ -36,7 +36,7 @@ $option6 = "id='selected-sidebar'";
     });
     $(".clickable-row").click(function() {
       var id = $(this).attr("class").split(' ');
-      if(id[1]=="Pending"){
+      if(id[1]=="Pending"||id[1]=="Waiting For Moderation"){
         alert('The Course of Final Assessment is still pending.')
       }else{
         window.location = $(this).data("href");
@@ -269,7 +269,7 @@ $option6 = "id='selected-sidebar'";
                   ?>
                  <tr id="course_list" style="height: 50px;">
                   <td width="5%" align="center">
-                    @if($status!="Pending")
+                    @if($status!="Pending"&&$status!="Waiting For Moderation")
                       <input type="checkbox" value="{{$row->course_id}}" class="group_download">
                     @endif
                   </td>

@@ -31,6 +31,7 @@ class StudentController extends Controller
                     ->join('programmes','students.programme_id', '=', 'programmes.programme_id')
                     ->join('semesters','students.semester', '=', 'semesters.semester_id')
                     ->select('students.*', 'users.email', 'users.name', 'programmes.programme_name','programmes.short_form_name','semesters.*')
+                    ->where('students.status_stu','=','Active')
                     ->get();
         return view('admin.StudentIndex', ['students' => $students]);
     }
@@ -281,5 +282,12 @@ class StudentController extends Controller
     public function downloadExcel()
     {
         return Excel::download(new StudentExport, 'Student.xlsx');
+    }
+
+    public function removeActiveStudent($id){
+        $student = Student::where('id', '=', $id)->firstOrFail();
+        $student->status_stu  = "Remove";
+        $student->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

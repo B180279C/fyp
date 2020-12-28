@@ -25,6 +25,7 @@ class MPUController extends Controller
         $programmes = DB::table('programmes')
                     ->select('programmes.*')
                     ->groupBy('level')
+                    ->where('programmes.status_programme','=','Active')
                     ->get();
         return view('admin.MPUIndex', ['programmes' => $programmes]);
     }
@@ -39,12 +40,14 @@ class MPUController extends Controller
         $subjects = DB::table('subjects_mpu')
                     ->select('subjects_mpu.*')
                     ->where('subjects_mpu.level', '=', $level)
+                    ->where('subjects_mpu.status_subject','=','Active')
                     ->get();
         $group = DB::table('subjects_mpu')
                     ->select('subjects_mpu.*')
                     ->groupBy('subject_type')
                     ->orderBy('mpu_id')
                     ->where('subjects_mpu.level', '=', $level)
+                    ->where('subjects_mpu.status_subject','=','Active')
                     ->get();
         return view('admin.MPUCreate', compact('subjects','group', 'level'));
     }
@@ -257,5 +260,12 @@ class MPUController extends Controller
     public function downloadExcel($level)
     {
         return Excel::download(new MPUSubjectExport($level), 'MPUSubject.xlsx');
+    }
+
+    public function removeActiveSubject($id){
+        $subject = Subject_MPU::where('mpu_id', '=', $id)->firstOrFail();
+        $subject->status_subject  = "Remove";
+        $subject->save();
+        return redirect()->back()->with('success','Remove Successfully');
     }
 }

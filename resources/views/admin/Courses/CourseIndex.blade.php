@@ -230,7 +230,7 @@ $option8 = "id='selected-sidebar'";
     </div>
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
-            <p class="page_title">Courses of Moderating</p>
+            <p class="page_title">Courses</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
             <div id="action_sidebar" class="w3-animate-right" style="display: none">
                 <div style="text-align: right;padding:10px;">
@@ -277,13 +277,13 @@ $option8 = "id='selected-sidebar'";
             </div>
             @endif
             <hr style="margin-top: 0px;">
-            <div style="overflow-x:auto;box-shadow: 0px 2px 5px #aaaaaa;">
+            <div style="overflow-x:auto;">
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
-                    <thead style="background-color: #0d2f81!important; color: gold;">
+                    <thead style="background-color: #0d2f81!important;">
                         <tr style="background-color: #d9d9d9;">
-                            <th style="border-left:1px solid #e6e6e6;color:#0d2f81;border-bottom: 1px solid #d9d9d9;text-align: center;">No. </th>
-                            <th style="border-left:1px solid #e6e6e6;color:#0d2f81;border-bottom: 1px solid #d9d9d9;text-align: center;">Courses</th>
-                            <th style="border-left:1px solid #e6e6e6;color:#0d2f81;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">No. </th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Courses</th>
+                            <th style="border-left:1px solid #e6e6e6;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
                         </tr>
                     </thead>
                 <?php
