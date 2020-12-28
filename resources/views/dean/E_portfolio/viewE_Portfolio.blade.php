@@ -142,13 +142,21 @@ $(document).ready(function() {
               				</tr>
               				<tr>
               					<td class="td">h) Timetable</td>
-              					<td class="td"></td>
+              					<td class="td">
+                          @if(count($timetable)>0)
+                          <center><i class="fa fa-check correct"></i></center>
+                          @endif
+                        </td>
               					<td class="td"></td>
               					<td class="td"></td>
               				</tr>
               				<tr>
               					<td class="td" style="border-bottom: 1px solid grey;">i) Attendance</td>
-              					<td class="td" style="border-bottom: 1px solid grey;"></td>
+              					<td class="td" style="border-bottom: 1px solid grey;">
+                          @if(round($attendance)>=80)
+                          <center><i class="fa fa-check correct"></i></center>
+                          @endif     
+                        </td>
               					<td class="td" style="border-bottom: 1px solid grey;"></td>
               					<td class="td" style="border-bottom: 1px solid grey;"></td>
               				</tr>

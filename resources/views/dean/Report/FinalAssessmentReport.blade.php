@@ -16,32 +16,6 @@ $option6 = "id='selected-sidebar'";
   }
 
   $(document).ready(function(){
-    oTable = $('#dtBasic').DataTable(
-        {
-            "bLengthChange" : false,
-            "bInfo": false,
-            pagingType: 'input',
-            pageLength: 10,
-            language: {
-                oPaginate: {
-                   sNext: '<i class="fa fa-forward"></i>',
-                   sPrevious: '<i class="fa fa-backward"></i>',
-                   sFirst: '<i class="fa fa-step-backward"></i>',
-                   sLast: '<i class="fa fa-step-forward"></i>'
-                }
-            }
-    });
-    $('#input').keyup(function(){
-        oTable.search($(this).val()).draw();
-    });
-    $(".clickable-row").click(function() {
-      var id = $(this).attr("class").split(' ');
-      if(id[1]=="Pending"||id[1]=="Waiting For Moderation"){
-        alert('The Course of Final Assessment is still pending.')
-      }else{
-        window.location = $(this).data("href");
-      }     
-    });
     $('.group_checkbox').click(function(){
       if($(this).prop("checked") == true){
         $('.group_download').prop("checked", true);
@@ -67,109 +41,136 @@ $option6 = "id='selected-sidebar'";
           alert("Please select the document first.");
       }
   });
+
+$(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    if($('.search').val()!=""){
+        var value = $('.search').val();
+        $.ajax({
+            type:'POST',
+            url:'{{$character}}/report/FA/searchCourse/',
+            data:{value:value},
+            success:function(data){
+              document.getElementById("course").innerHTML = data;
+              $('.group_checkbox').click(function(){
+                if($(this).prop("checked") == true){
+                  $('.group_download').prop("checked", true);
+                }
+                else if($(this).prop("checked") == false){
+                  $('.group_download').prop("checked", false);
+                }
+              });
+            }
+        });
+    }
+    $(".search").keyup(function(){
+        var value = $('.search').val();
+        $.ajax({
+            type:'POST',
+            url:'{{$character}}/report/FA/searchCourse/',
+            data:{value:value},
+            success:function(data){
+              document.getElementById("course").innerHTML = data;
+              $('.group_checkbox').click(function(){
+                if($(this).prop("checked") == true){
+                  $('.group_download').prop("checked", true);
+                }
+                else if($(this).prop("checked") == false){
+                  $('.group_download').prop("checked", false);
+                }
+              });
+            }
+        });
+    });
+});
+
+function showMessage(){
+  alert("The course of Teaching Plan is still pending");
+}
 </script>
 <style type="text/css">
-.checkbox_group_style{
-  border:0px solid black;
-  padding: 1px 10px 0px 10px!important;
-  margin: 0px!important;
-}
-.checkbox_style{
-  border:0px solid black;
-  padding: 0px 5px!important;
-  margin: 0px!important;
-  display: inline;
-  width: 28px;
-}
-.group{
-  margin-top:3px;
-  padding-left: 15px;
-  border:0px solid black;
-  display: inline;
-  padding: 0px!important;
-  margin: 0px!important;
-}
-.question_link:hover{
-    background-color: #d9d9d9;
-    text-decoration: none;
-    color: #0d2f81;
-}
 #show_image_link:hover{
     text-decoration: none;
 }
-.plus:hover{
-    background-color: #f2f2f2;
-}
-@media only screen and (max-width: 600px) {
-  #assessment_name{
-    margin-left: 0px;
-    padding-top: 0px;
-  }
-  #assessment_word{
-    margin-left: 0px;
-    padding-top: 0px;
-  }
-  #course_name{
-    padding-top: 0px;
-  }
-  #course_list{
-    margin-left: 0px;
-    padding: 4px 15px;
-  }
-  #course_action_two{
-    padding: 10px 0px 0px 0px;
-    position: relative;
-    right: -24px;
-    text-align: right;
-  }
-  #file_name_two{
-    width: 185px;
-    margin: 0px;
-    padding:0px;
-  }
-  #file_name{
-    width: 240px;
-    margin: 0px;
-    padding:0px;
-  }
-  #lecturer_name{
-    display: none;
-  }
-}
 @media only screen and (min-width: 600px) {
-    #course_list{
+  #course_list{
       margin-left: 0px;
       padding: 4px 15px;
     }
-    #assessment_name{
-        margin-left:-53px;
-        padding-top:0px;
-    }
-    #assessment_word{
-        margin-left:-48px;
-        padding-top:0px;
-    }
     #course_name{
-        margin-left:-18px;
-        padding-top:0px;
+      padding:0px;
+      margin:0px 0px 0px -25px;
+      border:0px solid black;
+      position: relative;
+      top: 8px;
     }
     #course_action_two{
       text-align: right;
       margin-left: 5px;
-      padding: 8px 0px 0px 25px;
+      padding: 8px 0px 0px 0px;
     }
     #course_action{
-      text-align: right;
-      padding: 3px 0px 0px 24px;
-    }
-    #lecturer_name{
-      text-align: right;
-      position:relative;
-      top:7px;
+      text-align: center;
+      padding:8px 0px;
+      margin:0px;
       border:0px solid black;
-      padding: 0px;
-      display: block;
     }
+  .checkbox_style{
+    border:0px solid black;
+    padding: 0px 0px!important;
+    margin: 0px!important;
+    display: inline;
+    width: 28px;
+  }
+  #course_image{
+    padding: 0px 5px;
+    margin:0px;
+    margin-left: -20px;
+    text-align: left;
+    vertical-align: middle;
+    border:0px solid black;
+    position: relative;
+    top: -2px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  #course_name{
+      padding: 0px;
+      border:0px solid black;
+      position: relative;
+      left: 30px;
+  }
+  #course_list{
+      margin-left: 0px;
+      padding: 4px 15px
+  }
+  #file_name{
+      margin: 0px;
+      padding:0px;
+  }
+  #course_action{
+      border:0px solid black;
+      padding:0px 0px 0px 0px;
+      margin:0px;
+    }
+    .checkbox_style{
+    border:0px solid black;
+    padding: 0px 0px 0px 0px!important;
+    margin: 0px 0px 0px -10px!important;
+    display: inline;
+  }
+  #course_image{
+    padding: 0px 10px 0px 5px;
+    text-align: center;
+    vertical-align: middle;
+    margin-left: -10px;
+    position: relative;
+    top: -2px;
+  }
 }
 </style>
 <div id="all">
@@ -219,7 +220,8 @@ $option6 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -30px;">
+            <div class="details" style="padding: 0px 5px 0px 5px;">
+              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -30px;">
                     <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                         <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                             <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
@@ -233,59 +235,63 @@ $option6 = "id='selected-sidebar'";
                             <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
                         </div>
                     </div>
-                </div>
               </div>
-            </div>
-            <div class="col-12 row" style="padding: 0px 0px 5px 10px;margin: -25px 0px 0px 0px;">
-              <div class="checkbox_group_style align-self-center">
-                <input type="checkbox" name="group_lecturer" id='group_lecturer' class="group_checkbox">
-              </div>
-              <p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">
-                Newest Semester of Courses
-              </p>
-            </div>
-            <div style="overflow-x: auto;padding-bottom: 5px;">
-              <table id="dtBasic" style="width: 100%;border:0px solid black;padding: 0px;margin: 0px;">
-              <thead>
-                <tr style="display: none;"><th></th><th></th><th></th><th></th></tr>
-              </thead> 
-              <tbody>
+            <div class="row" id="course" style="margin-top: -25px;">
+                  <div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">
+                    <div class="checkbox_group_style align-self-center">
+                      <input type="checkbox" name="group_lecturer" id='group_lecturer' class="group_checkbox">
+                    </div>
+                    <p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">
+                      Newest Semester of Courses
+                    </p>
+                  </div>
                   @foreach($course as $row)
                   <?php
-                    $status = "Pending";
-                    $color = "grey";
-                    foreach($action as $action_row){
-                      if($action_row->course_id==$row->course_id){
-                        $status = $action_row->status_data;
-                        if($status == "Rejected"){
-                          $color = "red";
-                        }else if($status == "Approved"){
-                          $color = "green";
-                        }else{
-                          $color = "blue";
-                        }
-                      }
+                    $status = App\Http\Controllers\Dean\ReportController::getFAaction($row->course_id);
+                    if($status == "Rejected"){
+                      $color = "red";
+                    }else if($status == "Approved"){
+                      $color = "green";
+                    }else if($status == "Pending"){
+                      $color = "grey";
+                    }else{
+                      $color = "blue";
                     }
-                  ?>
-                 <tr id="course_list" style="height: 50px;">
-                  <td width="5%" align="center">
+                   ?>
+                 <div class="col-12 row align-self-center" id="course_list">
+                  <div class="col-10 row align-self-center" style="border:0px solid black;margin: 0px;">
+                    <div class="checkbox_style align-self-center">
                     @if($status!="Pending"&&$status!="Waiting For Moderation")
-                      <input type="checkbox" value="{{$row->course_id}}" class="group_download">
+                      <input type="checkbox" value="{{$row->course_id}}" class="group_q group_download">
+                    @else
+                      <input type="hidden" value="{{$row->course_id}}">
                     @endif
-                  </td>
-                  <td width="3%" class='clickable-row {{$status}}' data-href='{{$character}}/report/final_assessment/download/{{$row->course_id}}'>
-                    <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
-                  </td>
-                  <td class='clickable-row {{$status}}' data-href='{{$character}}/report/final_assessment/download/{{$row->course_id}}'>
-                    <b>{{$row->semester_name}}</b> : {{$row->short_form_name}} / {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )
-                  </td>
-                  <td class='clickable-row {{$status}}' data-href='{{$character}}/report/final_assessment/download/{{$row->course_id}}'>
-                    <p style="padding:0px;margin:0px;color:<?php echo $color;?>">{!!$status!!}</p>
-                  </td>
-                </tr>
+                    </div>
+                    @if($status!="Pending"&&$status!="Waiting For Moderation")
+                      <a href="{{$character}}/report/FA/view/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">
+                    @else
+                      <a id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;" onclick="showMessage()">
+                    @endif
+                      <div class="col-1 align-self-center" id="course_image">
+                        <img src="{{url('image/final.png')}}" width="25px" height="25px"/>
+                      </div>
+                      <div class="col-11 align-self-center" id="course_name">
+                        <p id="file_name"><b>{{$row->semester_name}}</b> : {{$row->short_form_name}} / {{$row->subject_code}} {{$row->subject_name}} ( {{$row->name}} )</p>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="col-2 align-self-center" id="course_action">
+                    <p style="padding:0px;margin:0px;color:<?php echo $color?>;">
+                     <?php
+                        echo App\Http\Controllers\Dean\ReportController::getFAaction($row->course_id);
+                      ?>
+                    </p>
+                  </div>
+                </div>
                 @endforeach
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection

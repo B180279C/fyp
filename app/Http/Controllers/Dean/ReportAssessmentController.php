@@ -19,6 +19,296 @@ use File;
 
 class ReportAssessmentController extends Controller
 {
+  public function viewCADetail($id)
+  {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
+
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
+
+        $assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+        
+
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+        $action = DB::table('actionCA_v_a')
+                  ->select('actionCA_v_a.*')
+                  ->where('course_id', '=', $id)
+                  ->orderBy('actionCA_id')
+                  ->get();
+
+        $action_big = DB::table('actionCA_v_a')
+                  ->select('actionCA_v_a.*')
+                  ->where('course_id', '=', $id)
+                  ->orderByDesc('actionCA_id')
+                  ->get();
+
+        $all_assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->orderBy('assessments.ass_id')
+                    ->get();
+
+        $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
+        $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
+
+        $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
+        $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
+
+        if(count($course)>0){
+            return view('dean.Report.viewAssessment',compact('course','assessments','all_assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big'));
+        }else{
+            return redirect()->back();
+        }
+  }
+  public function getCAaction($course_id)
+  {
+    $course_CA_action = DB::table('actionca_v_a')
+                  ->join('courses','courses.course_id','=','actionca_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionca_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionca_v_a.status as action_status')
+                  ->where('courses.course_id','=',$course_id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('actionca_v_a.actionCA_id')
+                  ->first();
+
+    $status = "Pending";
+    if($course_CA_action!=""){
+      $status = $course_CA_action->action_status;
+    }
+    return $status;
+  }
+
+  public function searchCourse(Request $request)
+  {
+    $user_id     = auth()->user()->user_id;
+    $staff_dean  = Staff::where('user_id', '=', $user_id)->firstOrFail();
+    $faculty_id  = $staff_dean->faculty_id;
+    $department_id = $staff_dean->department_id;
+    $faculty     = Faculty::where('faculty_id', '=', $faculty_id)->firstOrFail();
+    $last_semester = DB::table('semesters')->orderBy('semester_name', 'desc')->first();
+    $semester_id = $last_semester->semester_id;
+
+    $value = $request->get('value');
+    $result = "";
+        if($value!=""){
+            if(auth()->user()->position=="Dean"){
+                $character = "";
+                $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                    ->where('departments.faculty_id', '=', $faculty_id)
+                    ->where('courses.status','=','Active')
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('subjects.subject_code','LIKE','%'.$value.'%')
+                            ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
+                            ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
+                            ->orWhere('users.name','LIKE','%'.$value.'%');
+                    })
+                    ->orderByDesc('semester_name')
+                    ->orderByDesc('course_id')             
+                    ->get();
+            }else if(auth()->user()->position=="HoD"){
+                 $character = "/hod";
+                 $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                    ->where('departments.department_id', '=', $department_id)
+                    ->where('courses.status','=','Active')
+                    ->Where(function($query) use ($value) {
+                          $query->orWhere('subjects.subject_code','LIKE','%'.$value.'%')
+                            ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
+                            ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
+                            ->orWhere('users.name','LIKE','%'.$value.'%');
+                    })
+                    ->orderByDesc('semester_name')
+                    ->orderByDesc('course_id')             
+                    ->get();     
+            }
+            $result .= '<div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" id="group_lecturer" class="group_checkbox">';
+            $result .= '</div>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Search Filter : '.$value;
+            $result .= '</p>';
+            $result .= '</div>';
+            if($course->count()) {
+                foreach($course as $row){
+                    $status = $this->getCAaction($row->course_id);
+                    $color = "grey";
+                    if($status == "Rejected"){
+                      $color = "red";
+                    }else if($status == "Verified"){
+                      $color = "green";
+                    }else if($status == "Pending"){
+                      $color = "grey";
+                    }else{
+                      $color = "blue";
+                    }
+                    $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                    $result .= '<div class="col-10 row align-self-center" style="border:0px solid black;margin: 0px;">';
+                    $result .= '<div class="checkbox_style align-self-center">';
+                    if($status!="Pending"&&$status!="Waiting For Moderation"){
+                      $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_q group_download">';
+                    }else{
+                      $result .= '<input type="hidden" value="'.$row->course_id.'">';
+                    }
+                    $result .= '</div>';
+                    if($status!="Pending"&&$status!="Waiting For Moderation"){
+                      $result .= '<a href="'.$character.'/report/CA/view/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">';
+                    }else{
+                      $result .= '<a id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;" onclick="showMessage()">';
+                    }
+                    $result .= '<div class="col-1 align-self-center" id="course_image">';
+                    $result .= '<img src="'.url('image/assessment.png').'" width="25px" height="25px"/>';
+                    $result .= '</div>';
+                    $result .= '<div class="col-11 align-self-center" id="course_name">';
+                    $result .= '<p id="file_name"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.' )</p>';
+                    $result .= '</div>';
+                    $result .= '</a>';
+                    $result .= '</div>';
+                    $result .= '<div class="col-2 align-self-center" id="course_action">';
+                    $result .= '<p style="padding:0px;margin:0px;color:'.$color.'">'.$status.'</span>';
+                    $result .= '</div>';
+                    $result .= '</div>';
+                }
+            }else{
+                    $result .= '<div class="col-md-12">';
+                    $result .= '<p><center>No matching records found</center></p>';
+                    $result .= '</div>';
+            }
+        }else{
+            if(auth()->user()->position=="Dean"){
+                $character = "";
+                $course_reviewer = DB::table('courses')
+                        ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                        ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                        ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                        ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                        ->join('staffs', 'staffs.id','=','courses.lecturer')
+                        ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                        ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                        ->where('courses.semester','=',$semester_id)
+                        ->where('departments.faculty_id','=',$faculty_id)
+                        ->where('courses.status','=','Active')
+                        ->orderByDesc('course_id')
+                        ->get();
+            }else if(auth()->user()->position=="HoD"){
+                 $character = "/hod";
+                 $course_reviewer = DB::table('courses')
+                        ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                        ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                        ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                        ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                        ->join('staffs', 'staffs.id','=','courses.lecturer')
+                        ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                        ->select('courses.*','subjects.*','programmes.*','departments.*','semesters.*','staffs.*','users.*')
+                        ->where('courses.semester','=',$semester_id)
+                        ->where('departments.department_id','=',$department_id)
+                        ->where('courses.status','=','Active')
+                        ->orderByDesc('course_id')
+                        ->get();        
+            }
+            $result .= '<div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" id="group_lecturer" class="group_checkbox">';
+            $result .= '</div>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Newest Semester of Courses';
+            $result .= '</p>';
+            $result .= '</div>';
+            foreach($course_reviewer as $row){
+                $status = $this->getCAaction($row->course_id);
+                $color = "grey";
+                if($status == "Rejected"){
+                    $color = "red";
+                }else if($status == "Verified"){
+                    $color = "green";
+                }else if($status == "Pending"){
+                    $color = "grey";
+                }else{
+                    $color = "blue";
+                }
+                $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                $result .= '<div class="col-10 row align-self-center" style="border:0px solid black;margin: 0px;">';
+                $result .= '<div class="checkbox_style align-self-center">';
+                if($status!="Pending"&&$status!="Waiting For Moderation"){
+                  $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_q group_download">';
+                }else{
+                  $result .= '<input type="hidden" value="'.$row->course_id.'">';
+                }
+                $result .= '</div>';
+
+                if($status!="Pending"&&$status!="Waiting For Moderation"){
+                  $result .= '<a href="'.$character.'/report/CA/view/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;">';
+                }else{
+                  $result .= '<a id="show_image_link" class="col-11 row" style="margin:0px;color:#0d2f81;border:0px solid black;width: 100%;" onclick="showMessage()">';
+                }
+                $result .= '<div class="col-1 align-self-center" id="course_image">';
+                $result .= '<img src="'.url('image/assessment.png').'" width="25px" height="25px"/>';
+                $result .= '</div>';
+                $result .= '<div class="col-11 align-self-center" id="course_name">';
+                $result .= '<p id="file_name"><b>'.$row->semester_name."</b> : ".$row->short_form_name." / ".$row->subject_code." ".$row->subject_name." ( ".$row->name.' )</p>';
+                $result .= '</div>';
+                $result .= '</a>';
+                $result .= '</div>';
+                $result .= '<div class="col-2 align-self-center" id="course_action">';
+                $result .= '<p style="padding:0px;margin:0px;color:'.$color.'">'.$status.'</span>';
+                $result .= '</div>';
+                $result .= '</div>';
+            }
+        }
+    return $result;
+  }
 	public function DownloadAssessmentReport($id)
 	{
 		$user_id       = auth()->user()->user_id;

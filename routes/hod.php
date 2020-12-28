@@ -877,22 +877,29 @@ Route::post($character.'/Reviewer/PastYearTP/searchFiles', 'Dean\Dean\D_PastYear
 
 
 Route::get($character.'/report/course/List/','Dean\ReportController@ReportAction');
+
 Route::get($character.'/report/TP/course/List/','Dean\ReportController@TPReport');
+Route::post($character.'/report/TP/searchCourse/','Dean\ReportTPController@searchCourse');
+Route::get($character.'/report/TP/view/{id}','Dean\ReportTPController@viewTPDetail');
 Route::get($character.'/report/TP/download/{id}','Dean\ReportTPController@DownloadTPReport');
 Route::get($character.'/report/TP/download/zipFiles/{id}/{download}','Dean\ReportTPController@ZipFilesDownloadTPReport');
 
 Route::get($character.'/report/assessment/','Dean\ReportController@AssessmentReport');
+Route::post($character.'/report/CA/searchCourse/','Dean\ReportAssessmentController@searchCourse');
+Route::get($character.'/report/CA/view/{id}','Dean\ReportAssessmentController@viewCADetail');
 Route::get($character.'/report/assessment/download/{id}','Dean\ReportAssessmentController@DownloadAssessmentReport');
 Route::get($character.'/report/assessment/download/zipFiles/{id}/{download}','Dean\ReportAssessmentController@ZipFilesDownloadAssessmentReport');
 
 Route::get($character.'/report/final_assessment/','Dean\ReportController@FinalAssessmentReport');
+Route::post($character.'/report/FA/searchCourse/','Dean\ReportFinalAssessmentController@searchCourse');
+Route::get($character.'/report/FA/view/{id}','Dean\ReportFinalAssessmentController@viewFADetail');
 Route::get($character.'/report/final_assessment/download/{id}','Dean\ReportFinalAssessmentController@DownloadFinalAssessmentReport');
 Route::get($character.'/report/final_assessment/download/zipFiles/{id}/{download}','Dean\ReportFinalAssessmentController@ZipFilesDownloadFinalAssessmentReport');
 
 Route::get($character.'/report/E_Portfolio/course/List/', [
-    'as' => 'E_Portfolio_List', 'uses' => 'Dean\ReportController@E_Portfolio_List']);
-   Route::get($character.'/E_Portfolio/list/{id}', [
-    'as' => 'viewListE_Portfolio', 'uses' => 'Dean\ReportController@viewListE_Portfolio']);
+'as' => 'E_Portfolio_List', 'uses' => 'Dean\ReportController@E_Portfolio_List']);
+Route::get($character.'/E_Portfolio/list/{id}', [
+'as' => 'viewListE_Portfolio', 'uses' => 'Dean\ReportController@viewListE_Portfolio']);
 Route::post($character.'/E_Portfolio/searchCourse/', 'Dean\E_PortfolioController@searchCourse');
 Route::get($character.'/E_Portfolio/download/zipFiles/{course_id}/{checked}','Dean\E_PortfolioController@downloadZipFiles');
 ?>

@@ -41,7 +41,7 @@ $(document).ready(function() {
 </style>
 <div id="all">
     <div>
-        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
+        <p style="margin: 0px;padding:10px 20px;font-size: 30px;">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}}</p>
         <p class="pass_page">
             <a href="{{$character}}/home" class="first_page"> Home </a>/
             <a href="{{$character}}/report/course/List/"> Report List </a>/
@@ -143,13 +143,21 @@ $(document).ready(function() {
               				</tr>
               				<tr>
               					<td class="td">h) Timetable</td>
-              					<td class="td"></td>
+              					<td class="td">
+                          @if(count($timetable)>0)
+                          <center><i class="fa fa-check correct"></i></center>
+                          @endif     
+                        </td>
               					<td class="td"></td>
               					<td class="td"></td>
               				</tr>
               				<tr>
               					<td class="td" style="border-bottom: 1px solid grey;">i) Attendance</td>
-              					<td class="td" style="border-bottom: 1px solid grey;"></td>
+              					<td class="td" style="border-bottom: 1px solid grey;">
+                          @if(round($attendance)>80)
+                          <center><i class="fa fa-check correct"></i></center>
+                          @endif     
+                        </td>
               					<td class="td" style="border-bottom: 1px solid grey;"></td>
               					<td class="td" style="border-bottom: 1px solid grey;"></td>
               				</tr>

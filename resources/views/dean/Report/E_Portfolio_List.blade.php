@@ -61,6 +61,14 @@ $(function () {
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;
+              $('.group_checkbox').click(function(){
+                if($(this).prop("checked") == true){
+                  $('.group_download').prop("checked", true);
+                }
+                else if($(this).prop("checked") == false){
+                  $('.group_download').prop("checked", false);
+                }
+              });
             }
         });
     }
@@ -72,6 +80,14 @@ $(function () {
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;
+              $('.group_checkbox').click(function(){
+                if($(this).prop("checked") == true){
+                  $('.group_download').prop("checked", true);
+                }
+                else if($(this).prop("checked") == false){
+                  $('.group_download').prop("checked", false);
+                }
+              });
             }
         });
     });

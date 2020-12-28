@@ -115,7 +115,15 @@ class E_PortfolioController extends Controller
                     ->where('status', '=', 'Active')
                     ->get();
 
-        return view('dean.E_portfolio.viewE_Portfolio',compact('course','assessments','assessment_list','lecturer_result','ass_final','assessment_final','lecturer_fx_result','syllabus','action','ca_action','fa_action','lecture_note'));
+        $timetable = DB::table('timetable')
+                    ->select('timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->where('timetable.status','=','Active')
+                    ->get();
+
+        $attendance = $this->viewAttendance($id);
+
+        return view('dean.E_portfolio.viewE_Portfolio',compact('course','assessments','assessment_list','lecturer_result','ass_final','timetable','attendance','assessment_final','lecturer_fx_result','syllabus','action','ca_action','fa_action','lecture_note'));
 	}
 
 	public function Download_E_Portfolio($id)
@@ -211,6 +219,14 @@ class E_PortfolioController extends Controller
                     ->where('course_id', '=', $id)
                     ->where('status', '=', 'Active')
                     ->get();
+
+        $timetable = DB::table('timetable')
+                    ->select('timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->where('timetable.status','=','Active')
+                    ->get();
+
+        $attendance = $this->viewAttendance($id);
 
 	    $phpWord = new \PhpOffice\PhpWord\PhpWord();
 	    // New section
@@ -413,14 +429,22 @@ class E_PortfolioController extends Controller
     	$table->addRow(1);
     	$table->addCell(2000,$cellRowNorContinue);
     	$table->addCell(4000,$styleCell)->addText('h) Timetable',Null,$noSpaceAndLeft);
-    	$table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+        if(count($timetable)>0){
+            $table->addCell(2000,$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+        }else{
+            $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+        }
     	$table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
     	$table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
 
     	$table->addRow(1);
     	$table->addCell(2000,$cellRowNorContinue);
     	$table->addCell(4000,$styleCell)->addText('i) Attendance',Null,$noSpaceAndLeft);
-    	$table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+        if(round($attendance)>80){
+            $table->addCell(2000,$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+        }else{
+            $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+        }
     	$table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
     	$table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
 
@@ -437,7 +461,6 @@ class E_PortfolioController extends Controller
 
     	$num = 3;
     	foreach($assessments as $row){
-
     		$table->addRow(1);
 	    	$table->addCell(2000,$cellRowNorSpan)->addText($num.'. '.$row->assessment_name,$fontStyle,$noSpaceAndLeft);
 	    	$table->addCell(4000,$styleCell)->addText('a) Moderated Question(s)',Null,$noSpaceAndLeft);
@@ -687,7 +710,9 @@ class E_PortfolioController extends Controller
                             ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
                             ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
                             ->orWhere('users.name','LIKE','%'.$value.'%');
-                    })             
+                    }) 
+                    ->orderByDesc('semester_name')
+                    ->orderByDesc('course_id')            
                     ->get();
             }else if(auth()->user()->position=="HoD"){
                  $character = "/hod";
@@ -706,11 +731,18 @@ class E_PortfolioController extends Controller
                             ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
                             ->orWhere('semesters.semester_name','LIKE','%'.$value.'%')
                             ->orWhere('users.name','LIKE','%'.$value.'%');
-                    })             
+                    })
+                    ->orderByDesc('semester_name')
+                    ->orderByDesc('course_id')             
                     ->get();     
             }
-            $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;">Search Filter : '.$value.'</p>';
+            $result .= '<div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" id="group_lecturer" class="group_checkbox">';
+            $result .= '</div>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Search Filter : '.$value;
+            $result .= '</p>';
             $result .= '</div>';
             if($course->count()) {
                 foreach($course as $row){
@@ -768,8 +800,13 @@ class E_PortfolioController extends Controller
                         ->where('courses.status','=','Active')
                         ->get();        
             }
-            $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;">Newest Semester of Courses</p>';
+            $result .= '<div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" id="group_lecturer" class="group_checkbox">';
+            $result .= '</div>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Newest Semester of Courses';
+            $result .= '</p>';
             $result .= '</div>';
             foreach($course_reviewer as $row){
                 $result .= '<div class="col-12 row align-self-center" id="course_list">';
@@ -909,6 +946,13 @@ class E_PortfolioController extends Controller
                         ->where('status', '=', 'Active')
                         ->get();
 
+            $timetable = DB::table('timetable')
+                    ->select('timetable.*')
+                    ->where('timetable.course_id','=',$string[$i])
+                    ->where('timetable.status','=','Active')
+                    ->get();
+
+            $attendance = $this->viewAttendance($string[$i]);
 
             $phpWord = new \PhpOffice\PhpWord\PhpWord();
             // New section
@@ -978,7 +1022,7 @@ class E_PortfolioController extends Controller
 
             $course_table->addRow(1);
             $course_table->addCell(3000,$styleCell)->addText('Programme', null, $noSpaceAndLeft);
-            $course_table->addCell(9000,$styleCell)->addText($programme_name, null, $noSpaceAndLeft);
+            $course_table->addCell(9000,$styleCell)->addText(htmlspecialchars($programme_name), null, $noSpaceAndLeft);
 
             $course_table->addRow(1);
             $course_table->addCell(3000,$styleCell)->addText('Subject Code', null, $noSpaceAndLeft);
@@ -1111,14 +1155,22 @@ class E_PortfolioController extends Controller
             $table->addRow(1);
             $table->addCell(2000,$cellRowNorContinue);
             $table->addCell(4000,$styleCell)->addText('h) Timetable',Null,$noSpaceAndLeft);
-            $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+            if(count($timetable)>0){
+                $table->addCell(2000,$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+            }else{
+                $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+            }
             $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
             $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
 
             $table->addRow(1);
             $table->addCell(2000,$cellRowNorContinue);
             $table->addCell(4000,$styleCell)->addText('i) Attendance',Null,$noSpaceAndLeft);
-            $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+            if(round($attendance)>80){
+                $table->addCell(2000,$styleCell)->addText('Y', array('bold' => true,'Color' => 'green'), $noSpaceAndCenter);
+            }else{
+                $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
+            }
             $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
             $table->addCell(2000,$styleCell)->addText('',Null, $noSpaceAndCenter);
 
@@ -1437,6 +1489,183 @@ class E_PortfolioController extends Controller
                     ->get();
 
         return view('dean.E_portfolio.E_Portfolio_View_List',compact('course','assessments','assessment_list','lecturer_result','ass_final','assessment_final','lecturer_fx_result','syllabus','action','ca_action','fa_action','lecture_note'));
+    }
+
+
+    public function viewAttendance($id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.course_id', '=', $id)
+                 ->get();
+
+        $assign_student = DB::table('assign_student_course')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
+                    ->select('assign_student_course.*','students.*','users.*')
+                    ->where('assign_student_course.course_id','=',$id)
+                    ->where('assign_student_course.status','=',"Active")
+                    ->orderBy('students.batch')
+                    ->get();
+
+        $timetable = DB::table('timetable')
+                    ->select('timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->where('timetable.status','=','Active')
+                    ->get();
+
+        $attendance = DB::table('attendance')
+                    ->join('timetable','timetable.tt_id','=','attendance.tt_id')
+                    ->select('attendance.*','timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->orderBy('attendance.A_date')
+                    ->orderBy('timetable.class_hour')
+                    ->get();
+
+        if($course[0]->semester =='A'){
+            $weeks = 7;
+            $startDate = $course[0]->startDate;
+        }else{
+            $weeks = 14;
+            $startDate = $course[0]->startDate;
+        }
+        $absent_person = 0;
+        $timetable_count = 0;
+        $total_tt = 0;
+        $take_hour = 0;
+        for($i=1;$i<=$weeks;$i++){
+            $count_hour = 0;
+            if($i==1){
+                foreach($timetable as $row){
+                    $week = "Next ".$row->week;
+                    $NewDate = date('Y-m-d', strtotime($startDate . $week));
+                    $hour = explode(',',$row->class_hour);
+                    $count_hour = $count_hour + count($hour);
+                    $take_hour = 0;
+                    foreach($attendance as $att_row){
+                        if($att_row->A_week==$i){
+                            $s_hour = explode('-',$att_row->hour);
+                            $e_hour = explode('-',$att_row->hour);
+                            $last_hour = $this->getFullTime($s_hour[0],$e_hour[1]);
+                            $timetable_hour = $att_row->class_hour;
+                            $explode_th = explode(',',$timetable_hour);
+                            $sperate = explode(',',$last_hour);
+                            $less_hour = $att_row->less_hour;
+                            if(count($sperate)>count($explode_th)){
+                                $less_hour = count($explode_th)-count($sperate);
+                            }
+                                if($less_hour==0){
+                                    for($s=0;$s<=count($sperate)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else if($less_hour<0){
+                                    for($s=0;$s<=count($explode_th)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else{
+                                    $take_hour= $take_hour + $less_hour;
+                                }
+                        }
+                    }
+                }
+                $total_tt        = $total_tt+$take_hour;
+                $timetable_count = $timetable_count + $count_hour;
+            }else{
+                $startDate = strtotime($course[0]->startDate);
+                $add_date = $startDate+(($i-1)*(86400*7));
+                $add_startDate = date('Y-m-d',$add_date);
+                foreach($timetable as $row){
+                    $week = "Next ".$row->week;
+                    $NewDate = date('Y-m-d', strtotime($add_startDate . $week));
+                    $hour = explode(',',$row->class_hour);
+                    $take_hour = 0;
+                    if($row->F_or_H=="Full"){
+                        $count_hour = $count_hour + count($hour);
+                    }else{
+                        if ($i % 2) {
+                            $count_hour = $count_hour + count($hour);
+                        }
+                    }
+                    foreach($attendance as $att_row){
+                        if($att_row->A_week==$i){
+                            $s_hour = explode('-',$att_row->hour);
+                            $e_hour = explode('-',$att_row->hour);
+                            $last_hour = $this->getFullTime($s_hour[0],$e_hour[1]);
+                            $timetable_hour = $att_row->class_hour;
+                            $explode_th = explode(',',$timetable_hour);
+                            $sperate = explode(',',$last_hour);
+                            $less_hour = $att_row->less_hour;
+                            if(count($sperate)>count($explode_th)){
+                                $less_hour = count($explode_th)-count($sperate);
+                            }
+                                if($less_hour==0){
+                                    for($s=0;$s<=count($sperate)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else if($less_hour<0){
+                                    for($s=0;$s<=count($explode_th)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else{
+                                    $take_hour= $take_hour + $less_hour;
+                                }
+                        }
+                    }
+                }
+                $total_tt        = $total_tt + $take_hour;
+                $timetable_count = $timetable_count + $count_hour;    
+            }
+        }
+        $completed = 0;
+
+        if($timetable_count!=0){
+            $completed = ($total_tt/$timetable_count)*100;
+        }
+        
+        return $completed;
+    }
+
+    public function getFullTime($s_hour,$e_hour){
+        $s_hour = intval($s_hour);
+        $e_hour = intval($e_hour);
+        $hour = $e_hour - $s_hour;
+        $zero = "0";
+        if($s_hour>=1000){
+            $zero = "";
+        }
+        $f_time = "";
+        $current = "";
+        for($time = 100;$time<=$hour;$time=$time+100){
+            if($current==""){
+                $current = intval($s_hour+100);
+                if($current>=1000){
+                    $f_time .= $zero.$s_hour."-".($s_hour+100);
+                }else{
+                    $f_time .= $zero.$s_hour."-0".($s_hour+100);
+                }
+            }else{
+                $zero = "0";
+                if($current>=1000){
+                    $zero = "";
+                }
+                $added_hour = intval($current+100);
+                if($added_hour>=1000){
+                    $f_time .= ",".$zero.$current."-".$added_hour;
+                }else{
+                    $f_time .= ",".$zero.$current."-0".$added_hour;
+                }
+                $current = $added_hour;
+            }
+        }
+        return $f_time;
     }
 }
 
