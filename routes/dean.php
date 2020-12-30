@@ -51,6 +51,14 @@
 	Route::post('/destoryFiles', 'Dean\F_PortFolioController@destroyFiles')->name('dropzone.destoryFiles');
 	Route::post('/storeFiles', 'Dean\F_PortFolioController@storeFiles');
 	Route::get('/faculty/portfolio/{id}','Dean\F_PortFolioController@downloadFP')->name('dean.downloadFP');
+	Route::get('/images/faculty_portfolio/{fp_id}/{image_name}', [
+	'as'         => 'FP_image',
+	'uses'       => 'Dean\F_PortFolioController@FPImage',
+	'middleware' => 'auth',
+	]);
+	Route::get('/FacultyPortFolio/download/zipFiles/{fp_id}/{download}/', 'Dean\F_PortFolioController@zipFileDownload');
+	Route::get('/dean/staff/CV/download/zipFiles/{staff_id}/', 'Dean\F_PortFolioController@zipFileCV');
+	Route::get('/dean/syllabus/download/zipFiles/{subject_id}/', 'Dean\F_PortFolioController@zipFileSyllabus');
 
 	//Course List
 	Route::get('/CourseList', 'Dean\C_PortFolioController@index')->name('dean.C_potrfolio.index');

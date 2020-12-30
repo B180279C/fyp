@@ -264,26 +264,241 @@ class M_CourseController extends Controller
                      ->where('status','=','Active')
                      ->get();
 
-        $tp = DB::table('teaching_plan')
-                 ->select('teaching_plan.*')
-                 ->where('course_id', '=', $id)
-                 ->get();
+        $timetable = DB::table('timetable')
+                    ->select('timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->where('timetable.status','=','Active')
+                    ->get();
 
-        $tp_ass = DB::table('tp_assessment_method')
-                 ->select('tp_assessment_method.*')
-                 ->where('course_id', '=', $id)
-                 ->get();
+        $attendance = $this->viewAttendance($id);
 
-        $tp_cqi = DB::table('tp_cqi')
-                 ->select('tp_cqi.*')
-                 ->where('course_id', '=', $id)
-                 ->where('status','=','Active')
-                 ->get();
+        $status_TP = "Pending";
+        $status_CA = "Pending";
+        $status_FA = "Pending";
+        $course_tp_action = DB::table('action_v_a')
+                  ->join('courses','courses.course_id','=','action_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('action_v_a.*','courses.*','subjects.*','staffs.*','users.*','action_v_a.status as action_status')
+                  ->where('courses.course_id','=',$id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('action_v_a.action_id')
+                  ->first();
+
+        if($course_tp_action!=""){
+          $status_TP = $course_tp_action->action_status;
+        }
+
+        $course_CA_action = DB::table('actionca_v_a')
+                  ->join('courses','courses.course_id','=','actionca_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionca_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionca_v_a.status as action_status')
+                  ->where('courses.course_id','=',$id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('actionca_v_a.actionCA_id')
+                  ->first();
+        if($course_CA_action!=""){
+            $status_CA = $course_CA_action->action_status;
+        }
+
+        $course_FA_action = DB::table('actionfa_v_a')
+                  ->join('courses','courses.course_id','=','actionfa_v_a.course_id')
+                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                  ->join('staffs', 'staffs.id','=','courses.lecturer')
+                  ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                  ->select('actionfa_v_a.*','courses.*','subjects.*','staffs.*','users.*','actionfa_v_a.status as action_status')
+                  ->where('courses.course_id','=',$id)
+                  ->where('courses.status','=','Active')
+                  ->orderByDesc('actionfa_v_a.actionFA_id')
+                  ->first();
+        if($course_FA_action!=""){
+            $status_FA = $course_FA_action->action_status;
+        }
+
 
         if(count($course)>0){
-            return view('dean.Moderator.ModeratorAction',compact('course','id','student','note','tp','tp_ass','tp_cqi'));
+            return view('dean.Moderator.ModeratorAction',compact('course','id','student','note','status_TP','status_CA','status_FA','timetable','attendance'));
         }else{
             return redirect()->back();
         }
 	}
+
+  public function viewAttendance($id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->join('staffs', 'staffs.id','=','courses.lecturer')
+                 ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                 ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*')
+                 ->where('courses.course_id', '=', $id)
+                 ->get();
+
+        $assign_student = DB::table('assign_student_course')
+                    ->join('students','students.student_id', '=', 'assign_student_course.student_id')
+                    ->join('users','users.user_id', '=', 'students.user_id')
+                    ->select('assign_student_course.*','students.*','users.*')
+                    ->where('assign_student_course.course_id','=',$id)
+                    ->where('assign_student_course.status','=',"Active")
+                    ->orderBy('students.batch')
+                    ->get();
+
+        $timetable = DB::table('timetable')
+                    ->select('timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->where('timetable.status','=','Active')
+                    ->get();
+
+        $attendance = DB::table('attendance')
+                    ->join('timetable','timetable.tt_id','=','attendance.tt_id')
+                    ->select('attendance.*','timetable.*')
+                    ->where('timetable.course_id','=',$id)
+                    ->orderBy('attendance.A_date')
+                    ->orderBy('timetable.class_hour')
+                    ->get();
+
+        if($course[0]->semester =='A'){
+            $weeks = 7;
+            $startDate = $course[0]->startDate;
+        }else{
+            $weeks = 14;
+            $startDate = $course[0]->startDate;
+        }
+        $absent_person = 0;
+        $timetable_count = 0;
+        $total_tt = 0;
+        $take_hour = 0;
+        for($i=1;$i<=$weeks;$i++){
+            $count_hour = 0;
+            if($i==1){
+                foreach($timetable as $row){
+                    $week = "Next ".$row->week;
+                    $NewDate = date('Y-m-d', strtotime($startDate . $week));
+                    $hour = explode(',',$row->class_hour);
+                    $count_hour = $count_hour + count($hour);
+                    $take_hour = 0;
+                    foreach($attendance as $att_row){
+                        if($att_row->A_week==$i){
+                            $s_hour = explode('-',$att_row->hour);
+                            $e_hour = explode('-',$att_row->hour);
+                            $last_hour = $this->getFullTime($s_hour[0],$e_hour[1]);
+                            $timetable_hour = $att_row->class_hour;
+                            $explode_th = explode(',',$timetable_hour);
+                            $sperate = explode(',',$last_hour);
+                            $less_hour = $att_row->less_hour;
+                            if(count($sperate)>count($explode_th)){
+                                $less_hour = count($explode_th)-count($sperate);
+                            }
+                                if($less_hour==0){
+                                    for($s=0;$s<=count($sperate)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else if($less_hour<0){
+                                    for($s=0;$s<=count($explode_th)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else{
+                                    $take_hour= $take_hour + $less_hour;
+                                }
+                        }
+                    }
+                }
+                $total_tt        = $total_tt+$take_hour;
+                $timetable_count = $timetable_count + $count_hour;
+            }else{
+                $startDate = strtotime($course[0]->startDate);
+                $add_date = $startDate+(($i-1)*(86400*7));
+                $add_startDate = date('Y-m-d',$add_date);
+                foreach($timetable as $row){
+                    $week = "Next ".$row->week;
+                    $NewDate = date('Y-m-d', strtotime($add_startDate . $week));
+                    $hour = explode(',',$row->class_hour);
+                    $take_hour = 0;
+                    if($row->F_or_H=="Full"){
+                        $count_hour = $count_hour + count($hour);
+                    }else{
+                        if ($i % 2) {
+                            $count_hour = $count_hour + count($hour);
+                        }
+                    }
+                    foreach($attendance as $att_row){
+                        if($att_row->A_week==$i){
+                            $s_hour = explode('-',$att_row->hour);
+                            $e_hour = explode('-',$att_row->hour);
+                            $last_hour = $this->getFullTime($s_hour[0],$e_hour[1]);
+                            $timetable_hour = $att_row->class_hour;
+                            $explode_th = explode(',',$timetable_hour);
+                            $sperate = explode(',',$last_hour);
+                            $less_hour = $att_row->less_hour;
+                            if(count($sperate)>count($explode_th)){
+                                $less_hour = count($explode_th)-count($sperate);
+                            }
+                                if($less_hour==0){
+                                    for($s=0;$s<=count($sperate)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else if($less_hour<0){
+                                    for($s=0;$s<=count($explode_th)-1;$s++){
+                                        $take_hour++;
+                                    }
+                                }else{
+                                    $take_hour= $take_hour + $less_hour;
+                                }
+                        }
+                    }
+                }
+                $total_tt        = $total_tt + $take_hour;
+                $timetable_count = $timetable_count + $count_hour;    
+            }
+        }
+        $completed = 0;
+
+        if($timetable_count!=0){
+            $completed = ($total_tt/$timetable_count)*100;
+        }
+        
+        return $completed;
+    }
+
+    public function getFullTime($s_hour,$e_hour){
+        $s_hour = intval($s_hour);
+        $e_hour = intval($e_hour);
+        $hour = $e_hour - $s_hour;
+        $zero = "0";
+        if($s_hour>=1000){
+            $zero = "";
+        }
+        $f_time = "";
+        $current = "";
+        for($time = 100;$time<=$hour;$time=$time+100){
+            if($current==""){
+                $current = intval($s_hour+100);
+                if($current>=1000){
+                    $f_time .= $zero.$s_hour."-".($s_hour+100);
+                }else{
+                    $f_time .= $zero.$s_hour."-0".($s_hour+100);
+                }
+            }else{
+                $zero = "0";
+                if($current>=1000){
+                    $zero = "";
+                }
+                $added_hour = intval($current+100);
+                if($added_hour>=1000){
+                    $f_time .= ",".$zero.$current."-".$added_hour;
+                }else{
+                    $f_time .= ",".$zero.$current."-0".$added_hour;
+                }
+                $current = $added_hour;
+            }
+        }
+        return $f_time;
+    }
 }

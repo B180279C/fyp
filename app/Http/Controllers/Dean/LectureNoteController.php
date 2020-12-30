@@ -1059,6 +1059,50 @@ class LectureNoteController extends Controller
                         }
                     }
                 }else{
+                    if($note->note_place=="Note"){
+                        if($note->used_by!=null){
+                            foreach($all_note as $all_row){
+                                if($note->used_by==$all_row->ln_id){
+                                    $zip->addEmptyDir($note->note_name." (".$all_row->semester_name.")");
+                                }
+                            }
+                        }else{
+                            $zip->addEmptyDir($note->note_name);
+                        }
+                    }else{
+                        $m=1;
+                        $place = explode(',,,',$note->note_place);
+                        $data = "";
+                        while(isset($place[$m])!=""){
+                            $name = Lecture_Note::where('ln_id', '=', $place[$m])->firstOrFail();
+                            $semester = "";
+                            $used_by = $name->used_by;
+                            foreach($all_note as $all_row){
+                                if($used_by==$all_row->ln_id){
+                                        $semester = $all_row->semester_name;
+                                }
+                            }
+                            if($data==""){
+                                if($used_by!=null){
+                                    $data .= $name->note_name." (".$semester.")";
+                                }else{
+                                    $data .= $name->note_name;
+                                }
+                            }else{
+                                if($used_by!=null){
+                                    $data .= "/".$name->note_name." (".$semester.")";
+                                }else{
+                                    $data .= "/".$name->note_name;
+                                }
+                            }
+                            $m++;
+                        }
+                        if($note->used_by!=null){
+                            $zip->addEmptyDir($data.'/'.$note->note_name." (".$semester.")");
+                        }else{
+                            $zip->addEmptyDir($data.'/'.$note->note_name);
+                        }
+                    }
                     $check = $note->note_place.",,,".$note->ln_id;
                     $next_check = $note->note_place.",,,".$note->ln_id.",,,";
                     $lecture_note = DB::table('lecture_notes')
@@ -1068,6 +1112,7 @@ class LectureNoteController extends Controller
                                             ->orWhere('note_place','LIKE','%'.$next_check.'%');
                                     })
                                     ->where('lecture_notes.status', '=', 'Active')
+                                    ->where('lecture_notes.course_id','=',$f_course_id)
                                     ->orderByDesc('lecture_notes.note_type')
                                     ->get();
                     foreach($lecture_note as $row){

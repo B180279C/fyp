@@ -306,15 +306,15 @@ class NotificationController extends Controller
 	            }
 	        }
         }else if($place=="Reviewer"){
-          if(auth()->user()->position=="HoD"){
-            if($course_FA_action!=""){
+          if($course_FA_action!=""){
+            if(auth()->user()->position=="HoD"){
               if($course_FA_action->action_status=="Waiting For Verified"){
-                $course_count++;
+                  $course_count++;
               }
-            }
-          }else if(auth()->user()->position=="Dean"){
-            if($course_FA_action->action_status=="Waiting For Approve"){
-                $course_count++;
+            }else if(auth()->user()->position=="Dean"){
+              if($course_FA_action->action_status=="Waiting For Approve"){
+                    $course_count++;
+              }
             }
           }
         }

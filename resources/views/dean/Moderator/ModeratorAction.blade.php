@@ -36,34 +36,81 @@ $option3 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
             <p class="page_title">Status</p>
-            <div class="details" style="padding: 5px 5px 10px 5px;">
+            <div style="padding: 5px;overflow-x:auto;">
                 <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);" id="table" class="table table-hover">
                     <thead>
                     <tr style="background-color: #d9d9d9;">
                         <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Student</b></th>
                         <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Lecture Note</b></th>
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Timetable</b></th>
+                        <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Attendance</b></th>
                         <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Teaching Plan</b></th>
                         <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Continuous Assessment</b></th>
                         <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;"><b>Final Assessment</b></th>
                     </tr>
                     <tr>
-                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{count($student)}}</td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                            <b>{{count($student)}}</b>
+                        </td>
                         <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
                             @if(count($note)>0)
                             <i class="fa fa-check correct" aria-hidden="true"></i></td>
                             @else
                             <i class="fa fa-times wrong" aria-hidden="true"></i>
-                        </td>
                             @endif
+                        </td>
                         <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
-                            @if((count($tp)>0)&&(count($tp_ass)>0)&&(count($tp_cqi)>0))
+                            @if(count($timetable)>0)
                             <i class="fa fa-check correct" aria-hidden="true"></i></td>
                             @else
-                            <i class="fa fa-times wrong" aria-hidden="true"></i></td>
+                            <i class="fa fa-times wrong" aria-hidden="true"></i>
                             @endif
                         </td>
-                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"></td>
-                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;"></td>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                            <b>{{round($attendance)}}%</b>
+                        </td>
+                        <?php
+                        if($status_TP=="Rejected"){
+                            $color_TP = "red";
+                        }else if($status_TP=="Pending"){
+                            $color_TP = "grey";
+                        }else if($status_TP=="Approved"){
+                            $color_TP = "green";
+                        }else{
+                            $color_TP = "blue";
+                        }
+                        ?>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;color:<?php echo $color_TP;?>;"><b>
+                            {{$status_TP}}</b>
+                        </td>
+                        <?php
+                        if($status_CA=="Rejected"){
+                            $color_CA = "red";
+                        }else if($status_CA=="Pending"){
+                            $color_CA = "grey";
+                        }else if($status_CA=="Verified"){
+                            $color_CA = "green";
+                        }else{
+                            $color_CA = "blue";
+                        }
+                        ?>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;color:<?php echo $color_CA;?>;"><b>
+                            {{$status_CA}}</b>
+                        </td>
+                        <?php
+                        if($status_FA=="Rejected"){
+                            $color_FA = "red";
+                        }else if($status_FA=="Pending"){
+                            $color_FA = "grey";
+                        }else if($status_FA=="Approved"){
+                            $color_FA = "green";
+                        }else{
+                            $color_FA = "blue";
+                        }
+                        ?>
+                        <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;color:<?php echo $color_FA;?>;"><b>
+                            {{$status_FA}}</b>
+                        </td>
                     </tr>
                     </thead>
                 </table>

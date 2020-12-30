@@ -235,12 +235,12 @@ function showMessage(){
                     </div>
                 </div>
               <div class="row" id="course" style="margin-top: -25px;">
-                  <div class="col-12 row" style="padding: 0px 20px 5px 20px;margin:0px;">
+                  <div class="col-12 row" style="padding: 0px 20px 5px 30px;margin:0px;">
                     <div class="checkbox_group_style align-self-center">
                       <input type="checkbox" name="group_lecturer" id='group_lecturer' class="group_checkbox">
                     </div>
                     <p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">
-                      Newest Semester of Courses
+                      &nbsp;&nbsp;Newest Semester of Courses
                     </p>
                   </div>
                 @foreach($course as $row)

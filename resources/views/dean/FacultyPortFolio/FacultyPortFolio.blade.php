@@ -15,6 +15,80 @@ $option2 = "id='selected-sidebar'";
       document.getElementById("button_open").style.display = "block";
     }
     $(document).ready(function(){  
+        $('[data-toggle="lightbox"]').click(function(event) {
+        event.preventDefault();
+           $(this).ekkoLightbox({
+            type: 'image',
+            onContentLoaded: function() {
+               var container = $('.ekko-lightbox-container');
+               var content = $('.modal-content');
+               var backdrop = $('.modal-backdrop');
+               var overlay = $('.ekko-lightbox-nav-overlay');
+               var modal = $('.modal');
+               var image = container.find('img');
+               var windowHeight = $(window).height();
+               var dialog = container.parents('.modal-dialog');
+               var data_header = $('.modal-header');
+               var data_title = $('.modal-title');
+               var body = $('.modal-body');
+               console.log(image.width());
+
+               if((image.width() > 380) && (image.width() < 441) && (image.width() != 422)){
+                  dialog.css('max-width','700px');
+                  image.css('height','900px');
+                  image.css('width','700px');
+                  overlay.css('height','900px');
+               }else{
+                  overlay.css('height','100%');
+               }
+               // backdrop.css('opacity','1');
+               data_header.css('background-color','white');
+               data_header.css('padding','10px');
+               data_header.css('margin','0px 24px');
+               data_header.css('border-bottom','1px solid black');
+               data_title.css('font-size','18px');
+
+               body.css('padding-top','0px');
+               body.css('padding-bottom','0px');
+               body.css('margin', "0px 24px");
+               body.css('background-color', "white");
+               content.css('background', "none");
+               content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+               content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+               content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+               content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+            }
+          });
+        });
+
+        $(document).on('click', '#checkDownloadAction', function(){
+          var checkedValue = ""; 
+          var inputElements = document.getElementsByClassName('group_download_list');
+          for(var i=0; inputElements[i]; i++){
+            if(inputElements[i].checked){
+              checkedValue += inputElements[i].value+"---";
+            }
+          }
+          if(checkedValue!=""){
+            var id = checkedValue;
+            window.location = "/FacultyPortFolio/download/zipFiles/"+id+"/checked";
+          }else{
+              alert("Please select the document first.");
+          }
+        });
+
+        $(document).on("click",".tp_title", function(){
+            $('#plan_detail').slideToggle("slow", function(){
+                // check paragraph once toggle effect is completed
+                if($('#plan_detail').is(":visible")){
+                    $('#icon').removeClass('fa fa-plus');
+                    $('#icon').addClass('fa fa-minus');
+                }else{
+                    $('#icon').removeClass('fa fa-minus');
+                    $('#icon').addClass('fa fa-plus');
+                }
+            });
+        });
         $(document).on('click', '#open_folder', function(){
             $('#openFolderModal').modal('show');
         });
@@ -28,15 +102,15 @@ $option2 = "id='selected-sidebar'";
            $("#form"+id).val(value);
         });
 
-        $(document).on('click', '.edit_button_file', function(){
+        $(document).on('click', '.edit_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
           $.ajax({
             type:'POST',
             url:'/folderNameEdit',
-            data:{value : num[3]},
+            data:{value : num[2]},
             success:function(data){
-              document.getElementById('fp_id').value = num[3];
+              document.getElementById('fp_id').value = num[2];
               document.getElementById('folder_name').value = data.portfolio_name;
             } 
           });
@@ -44,20 +118,26 @@ $option2 = "id='selected-sidebar'";
           return false;
         });
 
-        $(document).on('click', '.remove_button_file', function(){
+        $(document).on('click', '.remove_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
           if(confirm('Are you sure you want to remove the it?')) {
-            window.location = "/FacultyPortFolio/remove/"+num[3];
+            window.location = "/FacultyPortFolio/remove/"+num[2];
           }
           return false;
+        });
+
+        $(document).on('click', '.download_button', function(){
+            var id = $(this).attr("id");
+            var num = id.split("_");
+            window.location = "/faculty/portfolio/"+num[2];
         });
     });
     var i = 0;
     var file_up_names = [0];
     Dropzone.options.dropzoneFile =
     {
-        acceptedFiles: ".pdf,.xlsx,.docx,.pptx",
+        acceptedFiles: ".pdf,.xlsx,.docx,.pptx,.ppt,.jpg,.jpeg,.png",
         addRemoveLinks: true,
         timeout: 50000,
         renameFile: function(file) {
@@ -81,6 +161,7 @@ $option2 = "id='selected-sidebar'";
             });
         },
         accept: function(file, done) {
+            $(file.previewElement).find(".dz-image img").css('margin-left','13px');
             switch (file.type) {
               case 'application/pdf':
                 $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pdf.png')}}");
@@ -94,6 +175,10 @@ $option2 = "id='selected-sidebar'";
               case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
                 $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/pptx.png')}}");
                  break;
+              default:
+                $(file.previewElement).find(".dz-image img").attr("src", "{{url('image/file.png')}}").width('80px');
+                $(file.previewElement).find(".dz-image img").css('margin-left','20px');
+                break;
             }
             done();
         },
@@ -156,6 +241,51 @@ $option2 = "id='selected-sidebar'";
               data:{value:value,place:place},
               success:function(data){
                 document.getElementById("course").innerHTML = data;
+                $('[data-toggle="lightbox"]').click(function(event) {
+                   event.preventDefault();
+                       $(this).ekkoLightbox({
+                         type: 'image',
+                         onContentLoaded: function() {
+                           var container = $('.ekko-lightbox-container');
+                           var content = $('.modal-content');
+                           var backdrop = $('.modal-backdrop');
+                           var overlay = $('.ekko-lightbox-nav-overlay');
+                           var modal = $('.modal');
+                           var image = container.find('img');
+                           var windowHeight = $(window).height();
+                           var dialog = container.parents('.modal-dialog');
+                           var data_header = $('.modal-header');
+                           var data_title = $('.modal-title');
+                           var body = $('.modal-body');
+                           console.log(image.width());
+
+                           if((image.width() > 380) && (image.width() < 441) && (image.width() != 422)){
+                              dialog.css('max-width','700px');
+                              image.css('height','900px');
+                              image.css('width','700px');
+                              overlay.css('height','900px');
+                           }else{
+                              overlay.css('height','100%');
+                           }
+                           // backdrop.css('opacity','1');
+                           data_header.css('background-color','white');
+                           data_header.css('padding','10px');
+                           data_header.css('margin','0px 24px');
+                           data_header.css('border-bottom','1px solid black');
+                           data_title.css('font-size','18px');
+
+                           body.css('padding-top','0px');
+                           body.css('padding-bottom','0px');
+                           body.css('margin', "0px 24px");
+                           body.css('background-color', "white");
+                           content.css('background', "none");
+                           content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                         }
+                       });
+                 });
               }
           });
         }
@@ -167,13 +297,92 @@ $option2 = "id='selected-sidebar'";
                url:'/searchFiles',
                data:{value:value,place:place},
                success:function(data){
-                    document.getElementById("course").innerHTML = data;
+                  document.getElementById("course").innerHTML = data;
+                  $('[data-toggle="lightbox"]').click(function(event) {
+                   event.preventDefault();
+                       $(this).ekkoLightbox({
+                         type: 'image',
+                         onContentLoaded: function() {
+                           var container = $('.ekko-lightbox-container');
+                           var content = $('.modal-content');
+                           var backdrop = $('.modal-backdrop');
+                           var overlay = $('.ekko-lightbox-nav-overlay');
+                           var modal = $('.modal');
+                           var image = container.find('img');
+                           var windowHeight = $(window).height();
+                           var dialog = container.parents('.modal-dialog');
+                           var data_header = $('.modal-header');
+                           var data_title = $('.modal-title');
+                           var body = $('.modal-body');
+                           console.log(image.width());
+
+                           if((image.width() > 380) && (image.width() < 441) && (image.width() != 422)){
+                              dialog.css('max-width','700px');
+                              image.css('height','900px');
+                              image.css('width','700px');
+                              overlay.css('height','900px');
+                           }else{
+                              overlay.css('height','100%');
+                           }
+                           // backdrop.css('opacity','1');
+                           data_header.css('background-color','white');
+                           data_header.css('padding','10px');
+                           data_header.css('margin','0px 24px');
+                           data_header.css('border-bottom','1px solid black');
+                           data_title.css('font-size','18px');
+
+                           body.css('padding-top','0px');
+                           body.css('padding-bottom','0px');
+                           body.css('margin', "0px 24px");
+                           body.css('background-color', "white");
+                           content.css('background', "none");
+                           content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                           content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                         }
+                       });
+                 });
                }
             });
         });
     });
 </script>
 <style type="text/css">
+.checkbox_group_style{
+  border:0px solid black;
+  padding: 1px 10px 0px 10px!important;
+  margin: 0px!important;
+}
+.checkbox_style{
+  border:0px solid black;
+  padding: 0px 5px!important;
+  margin: 0px!important;
+  display: inline;
+  width: 28px;
+}
+.group{
+  margin-top:3px;
+  padding-left: 15px;
+  border:0px solid black;
+  display: inline;
+  padding: 0px!important;
+  margin: 0px!important;
+}
+.question_link:hover{
+    background-color: #d9d9d9;
+    text-decoration: none;
+    color: #0d2f81;
+}
+#show_image_link:hover{
+    text-decoration: none;
+}
+.plus:hover{
+    background-color: #f2f2f2;
+}
+.hover:hover{
+  background-color: #d9d9d9;
+}
 .dropzone .dz-preview{
   border-bottom: 1px solid black;
   padding-left: 10px;
@@ -192,20 +401,39 @@ $option2 = "id='selected-sidebar'";
   padding-left: 25px;
   display: inline-block;
 }
+#icon_image{
+  padding-top: 3px;border-bottom:1px solid #aaaaaa;
+}
+#checkbox{
+  border-bottom:1px solid #aaaaaa;padding: 5px 0px;margin: 0px; text-align: center;
+}
+.name:hover{
+  text-decoration: none;
+  color: #0d2f81;
+}
+
+
 @media only screen and (max-width: 600px) {
-  #course_name{
-        margin-left:0px;
-        padding-top: 5px;
-    }
-  #course_action_two{
-    padding: 0px;
-    position: relative;
-    right: -19px;
-    text-align: right;
+  #assessment_name{
+    margin-left: 0px;
+    padding-top: 0px;
   }
-  #course_action{
+  #assessment_word{
+    margin-left: 0px;
+    padding-top: 0px;
+  }
+  #course_name{
+    padding-top: 0px;
+  }
+  #course_list{
+    margin-left: 0px;
+    padding: 4px 15px;
+  }
+  #course_action_two{
+    padding: 10px 0px 0px 0px;
+    position: relative;
+    right: -24px;
     text-align: right;
-    padding: 3px 0px 0px 20px;
   }
   #file_name_two{
     width: 185px;
@@ -217,19 +445,53 @@ $option2 = "id='selected-sidebar'";
     margin: 0px;
     padding:0px;
   }
+  #lecturer_name{
+    display: none;
+  }
+  .name{
+    border-bottom:1px solid #aaaaaa;
+    margin: 0px;
+    color: #0d2f81;
+  }
 }
 @media only screen and (min-width: 600px) {
+    #course_list{
+      margin-left: 0px;
+      padding: 4px 15px;
+    }
+    #assessment_name{
+        margin-left:-53px;
+        padding-top:0px;
+    }
+    #assessment_word{
+        margin-left:-48px;
+        padding-top:0px;
+    }
     #course_name{
-        margin-left:-55px;
-        padding-top: 5px;
+        margin-left:-18px;
+        padding-top:0px;
     }
     #course_action_two{
       text-align: right;
-      padding: 3px 0px 0px 24px;
+      margin-left: 5px;
+      padding: 8px 0px 0px 25px;
     }
     #course_action{
       text-align: right;
       padding: 3px 0px 0px 24px;
+    }
+    #lecturer_name{
+      text-align: right;
+      position:relative;
+      top:7px;
+      border:0px solid black;
+      padding: 0px;
+      display: block;
+    }
+    .name{
+      border-bottom:1px solid #aaaaaa;
+      margin: 0px 0px 0px -30px;
+      color: #0d2f81;
     }
 }
 </style>
@@ -242,7 +504,7 @@ $option2 = "id='selected-sidebar'";
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">Faculty ( Portfolio )</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
@@ -253,6 +515,8 @@ $option2 = "id='selected-sidebar'";
                   <ul class="sidebar-action-ul">
                       <a id="open_folder"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Folder</li></a>
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
+                      <p class="title_method">Download</p>
+                      <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
                   </ul>
             </div>
             <br>
@@ -265,8 +529,8 @@ $option2 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <div class="details" style="padding: 0px 5px 5px 5px;">
-                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
+            <div class="details" style="padding: 0px 5px 0px 5px;">
+                <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -30px;">
                     <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                         <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                             <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
@@ -280,43 +544,28 @@ $option2 = "id='selected-sidebar'";
                         </div>
                     </div>
                 </div>
-                <div class="row" id="course" style="position: relative;top: -20px;">
-                      <a href="/FacultyPortFolio/LecturerCV/" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
-                              <img src="{{url('image/cv.png')}}" width="25px" height="25px"/>
-                            </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;"><b>Lecturer CV</b></p>
-                            </div>
-                          </div>
-                        </a>
-                        <a href="/FacultyPortFolio/Syllabus/" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;padding-left: 18px;">
-                              <img src="{{url('image/syllabus.png')}}" width="19px" height="25px"/>
-                            </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;"><b>Syllabus</b></p>
-                            </div>
-                          </div>
-                        </a>
+                <div class="row" id="course" style="margin-top:-25px;">
                       @foreach($faculty_portfolio as $row)
                         @if($row->portfolio_type=="folder")
-                        <a href="/faculty_portfolio/folder/{{$row->fp_id}}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
+                        <div class="col-12 row align-self-center" id="course_list">
+                          <div class="col-9 row align-self-center">
+                            <div class="checkbox_style align-self-center">
+                              <input type="checkbox" value="{{$row->fp_id}}" class="group_download_list">
+                            </div>
+                            <a href="/faculty_portfolio/folder/{{$row->fp_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                              <div class="col-1" style="position: relative;top: -2px;">
                                 <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
-                            </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->portfolio_name}}</b></p>
-                            </div>
-                            <div class="col-3" id="course_action_two">
-                                <i class="fa fa-wrench edit_button_file" aria-hidden="true" id="edit_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                                <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                              </div>
+                              <div class="col-10" id="course_name">
+                                  <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->portfolio_name}}</b></p>
+                              </div>
+                            </a>
+                          </div>
+                          <div class="col-3" id="course_action_two">
+                                <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                                <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                             </div>
                           </div>
-                        </a>
                         @else
                         <?php
                           $ext = "";
@@ -324,29 +573,101 @@ $option2 = "id='selected-sidebar'";
                             $ext = explode(".", $row->portfolio_file);
                           }
                         ?>
-                        <a href="{{ action('Dean\F_PortFolioController@downloadFP',$row->fp_id) }}" class="col-md-12 align-self-center" id="course_list">
-                          <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                            <div class="col-1" style="padding-top: 3px;">
-                              @if($ext[1]=="pdf")
-                              <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
-                              @elseif($ext[1]=="docx")
-                              <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
-                              @elseif($ext[1]=="xlsx")
-                              <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
-                              @elseif($ext[1]=="pptx")
-                              <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
-                              @endif 
+                        @if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt"))
+                        <div class="col-12 row align-self-center" id="course_list">
+                          <div class="col-9 row align-self-center">
+                            <div class="checkbox_style align-self-center">
+                              <input type="checkbox" value="{{$row->fp_id}}" class="group_download_list">
                             </div>
-                            <div class="col" id="course_name">
-                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->portfolio_name}}</b></p>
+                            <a href="/faculty/portfolio/{{$row->fp_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                              <div class="col-1" style="position: relative;top: -2px;">
+                               @if($ext[1]=="pdf")
+                                <img src="{{url('image/pdf.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="docx")
+                                <img src="{{url('image/docs.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="xlsx")
+                                <img src="{{url('image/excel.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="pptx")
+                                <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
+                                @elseif($ext[1]=="ppt")
+                                <img src="{{url('image/pptx.png')}}" width="25px" height="25px"/>
+                               @endif
+                              </div>
+                              <div class="col-10" id="course_name">
+                                  <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->portfolio_name}}</b></p> 
+                              </div>
+                            </a>
+                          </div>
+                          <div class="col-3" id="course_action_two">
+                                <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                          </div>
+                        </div>
+                        @else
+                        <div class="col-12 row align-self-center" id="course_list">
+                            <div class="col-9 row align-self-center">
+                              <div class="checkbox_style align-self-center">
+                                  <input type="checkbox" value="{{$row->fp_id}}" class="group_download_list">
+                                </div>
+                              <a href="/images/faculty_portfolio/{{$row->fp_id}}/{{$row->portfolio_file}}" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$row->portfolio_name}}">
+                                <div class="col-1" style="position: relative;top: -3px;">
+                                  <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
+                                </div>
+                                <div class="col-10" id="course_name">
+                                      <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>{{$row->portfolio_name}}</b></p>
+                                </div>
+                              </a>
                             </div>
-                            <div class="col-1" id="course_action">
-                                <i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                            <div class="col-3" id="course_action_two">
+                              <i class="fa fa-download download_button" aria-hidden="true" id="download_button_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;
+                              <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fp_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                             </div>
                           </div>
-                        </a>
+                        @endif
                         @endif
                       @endforeach
+                      <?php
+                      if(count($faculty_portfolio)==0){
+                      ?>
+                      <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px 10px 20px;">
+                        <center>Empty</center>
+                      </div>
+                      <?php
+                      }
+                      ?>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12" style="padding:0px 5px;">
+              <hr style="margin: 5px 10px 5px 10px;background-color:black;">
+              <div class="row">
+                <h5 style="position: relative;left: 15px;margin-top: 5px;" class="tp_title col-10" id="1">
+                        Other Materials (<i class="fa fa-plus" aria-hidden="true" id="icon" style="color: #0d2f81;position: relative;top: 2px;"></i>)
+                </h5>
+              </div>
+              <div class="details" style="padding: 0px;margin:0px;display: none;" id="plan_detail">
+                <div class="col-12 row align-self-center" id="course_list">
+                    <div class="col-12 row align-self-center">
+                      <a href="/FacultyPortFolio/LecturerCV/" class="col-12 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                          <div class="col-1" style="position: relative;top: -2px;">
+                            <img src="{{url('image/cv.png')}}" width="25px" height="25px"/>
+                          </div>
+                          <div class="col-10" id="course_name">
+                            <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>Lecturer CV</b></p>
+                          </div>
+                      </a>
+                    </div>
+                </div>
+                <div class="col-12 row align-self-center" id="course_list">
+                  <div class="col-12 row align-self-center">
+                        <a href="/FacultyPortFolio/Syllabus/" class="col-12 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                            <div class="col-1" style="position: relative;top: -2px;left: 3px;">
+                              <img src="{{url('image/syllabus.png')}}" width="19px" height="25px"/>
+                            </div>
+                            <div class="col-10" id="course_name">
+                              <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>Syllabus</b></p>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

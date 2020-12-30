@@ -13,6 +13,8 @@ use App\Programme;
 use App\Faculty;
 use App\Faculty_Portfolio;
 use App\Subject;
+use ZipArchive;
+use File;
 
 class F_PortFolioController extends Controller
 {
@@ -55,46 +57,95 @@ class F_PortFolioController extends Controller
                     ->get();
             if ($faculty_portfolio->count()) {
                 foreach($faculty_portfolio as $row){
+                    $data = "";
+                    if($row->portfolio_place != "Faculty"){
+                        $i=1;
+                        $place = explode(',,,',$row->portfolio_place);
+                        $data = "";
+                        while(isset($place[$i])!=""){
+                            $name = Faculty_Portfolio::where('fp_id', '=', $place[$i])->firstOrFail();
+                            if($data==""){
+                                $data .= $name->portfolio_name." / " ;
+                            }else{
+                                $data .= $name->portfolio_name." / ";
+                            }
+                            $i++;
+                        }
+                    }
                     if($row->portfolio_type=="folder"){
-                        $result .= '<a href="/faculty_portfolio/folder/'.$row->fp_id.'" class="col-md-12 align-self-center" id="course_list">';
-                        $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                        $result .= '<div class="col-1" style="padding-top: 3px;">';
-                        $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
+                        $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                        $result .= '<div class="col-9 row align-self-center">';
+                        $result .= '<div class="checkbox_style align-self-center">';
+                        $result .= '<input type="checkbox" value="'.$row->fp_id.'" class="group_download_list">';
                         $result .= '</div>';
-                        $result .= '<div class="col" id="course_name">';
-                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->portfolio_name.'</b></p>';
+                        $result .= '<a href="/faculty_portfolio/folder/'.$row->fp_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                        $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                        $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
+                        $result .= '</div>';
+                        $result .= '<div class="col-10" id="course_name">';
+                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->portfolio_name.'</b></p>'; 
+                        $result .= '</div>';
+                        $result .= '</a>';
                         $result .= '</div>';
                         $result .= '<div class="col-3" id="course_action_two">';
-                        $result .= '<i class="fa fa-wrench edit_button_file" aria-hidden="true" id="edit_button_file_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
-                        $result .= '<i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                            </div>';
-                        $result .= '</div></a>';
+                            $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
+                            $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                        $result .= '</div>';
+                        $result .= '</div>';
                     }else{
                         $ext = "";
                         if($row->portfolio_file!=""){
                             $ext = explode(".", $row->portfolio_file);
                         }
-                        $result .= '<a href="'.action('F_PortFolioController@downloadFP',$row->fp_id).'" class="col-md-12 align-self-center" id="course_list">';
-                        $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                        $result .= '<div class="col-1" style="padding-top: 3px;">';
-                        if($ext[1]=="pdf"){
-                            $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="docx"){
-                            $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="xlsx"){
-                            $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="pptx"){
-                            $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
+                            $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                            $result .= '<div class="col-9 row align-self-center">';
+                            $result .= '<div class="checkbox_style align-self-center">';
+                            $result .= '<input type="checkbox" value="'.$row->fp_id.'" class="group_download_list">';
+                            $result .= '</div>';
+                            $result .= '<a href="/faculty/portfolio/'.$row->fp_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                            if($ext[1]=="pdf"){
+                                $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="docx"){
+                                $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="xlsx"){
+                                $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }
+                            $result .= '</div>';
+                            $result .= '<div class="col-10" id="course_name">';
+                            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$data.$row->portfolio_name.'</b></p>';
+                            $result .= '</div>';
+                            $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .= '</div>';
+                            $result .= '</div>'; 
+                        }else{
+                            $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                            $result .= '<div class="col-9 row align-self-center">';
+                            $result .= '<div class="checkbox_style align-self-center">';
+                            $result .= '<input type="checkbox" value="'.$row->fp_id.'" class="group_download_list">';
+                            $result .= '</div>';
+                            $result .= '<a href="/images/faculty_portfolio/'.$row->fp_id.'/'.$row->portfolio_file.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->portfolio_name.'">';
+                            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                            $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-10" id="course_name">';
+                            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->portfolio_name.'</b></p>';
+                            $result .= '</div>';
+                            $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;&nbsp;<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .= '</div>';
+                            $result .= '</div>';
                         }
-
-                        $result .= '</div>';
-                        $result .= '<div class="col" id="course_name">';
-                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->portfolio_name.'</b></p>';
-                        $result .= '</div>';
-                        $result .= '<div class="col-1" id="course_action">';
-                        $result .= '<i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                                </div>';
-                        $result .= '</div></a>';
                     }   
                 }
             }else{
@@ -103,28 +154,6 @@ class F_PortFolioController extends Controller
                     $result .= '</div>';
             }
         }else{
-            if($place=="Faculty"){
-                $result .= '<a href="/FacultyPortFolio/CVdepartment" class="col-md-12 align-self-center" id="course_list">
-                              <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                                <div class="col-1" style="padding-top: 3px;">
-                                  <img src="'.url('image/cv.png').'" width="25px" height="25px"/>
-                                </div>
-                                <div class="col" id="course_name">
-                                  <p style="margin: 0px;"><b>Lecturer CV</b></p>
-                                </div>
-                              </div>
-                            </a>';
-                $result .= '<a href="/FacultyPortFolio/SyllabusDepartment" class="col-md-12 align-self-center" id="course_list">
-                              <div class="col-md-12 row" style="padding:10px;color:#0d2f81;">
-                                <div class="col-1" style="padding-top: 3px;">
-                                  <img src="'.url('image/syllabus.png').'" width="25px" height="25px"/>
-                                </div>
-                                <div class="col" id="course_name">
-                                  <p style="margin: 0px;"><b>Syllabus</b></p>
-                                </div>
-                              </div>
-                            </a>';
-            }
             $faculty_portfolio = DB::table('faculty_portfolio')
                     ->select('faculty_portfolio.*')
                     ->where('faculty_id', '=', $faculty_id)
@@ -132,54 +161,104 @@ class F_PortFolioController extends Controller
                     ->where('status', '=', 'Active')
                     ->orderByDesc('faculty_portfolio.portfolio_type')
                     ->get();
+
             if ($faculty_portfolio->count()) {
                 foreach($faculty_portfolio as $row){
+                    $data = "";
+                    if($row->portfolio_place != "Faculty"&&$row->portfolio_place != $place){
+                        $i=1;
+                        $place = explode(',,,',$row->portfolio_place);
+                        $data = "";
+                        while(isset($place[$i])!=""){
+                            $name = Faculty_Portfolio::where('fp_id', '=', $place[$i])->firstOrFail();
+                            if($data==""){
+                                $data .= $name->portfolio_name." / " ;
+                            }else{
+                                $data .= $name->portfolio_name." / ";
+                            }
+                            $i++;
+                        }
+                    }
                     if($row->portfolio_type=="folder"){
-                        $result .= '<a href="/faculty_portfolio/folder/'.$row->fp_id.'" class="col-md-12 align-self-center" id="course_list">';
-                        $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                        $result .= '<div class="col-1" style="padding-top: 3px;">';
-                        $result .= '<img src="'.url("image/folder2.png").'" width="25px" height="25px"/>';
+                        $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                        $result .= '<div class="col-9 row align-self-center">';
+                        $result .= '<div class="checkbox_style align-self-center">';
+                        $result .= '<input type="checkbox" value="'.$row->fp_id.'" class="group_download_list">';
                         $result .= '</div>';
-                        $result .= '<div class="col" id="course_name">';
-                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->portfolio_name.'</b></p>';
+                        $result .= '<a href="/faculty_portfolio/folder/'.$row->fp_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                        $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                        $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
+                        $result .= '</div>';
+                        $result .= '<div class="col-10" id="course_name">';
+                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->portfolio_name.'</b></p>'; 
+                        $result .= '</div>';
+                        $result .= '</a>';
                         $result .= '</div>';
                         $result .= '<div class="col-3" id="course_action_two">';
-                        $result .= '<i class="fa fa-wrench edit_button_file" aria-hidden="true" id="edit_button_file_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
-                        $result .= '<i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                            </div>';
-                        $result .= '</div></a>';
+                            $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;&nbsp;';
+                            $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                        $result .= '</div>';
+                        $result .= '</div>';
                     }else{
                         $ext = "";
                         if($row->portfolio_file!=""){
                             $ext = explode(".", $row->portfolio_file);
                         }
-
-                        $result .= '<a href="'.action('F_PortFolioController@downloadFP',$row->fp_id).'" class="col-md-12 align-self-center" id="course_list">';
-                        $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                        $result .= '<div class="col-1" style="padding-top: 3px;">';
-
-                        if($ext[1]=="pdf"){
-                            $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="docx"){
-                            $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="xlsx"){
-                            $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="pptx"){
-                            $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
-                        }    
-
-                        $result .= '</div>';
-                        $result .= '<div class="col" id="course_name">';
-                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->portfolio_name.'</b></p>';
-                        $result .= '</div>';
-                        $result .= '<div class="col-1" id="course_action">';
-                        $result .= '<i class="fa fa-times remove_button_file" aria-hidden="true" id="remove_button_file_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                                </div>';
-                        $result .= '</div></a>';
+                        if(($ext[1] == "pdf")||($ext[1] == "docx")||($ext[1] == "xlsx")||($ext[1] == "pptx")||($ext[1] == "ppt")){
+                            $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                            $result .= '<div class="col-9 row align-self-center">';
+                            $result .= '<div class="checkbox_style align-self-center">';
+                            $result .= '<input type="checkbox" value="'.$row->fp_id.'" class="group_download_list">';
+                            $result .= '</div>';
+                            $result .= '<a href="/faculty/portfolio/'.$row->fp_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                            if($ext[1]=="pdf"){
+                                $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="docx"){
+                                $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="xlsx"){
+                                $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="pptx"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }elseif($ext[1]=="ppt"){
+                                $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                            }
+                            $result .= '</div>';
+                            $result .= '<div class="col-10" id="course_name">';
+                            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$data.$row->portfolio_name.'</b></p>';
+                            $result .= '</div>';
+                            $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .= '</div>';
+                            $result .= '</div>'; 
+                        }else{
+                            $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                            $result .= '<div class="col-9 row align-self-center">';
+                            $result .= '<div class="checkbox_style align-self-center">';
+                            $result .= '<input type="checkbox" value="'.$row->fp_id.'" class="group_download_list">';
+                            $result .= '</div>';
+                            $result .= '<a href="/images/faculty_portfolio/'.$row->fp_id.'/'.$row->portfolio_file.'" data-toggle="lightbox" data-gallery="example-gallery_student" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$row->portfolio_name.'">';
+                            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                            $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-10" id="course_name">';
+                            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$data.$row->portfolio_name.'</b></p>';
+                            $result .= '</div>';
+                            $result .= '</a>';
+                            $result .= '</div>';
+                            $result .= '<div class="col-3" id="course_action_two">';
+                            $result .= '<i class="fa fa-download download_button" aria-hidden="true" id="download_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;&nbsp;<i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->fp_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
+                            $result .= '</div>';
+                            $result .= '</div>';
+                        }
                     }   
                 }
             }else{
-                
+                $result .= '<div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px 10px 20px;">';
+                $result .= '<center>Empty</center>';
+                $result .= '</div>';
             }
         }
         return $result;
@@ -216,6 +295,7 @@ class F_PortFolioController extends Controller
                     ->select('subjects.*','programmes.*','departments.*')
                     ->where('departments.faculty_id', '=', $faculty_id)
                     ->where('subjects.syllabus', '!=', "")
+                    ->orderBy('programmes.programme_id')
                     ->get();
         }
         return view('dean.FacultyPortFolio.Syllabus', compact('subjects','faculty'));
@@ -288,26 +368,42 @@ class F_PortFolioController extends Controller
                     ->where('staffs.lecturer_CV', '!=', null)
                     ->orderByDesc('staffs.lecturer_CV')
                     ->get();
-            $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Search Filter : '.$value.'</p>';
+            $result .= '<div class="col-12 row" style="padding: 0px 0px 5px 10px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" class="group_checkbox">';
+            $result .= '</div>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Search Filter : '.$value;
+            $result .= '</p>';
             $result .= '</div>';
             if ($faculty_staff->count()) {
                 foreach($faculty_staff as $row){
                     $ext = explode(".", $row->lecturer_CV);
-                    $result .= '<a href="'.action('Dean\F_PortFolioController@downloadCV',$row->staff_id).'" class="col-md-12 align-self-center" id="course_list" download>';
-                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                    $result .= '<div class="col-1" style="padding-top: 3px;">';
-                        if($ext[1]=="pdf"){
-                          $result .= '<img src="'.url("image/pdf.png").'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="docx"){
-                            $result .= '<img src="'.url("image/docs.png").'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="xlsx"){
-                            $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
-                        }
+                    $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                    $result .= '<div class="col-12 row align-self-center">';
+                    $result .= '<div class="checkbox_style align-self-center">';
+                    $result .= '<input type="checkbox" value="'.$row->staff_id.'" class="group_download_list">';
                     $result .= '</div>';
-                    $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->staff_id."_".$row->name.'</b></p>';
-                    $result .= '</div></div></a>';
+                    $result .= '<a href="/dean/staff/CV/'.$row->staff_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                    if($ext[1]=="pdf"){
+                        $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="docx"){
+                        $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="xlsx"){
+                        $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="pptx"){
+                        $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="ppt"){
+                        $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                    }
+                    $result .= '</div>';
+                    $result .= '<div class="col-10" id="course_name">';
+                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->staff_id.'_'.$row->name.'</b></p>';
+                    $result .= '</div>';
+                    $result .= '</a>';
+                    $result .= '</div>';
+                    $result .= '</div>'; 
                 }
             }else{
                     $result .= '<div class="col-md-12">';
@@ -322,28 +418,79 @@ class F_PortFolioController extends Controller
                     ->where('staffs.lecturer_CV', '!=', null)
                     ->orderByDesc('staffs.lecturer_CV')
                     ->get();
-            $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Lecturer CV In Faculty</p>';
+            $result .= '<div class="col-12 row" style="padding: 0px 0px 5px 10px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" class="group_checkbox">';
             $result .= '</div>';
-            foreach($faculty_staff as $row){
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Listing of CV';
+            $result .= '</p>';
+            $result .= '</div>';
+            if ($faculty_staff->count()) {
+                foreach($faculty_staff as $row){
                     $ext = explode(".", $row->lecturer_CV);
-                    $result .= '<a href="'.action('Dean\F_PortFolioController@downloadCV',$row->staff_id).'" class="col-md-12 align-self-center" id="course_list" download>';
-                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                    $result .= '<div class="col-1" style="padding-top: 3px;">';
-                        if($ext[1]=="pdf"){
-                          $result .= '<img src="'.url("image/pdf.png").'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="docx"){
-                            $result .= '<img src="'.url("image/docs.png").'" width="25px" height="25px"/>';
-                        }else if($ext[1]=="xlsx"){
-                            $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
-                        }
+                    $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                    $result .= '<div class="col-12 row align-self-center">';
+                    $result .= '<div class="checkbox_style align-self-center">';
+                    $result .= '<input type="checkbox" value="'.$row->staff_id.'" class="group_download_list">';
                     $result .= '</div>';
-                    $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->staff_id."_".$row->name.'</b></p>';
-                    $result .= '</div></div></a>';
+                    $result .= '<a href="/dean/staff/CV/'.$row->staff_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                    if($ext[1]=="pdf"){
+                        $result .= '<img src="'.url('image/pdf.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="docx"){
+                        $result .= '<img src="'.url('image/docs.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="xlsx"){
+                        $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="pptx"){
+                        $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                    }elseif($ext[1]=="ppt"){
+                        $result .= '<img src="'.url('image/pptx.png').'" width="25px" height="25px"/>';
+                    }
+                    $result .= '</div>';
+                    $result .= '<div class="col-10" id="course_name">';
+                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->staff_id.'_'.$row->name.'</b></p>';
+                    $result .= '</div>';
+                    $result .= '</a>';
+                    $result .= '</div>';
+                    $result .= '</div>'; 
+                }
+            }else{
+                $result .= '<div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px 10px 20px;">';
+                $result .= '<center>Empty</center>';
+                $result .= '</div>';
             }
         }
         return $result;
+    }
+
+
+    public function zipFileCV($staff_id)
+    {
+        $string = explode('---',$staff_id);
+        $user_id    = auth()->user()->user_id;
+        $checkFaculty = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_faculty = $checkFaculty->faculty_id;
+        $faculty    = Faculty::where('faculty_id', '=', $user_faculty)->firstOrFail();
+
+        $name = "Lecturer CV (".$faculty->faculty_name.")";
+        $zip = new ZipArchive;
+        $fileName = storage_path('private/staffCV/Zip_Files/'.$name.'.zip');
+        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        $files = File::files(storage_path('/private/staffCV/'));
+
+        for($i=0;$i<(count($string)-1);$i++){
+            $staff = Staff::where('staff_id', '=', $string[$i])->firstOrFail();
+            foreach ($files as $key => $value) {
+                $relativeNameInZipFile = basename($value);
+                if($staff->lecturer_CV==$relativeNameInZipFile){
+                    $ext = explode('.',$relativeNameInZipFile);
+                    $zip->addFile($value,$staff->staff_id.'.'.$ext[1]);
+                }
+            }
+        }
+        $zip->close();
+        return response()->download($fileName);
     }
 
     public function searchSyllabus(Request $request){
@@ -359,25 +506,40 @@ class F_PortFolioController extends Controller
                     ->select('subjects.*','programmes.*','departments.*')
                     ->where('departments.faculty_id', '=', $faculty_id)
                     ->Where(function($query) use ($value) {
-                          $query->orWhere('subjects.syllabus_name','LIKE','%'.$value.'%')
+                          $query->orWhere('subjects.subject_code','LIKE','%'.$value.'%')
+                            ->orWhere('subjects.subject_name','LIKE','%'.$value.'%')
+                            ->orWhere('programmes.short_form_name','LIKE','%'.$value.'%')
                             ->orWhere('programmes.programme_name','LIKE','%'.$value.'%')
                             ->orWhere('departments.department_name','LIKE','%'.$value.'%');
                     })
                     ->where('subjects.syllabus', '!=', "")
+                    ->orderBy('programmes.programme_id')
                     ->get();
-            $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Search Filter : '.$value.'</p>';
+            $result .= '<div class="col-12 row" style="padding: 0px 0px 5px 10px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" class="group_checkbox">';
+            $result .= '</div>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Search Filter : '.$value;
+            $result .= '</p>';
             $result .= '</div>';
             if ($subjects->count()) {
                 foreach($subjects as $row){
-                    $result .= '<a href="'.action('Dean\F_PortFolioController@downloadSyllabus',$row->subject_id).'" class="col-md-12 align-self-center" id="course_list">';
-                    $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                    $result .= '<div class="col-1" style="padding-top: 3px;">';
-                    $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
+                    $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                    $result .= '<div class="col-12 row align-self-center">';
+                    $result .= '<div class="checkbox_style align-self-center">';
+                    $result .= '<input type="checkbox" value="'.$row->subject_id.'" class="group_download_list">';
                     $result .= '</div>';
-                    $result .= '<div class="col" id="course_name">';
-                    $result .= '<p style="margin: 0px;"><b>'.$row->syllabus_name.'</b></p>';
-                    $result .= '</div></div></a>';
+                    $result .= '<a href="/dean/syllabusDownload/'.$row->subject_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                    $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+                    $result .= '</div>';
+                    $result .= '<div class="col-10" id="course_name">';
+                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->short_form_name." / ".$row->subject_code.' '.$row->subject_name.'</b></p>';
+                    $result .= '</div>';
+                    $result .= '</a>';
+                    $result .= '</div>';
+                    $result .= '</div>'; 
                 }
             }else{
                     $result .= '<div class="col-md-12">';
@@ -391,23 +553,71 @@ class F_PortFolioController extends Controller
                     ->select('subjects.*','programmes.*','departments.*')
                     ->where('departments.faculty_id', '=', $faculty_id)
                     ->where('subjects.syllabus', '!=', "")
+                    ->orderBy('programmes.programme_id')
                     ->get();
 
-            $result .= '<div class="col-md-12">';
-            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 10px;display: inline-block;">Syllabus In Faculty</p>';
+            $result .= '<div class="col-12 row" style="padding: 0px 0px 5px 10px;margin:0px;">';
+            $result .= '<div class="checkbox_group_style align-self-center">';
+            $result .= '<input type="checkbox" name="group_lecturer" class="group_checkbox">';
             $result .= '</div>';
-            foreach($subjects as $row){
-                $result .= '<a href="'.action('Dean\F_PortFolioController@downloadSyllabus',$row->subject_id).'" class="col-md-12 align-self-center" id="course_list">';
-                $result .= '<div class="col-md-12 row" style="padding:10px;color:#0d2f81;">';
-                $result .= '<div class="col-1" style="padding-top: 3px;">';
-                $result .= '<img src="'.url("image/excel.png").'" width="25px" height="25px"/>';
+            $result .= '<p style="font-size: 18px;margin:0px 0px 0px 5px;display: inline-block;">';
+            $result .= 'Listing of Syllabus';
+            $result .= '</p>';
+            $result .= '</div>';
+            if($subjects->count()){
+                foreach($subjects as $row){
+                    $result .= '<div class="col-12 row align-self-center" id="course_list">';
+                    $result .= '<div class="col-12 row align-self-center">';
+                    $result .= '<div class="checkbox_style align-self-center">';
+                    $result .= '<input type="checkbox" value="'.$row->subject_id.'" class="group_download_list">';
+                    $result .= '</div>';
+                    $result .= '<a href="/dean/syllabusDownload/'.$row->subject_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+                    $result .= '<div class="col-1" style="position: relative;top: -2px;">';
+                    $result .= '<img src="'.url('image/excel.png').'" width="25px" height="25px"/>';
+                    $result .= '</div>';
+                    $result .= '<div class="col-10" id="course_name">';
+                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name_two"><b>'.$row->short_form_name." / ".$row->subject_code.' '.$row->subject_name.'</b></p>';
+                    $result .= '</div>';
+                    $result .= '</a>';
+                    $result .= '</div>';
+                    $result .= '</div>'; 
+                }
+            }else{
+                $result .= '<div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 0px 20px 10px 20px;">';
+                $result .= '<center>Empty</center>';
                 $result .= '</div>';
-                $result .= '<div class="col" id="course_name">';
-                $result .= '<p style="margin: 0px;"><b>'.$row->syllabus_name.'</b></p>';
-                $result .= '</div></div></a>';
             }
         }
         return $result;
+    }
+
+    public function zipFileSyllabus($subject_id)
+    {
+        $string = explode('---',$subject_id);
+        $user_id    = auth()->user()->user_id;
+        $checkFaculty = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_faculty = $checkFaculty->faculty_id;
+        $faculty    = Faculty::where('faculty_id', '=', $user_faculty)->firstOrFail();
+
+        $name = "Syllabus (".$faculty->faculty_name.")";
+        $zip = new ZipArchive;
+        $fileName = storage_path('private/syllabus/Zip_Files/'.$name.'.zip');
+        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        $files = File::files(storage_path('/private/syllabus/'));
+
+        for($i=0;$i<(count($string)-1);$i++){
+            $subject = Subject::where('subject_id', '=', $string[$i])->firstOrFail();
+            $programmes = Programme::where('programme_id', '=', $subject->programme_id)->firstOrFail();
+            foreach ($files as $key => $value) {
+                $relativeNameInZipFile = basename($value);
+                if($subject->syllabus==$relativeNameInZipFile){
+                    $ext = explode('.',$relativeNameInZipFile);
+                    $zip->addFile($value,$programmes->short_form_name." : ".$subject->subject_code." ".$subject->subject_name.'.'.$ext[1]);
+                }
+            }
+        }
+        $zip->close();
+        return response()->download($fileName);
     }
 
     public function openNewFolder(Request $request){
@@ -519,11 +729,30 @@ class F_PortFolioController extends Controller
     public function removeActiveFile($id){
         $faculty_portfolio = Faculty_Portfolio::where('fp_id', '=', $id)->firstOrFail();
         if($faculty_portfolio->portfolio_type=="folder"){
-            $faculty_portfolio_list = Faculty_Portfolio::where('portfolio_place', 'LIKE', $faculty_portfolio->portfolio_place.",,,".$id.'%')->update(['status' => 'Remove']);
+            $faculty_portfolio_list = Faculty_Portfolio::where('portfolio_place', 'LIKE', $faculty_portfolio->portfolio_place.",,,".$id)->update(['status' => 'Remove']);
+
+            $faculty_portfolio_list_2 = Faculty_Portfolio::where('portfolio_place', 'LIKE', $faculty_portfolio->portfolio_place.",,,".$id.",,,".'%')->update(['status' => 'Remove']);
         }
         $faculty_portfolio->status  = "Remove";
         $faculty_portfolio->save();
         return redirect()->back()->with('success','Remove Successfully');
+    }
+
+    public function FPImage($fp_id,$image_name)
+    {
+        $user_id    = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $staff_faculty = $staff_dean->faculty_id;
+
+        $checkCourseId = Faculty_Portfolio::where('fp_id', '=', $fp_id)->firstOrFail();
+        $faculty_id = $checkCourseId->faculty_id;
+
+        if($staff_faculty==$faculty_id){
+            $storagePath = storage_path('/private/f_Portfolio/'.$faculty_id.'/'.$image_name);
+            return Image::make($storagePath)->response();
+        }else{
+            return redirect()->route('login');
+        }
     }
 
     public function downloadFP($id)
@@ -544,5 +773,128 @@ class F_PortFolioController extends Controller
         }else{
             return redirect()->route('login');
         }
+    }
+
+    public function zipFileDownload($fp_id,$download){
+
+        $string = explode('---',$fp_id);
+        $user_id    = auth()->user()->user_id;
+        $checkFaculty = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $user_faculty = $checkFaculty->faculty_id;
+        $faculty    = Faculty::where('faculty_id', '=', $user_faculty)->firstOrFail();
+
+        $name = "Faculty Portfolio (".$faculty->faculty_name.")";
+        $zip = new ZipArchive;
+        $fileName = storage_path('private/f_Portfolio/Zip_Files/'.$name.'.zip');
+        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        $files = File::files(storage_path('/private/f_Portfolio/'.$user_faculty.'/'));
+
+        if($download == "checked"){
+            for($i=0;$i<(count($string)-1);$i++){
+                $portfolio = Faculty_Portfolio::where('fp_id', '=', $string[$i])->firstOrFail();
+                if($portfolio->portfolio_type == "document"){
+                    foreach ($files as $key => $value) {
+                        $relativeNameInZipFile = basename($value);
+                        if($portfolio->portfolio_file==$relativeNameInZipFile){
+                            $ext = explode('.',$relativeNameInZipFile);
+                            if($portfolio->portfolio_place=="Faculty"){
+                                $zip->addFile($value,$portfolio->portfolio_name.'.'.$ext[1]);
+                            }else{
+                                $m=1;
+                                $place = explode(',,,',$portfolio->portfolio_place);
+                                $data = "";
+                                while(isset($place[$m])!=""){
+                                    $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                    if($data==""){
+                                        $data .= $name->portfolio_name;
+                                    }else{
+                                        $data .= "/".$name->portfolio_name;
+                                    }
+                                    $m++;
+                                }
+                                $zip->addFile($value,$data.'/'.$portfolio->portfolio_name.'.'.$ext[1]);
+                            }
+                        }
+                    }
+                }else{
+                    if($portfolio->portfolio_place=="Faculty"){
+                        $zip->addEmptyDir($portfolio->portfolio_name);
+                    }else{
+                        $m=1;
+                        $place = explode(',,,',$portfolio->portfolio_place);
+                        $data = "";
+                        while(isset($place[$m])!=""){
+                            $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                            if($data==""){
+                                $data .= $name->portfolio_name;
+                            }else{
+                                $data .= "/".$name->portfolio_name;
+                            }
+                            $m++;
+                        }
+                        $zip->addEmptyDir($data.'/'.$portfolio->portfolio_name);
+                    }
+                    $check = $portfolio->portfolio_place.",,,".$portfolio->fp_id;
+                    $next_check = $portfolio->portfolio_place.",,,".$portfolio->fp_id.",,,";
+                    $faculty_portfolio = DB::table('faculty_portfolio')
+                                    ->select('faculty_portfolio.*')
+                                    ->Where(function($query) use ($check,$next_check) {
+                                      $query->orWhere('portfolio_place','LIKE','%'.$check)
+                                            ->orWhere('portfolio_place','LIKE','%'.$next_check.'%');
+                                    })
+                                    ->where('faculty_portfolio.status', '=', 'Active')
+                                    ->where('faculty_portfolio.faculty_id','=',$user_faculty)
+                                    ->orderByDesc('faculty_portfolio.portfolio_type')
+                                    ->get();
+                    foreach($faculty_portfolio as $row){
+                        if($row->portfolio_type == "document"){
+                            foreach ($files as $key => $value) {
+                                $relativeNameInZipFile = basename($value);
+                                if($row->portfolio_file==$relativeNameInZipFile){
+                                    $ext = explode('.',$relativeNameInZipFile);
+                                    if($row->portfolio_place=="Faculty"){
+                                        $zip->addFile($value,$row->portfolio_name.'.'.$ext[1]);
+                                    }else{
+                                        $m=1;
+                                        $place = explode(',,,',$row->portfolio_place);
+                                        $data = "";
+                                        while(isset($place[$m])!=""){
+                                            $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                            if($data==""){
+                                                $data .= $name->portfolio_name;
+                                            }else{
+                                                $data .= "/".$name->portfolio_name;
+                                            }
+                                            $m++;
+                                        }
+                                        $zip->addFile($value,$data.'/'.$row->portfolio_name.'.'.$ext[1]);
+                                    }
+                                }
+                            }
+                        }else{
+                            if($row->portfolio_place=="Faculty"){
+                                    $zip->addEmptyDir($row->portfolio_name);
+                            }else{
+                                $m=1;
+                                $place = explode(',,,',$row->portfolio_place);
+                                $data = "";
+                                while(isset($place[$m])!=""){
+                                    $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                    if($data==""){
+                                        $data .= $name->portfolio_name;
+                                    }else{
+                                        $data .= "/".$name->portfolio_name;
+                                    }
+                                    $m++;
+                                }
+                                $zip->addEmptyDir($data.'/'.$row->portfolio_name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $zip->close();
+        return response()->download($fileName);
     }
 }
