@@ -235,7 +235,16 @@ $option4 = "id='selected-sidebar'";
 		                        <label for="full_name" class="bmd-label-floating">Search</label>
 		                        <input type="hidden" value="{{$course[0]->course_id}}" id="course_id">
                             <input type="hidden" value="{{$assessments->ass_id}}" id="ass_id">
-		                        <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+		                        <input type="text" name="search" class="form-control search tooltip_hover" id="input" style="font-size: 18px;">
+                            <span class="tooltiptext">
+                              <span>
+                                  <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                              </span>
+                              <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                              <span>1. Student Id</span><br/>
+                              <span>2. Student Name</span><br/>
+                              <span>3. Batch</span>
+                          </span>
 		                    </div>
 		                </div>
 		            </div>

@@ -23,6 +23,19 @@ $option3 = "id='selected-sidebar'";
     top:1px;
     text-align: center;
   }
+  .tooltiptext{
+    width:300px;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top:-20%;
+    left:103%;
+  }
 }
 </style>
 <script type="text/javascript">
@@ -187,7 +200,17 @@ $option3 = "id='selected-sidebar'";
                     <div class="col-11" style="padding-left: 20px;">
                         <div class="form-group">
                             <label for="full_name" class="bmd-label-floating">Search</label>
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+                            <input type="text" name="search" class="form-control search tooltip_hover" id="input" style="font-size: 18px;">
+                            <span class="tooltiptext">
+                              <span>
+                                  <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                              </span>
+                              <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                              <span>1. Subject Code</span><br/>
+                              <span>2. Subject Name</span><br/>
+                              <span>3. Semester</span><br/>
+                              <span>4. Lecturer Name</span>
+                            </span>
                         </div>
                     </div>
                 </div>

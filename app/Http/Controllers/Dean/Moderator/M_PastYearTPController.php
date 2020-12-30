@@ -1018,6 +1018,10 @@ class M_PastYearTPController extends Controller
                   $result .= '</div>';
                 $result .= '</div>';
               }
+          }else{
+              $result .= '<div class="col-md-12">';
+              $result .= '<p>Not Found</p>';
+              $result .= '</div>';
           }
       }else{
         $previous_semester = DB::table('courses')
@@ -1056,6 +1060,10 @@ class M_PastYearTPController extends Controller
                   $result .= '</div>';
                 $result .= '</div>';
               }
+          }else{
+              $result .= '<div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin:5px 20px;">';
+              $result .= '<center>Empty</center>';
+              $result .= '</div>';
           }
       }
       return $result;

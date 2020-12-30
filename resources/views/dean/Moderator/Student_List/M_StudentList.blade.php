@@ -98,7 +98,7 @@ $option3 = "id='selected-sidebar'";
         </p>
         <hr class="separate_hr">
     </div>
-    <div class="row" style="padding: 10px 10px 10px 10px;">
+    <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
             <p class="page_title">Student List ( {{count($assign_student)}} )</p>
             <div class="details" style="padding: 0px 5px 0px 5px;">
@@ -112,7 +112,16 @@ $option3 = "id='selected-sidebar'";
                         <div class="form-group">
                             <label for="full_name" class="bmd-label-floating">Search</label>
                             <input type="hidden" value="{{$course[0]->course_id}}" id="course_id">
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+                            <input type="text" name="search" class="form-control search tooltip_hover" id="input" style="font-size: 18px;">
+                            <span class="tooltiptext">
+                              <span>
+                                  <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                              </span>
+                              <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                              <span>1. Student Id</span><br/>
+                              <span>2. Student Name</span><br/>
+                              <span>3. Batch</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -146,6 +155,11 @@ $option3 = "id='selected-sidebar'";
                       </div>
                     </div>
                     @endforeach
+                    @if(count($assign_student)==0)
+                    <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 10px 0px 0px 0px;">
+                      <center>Empty</center>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

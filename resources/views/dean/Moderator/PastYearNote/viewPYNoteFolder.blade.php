@@ -320,6 +320,22 @@ $option3 = "id='selected-sidebar'";
       display: block;
     }
 }
+
+@media only screen and (min-width: 600px) {
+  .tooltiptext{
+    width:300px;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top:38%;
+    left:103%;
+  }
+}
 </style>
 <div id="all">
     <div>
@@ -402,7 +418,14 @@ $option3 = "id='selected-sidebar'";
                             <label for="full_name" class="bmd-label-floating">Search</label>
                             <input type="hidden" id="semester" value="{{$previous[0]->course_id}}">
                             <input type="hidden" id="view_place" value="{{$view_place}}">
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+                            <input type="text" name="search" class="form-control search tooltip_hover" id="input" style="font-size: 18px;">
+                            <span class="tooltiptext">
+                              <span>
+                                  <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                              </span>
+                              <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                              <span>1. All Note in {{$previous[0]->semester_name}}</span><br/>
+                            </span>
                         </div>
                     </div>
                 </div>

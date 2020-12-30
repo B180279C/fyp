@@ -55,6 +55,21 @@ $option5 = "id='selected-sidebar'";
     #show_image_link:hover{
         text-decoration-line: none;
     }
+@media only screen and (min-width: 600px) {
+  .tooltiptext{
+    width:300px;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top:38%;
+    left:103%;
+  }
+}
 </style>
 <div id="all">
     <div>
@@ -89,7 +104,14 @@ $option5 = "id='selected-sidebar'";
                 <div class="col-11" style="padding-left: 20px;">
                     <div class="form-group">
                         <label for="full_name" class="bmd-label-floating">Search</label>
-                        <input type="text" name="search" class="form-control" id="input" style="font-size: 18px;">
+                        <input type="text" name="search" class="form-control tooltip_hover" id="input" style="font-size: 18px;">
+                        <span class="tooltiptext">
+                            <span>
+                                <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                            </span>
+                            <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                            <span>1. All Data in table</span>
+                        </span>
                     </div>
                 </div>
             </div>

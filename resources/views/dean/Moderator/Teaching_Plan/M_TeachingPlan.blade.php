@@ -532,9 +532,9 @@ function w3_close() {
                 <center>Empty</center>
             </div>
             @endif
-            <hr style="margin: 5px 5px;background-color:black;">
+            <hr style="margin: 6px 5px 5px 5px;background-color:black;">
             @if($button_verify=="Yes")
-            <div class="row" style="height: auto;margin: 5px -10px 10px -10px;">
+            <div class="row" style="height: auto;margin: 6px -10px 10px -10px;">
                 <form id="myForm" method="post" action="{{$character}}/Moderator/teachingPlan/verify/" style="width: 100%;margin: 0px;">
                     {{csrf_field()}}
                     <input type="hidden" name="verify" id="verify">

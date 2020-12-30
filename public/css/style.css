@@ -532,3 +532,60 @@ ul.sidebar-action-ul a:hover{
   border-bottom: 1px solid #d9d9d9;
   text-align: center;
 }
+
+@media only screen and (min-width: 600px) {
+  .tooltiptext{
+    width:300px;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top:0px;
+    left:103%;
+  }
+
+  .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100.1%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .tooltiptext{
+    width:auto;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top: 115%;
+    left: 10%;
+    margin-left: -60px;
+  }
+
+  .tooltiptext::after {
+    content: "";
+    position: absolute;
+    bottom: 100.1%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+  }
+}
+
+
+

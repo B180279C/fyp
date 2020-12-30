@@ -108,6 +108,33 @@ $option1 = "id='selected-sidebar'";
       display: block;
     }
 }
+
+@media only screen and (min-width: 600px) {
+  .tooltiptext_2{
+    width:300px;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top:-40%;
+    left:103%;
+  }
+
+  .tooltiptext_2::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100.1%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent black transparent transparent;
+  }
+}
 </style>
 <script type="text/javascript">
 function w3_open() {
@@ -132,6 +159,12 @@ function w3_close() {
       });
     });
 
+    $('.tooltiptext_2').hide();
+    $(".tooltip_hover_2").hover(function(){
+      $('.tooltiptext_2').show();
+    }, function(){
+      $('.tooltiptext_2').hide();
+    });
     $(document).on('click', '.download_button', function(){
       var id = $(this).attr("id");
       var num = id.split("_");
@@ -365,7 +398,16 @@ function w3_close() {
                           <div class="form-group">
                               <label for="full_name" class="bmd-label-floating">Search</label>
                               <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
-                              <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+                              <input type="text" name="search" class="form-control search tooltip_hover" id="input" style="font-size: 18px;">
+                              <span class="tooltiptext">
+                                <span>
+                                    <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                                </span>
+                                <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                                <span>1. Assessment Name in Previous Semester</span><br/>
+                                <span>2. Keyword in Each Question</span><br/>
+                                <span>3. Semester</span><br/>
+                              </span>
                           </div>
                       </div>
                   </div>
@@ -410,7 +452,18 @@ function w3_close() {
                           <div class="form-group">
                               <label for="full_name" class="bmd-label-floating">Search</label>
                               <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
-                              <input type="text" class="form-control search_result" id="input_result" style="font-size: 18px;">
+                              <input type="text" class="form-control search_result tooltip_hover_2" id="input_result" style="font-size: 18px;">
+                              <span class="tooltiptext_2">
+                              <span>
+                                  <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                              </span>
+                              <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                              <span>1. Assessment Name in Previous Semester</span><br/>
+                              <span>2. Semester</span><br/>
+                              <span>3. Student Id OR Name</span><br/>
+                              <span>4. Batch </span><br/>
+                              <span>5. Submitted By ( Lecturer / Student )</span><br/>
+                            </span>
                           </div>
                       </div>
                   </div>

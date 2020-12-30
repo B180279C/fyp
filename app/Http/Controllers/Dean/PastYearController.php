@@ -696,7 +696,7 @@ class PastYearController extends Controller
 	            $result .= '<div class="checkbox_style align-self-center">';
 	            $result .= '<input type="checkbox" value="'.$row->ass_id.'" class="group_download">';
 	            $result .= '</div>';
-	            $result .= '<a href="'.$character.'/PastYear/assessment/'.$course_id.'/list/'.$row->ass_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	            $result .= '<a href="'.$character.'/PastYear/assessment/'.$original_id.'/list/'.$row->ass_id.'/" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	            $result .= '</div>';
@@ -1028,7 +1028,7 @@ class PastYearController extends Controller
 	                $result .= '<div class="checkbox_style align-self-center">';
 	                $result .= '<input type="checkbox" value="'.$ass_row_name->ass_id.'" class="group_r group_download">';
 	                $result .= '</div>';
-	                $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/name/'.$ass_row_name->ass_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	                $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/name/'.$ass_row_name->ass_id.'/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	                $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	                $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	                $result .= '</div>';
@@ -1183,7 +1183,7 @@ class PastYearController extends Controller
 	            $result .= '<div class="checkbox_style align-self-center">';
 	            $result .= '<input type="checkbox" value="'.$row->course_id.'" class="group_r group_download">';
 	            $result .= '</div>';
-	            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/previous/'.$row->course_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
+	            $result .= '<a href="'.$character.'/PastYear/sampleResult/'.$course_id.'/previous/'.$row->course_id.'/All" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 	            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 	            $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 	            $result .= '</div>';

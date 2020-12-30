@@ -97,6 +97,12 @@
       }
     })
     $(document).ready(function(){
+        $('.tooltiptext').hide();
+        $(".tooltip_hover").hover(function(){
+          $('.tooltiptext').show();
+          }, function(){
+          $('.tooltiptext').hide();
+        });
         $("#button_side").click(function(){
           var width = getWidth();
           var value = document.getElementById('openOclose').value;

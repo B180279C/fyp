@@ -289,7 +289,16 @@ function w3_close() {
                     <div class="col-11" style="padding-left: 20px;">
                         <div class="form-group">
                             <label for="full_name" class="bmd-label-floating">Search</label>
-                            <input type="text" name="search" class="form-control search" id="input" style="font-size: 18px;">
+                            <input type="text" name="search" class="form-control search tooltip_hover" id="input" style="font-size: 18px;">
+                            <span class="tooltiptext">
+                              <span>
+                                  <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
+                              </span>
+                              <hr style="background-color: #d9d9d9;margin: 3px 0px;">
+                              <span>1. Staff Id</span><br/>
+                              <span>2. Lecturer Name</span><br/>
+                              <span>3. Department</span><br/>
+                            </span>
                         </div>
                     </div>
                 </div>
