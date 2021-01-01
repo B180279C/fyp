@@ -71,11 +71,11 @@ class PastYearFinalController extends Controller
                  ->where('course_id', '=', $f_course_id)
                  ->get();
 
-        $name = $subjects[0]->subject_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $subjects[0]->subject_name." ( ".$subjects[0]->subject_code." )";
 
         if($download == "checked"){
         	$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
             for($i=1;$i<(count($string)-1);$i++){
@@ -123,7 +123,7 @@ class PastYearFinalController extends Controller
 		   	}
 		}else if($download == "searched"){
 			$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
 			for($i=1;$i<(count($string)-1);$i++){
@@ -166,7 +166,7 @@ class PastYearFinalController extends Controller
 			}
 		}else if($download == "searchedWord"){
 			$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
 			for($i=1;$i<(count($string)-1);$i++){
@@ -205,7 +205,7 @@ class PastYearFinalController extends Controller
 			}
 		}else{
 			$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
 	        $Resultfiles = File::files(storage_path('/private/Final_Result/'));
@@ -262,7 +262,12 @@ class PastYearFinalController extends Controller
         	}
 		}
 		$zip->close();
-    	return response()->download($fileName);
+        if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function searchAssessment(Request $request)
@@ -531,10 +536,13 @@ class PastYearFinalController extends Controller
     public function zipFileDownloadName($course_id,$download)
     {
     	if($download == "All"){
-    		$f_course_id = $course_id;
+            $string = explode('---',$course_id);
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }else{
             $string = explode('---',$course_id);
-            $f_course_id = $string[0];
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }
 
         $subjects = DB::table('courses')
@@ -544,17 +552,17 @@ class PastYearFinalController extends Controller
                  ->where('course_id', '=', $f_course_id)
                  ->get();
 
-        $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name." ( ".$subjects[0]->semester_name." )";
+        $ZipFile_name = $subjects[0]->subject_code." ".$subjects[0]->subject_name." ( ".$subjects[0]->semester_name." )";
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Assessment_Final/'));
 
         if($download == "checked"){
-           	for($i=1;$i<(count($string)-1);$i++){
+            for($i=2;$i<(count($string)-1);$i++){
 
-           		$AssFinal = AssFinal::where('fx_id','=',$string[$i])->firstOrFail();
-				$course_id = $AssFinal->course_id;
+                $AssFinal = AssFinal::where('fx_id','=',$string[$i])->firstOrFail();
+                $course_id = $AssFinal->course_id;
 
                 $zip->addEmptyDir($AssFinal->assessment_name);
                 $result_list = DB::table('assessment_final')
@@ -563,34 +571,34 @@ class PastYearFinalController extends Controller
                          ->where('assessment_final.status','=','Active')
                          ->get();
                 foreach($result_list as $rl_row){
-		            if($rl_row->ass_fx_type=="Question"){
-		                $zip->addEmptyDir($AssFinal->assessment_name."/Question");
-		            }else{
-		                $zip->addEmptyDir($AssFinal->assessment_name."/Solution"); 
-		            }
-		            foreach ($files as $key => $value) {
-		                $relativeNameInZipFile = basename($value);
-		                if($rl_row->ass_fx_document == $relativeNameInZipFile){
-		                    $ext = explode('.',$relativeNameInZipFile);
-		                    if($rl_row->ass_fx_type=="Question"){
-		                        $zip->addFile($value,$AssFinal->assessment_name."/Question/".$rl_row->ass_fx_name.'.'.$ext[1]);
-		                    }else{
-		                        $zip->addFile($value,$AssFinal->assessment_name."/Solution/".$rl_row->ass_fx_name.'.'.$ext[1]);
-		                    } 
-		                }
-		            }
-		        }
-		   	}
-		}else if($download == "searchedWord"){
-			for($i=1;$i<(count($string)-1);$i++){
+                    if($rl_row->ass_fx_type=="Question"){
+                        $zip->addEmptyDir($AssFinal->assessment_name."/Question");
+                    }else{
+                        $zip->addEmptyDir($AssFinal->assessment_name."/Solution"); 
+                    }
+                    foreach ($files as $key => $value) {
+                        $relativeNameInZipFile = basename($value);
+                        if($rl_row->ass_fx_document == $relativeNameInZipFile){
+                            $ext = explode('.',$relativeNameInZipFile);
+                            if($rl_row->ass_fx_type=="Question"){
+                                $zip->addFile($value,$AssFinal->assessment_name."/Question/".$rl_row->ass_fx_name.'.'.$ext[1]);
+                            }else{
+                                $zip->addFile($value,$AssFinal->assessment_name."/Solution/".$rl_row->ass_fx_name.'.'.$ext[1]);
+                            } 
+                        }
+                    }
+                }
+            }
+        }else if($download == "searchedWord"){
+            for($i=2;$i<(count($string)-1);$i++){
 
-				$assessment_final = AssessmentFinal::where('ass_fx_id','=',$string[$i])->firstOrFail();
-				$fx_id = $assessment_final->fx_id;
+                $assessment_final = AssessmentFinal::where('ass_fx_id','=',$string[$i])->firstOrFail();
+                $fx_id = $assessment_final->fx_id;
 
-				$AssFinal = AssFinal::where('fx_id','=',$fx_id)->firstOrFail();
-				$course_id = $AssFinal->course_id;
+                $AssFinal = AssFinal::where('fx_id','=',$fx_id)->firstOrFail();
+                $course_id = $AssFinal->course_id;
 
-				$course = DB::table('courses')
+                $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                  ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                  ->select('courses.*','subjects.*','semesters.*')
@@ -599,59 +607,64 @@ class PastYearFinalController extends Controller
 
                  $zip->addEmptyDir($AssFinal->assessment_name);
 
-		         if($assessment_final->ass_fx_type=="Question"){
-		            $zip->addEmptyDir($AssFinal->assessment_name."/Question");
-		         }else{
-		            $zip->addEmptyDir($AssFinal->assessment_name."/Solution"); 
-		         }
-		         foreach ($files as $key => $value) {
-		           	$relativeNameInZipFile = basename($value);
-		            if($assessment_final->ass_fx_document == $relativeNameInZipFile){
-		                $ext = explode('.',$relativeNameInZipFile);
-		                if($assessment_final->ass_fx_type=="Question"){
-		                    $zip->addFile($value,$AssFinal->assessment_name."/Question/".$assessment_final->ass_fx_name.'.'.$ext[1]);
-		                }else{
-		                    $zip->addFile($value,$AssFinal->assessment_name."/Solution/".$assessment_final->ass_fx_name.'.'.$ext[1]);
-		                } 
-		            }
-		        }
-			}
-		}else{
-	        $ass_final = DB::table('ass_final')
-			                 ->select('ass_final.*')
-			                 ->where('course_id', '=', $course_id)
-			                 ->where('status', '=', 'Active')
-			                 ->get();
+                 if($assessment_final->ass_fx_type=="Question"){
+                    $zip->addEmptyDir($AssFinal->assessment_name."/Question");
+                 }else{
+                    $zip->addEmptyDir($AssFinal->assessment_name."/Solution"); 
+                 }
+                 foreach ($files as $key => $value) {
+                    $relativeNameInZipFile = basename($value);
+                    if($assessment_final->ass_fx_document == $relativeNameInZipFile){
+                        $ext = explode('.',$relativeNameInZipFile);
+                        if($assessment_final->ass_fx_type=="Question"){
+                            $zip->addFile($value,$AssFinal->assessment_name."/Question/".$assessment_final->ass_fx_name.'.'.$ext[1]);
+                        }else{
+                            $zip->addFile($value,$AssFinal->assessment_name."/Solution/".$assessment_final->ass_fx_name.'.'.$ext[1]);
+                        } 
+                    }
+                }
+            }
+        }else{
+            $ass_final = DB::table('ass_final')
+                             ->select('ass_final.*')
+                             ->where('course_id', '=', $string[1])
+                             ->where('status', '=', 'Active')
+                             ->get();
 
-	        foreach($ass_final as $ass_row){
-	                	$zip->addEmptyDir($ass_row->assessment_name);
-	                	$result_list = DB::table('assessment_final')
-	                         ->select('assessment_final.*')
-	                         ->where('assessment_final.fx_id', '=', $ass_row->fx_id)
-	                         ->where('assessment_final.status','=','Active')
-	                         ->get();
-	            foreach($result_list as $rl_row){
-			                if($rl_row->ass_fx_type=="Question"){
-			                    $zip->addEmptyDir($ass_row->assessment_name."/Question");
-			                }else{
-			                    $zip->addEmptyDir($ass_row->assessment_name."/Solution"); 
-			                }
-			        foreach ($files as $key => $value) {
-			            $relativeNameInZipFile = basename($value);
-			            if($rl_row->ass_fx_document == $relativeNameInZipFile){
-			                $ext = explode('.',$relativeNameInZipFile);
-			                if($rl_row->ass_fx_type=="Question"){
-			                    $zip->addFile($value,$ass_row->assessment_name."/Question/".$rl_row->ass_fx_name.'.'.$ext[1]);
-			                }else{
-			                    $zip->addFile($value,$ass_row->assessment_name."/Solution/".$rl_row->ass_fx_name.'.'.$ext[1]);
-			                } 
-			            }
-			        }
-			    }
-	        }
-		}
-		$zip->close();
-    	return response()->download($fileName);
+            foreach($ass_final as $ass_row){
+                        $zip->addEmptyDir($ass_row->assessment_name);
+                        $result_list = DB::table('assessment_final')
+                             ->select('assessment_final.*')
+                             ->where('assessment_final.fx_id', '=', $ass_row->fx_id)
+                             ->where('assessment_final.status','=','Active')
+                             ->get();
+                foreach($result_list as $rl_row){
+                            if($rl_row->ass_fx_type=="Question"){
+                                $zip->addEmptyDir($ass_row->assessment_name."/Question");
+                            }else{
+                                $zip->addEmptyDir($ass_row->assessment_name."/Solution"); 
+                            }
+                    foreach ($files as $key => $value) {
+                        $relativeNameInZipFile = basename($value);
+                        if($rl_row->ass_fx_document == $relativeNameInZipFile){
+                            $ext = explode('.',$relativeNameInZipFile);
+                            if($rl_row->ass_fx_type=="Question"){
+                                $zip->addFile($value,$ass_row->assessment_name."/Question/".$rl_row->ass_fx_name.'.'.$ext[1]);
+                            }else{
+                                $zip->addFile($value,$ass_row->assessment_name."/Solution/".$rl_row->ass_fx_name.'.'.$ext[1]);
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+        $zip->close();
+        if($this->checkCoursePerson($original_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function PastYearAssessmentList($id,$fx_id)
@@ -854,11 +867,14 @@ class PastYearFinalController extends Controller
 
    	public function zipFileDownloadList($fx_id,$download)
     {
-    	 if($download == "checked"){
+    	if($download == "checked"){
             $string = explode('---',$fx_id);
-            $f_fx_id = $string[0];
+            $f_fx_id = $string[1];
+            $f_course_id = $string[0];
         }else{
-            $f_fx_id = $fx_id;
+            $string = explode('---',$fx_id);
+            $f_fx_id = $string[1];
+            $f_course_id = $string[0];
         }
 
         $AssFinal = AssFinal::where('fx_id', '=', $f_fx_id)->firstOrFail();
@@ -871,14 +887,14 @@ class PastYearFinalController extends Controller
                         ->where('courses.course_id', '=', $course_id)
                         ->get();
 
-        $name = $subjects[0]->semester_name." ".$AssFinal->assessment_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $subjects[0]->semester_name." ".$AssFinal->assessment_name." ( ".$subjects[0]->subject_code." )";
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Assessment_Final/'));
         
         if($download == "checked"){
-            for($i=1;$i<(count($string)-1);$i++){
+            for($i=2;$i<(count($string)-1);$i++){
                 $studentId_By = explode('_',$string[$i]);
                 $zip->addEmptyDir($studentId_By[1]);
                 $assessment_final = AssessmentFinal::where('ass_fx_id', '=', $studentId_By[0])->firstOrFail();
@@ -893,7 +909,7 @@ class PastYearFinalController extends Controller
         }else{
             $result_list = DB::table('assessment_final')
                          ->select('assessment_final.*')
-                         ->where('assessment_final.fx_id', '=', $fx_id)
+                         ->where('assessment_final.fx_id', '=', $f_fx_id)
                          ->where('assessment_final.status','=','Active')
                          ->get();
 
@@ -917,7 +933,12 @@ class PastYearFinalController extends Controller
             } 
         }
         $zip->close();
-        return response()->download($fileName);
+        if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function FinalAssessmentImage($image_name)
@@ -1019,6 +1040,29 @@ class PastYearFinalController extends Controller
             return Storage::disk('private')->download('Assessment_Final/'.$assessment_final->ass_fx_document, $question."_".$assessment_final->ass_fx_type."_".$assessment_final->ass_fx_name.'.'.$ext[1]);
         }else{
             return redirect()->route('login');
+        }
+    }
+
+    public function checkCoursePerson($course_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $student       = Student::where('user_id', '=', $user_id)->firstOrFail();
+
+        $course    = DB::table('assign_student_course')
+                    ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
+                    ->where('assign_student_course.student_id', '=', $student->student_id)
+                    ->where('assign_student_course.course_id','=',$course_id)
+                    ->get();
+        
+        if(count($course)>0){
+            return true;
+        }else{
+            return false;
         }
     }
 }

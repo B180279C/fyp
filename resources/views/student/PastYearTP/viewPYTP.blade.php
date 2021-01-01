@@ -25,7 +25,7 @@ $option1 = "id='selected-sidebar'";
       }
       if(checkedValue!=""){
         var course_id = $('#course_id').val();
-        var id = checkedValue;
+        var id = course_id+"---"+checkedValue;
         window.location = "{{$character}}/PastYearTP/download/zipFiles/"+id+"/checked";
       }else{
           alert("Please select the document first.");

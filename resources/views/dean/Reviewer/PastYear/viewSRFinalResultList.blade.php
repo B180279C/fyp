@@ -185,7 +185,8 @@ $(document).on('click', '#checkDownloadAction', function(){
   if(checkedValue!=""){
     var course_id = $('#course_id').val();
     var student_id = $('#student_id').val();
-    var id = course_id+"_"+checkedValue;
+    var original_id = $('#original_id').val();
+    var id = original_id+"_"+course_id+"_"+checkedValue;
     window.location = "{{$character}}/PastYear/FinalSampleResult/Student/"+student_id+"/download/zipFiles/"+id+"/checked";
   }else{
     alert("Please select the document first.");
@@ -218,7 +219,7 @@ $(document).on('click', '#checkDownloadAction', function(){
                       <input type="hidden" id="student_id" value="{{$assessment_final_result->student_id}}">
                       <input type="hidden" id="original_id" value="{{$id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='{{$character}}/PastYear/FinalSampleResult/Student/{{$assessment_final_result->student_id}}/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/FinalSampleResult/Student/{{$assessment_final_result->student_id}}/download/zipFiles/{{$id}}_{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                     </ul>
                 </div>
             @endif

@@ -22,39 +22,39 @@ class PastYearTPController extends Controller
 	public function PastYearTP($id)
 	{
 		$user_id   = auth()->user()->user_id;
-    $student   = Student::where('user_id', '=', $user_id)->firstOrFail();
-    $course    = DB::table('assign_student_course')
-                ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
-                ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
-                ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                ->join('staffs', 'staffs.id','=','courses.lecturer')
-                ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
-                ->where('assign_student_course.student_id', '=', $student->student_id)
-                ->where('assign_student_course.course_id','=',$id)
-                ->get();
-
-    $previous_semester = DB::table('courses')
+        $student   = Student::where('user_id', '=', $user_id)->firstOrFail();
+        $course    = DB::table('assign_student_course')
+                    ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                    ->join('tp_assessment_method','tp_assessment_method.course_id','=','courses.course_id')
-                    ->join('teaching_plan','teaching_plan.course_id','=','courses.course_id')
-                    ->join('action_v_a','action_v_a.course_id','=','courses.course_id')
-                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-                    ->join('staffs','staffs.id','=','courses.lecturer')
-                    ->join('users','staffs.user_id','=','users.user_id')
-                    ->select('subjects.*','courses.*','semesters.*','staffs.*','users.*')
-                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
-                    ->where('courses.course_id','!=',$id)
-                    ->where('courses.status', '=', 'Active')
-                    ->orderByDesc('semesters.semester_name')
-                    ->groupBy('courses.course_id')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
+                    ->where('assign_student_course.student_id', '=', $student->student_id)
+                    ->where('assign_student_course.course_id','=',$id)
                     ->get();
 
-    if(count($course)>0){
-      return view('student.PastYearTP.viewPYTP',compact('course','previous_semester'));
-    }else{
-      return redirect()->back();
-    }
+        $previous_semester = DB::table('courses')
+                        ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                        ->join('tp_assessment_method','tp_assessment_method.course_id','=','courses.course_id')
+                        ->join('teaching_plan','teaching_plan.course_id','=','courses.course_id')
+                        ->join('action_v_a','action_v_a.course_id','=','courses.course_id')
+                        ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                        ->join('staffs','staffs.id','=','courses.lecturer')
+                        ->join('users','staffs.user_id','=','users.user_id')
+                        ->select('subjects.*','courses.*','semesters.*','staffs.*','users.*')
+                        ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                        ->where('courses.course_id','!=',$id)
+                        ->where('courses.status', '=', 'Active')
+                        ->orderByDesc('semesters.semester_name')
+                        ->groupBy('courses.course_id')
+                        ->get();
+
+        if(count($course)>0){
+          return view('student.PastYearTP.viewPYTP',compact('course','previous_semester'));
+        }else{
+          return redirect()->back();
+        }
 	}
 
 	public function PastYearTPDownload($id,$course_id)
@@ -62,20 +62,20 @@ class PastYearTPController extends Controller
 	  $user_id   = auth()->user()->user_id;
       $student   = Student::where('user_id', '=', $user_id)->firstOrFail();
 
-    $check_course    = DB::table('assign_student_course')
-                ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
-                ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
-                ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-                ->join('staffs', 'staffs.id','=','courses.lecturer')
-                ->join('users', 'staffs.user_id', '=' , 'users.user_id')
-                ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
-                ->where('assign_student_course.student_id', '=', $student->student_id)
-                ->where('assign_student_course.course_id','=',$id)
-                ->get();
+      $check_course    = DB::table('assign_student_course')
+                    ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
+                    ->where('assign_student_course.student_id', '=', $student->student_id)
+                    ->where('assign_student_course.course_id','=',$id)
+                    ->get();
 
-      if(count($check_course)===0){
-      	return redirect()->back();
-      }
+          if(count($check_course)===0){
+          	return redirect()->back();
+          }
 
       $course = DB::table('courses')
                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -487,14 +487,15 @@ class PastYearTPController extends Controller
   {
    	if($download=="checked"){
         $string = explode('---',$course_id);
+        $f_course_id = $string[0];
     }
 
-    $name = "Teaching Plan Zip Files";
+    $ZipFile_name = "Teaching Plan Zip Files";
     $zip = new ZipArchive;
-    $fileName = storage_path('private/Teaching_Plan/Zip_Files/'.$name.'.zip');
+    $fileName = storage_path('private/Teaching_Plan/Zip_Files/'.$ZipFile_name.'.zip');
     $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-    for($i=0;$i<(count($string)-1);$i++){
+    for($i=1;$i<(count($string)-1);$i++){
         $user_id   = auth()->user()->user_id;
         $student   = Student::where('user_id', '=', $user_id)->firstOrFail();
 
@@ -511,6 +512,7 @@ class PastYearTPController extends Controller
 		foreach($course as $row){
 			$credit = $row->credit;
 			$staff_id = $row->staff_id;
+            $name = $row->name;
             $syllabus = $row->syllabus;
             $programme_name = $row->programme_name;
             $subject_code = $row->subject_code;
@@ -946,7 +948,12 @@ class PastYearTPController extends Controller
                 File::delete($semester_name." ".$subject_code." ".$subject_name.'.docx');
             }
         }
-	    return response()->download($fileName)->deleteFileAfterSend(true);
+        if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Teaching_Plan/Zip_Files/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
   }
 
     public function searchPastYearTP(Request $request)
@@ -1047,5 +1054,28 @@ class PastYearTPController extends Controller
 		    }
 		}
 	    return $result;
+    }
+
+    public function checkCoursePerson($course_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $student       = Student::where('user_id', '=', $user_id)->firstOrFail();
+
+        $course    = DB::table('assign_student_course')
+                    ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
+                    ->where('assign_student_course.student_id', '=', $student->student_id)
+                    ->where('assign_student_course.course_id','=',$course_id)
+                    ->get();
+        
+        if(count($course)>0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

@@ -121,7 +121,8 @@ $option3 = "id='selected-sidebar'";
     }
     if(checkedValue!=""){
       var course_id = $('#course_id').val();
-      var id = course_id+"---"+checkedValue;
+      var original_id = $('#original_id').val();
+      var id = original_id+"---"+course_id+"---"+checkedValue;
       window.location = "{{$character}}/PastYear/FinalSampleResult/student/download/zipFiles/"+id+"/checked";
     }else{
       alert("Please select the document first.");
@@ -206,7 +207,7 @@ $option3 = "id='selected-sidebar'";
                       @if((count($lecturer_result)!=0)||(count($student_result)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='{{$character}}/PastYear/FinalSampleResult/download/zipFiles/{{$previous[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/FinalSampleResult/student/download/zipFiles/{{$course[0]->course_id}}---{{$previous[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                     </ul>
                 </div>

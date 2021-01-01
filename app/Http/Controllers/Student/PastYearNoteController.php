@@ -568,9 +568,9 @@ class PastYearNoteController extends Controller
                         ->where('lecture_notes.status', '=', 'Active')
                         ->get();
 
-        $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
+        $ZipFile_name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Lecture_Note/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Lecture_Note/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Lecture_Note/'));
 
@@ -1229,7 +1229,12 @@ class PastYearNoteController extends Controller
 		        }
         }
         $zip->close();
-    	return response()->download($fileName);
+        if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Lecture_Note/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function PastYearNoteViewIn($id,$view,$view_id)
@@ -1364,6 +1369,29 @@ class PastYearNoteController extends Controller
             return Storage::disk('private')->download('Lecture_Note/'.$lecture_note->note, $lecture_note->note_name.'.'.$ext[1]);
         }else{
             return redirect()->route('login');
+        }
+    }
+
+    public function checkCoursePerson($course_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $student       = Student::where('user_id', '=', $user_id)->firstOrFail();
+
+        $course    = DB::table('assign_student_course')
+                    ->join('courses', 'courses.course_id', '=', 'assign_student_course.course_id')
+                    ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('staffs', 'staffs.id','=','courses.lecturer')
+                    ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                    ->select('assign_student_course.*','semesters.*','subjects.*','staffs.*','users.*')
+                    ->where('assign_student_course.student_id', '=', $student->student_id)
+                    ->where('assign_student_course.course_id','=',$course_id)
+                    ->get();
+        
+        if(count($course)>0){
+            return true;
+        }else{
+            return false;
         }
     }
 }

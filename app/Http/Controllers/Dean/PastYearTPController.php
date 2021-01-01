@@ -209,12 +209,12 @@ class PastYearTPController extends Controller
     $course_table->addRow(1);
     $course_table->addCell(500,$styleCell)->addText('4.',null, $noSpaceAndLeft);
     $course_table->addCell(2000,$styleCell)->addText('Lecturer: ', null, $noSpaceAndLeft);
-    $course_table->addCell(10000,$styleCell)->addText($course[0]->name."( ".$course[0]->staff_id." )", null, $noSpaceAndLeft);
+    $course_table->addCell(10000,$styleCell)->addText($course[0]->name." ( ".$course[0]->staff_id." )", null, $noSpaceAndLeft);
 
     $course_table->addRow(1);
     $course_table->addCell(500,$styleCell)->addText('5.',null, $noSpaceAndLeft);
     $course_table->addCell(2000,$styleCell)->addText('Tutor: ', null, $noSpaceAndLeft);
-    $course_table->addCell(10000,$styleCell)->addText($course[0]->name."( ".$course[0]->staff_id." )", null, $noSpaceAndLeft);
+    $course_table->addCell(10000,$styleCell)->addText($course[0]->name." ( ".$course[0]->staff_id." )", null, $noSpaceAndLeft);
 
     $course_table->addRow(1);
     $course_table->addCell(500,$styleCell)->addText('6.',null, $noSpaceAndLeft);
@@ -488,18 +488,19 @@ class PastYearTPController extends Controller
   {
    	if($download=="checked"){
         $string = explode('---',$course_id);
+        $f_course_id = $string[0];
     }
 
-    $name = "Teaching Plan Zip Files";
+    $ZipFile_name = "Teaching Plan Zip Files";
     $zip = new ZipArchive;
-    $fileName = storage_path('private/Teaching_Plan/Zip_Files/'.$name.'.zip');
+    $fileName = storage_path('private/Teaching_Plan/Zip_Files/'.$ZipFile_name.'.zip');
     $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-    for($i=0;$i<(count($string)-1);$i++){
+    for($i=1;$i<(count($string)-1);$i++){
        	$user_id       = auth()->user()->user_id;
-		$staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
-		$faculty_id    = $staff_dean->faculty_id;
-		$department_id = $staff_dean->department_id;
+    		$staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+    		$faculty_id    = $staff_dean->faculty_id;
+    		$department_id = $staff_dean->department_id;
 
 		$course = DB::table('courses')
 		                   ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -514,6 +515,7 @@ class PastYearTPController extends Controller
 		foreach($course as $row){
 			$credit = $row->credit;
 			$staff_id = $row->staff_id;
+      $name = $row->name;
             $syllabus = $row->syllabus;
             $programme_name = $row->programme_name;
             $subject_code = $row->subject_code;
@@ -646,12 +648,12 @@ class PastYearTPController extends Controller
 	    $course_table->addRow(1);
 	    $course_table->addCell(500,$styleCell)->addText('4.',null, $noSpaceAndLeft);
 	    $course_table->addCell(2000,$styleCell)->addText('Lecturer: ', null, $noSpaceAndLeft);
-	    $course_table->addCell(10000,$styleCell)->addText($name."( ".$staff_id." )", null, $noSpaceAndLeft);
+	    $course_table->addCell(10000,$styleCell)->addText($name." ( ".$staff_id." )", null, $noSpaceAndLeft);
 
 	    $course_table->addRow(1);
 	    $course_table->addCell(500,$styleCell)->addText('5.',null, $noSpaceAndLeft);
 	    $course_table->addCell(2000,$styleCell)->addText('Tutor: ', null, $noSpaceAndLeft);
-	    $course_table->addCell(10000,$styleCell)->addText($name."( ".$staff_id." )", null, $noSpaceAndLeft);
+	    $course_table->addCell(10000,$styleCell)->addText($name." ( ".$staff_id." )", null, $noSpaceAndLeft);
 
 	    $course_table->addRow(1);
 	    $course_table->addCell(500,$styleCell)->addText('6.',null, $noSpaceAndLeft);
@@ -951,7 +953,12 @@ class PastYearTPController extends Controller
                 File::delete($semester_name." ".$subject_code." ".$subject_name.'.docx');
             }
         }
-	    return response()->download($fileName)->deleteFileAfterSend(true);
+      if($this->checkCoursePerson($f_course_id)==true){
+        return response()->download($fileName)->deleteFileAfterSend(true);
+      }else{
+        Storage::disk('private')->delete('/Teaching_Plan/Zip_Files/'.$ZipFile_name.'.zip');
+        return redirect()->back();
+      }
   }
 
     public function searchPastYearTP(Request $request)
@@ -1064,5 +1071,48 @@ class PastYearTPController extends Controller
         }
 		}
 	    return $result;
+    }
+
+
+    public function checkCoursePerson($course_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $checkid       = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $id            = $checkid->id;
+        $faculty_id    = $checkid->faculty_id;
+        $department_id = $checkid->department_id;
+
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*')
+                    ->where('departments.faculty_id','=',$faculty_id)
+                    ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*')
+                    ->where('departments.department_id','=',$department_id)
+                    ->get();
+        }else if(auth()->user()->position=="Lecturer"){
+            $course = DB::table('courses')
+                 ->select('courses.*')
+                 ->Where(function($query) use ($id){
+                          $query->orWhere('courses.lecturer','=',$id)
+                                ->orWhere('courses.moderator','=',$id);
+                  })
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+        }
+        
+        if(count($course)>0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

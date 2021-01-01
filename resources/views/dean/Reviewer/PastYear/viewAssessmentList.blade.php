@@ -218,7 +218,8 @@ function w3_close() {
       }
       if(checkedValue!=""){
         var ass_id = $('#ass_id').val();
-        var id = ass_id+"---"+checkedValue;
+        var original_id = $('#original_id').val();
+        var id = original_id+"---"+ass_id+"---"+checkedValue;
         window.location = "{{$character}}/PastYear/assessment/list/download/zipFiles/"+id+"/checked";
       }else{
         alert("Please select the document first.");
@@ -388,7 +389,7 @@ function w3_close() {
                       <p class="title_method">Download</p>
                       <input type="hidden" id="ass_id" value="{{$assessments->ass_id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='{{$character}}/PastYear/assessment/list/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/assessment/list/download/zipFiles/{{$course[0]->course_id}}---{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                   </ul>
                 </div>
                 <br>

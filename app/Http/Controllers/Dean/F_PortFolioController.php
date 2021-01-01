@@ -481,16 +481,18 @@ class F_PortFolioController extends Controller
 
         for($i=0;$i<(count($string)-1);$i++){
             $staff = Staff::where('staff_id', '=', $string[$i])->firstOrFail();
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                if($staff->lecturer_CV==$relativeNameInZipFile){
-                    $ext = explode('.',$relativeNameInZipFile);
-                    $zip->addFile($value,$staff->staff_id.'.'.$ext[1]);
+            if($user_faculty==$staff->faculty_id){
+                foreach ($files as $key => $value) {
+                    $relativeNameInZipFile = basename($value);
+                    if($staff->lecturer_CV==$relativeNameInZipFile){
+                        $ext = explode('.',$relativeNameInZipFile);
+                        $zip->addFile($value,$staff->staff_id.'.'.$ext[1]);
+                    }
                 }
             }
         }
         $zip->close();
-        return response()->download($fileName);
+        return response()->download($fileName)->deleteFileAfterSend(true);
     }
 
     public function searchSyllabus(Request $request){
@@ -608,16 +610,19 @@ class F_PortFolioController extends Controller
         for($i=0;$i<(count($string)-1);$i++){
             $subject = Subject::where('subject_id', '=', $string[$i])->firstOrFail();
             $programmes = Programme::where('programme_id', '=', $subject->programme_id)->firstOrFail();
-            foreach ($files as $key => $value) {
-                $relativeNameInZipFile = basename($value);
-                if($subject->syllabus==$relativeNameInZipFile){
-                    $ext = explode('.',$relativeNameInZipFile);
-                    $zip->addFile($value,$programmes->short_form_name." : ".$subject->subject_code." ".$subject->subject_name.'.'.$ext[1]);
+            $departments = Department::where('department_id', '=', $programmes->department_id)->firstOrFail();
+            if($user_faculty==$departments->faculty_id){
+                foreach ($files as $key => $value) {
+                    $relativeNameInZipFile = basename($value);
+                    if($subject->syllabus==$relativeNameInZipFile){
+                        $ext = explode('.',$relativeNameInZipFile);
+                        $zip->addFile($value,$programmes->short_form_name." : ".$subject->subject_code." ".$subject->subject_name.'.'.$ext[1]);
+                    }
                 }
             }
         }
         $zip->close();
-        return response()->download($fileName);
+        return response()->download($fileName)->deleteFileAfterSend(true);
     }
 
     public function openNewFolder(Request $request){
@@ -792,102 +797,104 @@ class F_PortFolioController extends Controller
         if($download == "checked"){
             for($i=0;$i<(count($string)-1);$i++){
                 $portfolio = Faculty_Portfolio::where('fp_id', '=', $string[$i])->firstOrFail();
-                if($portfolio->portfolio_type == "document"){
-                    foreach ($files as $key => $value) {
-                        $relativeNameInZipFile = basename($value);
-                        if($portfolio->portfolio_file==$relativeNameInZipFile){
-                            $ext = explode('.',$relativeNameInZipFile);
-                            if($portfolio->portfolio_place=="Faculty"){
-                                $zip->addFile($value,$portfolio->portfolio_name.'.'.$ext[1]);
-                            }else{
-                                $m=1;
-                                $place = explode(',,,',$portfolio->portfolio_place);
-                                $data = "";
-                                while(isset($place[$m])!=""){
-                                    $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
-                                    if($data==""){
-                                        $data .= $name->portfolio_name;
-                                    }else{
-                                        $data .= "/".$name->portfolio_name;
-                                    }
-                                    $m++;
-                                }
-                                $zip->addFile($value,$data.'/'.$portfolio->portfolio_name.'.'.$ext[1]);
-                            }
-                        }
-                    }
-                }else{
-                    if($portfolio->portfolio_place=="Faculty"){
-                        $zip->addEmptyDir($portfolio->portfolio_name);
-                    }else{
-                        $m=1;
-                        $place = explode(',,,',$portfolio->portfolio_place);
-                        $data = "";
-                        while(isset($place[$m])!=""){
-                            $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
-                            if($data==""){
-                                $data .= $name->portfolio_name;
-                            }else{
-                                $data .= "/".$name->portfolio_name;
-                            }
-                            $m++;
-                        }
-                        $zip->addEmptyDir($data.'/'.$portfolio->portfolio_name);
-                    }
-                    $check = $portfolio->portfolio_place.",,,".$portfolio->fp_id;
-                    $next_check = $portfolio->portfolio_place.",,,".$portfolio->fp_id.",,,";
-                    $faculty_portfolio = DB::table('faculty_portfolio')
-                                    ->select('faculty_portfolio.*')
-                                    ->Where(function($query) use ($check,$next_check) {
-                                      $query->orWhere('portfolio_place','LIKE','%'.$check)
-                                            ->orWhere('portfolio_place','LIKE','%'.$next_check.'%');
-                                    })
-                                    ->where('faculty_portfolio.status', '=', 'Active')
-                                    ->where('faculty_portfolio.faculty_id','=',$user_faculty)
-                                    ->orderByDesc('faculty_portfolio.portfolio_type')
-                                    ->get();
-                    foreach($faculty_portfolio as $row){
-                        if($row->portfolio_type == "document"){
-                            foreach ($files as $key => $value) {
-                                $relativeNameInZipFile = basename($value);
-                                if($row->portfolio_file==$relativeNameInZipFile){
-                                    $ext = explode('.',$relativeNameInZipFile);
-                                    if($row->portfolio_place=="Faculty"){
-                                        $zip->addFile($value,$row->portfolio_name.'.'.$ext[1]);
-                                    }else{
-                                        $m=1;
-                                        $place = explode(',,,',$row->portfolio_place);
-                                        $data = "";
-                                        while(isset($place[$m])!=""){
-                                            $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
-                                            if($data==""){
-                                                $data .= $name->portfolio_name;
-                                            }else{
-                                                $data .= "/".$name->portfolio_name;
-                                            }
-                                            $m++;
+                if($user_faculty==$portfolio->faculty_id){
+                    if($portfolio->portfolio_type == "document"){
+                        foreach ($files as $key => $value) {
+                            $relativeNameInZipFile = basename($value);
+                            if($portfolio->portfolio_file==$relativeNameInZipFile){
+                                $ext = explode('.',$relativeNameInZipFile);
+                                if($portfolio->portfolio_place=="Faculty"){
+                                    $zip->addFile($value,$portfolio->portfolio_name.'.'.$ext[1]);
+                                }else{
+                                    $m=1;
+                                    $place = explode(',,,',$portfolio->portfolio_place);
+                                    $data = "";
+                                    while(isset($place[$m])!=""){
+                                        $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                        if($data==""){
+                                            $data .= $name->portfolio_name;
+                                        }else{
+                                            $data .= "/".$name->portfolio_name;
                                         }
-                                        $zip->addFile($value,$data.'/'.$row->portfolio_name.'.'.$ext[1]);
+                                        $m++;
                                     }
+                                    $zip->addFile($value,$data.'/'.$portfolio->portfolio_name.'.'.$ext[1]);
                                 }
                             }
+                        }
+                    }else{
+                        if($portfolio->portfolio_place=="Faculty"){
+                            $zip->addEmptyDir($portfolio->portfolio_name);
                         }else{
-                            if($row->portfolio_place=="Faculty"){
-                                    $zip->addEmptyDir($row->portfolio_name);
-                            }else{
-                                $m=1;
-                                $place = explode(',,,',$row->portfolio_place);
-                                $data = "";
-                                while(isset($place[$m])!=""){
-                                    $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
-                                    if($data==""){
-                                        $data .= $name->portfolio_name;
-                                    }else{
-                                        $data .= "/".$name->portfolio_name;
-                                    }
-                                    $m++;
+                            $m=1;
+                            $place = explode(',,,',$portfolio->portfolio_place);
+                            $data = "";
+                            while(isset($place[$m])!=""){
+                                $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                if($data==""){
+                                    $data .= $name->portfolio_name;
+                                }else{
+                                    $data .= "/".$name->portfolio_name;
                                 }
-                                $zip->addEmptyDir($data.'/'.$row->portfolio_name);
+                                $m++;
+                            }
+                            $zip->addEmptyDir($data.'/'.$portfolio->portfolio_name);
+                        }
+                        $check = $portfolio->portfolio_place.",,,".$portfolio->fp_id;
+                        $next_check = $portfolio->portfolio_place.",,,".$portfolio->fp_id.",,,";
+                        $faculty_portfolio = DB::table('faculty_portfolio')
+                                        ->select('faculty_portfolio.*')
+                                        ->Where(function($query) use ($check,$next_check) {
+                                          $query->orWhere('portfolio_place','LIKE','%'.$check)
+                                                ->orWhere('portfolio_place','LIKE','%'.$next_check.'%');
+                                        })
+                                        ->where('faculty_portfolio.status', '=', 'Active')
+                                        ->where('faculty_portfolio.faculty_id','=',$user_faculty)
+                                        ->orderByDesc('faculty_portfolio.portfolio_type')
+                                        ->get();
+                        foreach($faculty_portfolio as $row){
+                            if($row->portfolio_type == "document"){
+                                foreach ($files as $key => $value) {
+                                    $relativeNameInZipFile = basename($value);
+                                    if($row->portfolio_file==$relativeNameInZipFile){
+                                        $ext = explode('.',$relativeNameInZipFile);
+                                        if($row->portfolio_place=="Faculty"){
+                                            $zip->addFile($value,$row->portfolio_name.'.'.$ext[1]);
+                                        }else{
+                                            $m=1;
+                                            $place = explode(',,,',$row->portfolio_place);
+                                            $data = "";
+                                            while(isset($place[$m])!=""){
+                                                $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                                if($data==""){
+                                                    $data .= $name->portfolio_name;
+                                                }else{
+                                                    $data .= "/".$name->portfolio_name;
+                                                }
+                                                $m++;
+                                            }
+                                            $zip->addFile($value,$data.'/'.$row->portfolio_name.'.'.$ext[1]);
+                                        }
+                                    }
+                                }
+                            }else{
+                                if($row->portfolio_place=="Faculty"){
+                                        $zip->addEmptyDir($row->portfolio_name);
+                                }else{
+                                    $m=1;
+                                    $place = explode(',,,',$row->portfolio_place);
+                                    $data = "";
+                                    while(isset($place[$m])!=""){
+                                        $name = Faculty_Portfolio::where('fp_id', '=', $place[$m])->firstOrFail();
+                                        if($data==""){
+                                            $data .= $name->portfolio_name;
+                                        }else{
+                                            $data .= "/".$name->portfolio_name;
+                                        }
+                                        $m++;
+                                    }
+                                    $zip->addEmptyDir($data.'/'.$row->portfolio_name);
+                                }
                             }
                         }
                     }
@@ -895,6 +902,6 @@ class F_PortFolioController extends Controller
             }
         }
         $zip->close();
-        return response()->download($fileName);
+        return response()->download($fileName)->deleteFileAfterSend(true);
     }
 }

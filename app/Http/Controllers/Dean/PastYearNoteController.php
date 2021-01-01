@@ -575,9 +575,9 @@ class PastYearNoteController extends Controller
                         ->where('lecture_notes.status', '=', 'Active')
                         ->get();
 
-        $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
+        $ZipFile_name = $subjects[0]->subject_code." ".$subjects[0]->subject_name;
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Lecture_Note/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Lecture_Note/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Lecture_Note/'));
 
@@ -1236,7 +1236,12 @@ class PastYearNoteController extends Controller
 		        }
         }
         $zip->close();
-    	return response()->download($fileName);
+    	if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Lecture_Note/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function PastYearNoteViewIn($id,$view,$view_id)
@@ -1357,6 +1362,48 @@ class PastYearNoteController extends Controller
             return Storage::disk('private')->download('Lecture_Note/'.$lecture_note->note, $lecture_note->note_name.'.'.$ext[1]);
         }else{
             return redirect()->route('login');
+        }
+    }
+
+    public function checkCoursePerson($course_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $checkid       = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $id            = $checkid->id;
+        $faculty_id    = $checkid->faculty_id;
+        $department_id = $checkid->department_id;
+
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*')
+                    ->where('departments.faculty_id','=',$faculty_id)
+                    ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*')
+                    ->where('departments.department_id','=',$department_id)
+                    ->get();
+        }else if(auth()->user()->position=="Lecturer"){
+            $course = DB::table('courses')
+                 ->select('courses.*')
+                 ->Where(function($query) use ($id){
+                          $query->orWhere('courses.lecturer','=',$id)
+                                ->orWhere('courses.moderator','=',$id);
+                  })
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+        }
+        
+        if(count($course)>0){
+            return true;
+        }else{
+            return false;
         }
     }
 }

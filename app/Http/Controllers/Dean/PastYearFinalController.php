@@ -83,11 +83,11 @@ class PastYearFinalController extends Controller
                  ->where('course_id', '=', $f_course_id)
                  ->get();
 
-        $name = $subjects[0]->subject_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $subjects[0]->subject_name." ( ".$subjects[0]->subject_code." )";
 
         if($download == "checked"){
         	$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
             for($i=1;$i<(count($string)-1);$i++){
@@ -135,7 +135,7 @@ class PastYearFinalController extends Controller
 		   	}
 		}else if($download == "searched"){
 			$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
 			for($i=1;$i<(count($string)-1);$i++){
@@ -178,7 +178,7 @@ class PastYearFinalController extends Controller
 			}
 		}else if($download == "searchedWord"){
 			$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
 			for($i=1;$i<(count($string)-1);$i++){
@@ -217,7 +217,7 @@ class PastYearFinalController extends Controller
 			}
 		}else{
 			$zip = new ZipArchive;
-	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+	        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
 	        $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	        $files = File::files(storage_path('/private/Assessment_Final/'));
 	        $Resultfiles = File::files(storage_path('/private/Final_Result/'));
@@ -331,7 +331,12 @@ class PastYearFinalController extends Controller
         	}
 		}
 		$zip->close();
-    	return response()->download($fileName);
+    	if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function searchAssessment(Request $request)
@@ -606,10 +611,13 @@ class PastYearFinalController extends Controller
     public function zipFileDownloadName($course_id,$download)
     {
     	if($download == "All"){
-    		$f_course_id = $course_id;
+            $string = explode('---',$course_id);
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }else{
             $string = explode('---',$course_id);
-            $f_course_id = $string[0];
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }
 
         $subjects = DB::table('courses')
@@ -619,14 +627,14 @@ class PastYearFinalController extends Controller
                  ->where('course_id', '=', $f_course_id)
                  ->get();
 
-        $name = $subjects[0]->subject_code." ".$subjects[0]->subject_name." ( ".$subjects[0]->semester_name." )";
+        $ZipFile_name = $subjects[0]->subject_code." ".$subjects[0]->subject_name." ( ".$subjects[0]->semester_name." )";
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Assessment_Final/'));
 
         if($download == "checked"){
-           	for($i=1;$i<(count($string)-1);$i++){
+           	for($i=2;$i<(count($string)-1);$i++){
 
            		$AssFinal = AssFinal::where('fx_id','=',$string[$i])->firstOrFail();
 				$course_id = $AssFinal->course_id;
@@ -657,7 +665,7 @@ class PastYearFinalController extends Controller
 		        }
 		   	}
 		}else if($download == "searchedWord"){
-			for($i=1;$i<(count($string)-1);$i++){
+			for($i=2;$i<(count($string)-1);$i++){
 
 				$assessment_final = AssessmentFinal::where('ass_fx_id','=',$string[$i])->firstOrFail();
 				$fx_id = $assessment_final->fx_id;
@@ -694,7 +702,7 @@ class PastYearFinalController extends Controller
 		}else{
 	        $ass_final = DB::table('ass_final')
 			                 ->select('ass_final.*')
-			                 ->where('course_id', '=', $course_id)
+			                 ->where('course_id', '=', $string[1])
 			                 ->where('status', '=', 'Active')
 			                 ->get();
 
@@ -726,7 +734,12 @@ class PastYearFinalController extends Controller
 	        }
 		}
 		$zip->close();
-    	return response()->download($fileName);
+    	if($this->checkCoursePerson($original_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function PastYearAssessmentList($id,$fx_id)
@@ -932,11 +945,14 @@ class PastYearFinalController extends Controller
 
    	public function zipFileDownloadList($fx_id,$download)
     {
-    	 if($download == "checked"){
+    	if($download == "checked"){
             $string = explode('---',$fx_id);
-            $f_fx_id = $string[0];
+            $f_fx_id = $string[1];
+            $f_course_id = $string[0];
         }else{
-            $f_fx_id = $fx_id;
+            $string = explode('---',$fx_id);
+            $f_fx_id = $string[1];
+            $f_course_id = $string[0];
         }
 
         $AssFinal = AssFinal::where('fx_id', '=', $f_fx_id)->firstOrFail();
@@ -949,14 +965,14 @@ class PastYearFinalController extends Controller
                         ->where('courses.course_id', '=', $course_id)
                         ->get();
 
-        $name = $subjects[0]->semester_name." ".$AssFinal->assessment_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $subjects[0]->semester_name." ".$AssFinal->assessment_name." ( ".$subjects[0]->subject_code." )";
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Assessment_Final/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Assessment_Final/'));
         
         if($download == "checked"){
-            for($i=1;$i<(count($string)-1);$i++){
+            for($i=2;$i<(count($string)-1);$i++){
                 $studentId_By = explode('_',$string[$i]);
                 $zip->addEmptyDir($studentId_By[1]);
                 $assessment_final = AssessmentFinal::where('ass_fx_id', '=', $studentId_By[0])->firstOrFail();
@@ -971,7 +987,7 @@ class PastYearFinalController extends Controller
         }else{
             $result_list = DB::table('assessment_final')
                          ->select('assessment_final.*')
-                         ->where('assessment_final.fx_id', '=', $fx_id)
+                         ->where('assessment_final.fx_id', '=', $f_fx_id)
                          ->where('assessment_final.status','=','Active')
                          ->get();
 
@@ -995,7 +1011,12 @@ class PastYearFinalController extends Controller
             } 
         }
         $zip->close();
-        return response()->download($fileName);
+        if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Assessment_Final/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     //Result
@@ -1196,9 +1217,9 @@ class PastYearFinalController extends Controller
                  ->where('course_id', '=', $f_course_id)
                  ->get();
 
-        $name = $subjects[0]->subject_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $subjects[0]->subject_name." ( ".$subjects[0]->subject_code." )";
         $zip = new ZipArchive;
-	    $fileName = storage_path('private/Final_Result/PastYear/'.$name.'.zip');
+	    $fileName = storage_path('private/Final_Result/PastYear/'.$ZipFile_name.'.zip');
 	    $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 	    $Resultfiles = File::files(storage_path('/private/Final_Result/'));
         if($download == "checked"){
@@ -1475,7 +1496,12 @@ class PastYearFinalController extends Controller
             }
         }
         $zip->close();
-    	return response()->download($fileName);
+    	if($this->checkCoursePerson($f_course_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Final_Result/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function PastYearStudentList($id,$course_id,$search)
@@ -1703,26 +1729,29 @@ class PastYearFinalController extends Controller
     {
         if($download == "checked"){
             $string = explode('---',$course_id);
-            $f_course_id = $string[0];
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }else{
-            $f_course_id = $course_id;
+            $string = explode('---',$course_id);
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }
 
         $subjects = DB::table('subjects')
                         ->join('courses','courses.subject_id','=','subjects.subject_id')
                         ->join('semesters','semesters.semester_id','=','courses.semester')
                         ->select('courses.*','subjects.*','semesters.*')
-                        ->where('courses.course_id', '=', $course_id)
+                        ->where('courses.course_id', '=', $f_course_id)
                         ->get();
 
-        $name = "Final Sample Result ( ".$subjects[0]->semester_name." )";
+        $ZipFile_name = "Final Sample Result ( ".$subjects[0]->semester_name." )";
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Final_Result/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Final_Result/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Final_Result/'));
         
         if($download == "checked"){
-            for($i=1;$i<(count($string)-1);$i++){
+            for($i=2;$i<(count($string)-1);$i++){
                 $studentId_By = explode('_',$string[$i]);
                 $zip->addEmptyDir($studentId_By[0]);
                 if($studentId_By[1]=="All"){
@@ -1769,7 +1798,7 @@ class PastYearFinalController extends Controller
                          ->join('students','students.student_id', '=', 'assessment_final_result.student_id')
                          ->join('users','users.user_id', '=', 'students.user_id')
                          ->select('assessment_final_result.*','students.*','users.*')
-                         ->where('assessment_final_result.course_id', '=', $course_id)
+                         ->where('assessment_final_result.course_id', '=', $f_course_id)
                          ->where('assessment_final_result.status','=','Active')
                          ->groupBy('assessment_final_result.student_id')
                          ->get();
@@ -1780,7 +1809,7 @@ class PastYearFinalController extends Controller
                          ->join('students','students.student_id', '=', 'assessment_final_result.student_id')
                          ->join('users','users.user_id', '=', 'students.user_id')
                          ->select('assessment_final_result.*','students.*','users.*')
-                         ->where('assessment_final_result.course_id', '=', $course_id)
+                         ->where('assessment_final_result.course_id', '=', $f_course_id)
                          ->where('assessment_final_result.status','=','Active')
                          ->where('assessment_final_result.student_id','=',$row->student_id)
                          ->get();
@@ -1805,7 +1834,12 @@ class PastYearFinalController extends Controller
             }
         }
         $zip->close();
-        return response()->download($fileName);
+        if($this->checkCoursePerson($original_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Final_Result/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function PastYearResultList($id,$fxr_id)
@@ -1866,19 +1900,22 @@ class PastYearFinalController extends Controller
     {
         if($download == "checked"){
             $string = explode('_',$course_id);
-            $f_course_id = $string[0];
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }else{
-            $f_course_id = $course_id;
+            $string = explode('_',$course_id);
+            $original_id = $string[0];
+            $f_course_id = $string[1];
         }
 
-        $name = "Final Exam Result ( ".$student_id." )";
+        $ZipFile_name = "Final Exam Result ( ".$student_id." )";
         $zip = new ZipArchive;
-        $fileName = storage_path('private/Final_Result/PastYear/'.$name.'.zip');
+        $fileName = storage_path('private/Final_Result/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         $files = File::files(storage_path('/private/Final_Result/'));
 
         if($download == "checked"){
-            for($i=1;$i<(count($string)-1);$i++){
+            for($i=2;$i<(count($string)-1);$i++){
                 $assessment_final_result = AssessmentFinalResult::where('fxr_id', '=', $string[$i])->firstOrFail();
                 if($assessment_final_result->submitted_by=="Lecturer"){
                     $zip->addEmptyDir("Lecturer");
@@ -1927,7 +1964,12 @@ class PastYearFinalController extends Controller
             }
         }
         $zip->close();
-        return response()->download($fileName);
+        if($this->checkCoursePerson($original_id)==true){
+            return response()->download($fileName)->deleteFileAfterSend(true);
+        }else{
+            Storage::disk('private')->delete('/Final_Result/PastYear/'.$ZipFile_name.'.zip');
+            return redirect()->back();
+        }
     }
 
     public function FinalAssessmentImage($image_name)
@@ -2130,6 +2172,48 @@ class PastYearFinalController extends Controller
             return Storage::disk('private')->download('Final_Result/'.$assessment_final_result->document, $assessment_final_result->document_name.'.'.$ext[1]);
         }else{
             return redirect()->route('login');
+        }
+    }
+
+    public function checkCoursePerson($course_id)
+    {
+        $user_id       = auth()->user()->user_id;
+        $checkid       = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $id            = $checkid->id;
+        $faculty_id    = $checkid->faculty_id;
+        $department_id = $checkid->department_id;
+
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*')
+                    ->where('departments.faculty_id','=',$faculty_id)
+                    ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                    ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                    ->select('courses.*','subjects.*','programmes.*','departments.*')
+                    ->where('departments.department_id','=',$department_id)
+                    ->get();
+        }else if(auth()->user()->position=="Lecturer"){
+            $course = DB::table('courses')
+                 ->select('courses.*')
+                 ->Where(function($query) use ($id){
+                          $query->orWhere('courses.lecturer','=',$id)
+                                ->orWhere('courses.moderator','=',$id);
+                  })
+                 ->where('course_id', '=', $course_id)
+                 ->get();
+        }
+        
+        if(count($course)>0){
+            return true;
+        }else{
+            return false;
         }
     }
 }

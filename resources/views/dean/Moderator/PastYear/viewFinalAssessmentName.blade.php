@@ -145,7 +145,8 @@ function w3_close() {
       }
       if(checkedValue!=""){
         var course_id = $('#course_id').val();
-        var id = course_id+"---"+checkedValue;
+        var original_id = $('#original_id').val();
+        var id = original_id+"---"+course_id+"---"+checkedValue;
         if($('.search').val()!=""){
           window.location = "{{$character}}/PastYear/FinalAssessment/name/download/zipFiles/"+id+"/searchedWord";
         }else{
@@ -305,7 +306,7 @@ function w3_close() {
                       <input type="hidden" id="original_id" value="{{$id}}">
                       <input type="hidden" id="course_id" value="{{$previous[0]->course_id}}">
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='{{$character}}/PastYear/FinalAssessment/name/download/zipFiles/{{$previous[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/PastYear/FinalAssessment/name/download/zipFiles/{{$id}}---{{$previous[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                   </ul>
                 </div>
                 <br>
