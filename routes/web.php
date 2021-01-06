@@ -18,8 +18,8 @@ Route::get('/', function () {
 });
 
 Auth::routes(['verify' => true]);
-Route::get('/Attendance/Student/login/{attendance_id}/{code}','Dean\AttendanceController@student_login');
-Route::post('/Attendance/Student/login/taken/','Dean\AttendanceController@taken_attendance');
+Route::get('Attendance/Student/login/{attendance_id}/{code}','Dean\AttendanceController@student_login');
+Route::post('Attendance/Student/login/taken/','Dean\AttendanceController@taken_attendance')->name('attendance.submit');
 Route::get('student/register','StudentController@create')->name('student.create');
 Route::post('student/register', 'StudentController@store')->name('student.register.submit');
 
@@ -139,7 +139,7 @@ Route::middleware('is_admin')->group(function(){
 	Route::post('/coursesuploadCourses', 'CourseController@importExcel')->name('admin.dropzone.uploadCourses');
 	Route::post('/courses/excel/create', 'CourseController@storeCourses')->name('admin.course.excel.submit');
 	Route::get('/courses/remove/{id}', 'CourseController@removeActiveCourse');
-	Route::get('/CourseList/excel/download/', 'Dean\C_PortFolioController@downloadExcel');
+	Route::get('/courses/listing/excel/download/', 'CourseController@downloadExcel');
 });
 
 Route::middleware('is_student')->group(function(){

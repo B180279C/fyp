@@ -820,4 +820,9 @@ class CourseController extends Controller
             }
         }
     }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new CourseExport, 'Courses.xlsx');
+    }
 }

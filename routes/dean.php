@@ -72,7 +72,7 @@
 	Route::get('/CourseList/remove/{id}', 'Dean\CourseController@removeActiveCourse');
 	Route::get('/CourseList/action/{id}','Dean\C_PortFolioController@CourseListAction');
 	Route::get('/timetable/remove/{id}', 'Dean\CourseController@removeActiveTimetable');
-	Route::get('/CourseList/excel/download/', 'Dean\C_PortFolioController@downloadExcel');
+	// Route::get('/CourseList/excel/download/', 'Dean\C_PortFolioController@downloadExcel');
 	
 	
 

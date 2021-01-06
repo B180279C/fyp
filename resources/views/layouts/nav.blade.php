@@ -77,6 +77,13 @@
             document.documentElement.clientWidth
         );
     }
+
+    function logout(){
+        if(confirm('Are you sure want to Logout?')){
+            event.preventDefault();
+            document.getElementById('logout-form').submit();
+        }
+    }
     $(window).resize(function() {
       var width = $(window).width();
       // var height = $(window).height();
@@ -165,10 +172,8 @@
                         <span class="caret"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
+                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="logout()">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;&nbsp;{{ __('Logout') }}
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf

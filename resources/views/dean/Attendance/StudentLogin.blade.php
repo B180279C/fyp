@@ -45,7 +45,7 @@
                           </button>
                         </div>
                         @endif
-                        <form method="POST" action="/Attendance/Student/login/taken/">
+                        <form method="post" action="{{ route('attendance.submit') }}">
                         @csrf
                             <input type="hidden" name="attendance_id" value="{{$attendance_id}}">
                             <input type="hidden" name="code" value="{{$code}}">

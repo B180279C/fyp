@@ -254,7 +254,7 @@ $option8 = "id='selected-sidebar'";
               <ul class="sidebar-action-ul">
                 <a href='/courses/create'><li class="sidebar-action-li"><i class="fa fa-book" style="padding: 0px 10px;" aria-hidden="true"></i>Make a new Course</li></a>
                 <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Add Multple Courses</li></a>
-                <a href="/CourseList/excel/download/"><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
+                <a href="/courses/listing/excel/download/"><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>Export Excel File</li></a>
               </ul>
             </div>
             <br>

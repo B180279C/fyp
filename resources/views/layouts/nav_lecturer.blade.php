@@ -156,6 +156,13 @@
             document.documentElement.clientWidth
         );
     }
+    
+    function logout(){
+        if(confirm('Are you sure want to Logout?')){
+            event.preventDefault();
+            document.getElementById('logout-form').submit();
+        }
+    }
     $(window).resize(function() {
       var width = $(window).width();
       // var height = $(window).height();
@@ -266,12 +273,11 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="{{ route('lecturer.Profile') }}">
-                            Profile
+                            <i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Profile
                         </a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                                document.getElementById('logout-form').submit();">
-                            {{ __('Logout') }}
+                            onclick="logout();">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;&nbsp;{{ __('Logout') }}
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf

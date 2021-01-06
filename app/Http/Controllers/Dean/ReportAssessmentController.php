@@ -67,14 +67,14 @@ class ReportAssessmentController extends Controller
                   ->where('course_id', '=', $id)
                   ->get();
 
-        $action = DB::table('actionCA_v_a')
-                  ->select('actionCA_v_a.*')
+        $action = DB::table('actionca_v_a')
+                  ->select('actionca_v_a.*')
                   ->where('course_id', '=', $id)
                   ->orderBy('actionCA_id')
                   ->get();
 
-        $action_big = DB::table('actionCA_v_a')
-                  ->select('actionCA_v_a.*')
+        $action_big = DB::table('actionca_v_a')
+                  ->select('actionca_v_a.*')
                   ->where('course_id', '=', $id)
                   ->orderByDesc('actionCA_id')
                   ->get();
