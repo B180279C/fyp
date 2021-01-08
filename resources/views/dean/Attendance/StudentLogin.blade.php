@@ -1,10 +1,25 @@
 @extends('layouts.Attendance_login')
 
 @section('content')
+<style type="text/css">
+    #button_link:hover{
+        text-decoration: none;
+    }
+    @media only screen and (max-width: 600px) {
+        #title_side{
+            height: 300px;
+        }
+    }
+    @media only screen and (min-width: 600px) {
+        #title_side{
+            height: 500px;
+        }
+    }
+</style>
 <br>
 <div class="container" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
     <div class="row align-self-center">
-        <div class="col-md-4 row" style="padding:0px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);background-color: #0d2f81;color: white;width: 100%; margin-left: 0px;height: 500px;">
+        <div class="col-md-4 row" style="padding:0px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);background-color: #0d2f81;color: white;width: 100%; margin-left: 0px;" id="title_side">
             <div class="col-md-1"></div>
             <div class="col-md-10 align-self-center">
                 <table>
@@ -83,7 +98,7 @@
                                         {{ __('Login') }}
                                 </button>
                                 @if (Route::has('password.request'))
-                                        <a class="btn btn-link" href="{{ route('password.request') }}">
+                                        <a class="btn btn-link" href="{{ route('password.request') }}" id="button_link" style="color: #008075;">
                                             {{ __('Forgot Your Password?') }}
                                         </a>
                                 @endif

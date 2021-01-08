@@ -1,9 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+<style type="text/css">
+    @media only screen and (max-width: 600px) {
+        #title_side{
+            height: 300px;
+        }
+    }
+    @media only screen and (min-width: 600px) {
+        #title_side{
+            height: 645px;
+        }
+    }
+</style>
 <div class="container" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
     <div class="row align-self-center">
-        <div class="col-md-4 row" style="padding:0px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);background-color: #0d2f81;color: white;width: 100%; margin-left: 0px;height:645px;">
+        <div class="col-md-4 row" style="padding:0px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);background-color: #0d2f81;color: white;width: 100%; margin-left: 0px;" id="title_side">
             <div class="col-md-1"></div>
             <div class="col-md-10 align-self-center">
                 <table>
@@ -191,8 +203,9 @@
                         <div class="form-group">
                             <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;float:left;">
                         </div>
+                        <br/>
                     </form>
-               <br>
+
                 </div>
         </div>
         <div class="col-md-1"></div>

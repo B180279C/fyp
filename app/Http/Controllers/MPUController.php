@@ -266,6 +266,7 @@ class MPUController extends Controller
         $subject = Subject_MPU::where('mpu_id', '=', $id)->firstOrFail();
         $subject->status_subject  = "Remove";
         $subject->save();
+        Storage::disk('private')->delete('/syllabus/'.$subject->syllabus);
         return redirect()->back()->with('success','Remove Successfully');
     }
 }

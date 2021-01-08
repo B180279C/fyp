@@ -13,7 +13,7 @@ $option2 = "id='selected-sidebar'";
           }
         });
         $('#edit_image').click(function(){
-            if(confirm("Do you sure want to remove this?")){
+            if(confirm("Do you sure want to remove this? After removal, it will be empty.")){
                 var value = $('#id').val();
                 var image = $('#image').val();
                 $.ajax({
