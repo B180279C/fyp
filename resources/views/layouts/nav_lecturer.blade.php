@@ -275,8 +275,7 @@
                         <a class="dropdown-item" href="{{ route('lecturer.Profile') }}">
                             <i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Profile
                         </a>
-                        <a class="dropdown-item" href="{{ route('logout') }}"
-                            onclick="logout();">
+                        <a class="dropdown-item" onclick="logout();">
                             <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;&nbsp;{{ __('Logout') }}
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
+<style type="text/css">
+    #button_link:hover{
+        text-decoration: none;
+    }
+</style>
 <br>
 <div class="container" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
     <div class="row align-self-center">
@@ -81,7 +86,7 @@
                                         {{ __('Login') }}
                                 </button>
                                 @if (Route::has('password.request'))
-                                        <a class="btn btn-link" href="{{ route('password.request') }}">
+                                        <a class="btn btn-link" href="{{ route('password.request') }}" id="button_link" style="color: #008075;">
                                             {{ __('Forgot Your Password?') }}
                                         </a>
                                 @endif

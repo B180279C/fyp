@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\View;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes(['verify' => true]);
 Route::get('Attendance/Student/login/{attendance_id}/{code}','Dean\AttendanceController@student_login');
 Route::post('Attendance/Student/login/taken/','Dean\AttendanceController@taken_attendance')->name('attendance.submit');
@@ -24,11 +20,14 @@ Route::get('student/register','StudentController@create')->name('student.create'
 Route::post('student/register', 'StudentController@store')->name('student.register.submit');
 
 Route::middleware('is_admin')->group(function(){
-	
-	Route::get('admin/chartStudent', 'HomeController@chartStudent');
-	Route::get('admin/chartProgramme', 'HomeController@chartProgramme');
+	Route::get('/', function () {
+		    return redirect()->route('admin.home');
+	})->middleware('auth');
 
 	Route::get('admin/home', 'HomeController@adminHome')->name('admin.home');
+	Route::get('admin/chartStudent', 'HomeController@chartStudent');
+	Route::get('admin/chartProgramme', 'HomeController@chartProgramme');
+	
 	Route::get('student/create','StudentController@AdminCreateStudent')->name('admin.student.create');
 	Route::post('student/create', 'StudentController@store')->name('admin.student.submit');
 	Route::post('/studentUploadImage', 'StudentController@uploadImages')->name('dropzone.uploadStudentImage');
