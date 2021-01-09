@@ -842,7 +842,7 @@ $(document).ready(function(){
                 <hr style="margin:6px 5px 0px 5px;background-color:black;">
                 @if($button_verify=="Yes")
                 <div class="row" style="height: auto;margin: 5px -10px 10px -10px;">
-                  <form id="myForm" method="post" action="{{$character}}/Reviewer/FinalExamination/verify/" style="width: 100%;margin: 0px;">
+                  <form id="myForm" method="post" action="{{route($route_name.'.FA.verify_form')}}" style="width: 100%;margin: 0px;">
                       {{csrf_field()}}
                       <input type="hidden" name="verify" id="verify">
                       <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
@@ -864,7 +864,7 @@ $(document).ready(function(){
                 @endif
                 @if($button_approve=="Yes")
                 <div class="row" style="height: auto;margin: 5px -10px 10px -10px;">
-                  <form id="myForm" method="post" action="/Reviewer/FinalExamination/approve/" style="width: 100%;margin: 0px;">
+                  <form id="myForm" method="post" action="{{route($route_name.'.FA.approve_form')}}" style="width: 100%;margin: 0px;">
                       {{csrf_field()}}
                       <input type="hidden" name="verify" id="verify">
                       <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">

@@ -19,6 +19,7 @@ class IsTeacher
         if(auth()->user()){
             if(auth()->user()->position == "Lecturer"){
                 View::share('character','/lecturer');
+                View::share('route_name','lecturer');
                 return $next($request);
             }
         }

@@ -351,7 +351,7 @@ $option1 = "id='selected-sidebar'";
           var fx_id = $('#fx_id').val();
           $.ajax({
               type:'POST',
-              url: "{{$character}}/FinalExamination/searchKey/",
+              url: "{{route($route_name.'.final.searchKey')}}",
               data:{value:value,fx_id:fx_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -418,7 +418,7 @@ $option1 = "id='selected-sidebar'";
             var fx_id = $('#fx_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/FinalExamination/searchKey/",
+               url: "{{route($route_name.'.final.searchKey')}}",
                data:{value:value,fx_id:fx_id},
                success:function(data){
                     document.getElementById("assessments").innerHTML = data;

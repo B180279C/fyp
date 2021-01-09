@@ -840,7 +840,7 @@ $(document).ready(function(){
               </div>
                 @endif
                 @if($button_verify=="Yes")
-                <form id="myForm" method="post" action="{{$character}}/Moderator/FinalExamination/Moderation/" style="margin: 0px;">
+                <form id="myForm" method="post" action="{{route($route_name.'.create.FA_ModerationForm')}}" style="margin: 0px;">
                   {{csrf_field()}}
                   <input type="hidden" name="actionFA_id" value="{{$actionFA_id}}">
                   <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">

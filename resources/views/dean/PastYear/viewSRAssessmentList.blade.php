@@ -162,7 +162,7 @@ function w3_close() {
           var original_id = $('#original_id').val();
           $.ajax({
               type:'POST',
-              url: "{{$character}}/PastYear/assessment/sampleResult/searchSampleResult/",
+              url: "{{route($route_name.'.PY.searchSampleResult')}}",
               data:{value:value,course_id:course_id,original_id:original_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -175,7 +175,7 @@ function w3_close() {
             var original_id = $('#original_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/PastYear/assessment/sampleResult/searchSampleResult/",
+               url: "{{route($route_name.'.PY.searchSampleResult')}}",
                data:{value:value,course_id:course_id,original_id:original_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;

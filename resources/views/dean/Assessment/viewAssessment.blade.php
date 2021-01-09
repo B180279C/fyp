@@ -474,7 +474,7 @@ function ModerationForm(actionCA_id){
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form style="padding: 0px;margin: 0px;" id="self_declaration_form" method="post" action="{{$character}}/assessment/Action/HOD/">
+      <form style="padding: 0px;margin: 0px;" id="self_declaration_form" method="post" action="{{route($route_name.'.CA.submit_for_verify')}}">
         {{csrf_field()}}
       <div class="row" style="margin: 0px;padding: 15px 10px 10px 10px;">
         <input type="hidden" name="actionCA_id" value="{{$actionCA_id}}">

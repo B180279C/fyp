@@ -302,7 +302,7 @@ $option1 = "id='selected-sidebar'";
       var ass_id = $('#ass_id').val();
       $.ajax({
           type:'POST',
-          url: "{{$character}}/AssessmentResult/searchStudentList/",
+          url: "{{route($route_name.'.searchStudentList')}}",
           data:{value:value,course_id:course_id,ass_id:ass_id},
           success:function(data){
             document.getElementById("student_list").innerHTML = data;
@@ -326,7 +326,7 @@ $option1 = "id='selected-sidebar'";
         var ass_id = $('#ass_id').val();
         $.ajax({
            type:'POST',
-           url: "{{$character}}/AssessmentResult/searchStudentList/",
+           url: "{{route($route_name.'.searchStudentList')}}",
            data:{value:value,course_id:course_id,ass_id:ass_id},
            success:function(data){
               document.getElementById("student_list").innerHTML = data;

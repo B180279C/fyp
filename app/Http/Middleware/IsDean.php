@@ -20,6 +20,7 @@ class IsDean
             if(auth()->user()->position == "Dean"){
                 View::share('character','');
                 View::share('cha','Dean');
+                View::share('route_name','dean');
                 return $next($request);
             }
         }

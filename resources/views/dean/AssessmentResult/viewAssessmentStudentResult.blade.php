@@ -317,7 +317,7 @@ function writeInput(id,num,name,ext,fake){
       var question = $('#question').val();
       $.ajax({
           type:'POST',
-          url: "{{$character}}/AssessmentResult/searchAssessmentForm/",
+          url: "{{route($route_name.'.searchAssessmentForm')}}",
           data:{value:value,course_id:course_id,question:question},
           success:function(data){
             document.getElementById("assessments").innerHTML = data;
@@ -330,7 +330,7 @@ function writeInput(id,num,name,ext,fake){
         var question = $('#question').val();
         $.ajax({
            type:'POST',
-           url: "{{$character}}/AssessmentResult/searchAssessmentForm/",
+           url: "{{route($route_name.'.searchAssessmentForm')}}",
            data:{value:value,course_id:course_id,question:question},
            success:function(data){
               document.getElementById("assessments").innerHTML = data;

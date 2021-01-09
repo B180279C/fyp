@@ -773,7 +773,7 @@ $(document).ready(function(){
                 </div>
                 @endif
                 @if($button_verify=="Yes")
-                <form id="myForm" method="post" action="{{$character}}/Moderator/Assessment/Moderation/" style="margin: 0px;">
+                <form id="myForm" method="post" action="{{route($route_name.'.create.CAModerationForm')}}" style="margin: 0px;">
                   {{csrf_field()}}
                   <input type="hidden" name="actionCA_id" value="{{$actionCA_id}}">
                   <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">

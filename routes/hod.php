@@ -290,12 +290,12 @@ Route::get($character.'/images/assessment/{image_name}', [
 	]);
 Route::get($character.'/assessment/view/whole_paper/{ass_id}', 'Dean\AssessmentController@view_wholePaper');
 Route::get($character.'/assessment/download/{ass_li_id}', 'Dean\AssessmentController@downloadFiles');
-Route::post($character.'/assessment/searchKey/', 'Dean\AssessmentController@searchKey');
-Route::post($character.'/assessment/searchAssessmentList/', 'Dean\AssessmentController@searchAssessmentList');
+Route::post($character.'/assessment/searchKey/', 'Dean\AssessmentController@searchKey')->name('hod.searchKey');
+Route::post($character.'/assessment/searchAssessmentList/', 'Dean\AssessmentController@searchAssessmentList')->name('hod.searchAssessmentList');
 Route::get($character.'/assessment/AllZipFiles/{id}/{download}','Dean\AssessmentController@AllZipFileDownload');
 Route::get($character.'/assessment/download/zipFiles/{ass_id}/{download}','Dean\AssessmentController@zipFileDownload');
 Route::get($character.'/assessment/Action/Submit/{id}', 'Dean\AssessmentController@AssessmentSubmitAction');
-Route::post($character.'/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form');
+Route::post($character.'/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form')->name('hod.CA.submit_for_verify');
 Route::get($character.'/Assessment/report/{actionCA_id}','Dean\AssessmentController@ModerationFormReport');
 Route::get($character.'/assessment/create/previous/{id}/{question}','Dean\AssessmentController@createPreviousAss');
 
@@ -311,8 +311,8 @@ Route::get($character.'/AssessmentResult/studentResult/{ass_id}/', [
 Route::get($character.'/AssessmentResult/view/student/{ar_stu_id}/', [
     'as' => 'hod.viewStudentResult', 'uses' => 'Dean\AssessmentResultController@viewStudentResult']);
 Route::get($character.'/AssessmentResult/result/{ar_stu_id}','Dean\AssessmentResultController@downloadDocument');
-Route::post($character.'/AssessmentResult/searchAssessmentForm/', 'Dean\AssessmentResultController@searchAssessmentForm');
-Route::post($character.'/AssessmentResult/searchStudentList/', 'Dean\AssessmentResultController@searchStudentList');
+Route::post($character.'/AssessmentResult/searchAssessmentForm/', 'Dean\AssessmentResultController@searchAssessmentForm')->name('hod.searchAssessmentForm');
+Route::post($character.'/AssessmentResult/searchStudentList/', 'Dean\AssessmentResultController@searchStudentList')->name('hod.searchStudentList');
 Route::get($character.'/images/AssessmentResult/{image_name}', [
 	'as'         => 'hod.assessmentResult_image',
 	'uses'       => 'Dean\AssessmentResultController@assessmentResult_image',
@@ -346,14 +346,14 @@ Route::get($character.'/images/final_assessment/{image_name}', [
 	     'uses'       => 'Dean\FinalExaminationController@FinalAssessmentImage',
 	     'middleware' => 'auth',
 	]);
-Route::post($character.'/FinalExamination/searchAssessmentList/', 'Dean\FinalExaminationController@searchAssessmentList');
-Route::post($character.'/FinalExamination/searchKey/', 'Dean\FinalExaminationController@searchKey');
+Route::post($character.'/FinalExamination/searchAssessmentList/', 'Dean\FinalExaminationController@searchAssessmentList')->name('hod.final.searchAssessmentList');
+Route::post($character.'/FinalExamination/searchKey/', 'Dean\FinalExaminationController@searchKey')->name('hod.final.searchKey');
 Route::get($character.'/final_assessment/view/whole_paper/{fx_id}', 'Dean\FinalExaminationController@view_wholePaper');
 Route::get($character.'/FinalExamination/download/{ass_fx_id}', 'Dean\FinalExaminationController@downloadFiles');
 Route::get($character.'/FinalExamination/AllZipFiles/{id}/{download}','Dean\FinalExaminationController@AllZipFileDownload');
 Route::get($character.'/FinalExamination/download/zipFiles/{fx_id}/{download}','Dean\FinalExaminationController@zipFileDownload');
 Route::get($character.'/FinalExamination/Action/Submit/{id}','Dean\FinalExaminationController@FASubmitAction');
-Route::post($character.'/FinalExamination/Action/HOD/', 'Dean\FinalExaminationController@SubmitSelf_D_Form');
+Route::post($character.'/FinalExamination/Action/HOD/', 'Dean\FinalExaminationController@SubmitSelf_D_Form')->name('hod.FA.submit_for_verify');
 Route::get($character.'/FinalExamination/report/{actionFA_id}','Dean\FinalExaminationController@ModerationFormReport');
 Route::get($character.'/FinalExamination/create/previous/{id}/','Dean\FinalExaminationController@createPreviousAss');
 
@@ -373,7 +373,7 @@ Route::get($character.'/images/FinalResult/{image_name}', [
 ]);
 Route::get($character.'/FinalResult/view/whole_paper/{fxr_id}', 'Dean\FinalExaminationResultController@view_wholePaper');
 Route::get($character.'/FinalResult/remove/{fxr_id}', 'Dean\FinalExaminationResultController@removeStudentActive');
-Route::post($character.'/FinalResult/searchStudentList/', 'Dean\FinalExaminationResultController@searchStudentList');
+Route::post($character.'/FinalResult/searchStudentList/', 'Dean\FinalExaminationResultController@searchStudentList')->name('hod.final.searchStudentList');
 Route::get($character.'/FinalResult/download/zipFiles/{course_id}/{download}','Dean\FinalExaminationResultController@zipFileDownload');
 Route::get($character.'/FinalResult/Student/{student_id}/download/zipFiles/{course_id}/{download}', [
     'as' => 'hod.zipFileDownloadFinalResult', 'uses' => 'Dean\FinalExaminationResultController@zipFileDownloadStudent']);
@@ -397,8 +397,8 @@ Route::get($character.'/Timetable/{id}', [
 //Attendance
 Route::get($character.'/Attendance/{id}', 'Dean\AttendanceController@viewAttendance');
 Route::get($character.'/Attendance/{id}/student_list/{date}', 'Dean\AttendanceController@viewStudentList');
-Route::post($character.'/Attendance/store/', 'Dean\AttendanceController@storeAttendance');
-Route::post($character.'/Attendance/edit/', 'Dean\AttendanceController@editAttendance');
+Route::post($character.'/Attendance/store/', 'Dean\AttendanceController@storeAttendance')->name('hod.storeAttendance');
+Route::post($character.'/Attendance/edit/', 'Dean\AttendanceController@editAttendance')->name('hod.editAttendance');
 Route::post($character.'/Attendance/openQR_Code/', 'Dean\AttendanceController@openQR_Code');
 Route::get($character.'/Attendance/QR_code/{attendance_id}/{code}', 'Dean\AttendanceController@QR_Code');
 Route::get($character.'/Attendance/excel/download/{id}','Dean\AttendanceController@downloadExcel');
@@ -411,9 +411,9 @@ Route::get($character.'/PastYear/assessment/{id}/list/{ass_id}/','Dean\PastYearC
 Route::get($character.'/PastYear/assessment/download/zipFiles/{course_id}/{download}','Dean\PastYearController@zipFileDownload');
 Route::get($character.'/PastYear/assessment/name/download/zipFiles/{course_id}/{download}','Dean\PastYearController@zipFileDownloadName');
 Route::get($character.'/PastYear/assessment/list/download/zipFiles/{ass_id}/{download}','Dean\PastYearController@zipFileDownloadList');
-Route::post($character.'/PastYear/assessment/searchAssessment/', 'Dean\PastYearController@searchAssessment');
-Route::post($character.'/PastYear/assessment/name/searchAssessmentName/', 'Dean\PastYearController@searchAssessmentName');
-Route::post($character.'/PastYear/assessment/list/searchAssessmentlist/', 'Dean\PastYearController@searchAssessmentlist');
+Route::post($character.'/PastYear/assessment/searchAssessment/', 'Dean\PastYearController@searchAssessment')->name('hod.PY.searchAssessment');
+Route::post($character.'/PastYear/assessment/name/searchAssessmentName/', 'Dean\PastYearController@searchAssessmentName')->name('hod.PY.searchAssessmentName');
+Route::post($character.'/PastYear/assessment/list/searchAssessmentlist/', 'Dean\PastYearController@searchAssessmentlist')->name('hod.PY.searchAssessmentlist');
 Route::get($character.'/PastYear/assessment/download/{ass_li_id}', 'Dean\PastYearController@downloadFiles');
 Route::get($character.'/PastYear/assessment/view/whole_paper/{ass_id}', 'Dean\PastYearController@view_wholePaper');
 Route::get($character.'/PastYear/images/assessment/{image_name}', [
@@ -430,9 +430,9 @@ Route::get($character.'/PastYear/FinalAssessment/{id}/list/{fx_id}/','Dean\PastY
 Route::get($character.'/PastYear/FinalAssessment/download/zipFiles/{course_id}/{download}','Dean\PastYearFinalController@zipFileDownload');
 Route::get($character.'/PastYear/FinalAssessment/name/download/zipFiles/{course_id}/{download}','Dean\PastYearFinalController@zipFileDownloadName');
 Route::get($character.'/PastYear/FinalAssessment/list/download/zipFiles/{fx_id}/{download}','Dean\PastYearFinalController@zipFileDownloadList');
-Route::post($character.'/PastYear/FinalAssessment/searchAssessment/', 'Dean\PastYearFinalController@searchAssessment');
-Route::post($character.'/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\PastYearFinalController@searchAssessmentName');
-Route::post($character.'/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\PastYearFinalController@searchAssessmentlist');
+Route::post($character.'/PastYear/FinalAssessment/searchAssessment/', 'Dean\PastYearFinalController@searchAssessment')->name('hod.PY.final.searchAssessment');
+Route::post($character.'/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\PastYearFinalController@searchAssessmentName')->name('hod.PY.final.searchAssessmentName');
+Route::post($character.'/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\PastYearFinalController@searchAssessmentlist')->name('hod.PY.final.searchAssessmentlist');
 Route::get($character.'/PastYear/FinalAssessment/download/{ass_fx_id}', 'Dean\PastYearFinalController@downloadFiles');
 Route::get($character.'/PastYear/images/final_assessment/{image_name}', [
 	'as'         => 'assessment_final_image',
@@ -450,9 +450,9 @@ Route::get($character.'/PastYear/sampleResult/list/download/zipFiles/{course_id}
 Route::get($character.'/PastYear/sampleResult/download/zipFiles/{ass_id}/{download}','Dean\PastYearController@zipFileDownloadStudent');
 Route::get($character.'/PastYear/Student/{student_id}/download/zipFiles/{ass_id}/{download}', [
     'as' => 'zipFileDownloadDocument', 'uses' => 'Dean\PastYearController@zipFileDownloadDocument']);
-Route::post($character.'/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\PastYearController@searchAssessmentSampleResult');
-Route::post($character.'/PastYear/result/searchAssessmentResult/', 'Dean\PastYearController@searchAssessmentResult');
-Route::post($character.'/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\PastYearController@searchStudentList');
+Route::post($character.'/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\PastYearController@searchAssessmentSampleResult')->name('hod.PY.searchSampleResult');
+Route::post($character.'/PastYear/result/searchAssessmentResult/', 'Dean\PastYearController@searchAssessmentResult')->name('hod.PY.searchAssessmentResult');
+Route::post($character.'/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\PastYearController@searchStudentList')->name('hod.PY.searchStudentList');
 Route::get($character.'/PastYear/images/AssessmentResult/{image_name}', [
 	'as'         => 'M_assessmentResult_image',
 	'uses'       => 'Dean\PastYearController@assessmentResult_image',
@@ -469,8 +469,8 @@ Route::get($character.'/PastYear/FinalSampleResult/download/zipFiles/{course_id}
 Route::get($character.'/PastYear/FinalSampleResult/Student/{student_id}/download/zipFiles/{course_id}/{download}', [
     'as' => 'zipFileDownloadDocument', 'uses' => 'Dean\PastYearFinalController@zipFileDownloadDocument']);
 Route::get($character.'/PastYear/FinalSampleResult/student/download/zipFiles/{course_id}/{download}','Dean\PastYearFinalController@zipFileDownloadStudent');
-Route::post($character.'/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\PastYearFinalController@searchAssessmentResult');
-Route::post($character.'/PastYear/FinalSampleResult/searchStudentList/', 'Dean\PastYearFinalController@searchStudentList');
+Route::post($character.'/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\PastYearFinalController@searchAssessmentResult')->name('hod.PY.final.searchAssessmentResult');
+Route::post($character.'/PastYear/FinalSampleResult/searchStudentList/', 'Dean\PastYearFinalController@searchStudentList')->name('hod.PY.final.searchStudentList');
 Route::get($character.'/PastYear/images/FinalResult/{image_name}', [
 	'as'         => 'FinalResult_image',
 	'uses'       => 'Dean\PastYearFinalController@FinalResult_image',
@@ -519,7 +519,7 @@ Route::get($character.'/Moderator/lectureNote/download/{id}','Dean\Moderator\M_L
 
 //Moderator Teaching Plan
 Route::get($character.'/Moderator/teachingPlan/{id}','Dean\Moderator\M_TeachingPlanController@ModeratorTeachingPlan');
-Route::post($character.'/Moderator/teachingPlan/verify/','Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction');
+Route::post($character.'/Moderator/teachingPlan/verify/','Dean\Moderator\M_TeachingPlanController@M_TP_VerifyAction')->name('hod.tp_verify_form');
 Route::get($character.'/Moderator/teachingPlan/report/{id}', 'Dean\Moderator\M_TeachingPlanController@TPDownload');
 //Moderator Assessment
 Route::get($character.'/Moderator/viewAssessment/{id}','Dean\Moderator\M_AssessmentController@viewAssessment');
@@ -555,7 +555,7 @@ Route::get($character.'/Moderator/AssessmentResult/view/whole_paper/{ar_stu_id}'
 Route::get($character.'/Moderator/AssessmentResult/result/{ar_stu_id}','Dean\Moderator\M_AssessmentResultController@downloadDocument');
 //Moderator Assessment
 Route::get($character.'/Moderator/Assessment/{id}','Dean\Moderator\M_AssessmentController@ModeratorAssessment');
-Route::post($character.'/Moderator/Assessment/Moderation/','Dean\Moderator\M_AssessmentController@M_Ass_Moderate_Action');
+Route::post($character.'/Moderator/Assessment/Moderation/','Dean\Moderator\M_AssessmentController@M_Ass_Moderate_Action')->name('hod.create.CAModerationForm');
 Route::get($character.'/Moderator/Assessment/report/{actionCA_id}','Dean\Moderator\M_AssessmentController@ModerationFormReport');
 
 //Final Assessment
@@ -591,7 +591,7 @@ Route::post($character.'/Moderator/FinalResult/searchStudentList/', 'Dean\Modera
 
 //Moderator Final Assessment
 Route::get($character.'/Moderator/FinalExamination/{id}','Dean\Moderator\M_FinalExamController@ModeratorFinalExam');
-Route::post($character.'/Moderator/FinalExamination/Moderation/','Dean\Moderator\M_FinalExamController@M_FX_Moderate_Action');
+Route::post($character.'/Moderator/FinalExamination/Moderation/','Dean\Moderator\M_FinalExamController@M_FX_Moderate_Action')->name('hod.create.FA_ModerationForm');
 Route::get($character.'/Moderator/FinalExamination/report/{actionFA_id}','Dean\Moderator\M_FinalExamController@ModerationFormReport');
 //Moderator E_PortFolio
 Route::get($character.'/Moderator/E_Portfolio/{id}','Dean\Moderator\E_PortfolioController@viewE_Portfolio');
@@ -706,7 +706,7 @@ Route::get($character.'/Reviewer/images/lectureNote/{ln_id}/{image_name}', [
 Route::get($character.'/Reviewer/lectureNote/download/{id}','Dean\Dean\D_LectureNoteController@downloadLN');
 //Reviewer Teaching Plan
 Route::get($character.'/Reviewer/teachingPlan/{id}','Dean\Dean\D_TeachingPlanController@DeanTeachingPlan');
-Route::post($character.'/Reviewer/teachingPlan/approve/','Dean\Dean\D_TeachingPlanController@D_TP_VerifyAction');
+Route::post($character.'/Reviewer/teachingPlan/approve/','Dean\Dean\D_TeachingPlanController@D_TP_VerifyAction')->name('hod.tp_approve_form');
 Route::get($character.'/Reviewer/teachingPlan/report/{id}', 'Dean\Dean\D_TeachingPlanController@TPDownload');
 
 //Reviewer Assessment
@@ -744,7 +744,7 @@ Route::get($character.'/Reviewer/AssessmentResult/view/whole_paper/{ar_stu_id}',
 Route::get($character.'/Reviewer/AssessmentResult/result/{ar_stu_id}','Dean\Dean\D_AssessmentResultController@downloadDocument');
 
 Route::get($character.'/Reviewer/Assessment/{id}','Dean\Dean\D_AssessmentController@DeanAssessment');
-Route::post($character.'/Reviewer/Assessment/approve/','Dean\Dean\D_AssessmentController@D_Ass_Verify_Action');
+Route::post($character.'/Reviewer/Assessment/approve/','Dean\Dean\D_AssessmentController@D_Ass_Verify_Action')->name('hod.CA.verify_form');
 Route::get($character.'/Reviewer/Assessment/report/{actionCA_id}','Dean\Dean\D_AssessmentController@ModerationFormReport');
 
 //Dean Final Assessment
@@ -779,7 +779,7 @@ Route::get($character.'/Reviewer/FinalResult/view/whole_paper/{fxr_id}', 'Dean\D
 Route::post($character.'/Reviewer/FinalResult/searchStudentList/', 'Dean\Dean\D_FinalExamResultController@searchStudentList');
 	
 Route::get($character.'/Reviewer/FinalExamination/{id}','Dean\Dean\D_FinalExamController@DeanFinalExam');	
-Route::post($character.'/Reviewer/FinalExamination/verify/','Dean\Dean\D_FinalExamController@D_FX_Verify_Action');
+Route::post($character.'/Reviewer/FinalExamination/verify/','Dean\Dean\D_FinalExamController@D_FX_Verify_Action')->name('hod.FA.verify_form');
 Route::get($character.'/Reviewer/FinalExamination/report/{actionFA_id}','Dean\Dean\D_FinalExamController@ModerationFormReport');
 
 //Dean E_PortFolio

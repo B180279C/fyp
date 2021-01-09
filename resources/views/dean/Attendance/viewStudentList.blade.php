@@ -157,7 +157,7 @@ $(document).ready(function(){
             </div>
              <div class="details" style="padding: 5px 5px 0px 5px;">
              	@if(count($attendance)>0)
-             	<form method="post" action="{{$character}}/Attendance/edit/" style="padding: 0px;margin: 0px;">
+             	<form method="post" action="{{route($route_name.'.editAttendance')}}" style="padding: 0px;margin: 0px;">
              		{{csrf_field()}}
              		<div style="overflow-x: auto;">
              		<table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);margin-top: 5px;" id="table" class="table table-hover">
@@ -203,7 +203,7 @@ $(document).ready(function(){
 	                </div>
              	</form>
              	@else
-             	<form method="post" action="{{$character}}/Attendance/store/" style="padding: 0px;margin: 0px;">
+             	<form method="post" action="{{route($route_name.'.storeAttendance')}}" style="padding: 0px;margin: 0px;">
              		{{csrf_field()}}
              	<div style="overflow-x: auto;">
              	<table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);margin-top: 5px;" id="table" class="table table-hover">

@@ -199,7 +199,11 @@ class NotificationController extends Controller
         }
 
         $num_moderator = count($action)+count($action2)+count($action3);
-        return $num_moderator."/".$num_reviewer.'/'.$course_count;
+        if(auth()->user()->position=="Lecturer"){
+          return $num_moderator.'/'.$course_count;
+        }else{
+          return $num_moderator."/".$num_reviewer.'/'.$course_count;
+        }
 	}
 
 	public static function getTP_Num($id,$place)

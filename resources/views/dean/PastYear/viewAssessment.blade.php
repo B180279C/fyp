@@ -230,7 +230,7 @@ function w3_close() {
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url: "{{$character}}/PastYear/assessment/searchAssessment/",
+              url: "{{route($route_name.'.PY.searchAssessment')}}",
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -284,7 +284,7 @@ function w3_close() {
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/PastYear/assessment/searchAssessment/",
+               url: "{{route($route_name.'.PY.searchAssessment')}}",
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;
@@ -339,7 +339,7 @@ function w3_close() {
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url: "{{$character}}/PastYear/result/searchAssessmentResult/",
+              url: "{{route($route_name.'.PY.searchAssessmentResult')}}",
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("results").innerHTML = data;
@@ -351,7 +351,7 @@ function w3_close() {
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/PastYear/result/searchAssessmentResult/",
+               url: "{{route($route_name.'.PY.searchAssessmentResult')}}",
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("results").innerHTML = data;

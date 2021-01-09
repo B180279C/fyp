@@ -20,6 +20,7 @@ class IsHoD
             if(auth()->user()->position == "HoD"){
                 View::share('character','/hod');
                 View::share('cha','Head Of Department');
+                View::share('route_name','hod');
                 return $next($request);
             }
         }
