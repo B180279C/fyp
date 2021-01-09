@@ -134,7 +134,7 @@ $option3 = "id='selected-sidebar'";
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'{{$character}}/Moderator/FinalExamination/searchAssessmentList/',
+              url:'{{route($route_name.".moderator.Final_searchAssessmentList")}}',
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -146,7 +146,7 @@ $option3 = "id='selected-sidebar'";
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'{{$character}}/Moderator/FinalExamination/searchAssessmentList/',
+               url:'{{route($route_name.".moderator.Final_searchAssessmentList")}}',
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;

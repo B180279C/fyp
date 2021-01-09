@@ -144,7 +144,7 @@ $option4 = "id='selected-sidebar'";
           var question = $('#question').val();
           $.ajax({
               type:'POST',
-              url:'{{$character}}/Reviewer/assessment/searchAssessmentList/',
+              url:'{{route($route_name.".r.searchAssessmentList")}}',
               data:{value:value,course_id:course_id,question:question},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -157,7 +157,7 @@ $option4 = "id='selected-sidebar'";
             var question = $('#question').val();
             $.ajax({
                type:'POST',
-               url:'{{$character}}/Reviewer/assessment/searchAssessmentList/',
+               url:'{{route($route_name.".r.searchAssessmentList")}}',
                data:{value:value,course_id:course_id,question:question},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;

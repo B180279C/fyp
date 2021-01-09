@@ -533,8 +533,8 @@ Route::get($character.'/Moderator/images/assessment/{image_name}', [
 	     'uses'       => 'Dean\Moderator\M_AssessmentController@assessmentImage',
 	     'middleware' => 'auth',
 	]);
-Route::post($character.'/Moderator/assessment/searchKey/', 'Dean\Moderator\M_AssessmentController@searchKey');
-Route::post($character.'/Moderator/assessment/searchAssessmentList/', 'Dean\Moderator\M_AssessmentController@searchAssessmentList');
+Route::post($character.'/Moderator/assessment/searchKey/', 'Dean\Moderator\M_AssessmentController@searchKey')->name('hod.moderator.searchKey');
+Route::post($character.'/Moderator/assessment/searchAssessmentList/', 'Dean\Moderator\M_AssessmentController@searchAssessmentList')->name('hod.moderator.searchAssessmentList');
 Route::get($character.'/Moderator/assessment/download/{ass_li_id}', 'Dean\Moderator\M_AssessmentController@downloadFiles');
 
 //Assessment Result
@@ -544,8 +544,8 @@ Route::get($character.'/Moderator/AssessmentResult/studentResult/{ass_id}/', [
     'as' => 'hod.M_viewstudentlist', 'uses' => 'Dean\Moderator\M_AssessmentResultController@viewstudentlist']);
 Route::get($character.'/Moderator/AssessmentResult/view/student/{ar_stu_id}/', [
     'as' => 'hod.M_viewStudentResult', 'uses' => 'Dean\Moderator\M_AssessmentResultController@viewStudentResult']);
-Route::post($character.'/Moderator/AssessmentResult/searchAssessmentForm/', 'Dean\Moderator\M_AssessmentResultController@searchAssessmentForm');
-Route::post($character.'/Moderator/AssessmentResult/searchStudentList/', 'Dean\Moderator\M_AssessmentResultController@searchStudentList');
+Route::post($character.'/Moderator/AssessmentResult/searchAssessmentForm/', 'Dean\Moderator\M_AssessmentResultController@searchAssessmentForm')->name('hod.moderator.searchAssessmentForm');
+Route::post($character.'/Moderator/AssessmentResult/searchStudentList/', 'Dean\Moderator\M_AssessmentResultController@searchStudentList')->name('hod.moderator.searchStudentList');
 Route::get($character.'/Moderator/images/AssessmentResult/{image_name}', [
 	'as'         => 'hod.M_assessmentResult_image',
 	'uses'       => 'Dean\Moderator\M_AssessmentResultController@assessmentResult_image',
@@ -570,8 +570,8 @@ Route::get($character.'/Moderator/images/final_assessment/{image_name}', [
 	     'middleware' => 'auth',
 ]);
 Route::get($character.'/Moderator/FinalExamination/view_list/{fx_id}', 'Dean\Moderator\M_FinalExamController@final_assessment_list_view');
-Route::post($character.'/Moderator/FinalExamination/searchAssessmentList/', 'Dean\Moderator\M_FinalExamController@searchAssessmentList');
-Route::post($character.'/Moderator/FinalExamination/searchKey/', 'Dean\Moderator\M_FinalExamController@searchKey');
+Route::post($character.'/Moderator/FinalExamination/searchAssessmentList/', 'Dean\Moderator\M_FinalExamController@searchAssessmentList')->name('hod.moderator.Final_searchAssessmentList');
+Route::post($character.'/Moderator/FinalExamination/searchKey/', 'Dean\Moderator\M_FinalExamController@searchKey')->name('hod.m.Final.searchKey');
 Route::get($character.'/Moderator/final_assessment/view/whole_paper/{fx_id}', 'Dean\Moderator\M_FinalExamController@view_wholePaper');
 Route::get($character.'/Moderator/FinalExamination/download/{ass_fx_id}', 'Dean\Moderator\M_FinalExamController@downloadFiles');
 
@@ -587,7 +587,7 @@ Route::get($character.'/Moderator/images/FinalResult/{image_name}', [
 	     'middleware' => 'auth',
 ]);
 Route::get($character.'/Moderator/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Moderator\M_FinalExamResultController@view_wholePaper');
-Route::post($character.'/Moderator/FinalResult/searchStudentList/', 'Dean\Moderator\M_FinalExamResultController@searchStudentList');
+Route::post($character.'/Moderator/FinalResult/searchStudentList/', 'Dean\Moderator\M_FinalExamResultController@searchStudentList')->name('hod.m.final.searchStudentList');
 
 //Moderator Final Assessment
 Route::get($character.'/Moderator/FinalExamination/{id}','Dean\Moderator\M_FinalExamController@ModeratorFinalExam');
@@ -610,9 +610,9 @@ Route::get($character.'/Moderator/Attendance/{id}/student_list/{date}', 'Dean\Mo
 Route::get($character.'/Moderator/PastYear/assessment/{id}','Dean\Moderator\M_PastYearController@PastYearAssessment');
 Route::get($character.'/Moderator/PastYear/assessment/{id}/assessment_name/{course_id}','Dean\Moderator\M_PastYearController@PastYearAssessmentName');
 Route::get($character.'/Moderator/PastYear/assessment/{id}/list/{ass_id}/','Dean\Moderator\M_PastYearController@PastYearAssessmentList');
-Route::post($character.'/Moderator/PastYear/assessment/searchAssessment/', 'Dean\Moderator\M_PastYearController@searchAssessment');
-Route::post($character.'/Moderator/PastYear/assessment/name/searchAssessmentName/', 'Dean\Moderator\M_PastYearController@searchAssessmentName');
-Route::post($character.'/Moderator/PastYear/assessment/list/searchAssessmentlist/', 'Dean\Moderator\M_PastYearController@searchAssessmentlist');
+Route::post($character.'/Moderator/PastYear/assessment/searchAssessment/', 'Dean\Moderator\M_PastYearController@searchAssessment')->name('hod.m.PY.searchAssessment');
+Route::post($character.'/Moderator/PastYear/assessment/name/searchAssessmentName/', 'Dean\Moderator\M_PastYearController@searchAssessmentName')->name('hod.m.PY.searchAssessmentName');
+Route::post($character.'/Moderator/PastYear/assessment/list/searchAssessmentlist/', 'Dean\Moderator\M_PastYearController@searchAssessmentlist')->name('hod.m.PY.searchAssessmentlist');
 Route::get($character.'/Moderator/PastYear/assessment/view/whole_paper/{ass_id}', 'Dean\Moderator\M_PastYearController@view_wholePaper');
 Route::get($character.'/Moderator/PastYear/images/assessment/{image_name}', [
 	'as'         => 'M_assessment_image',
@@ -626,9 +626,9 @@ Route::get($character.'/Moderator/PastYear/assessment/download/{ass_li_id}',
 Route::get($character.'/Moderator/PastYear/FinalAssessment/{id}','Dean\Moderator\M_PastYearFinalController@PastYearAssessment');
 Route::get($character.'/Moderator/PastYear/FinalAssessment/{id}/assessment_name/{course_id}','Dean\Moderator\M_PastYearFinalController@PastYearAssessmentName');
 Route::get($character.'/Moderator/PastYear/FinalAssessment/{id}/list/{fx_id}/','Dean\Moderator\M_PastYearFinalController@PastYearAssessmentList');
-Route::post($character.'/Moderator/PastYear/FinalAssessment/searchAssessment/', 'Dean\Moderator\M_PastYearFinalController@searchAssessment');
-Route::post($character.'/Moderator/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\Moderator\M_PastYearFinalController@searchAssessmentName');
-Route::post($character.'/Moderator/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\Moderator\M_PastYearFinalController@searchAssessmentlist');
+Route::post($character.'/Moderator/PastYear/FinalAssessment/searchAssessment/', 'Dean\Moderator\M_PastYearFinalController@searchAssessment')->name('hod.m.PY.final.searchAssessment');
+Route::post($character.'/Moderator/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\Moderator\M_PastYearFinalController@searchAssessmentName')->name('hod.m.PY.final.searchAssessmentName');
+Route::post($character.'/Moderator/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\Moderator\M_PastYearFinalController@searchAssessmentlist')->name('hod.m.PY.final.searchAssessmentlist');
 Route::get($character.'/Moderator/PastYear/FinalAssessment/download/{ass_fx_id}', 'Dean\Moderator\M_PastYearFinalController@downloadFiles');
 Route::get($character.'/Moderator/PastYear/images/final_assessment/{image_name}', [
 	'as'         => 'M_assessment_final_image',
@@ -642,9 +642,9 @@ Route::get($character.'/Moderator/PastYear/final_assessment/view/whole_paper/{fx
 Route::get($character.'/Moderator/PastYear/sampleResult/{id}/previous/{course_id}/{search}','Dean\Moderator\M_PastYearController@PastYearResultAssessmentList');
 Route::get($character.'/Moderator/PastYear/sampleResult/{id}/name/{ass_id}/{search}','Dean\Moderator\M_PastYearController@PastYearStudentList');
 Route::get($character.'/Moderator/PastYear/sampleResult/{id}/result/{ar_stu_id}','Dean\Moderator\M_PastYearController@PastYearResultList');
-Route::post($character.'/Moderator/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\Moderator\M_PastYearController@searchAssessmentSampleResult');
-Route::post($character.'/Moderator/PastYear/result/searchAssessmentResult/', 'Dean\Moderator\M_PastYearController@searchAssessmentResult');
-Route::post($character.'/Moderator/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\Moderator\M_PastYearController@searchStudentList');
+Route::post($character.'/Moderator/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\Moderator\M_PastYearController@searchAssessmentSampleResult')->name('hod.m.PY.searchSampleResult');
+Route::post($character.'/Moderator/PastYear/result/searchAssessmentResult/', 'Dean\Moderator\M_PastYearController@searchAssessmentResult')->name('hod.m.PY.searchAssessmentResult');
+Route::post($character.'/Moderator/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\Moderator\M_PastYearController@searchStudentList')->name('hod.m.PY.searchStudentList');
 Route::get($character.'/Moderator/PastYear/images/AssessmentResult/{image_name}', [
 	'as'         => 'M_assessmentResult_image',
 	'uses'       => 'Dean\Moderator\M_PastYearController@assessmentResult_image',
@@ -656,8 +656,8 @@ Route::get($character.'/Moderator/PastYear/AssessmentResult/result/{ar_stu_id}',
 //Moderator Past Year FInal Result
 Route::get($character.'/Moderator/PastYear/FinalSampleResult/{id}/previous/{course_id}/{search}','Dean\Moderator\M_PastYearFinalController@PastYearStudentList');
 Route::get($character.'/Moderator/PastYear/FinalSampleResult/{id}/result/{fxr_id}','Dean\Moderator\M_PastYearFinalController@PastYearResultList');
-Route::post($character.'/Moderator/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\Moderator\M_PastYearFinalController@searchAssessmentResult');
-Route::post($character.'/Moderator/PastYear/FinalSampleResult/searchStudentList/', 'Dean\Moderator\M_PastYearFinalController@searchStudentList');
+Route::post($character.'/Moderator/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\Moderator\M_PastYearFinalController@searchAssessmentResult')->name('hod.m.PY.final.searchAssessmentResult');
+Route::post($character.'/Moderator/PastYear/FinalSampleResult/searchStudentList/', 'Dean\Moderator\M_PastYearFinalController@searchStudentList')->name('hod.m.PY.final.searchAssessmentResult');
 Route::get($character.'/Moderator/PastYear/images/FinalResult/{image_name}', [
 	'as'         => 'M_FinalResult_image',
 	'uses'       => 'Dean\Moderator\M_PastYearFinalController@FinalResult_image',
@@ -721,8 +721,8 @@ Route::get($character.'/Reviewer/images/assessment/{image_name}', [
 	     'uses'       => 'Dean\Dean\D_AssessmentController@assessmentImage',
 	     'middleware' => 'auth',
 ]);
-Route::post($character.'/Reviewer/assessment/searchKey/', 'Dean\Dean\D_AssessmentController@searchKey');
-Route::post($character.'/Reviewer/assessment/searchAssessmentList/', 'Dean\Dean\D_AssessmentController@searchAssessmentList');
+Route::post($character.'/Reviewer/assessment/searchKey/', 'Dean\Dean\D_AssessmentController@searchKey')->name('hod.r.searchKey');
+Route::post($character.'/Reviewer/assessment/searchAssessmentList/', 'Dean\Dean\D_AssessmentController@searchAssessmentList')->name('hod.r.searchAssessmentList');
 Route::get($character.'/Reviewer/assessment/download/{ass_li_id}', 'Dean\Dean\D_AssessmentController@downloadFiles');
 
 //Assessment Result
@@ -733,8 +733,8 @@ Route::get($character.'/Reviewer/AssessmentResult/studentResult/{ass_id}/', [
 'as' => 'viewstudentlist', 'uses' => 'Dean\Dean\D_AssessmentResultController@viewstudentlist']);
 Route::get($character.'/Reviewer/AssessmentResult/view/student/{ar_stu_id}/', [
 'as' => 'viewStudentResult', 'uses' => 'Dean\Dean\D_AssessmentResultController@viewStudentResult']);
-Route::post($character.'/Reviewer/AssessmentResult/searchAssessmentForm/', 'Dean\Dean\D_AssessmentResultController@searchAssessmentForm');
-Route::post($character.'/Reviewer/AssessmentResult/searchStudentList/', 'Dean\Dean\D_AssessmentResultController@searchStudentList');
+Route::post($character.'/Reviewer/AssessmentResult/searchAssessmentForm/', 'Dean\Dean\D_AssessmentResultController@searchAssessmentForm')->name('hod.r.searchAssessmentForm');
+Route::post($character.'/Reviewer/AssessmentResult/searchStudentList/', 'Dean\Dean\D_AssessmentResultController@searchStudentList')->name('hod.r.searchStudentList');
 Route::get($character.'/Reviewer/images/AssessmentResult/{image_name}', [
 	'as'         => 'assessmentResult_image',
 	'uses'       => 'Dean\Dean\D_AssessmentResultController@assessmentResult_image',
@@ -759,8 +759,8 @@ Route::get($character.'/Reviewer/images/final_assessment/{image_name}', [
 	     'uses'       => 'Dean\Dean\D_FinalExamController@FinalAssessmentImage',
 	     'middleware' => 'auth',
 ]);
-Route::post($character.'/Reviewer/FinalExamination/searchAssessmentList/', 'Dean\Dean\D_FinalExamController@searchAssessmentList');
-Route::post($character.'/Reviewer/FinalExamination/searchKey/', 'Dean\Dean\D_FinalExamController@searchKey');
+Route::post($character.'/Reviewer/FinalExamination/searchAssessmentList/', 'Dean\Dean\D_FinalExamController@searchAssessmentList')->name('hod.r.final.searchAssessmentList');
+Route::post($character.'/Reviewer/FinalExamination/searchKey/', 'Dean\Dean\D_FinalExamController@searchKey')->name('hod.r.final.searchKey');
 Route::get($character.'/Reviewer/final_assessment/view/whole_paper/{fx_id}', 'Dean\Dean\D_FinalExamController@view_wholePaper');
 Route::get($character.'/Reviewer/FinalExamination/download/{ass_fx_id}', 'Dean\Dean\D_FinalExamController@downloadFiles');
 
@@ -776,7 +776,7 @@ Route::get($character.'/Reviewer/images/FinalResult/{image_name}', [
 	     'middleware' => 'auth',
 ]);
 Route::get($character.'/Reviewer/FinalResult/view/whole_paper/{fxr_id}', 'Dean\Dean\D_FinalExamResultController@view_wholePaper');
-Route::post($character.'/Reviewer/FinalResult/searchStudentList/', 'Dean\Dean\D_FinalExamResultController@searchStudentList');
+Route::post($character.'/Reviewer/FinalResult/searchStudentList/', 'Dean\Dean\D_FinalExamResultController@searchStudentList')->name('hod.r.final.searchStudentList');
 	
 Route::get($character.'/Reviewer/FinalExamination/{id}','Dean\Dean\D_FinalExamController@DeanFinalExam');	
 Route::post($character.'/Reviewer/FinalExamination/verify/','Dean\Dean\D_FinalExamController@D_FX_Verify_Action')->name('hod.FA.verify_form');
@@ -801,9 +801,9 @@ Route::get($character.'/Reviewer/Attendance/{id}/student_list/{date}', 'Dean\Dea
 Route::get($character.'/Reviewer/PastYear/assessment/{id}','Dean\Dean\D_PastYearController@PastYearAssessment');
 Route::get($character.'/Reviewer/PastYear/assessment/{id}/assessment_name/{course_id}','Dean\Dean\D_PastYearController@PastYearAssessmentName');
 Route::get($character.'/Reviewer/PastYear/assessment/{id}/list/{ass_id}/','Dean\Dean\D_PastYearController@PastYearAssessmentList');
-Route::post($character.'/Reviewer/PastYear/assessment/searchAssessment/', 'Dean\Dean\D_PastYearController@searchAssessment');
-Route::post($character.'/Reviewer/PastYear/assessment/name/searchAssessmentName/', 'Dean\Dean\D_PastYearController@searchAssessmentName');
-Route::post($character.'/Reviewer/PastYear/assessment/list/searchAssessmentlist/', 'Dean\Dean\D_PastYearController@searchAssessmentlist');
+Route::post($character.'/Reviewer/PastYear/assessment/searchAssessment/', 'Dean\Dean\D_PastYearController@searchAssessment')->name('hod.r.PY.searchAssessment');
+Route::post($character.'/Reviewer/PastYear/assessment/name/searchAssessmentName/', 'Dean\Dean\D_PastYearController@searchAssessmentName')->name('hod.r.PY.searchAssessmentName');
+Route::post($character.'/Reviewer/PastYear/assessment/list/searchAssessmentlist/', 'Dean\Dean\D_PastYearController@searchAssessmentlist')->name('hod.r.PY.searchAssessmentlist');
 Route::get($character.'/Reviewer/PastYear/assessment/view/whole_paper/{ass_id}', 'Dean\Dean\D_PastYearController@view_wholePaper');
 Route::get($character.'/Reviewer/PastYear/images/assessment/{image_name}', [
 	'as'         => 'M_assessment_image',
@@ -817,9 +817,9 @@ Route::get($character.'/Reviewer/PastYear/assessment/download/{ass_li_id}',
 Route::get($character.'/Reviewer/PastYear/FinalAssessment/{id}','Dean\Dean\D_PastYearFinalController@PastYearAssessment');
 Route::get($character.'/Reviewer/PastYear/FinalAssessment/{id}/assessment_name/{course_id}','Dean\Dean\D_PastYearFinalController@PastYearAssessmentName');
 Route::get($character.'/Reviewer/PastYear/FinalAssessment/{id}/list/{fx_id}/','Dean\Dean\D_PastYearFinalController@PastYearAssessmentList');
-Route::post($character.'/Reviewer/PastYear/FinalAssessment/searchAssessment/', 'Dean\Dean\D_PastYearFinalController@searchAssessment');
-Route::post($character.'/Reviewer/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentName');
-Route::post($character.'/Reviewer/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentlist');
+Route::post($character.'/Reviewer/PastYear/FinalAssessment/searchAssessment/', 'Dean\Dean\D_PastYearFinalController@searchAssessment')->name('hod.r.PY.final.searchAssessment');
+Route::post($character.'/Reviewer/PastYear/FinalAssessment/name/searchAssessmentName/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentName')->name('hod.r.PY.final.searchAssessmentName');
+Route::post($character.'/Reviewer/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentlist')->name('hod.r.PY.final.searchAssessmentlist');
 Route::get($character.'/Reviewer/PastYear/FinalAssessment/download/{ass_fx_id}', 'Dean\Dean\D_PastYearFinalController@downloadFiles');
 Route::get($character.'/Reviewer/PastYear/images/final_assessment/{image_name}', [
 	'as'         => 'M_assessment_final_image',
@@ -833,9 +833,9 @@ Route::get($character.'/Reviewer/PastYear/final_assessment/view/whole_paper/{fx_
 Route::get($character.'/Reviewer/PastYear/sampleResult/{id}/previous/{course_id}/{search}','Dean\Dean\D_PastYearController@PastYearResultAssessmentList');
 Route::get($character.'/Reviewer/PastYear/sampleResult/{id}/name/{ass_id}/{search}','Dean\Dean\D_PastYearController@PastYearStudentList');
 Route::get($character.'/Reviewer/PastYear/sampleResult/{id}/result/{ar_stu_id}','Dean\Dean\D_PastYearController@PastYearResultList');
-Route::post($character.'/Reviewer/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\Dean\D_PastYearController@searchAssessmentSampleResult');
-Route::post($character.'/Reviewer/PastYear/result/searchAssessmentResult/', 'Dean\Dean\D_PastYearController@searchAssessmentResult');
-Route::post($character.'/Reviewer/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\Dean\D_PastYearController@searchStudentList');
+Route::post($character.'/Reviewer/PastYear/assessment/sampleResult/searchSampleResult/', 'Dean\Dean\D_PastYearController@searchAssessmentSampleResult')->name('hod.r.PY.searchSampleResult');
+Route::post($character.'/Reviewer/PastYear/result/searchAssessmentResult/', 'Dean\Dean\D_PastYearController@searchAssessmentResult')->name('hod.r.PY.searchAssessmentResult');
+Route::post($character.'/Reviewer/PastYear/assessment/sampleResult/searchStudentList/', 'Dean\Dean\D_PastYearController@searchStudentList')->name('hod.r.PY.searchStudentList');
 Route::get($character.'/Reviewer/PastYear/images/AssessmentResult/{image_name}', [
 	'as'         => 'M_assessmentResult_image',
 	'uses'       => 'Dean\Dean\D_PastYearController@assessmentResult_image',
@@ -847,8 +847,8 @@ Route::get($character.'/Reviewer/PastYear/AssessmentResult/result/{ar_stu_id}','
 //Reviewer Past Year FInal Result
 Route::get($character.'/Reviewer/PastYear/FinalSampleResult/{id}/previous/{course_id}/{search}','Dean\Dean\D_PastYearFinalController@PastYearStudentList');
 Route::get($character.'/Reviewer/PastYear/FinalSampleResult/{id}/result/{fxr_id}','Dean\Dean\D_PastYearFinalController@PastYearResultList');
-Route::post($character.'/Reviewer/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentResult');
-Route::post($character.'/Reviewer/PastYear/FinalSampleResult/searchStudentList/', 'Dean\Dean\D_PastYearFinalController@searchStudentList');
+Route::post($character.'/Reviewer/PastYear/FinalSampleResult/searchAssessmentResult/', 'Dean\Dean\D_PastYearFinalController@searchAssessmentResult')->name('hod.r.PY.final.searchAssessmentResult');
+Route::post($character.'/Reviewer/PastYear/FinalSampleResult/searchStudentList/', 'Dean\Dean\D_PastYearFinalController@searchStudentList')->name('hod.r.PY.final.searchStudentList');
 Route::get($character.'/Reviewer/PastYear/images/FinalResult/{image_name}', [
 	'as'         => 'M_FinalResult_image',
 	'uses'       => 'Dean\Dean\D_PastYearFinalController@FinalResult_image',

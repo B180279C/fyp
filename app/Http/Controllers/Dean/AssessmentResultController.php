@@ -281,6 +281,8 @@ class AssessmentResultController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $result = "";
@@ -400,6 +402,8 @@ class AssessmentResultController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $result = "";

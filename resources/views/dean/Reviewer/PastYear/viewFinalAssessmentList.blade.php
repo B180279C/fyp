@@ -238,7 +238,7 @@ function w3_close() {
           var original_id = $('#original_id').val();
           $.ajax({
               type:'POST',
-              url: "{{$character}}/Reviewer/PastYear/FinalAssessment/list/searchAssessmentlist/",
+              url: "{{route($route_name.'.r.PY.final.searchAssessmentlist')}}",
               data:{value:value,fx_id:fx_id,original_id:original_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -303,7 +303,7 @@ function w3_close() {
             var original_id = $('#original_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/Reviewer/PastYear/FinalAssessment/list/searchAssessmentlist/",
+               url: "{{route($route_name.'.r.PY.final.searchAssessmentlist')}}",
                data:{value:value,fx_id:fx_id,original_id:original_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;

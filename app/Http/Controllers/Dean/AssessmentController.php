@@ -455,6 +455,8 @@ class AssessmentController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $result = "";
@@ -549,6 +551,8 @@ class AssessmentController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();

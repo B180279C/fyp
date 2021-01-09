@@ -177,6 +177,8 @@ class FinalExaminationResultController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $result = "";

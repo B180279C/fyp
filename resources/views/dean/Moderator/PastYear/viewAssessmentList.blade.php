@@ -239,7 +239,7 @@ function w3_close() {
 
           $.ajax({
               type:'POST',
-              url: "{{$character}}/Moderator/PastYear/assessment/list/searchAssessmentlist/",
+              url: "{{route($route_name.'.m.PY.searchAssessmentlist')}}",
               data:{value:value,ass_id:ass_id,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -304,7 +304,7 @@ function w3_close() {
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/Moderator/PastYear/assessment/list/searchAssessmentlist/",
+               url: "{{route($route_name.'.m.PY.searchAssessmentlist')}}",
                data:{value:value,ass_id:ass_id,course_id:course_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;

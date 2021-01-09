@@ -141,7 +141,7 @@ $option3 = "id='selected-sidebar'";
       var ass_id = $('#ass_id').val();
       $.ajax({
           type:'POST',
-          url: "{{$character}}/Moderator/PastYear/assessment/sampleResult/searchStudentList/",
+          url: "{{route($route_name.'.m.PY.searchStudentList')}}",
           data:{value:value,course_id:course_id,ass_id:ass_id},
           success:function(data){
             document.getElementById("student_list").innerHTML = data;
@@ -165,7 +165,7 @@ $option3 = "id='selected-sidebar'";
         var ass_id = $('#ass_id').val();
         $.ajax({
            type:'POST',
-           url: "{{$character}}/Moderator/PastYear/assessment/sampleResult/searchStudentList/",
+           url: "{{route($route_name.'.m.PY.searchStudentList')}}",
            data:{value:value,course_id:course_id,ass_id:ass_id},
            success:function(data){
               document.getElementById("student_list").innerHTML = data;

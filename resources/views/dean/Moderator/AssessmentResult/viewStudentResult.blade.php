@@ -140,7 +140,7 @@ $option3 = "id='selected-sidebar'";
       var ass_id = $('#ass_id').val();
       $.ajax({
           type:'POST',
-          url: "{{$character}}/Moderator/AssessmentResult/searchStudentList/",
+          url: "{{route($route_name.'.moderator.searchStudentList')}}",
           data:{value:value,course_id:course_id,ass_id:ass_id},
           success:function(data){
             document.getElementById("student_list").innerHTML = data;
@@ -164,7 +164,7 @@ $option3 = "id='selected-sidebar'";
         var ass_id = $('#ass_id').val();
         $.ajax({
            type:'POST',
-           url: "{{$character}}/Moderator/AssessmentResult/searchStudentList/",
+           url: "{{route($route_name.'.moderator.searchStudentList')}}",
            data:{value:value,course_id:course_id,ass_id:ass_id},
            success:function(data){
               document.getElementById("student_list").innerHTML = data;
@@ -200,21 +200,23 @@ $option3 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 10px 10px;">
         <div class="col-md-12">
             <p class="page_title">{{$assessments->assessment_name}}</p>
+            @if((count($lecturer_result)!=0)||(count($student_result)!=0))
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 250px;">
                     <div style="text-align: right;padding:10px;">
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   	<ul class="sidebar-action-ul">
-                      @if((count($lecturer_result)!=0)||(count($student_result)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
                         <a href='{{$character}}/AssessmentResult/download/zipFiles/{{$assessments->ass_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
-                      @endif
+                      
                   	</ul>
                 </div>
+                @endif
                 <br>
                 <br>
+                
                 @if(\Session::has('success'))
 	            <div class="alert alert-success alert-dismissible fade show" role="alert">
 	                <Strong>{{\Session::get('success')}}</Strong>

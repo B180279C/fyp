@@ -127,7 +127,7 @@ $option3 = "id='selected-sidebar'";
       var question = $('#question').val();
       $.ajax({
           type:'POST',
-          url: "{{$character}}/Moderator/AssessmentResult/searchAssessmentForm/",
+          url: "{{route($route_name.'.moderator.searchAssessmentForm')}}",
           data:{value:value,course_id:course_id,question:question},
           success:function(data){
             document.getElementById("assessments").innerHTML = data;
@@ -140,7 +140,7 @@ $option3 = "id='selected-sidebar'";
         var question = $('#question').val();
         $.ajax({
            type:'POST',
-           url: "{{$character}}/Moderator/AssessmentResult/searchAssessmentForm/",
+           url: "{{route($route_name.'.moderator.searchAssessmentForm')}}",
            data:{value:value,course_id:course_id,question:question},
            success:function(data){
               document.getElementById("assessments").innerHTML = data;

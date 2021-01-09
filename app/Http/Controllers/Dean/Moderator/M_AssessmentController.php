@@ -930,6 +930,8 @@ class M_AssessmentController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $result = "";
@@ -1018,6 +1020,8 @@ class M_AssessmentController extends Controller
             $character = '';
         }else if(auth()->user()->position=="HoD"){
             $character = '/hod';
+        }else if(auth()->user()->position=="Lecturer"){
+            $character = '/lecturer';
         }
 
         $course = DB::table('courses')
