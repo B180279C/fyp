@@ -197,7 +197,7 @@ function w3_close() {
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url: "{{$character}}/PastYear/assessment/searchAssessment/",
+              url: "{{route('PY.searchAssessment')}}",
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
@@ -251,7 +251,7 @@ function w3_close() {
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url: "{{$character}}/PastYear/assessment/searchAssessment/",
+               url: "{{route('PY.searchAssessment')}}",
                data:{value:value,course_id:course_id},
                success:function(data){
                   document.getElementById("assessments").innerHTML = data;
@@ -297,31 +297,6 @@ function w3_close() {
                     }
                   });
                 });
-               }
-            });
-        });
-
-        if($('.search_result').val()!=""){
-          var value = $('.search_result').val();
-          var course_id = $('#course_id').val();
-          $.ajax({
-              type:'POST',
-              url: "{{$character}}/PastYear/result/searchAssessmentResult/",
-              data:{value:value,course_id:course_id},
-              success:function(data){
-                document.getElementById("results").innerHTML = data;
-              }
-          });
-        }
-        $(".search_result").keyup(function(){
-            var value = $('.search_result').val();
-            var course_id = $('#course_id').val();
-            $.ajax({
-               type:'POST',
-               url: "{{$character}}/PastYear/result/searchAssessmentResult/",
-               data:{value:value,course_id:course_id},
-               success:function(data){
-                  document.getElementById("results").innerHTML = data;
                }
             });
         });

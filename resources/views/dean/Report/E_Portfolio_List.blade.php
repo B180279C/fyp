@@ -57,7 +57,7 @@ $(function () {
         var value = $('.search').val();
        	$.ajax({
             type:'POST',
-            url:'{{$character}}/E_Portfolio/searchCourse/',
+            url:'{{route($route_name.".report.e_p")}}',
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;
@@ -76,7 +76,7 @@ $(function () {
         var value = $('.search').val();
         $.ajax({
             type:'POST',
-            url:'{{$character}}/E_Portfolio/searchCourse/',
+            url:'{{route($route_name.".report.e_p")}}',
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;

@@ -50,9 +50,9 @@ Route::get($character.'/PastYear/assessment/{id}/list/{ass_id}/','Student\PastYe
 Route::get($character.'/PastYear/assessment/download/zipFiles/{course_id}/{download}','Student\PastYearController@zipFileDownload');
 Route::get($character.'/PastYear/assessment/name/download/zipFiles/{course_id}/{download}','Student\PastYearController@zipFileDownloadName');
 Route::get($character.'/PastYear/assessment/list/download/zipFiles/{ass_id}/{download}','Student\PastYearController@zipFileDownloadList');
-Route::post($character.'/PastYear/assessment/searchAssessment/', 'Student\PastYearController@searchAssessment');
-Route::post($character.'/PastYear/assessment/name/searchAssessmentName/', 'Student\PastYearController@searchAssessmentName');
-Route::post($character.'/PastYear/assessment/list/searchAssessmentlist/', 'Student\PastYearController@searchAssessmentlist');
+Route::post($character.'/PastYear/assessment/searchAssessment/', 'Student\PastYearController@searchAssessment')->name('PY.searchAssessment');
+Route::post($character.'/PastYear/assessment/name/searchAssessmentName/', 'Student\PastYearController@searchAssessmentName')->name('PY.searchAssessmentName');
+Route::post($character.'/PastYear/assessment/list/searchAssessmentlist/', 'Student\PastYearController@searchAssessmentlist')->name('PY.searchAssessmentlist');
 Route::get($character.'/PastYear/assessment/download/{ass_li_id}', 'Student\PastYearController@downloadFiles');
 Route::get($character.'/PastYear/assessment/view/whole_paper/{ass_id}', 'Student\PastYearController@view_wholePaper');
 Route::get($character.'/PastYear/images/assessment/{image_name}', [
@@ -69,9 +69,9 @@ Route::get($character.'/PastYear/FinalAssessment/{id}/list/{fx_id}/','Student\Pa
 Route::get($character.'/PastYear/FinalAssessment/download/zipFiles/{course_id}/{download}','Student\PastYearFinalController@zipFileDownload');
 Route::get($character.'/PastYear/FinalAssessment/name/download/zipFiles/{course_id}/{download}','Student\PastYearFinalController@zipFileDownloadName');
 Route::get($character.'/PastYear/FinalAssessment/list/download/zipFiles/{fx_id}/{download}','Student\PastYearFinalController@zipFileDownloadList');
-Route::post($character.'/PastYear/FinalAssessment/searchAssessment/', 'Student\PastYearFinalController@searchAssessment');
-Route::post($character.'/PastYear/FinalAssessment/name/searchAssessmentName/', 'Student\PastYearFinalController@searchAssessmentName');
-Route::post($character.'/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Student\PastYearFinalController@searchAssessmentlist');
+Route::post($character.'/PastYear/FinalAssessment/searchAssessment/', 'Student\PastYearFinalController@searchAssessment')->name('PY.final.searchAssessment');
+Route::post($character.'/PastYear/FinalAssessment/name/searchAssessmentName/', 'Student\PastYearFinalController@searchAssessmentName')->name('PY.final.searchAssessmentName');
+Route::post($character.'/PastYear/FinalAssessment/list/searchAssessmentlist/', 'Student\PastYearFinalController@searchAssessmentlist')->name('PY.final.searchAssessmentlist');
 Route::get($character.'/PastYear/FinalAssessment/download/{ass_fx_id}', 'Student\PastYearFinalController@downloadFiles');
 Route::get($character.'/PastYear/images/final_assessment/{image_name}', [
 	'as'         => 'assessment_final_image',

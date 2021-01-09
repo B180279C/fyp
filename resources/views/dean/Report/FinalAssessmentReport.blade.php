@@ -52,7 +52,7 @@ $(function () {
         var value = $('.search').val();
         $.ajax({
             type:'POST',
-            url:'{{$character}}/report/FA/searchCourse/',
+            url:'{{route($route_name.".report.fa")}}',
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;
@@ -71,7 +71,7 @@ $(function () {
         var value = $('.search').val();
         $.ajax({
             type:'POST',
-            url:'{{$character}}/report/FA/searchCourse/',
+            url:'{{route($route_name.".report.fa")}}',
             data:{value:value},
             success:function(data){
               document.getElementById("course").innerHTML = data;

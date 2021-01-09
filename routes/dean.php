@@ -918,19 +918,19 @@
 	Route::get('/report/course/List/','Dean\ReportController@ReportAction');
 
 	Route::get('/report/TP/course/List/','Dean\ReportController@TPReport');
-	Route::post('/report/TP/searchCourse/','Dean\ReportTPController@searchCourse');
+	Route::post('/report/TP/searchCourse/','Dean\ReportTPController@searchCourse')->name('dean.report.tp');
 	Route::get('/report/TP/view/{id}','Dean\ReportTPController@viewTPDetail');
 	Route::get('/report/TP/download/{id}','Dean\ReportTPController@DownloadTPReport');
 	Route::get('/report/TP/download/zipFiles/{id}/{download}','Dean\ReportTPController@ZipFilesDownloadTPReport');
 
 	Route::get('/report/assessment/','Dean\ReportController@AssessmentReport');
-	Route::post('/report/CA/searchCourse/','Dean\ReportAssessmentController@searchCourse');
+	Route::post('/report/CA/searchCourse/','Dean\ReportAssessmentController@searchCourse')->name('dean.report.ca');
 	Route::get('/report/CA/view/{id}','Dean\ReportAssessmentController@viewCADetail');
 	Route::get('/report/assessment/download/{id}','Dean\ReportAssessmentController@DownloadAssessmentReport');
 	Route::get('/report/assessment/download/zipFiles/{id}/{download}','Dean\ReportAssessmentController@ZipFilesDownloadAssessmentReport');
 
 	Route::get('/report/final_assessment/','Dean\ReportController@FinalAssessmentReport');
-	Route::post('/report/FA/searchCourse/','Dean\ReportFinalAssessmentController@searchCourse');
+	Route::post('/report/FA/searchCourse/','Dean\ReportFinalAssessmentController@searchCourse')->name('dean.report.fa');
 	Route::get('/report/FA/view/{id}','Dean\ReportFinalAssessmentController@viewFADetail');
 	Route::get('/report/final_assessment/download/{id}','Dean\ReportFinalAssessmentController@DownloadFinalAssessmentReport');
 	Route::get('/report/final_assessment/download/zipFiles/{id}/{download}','Dean\ReportFinalAssessmentController@ZipFilesDownloadFinalAssessmentReport');
@@ -939,6 +939,6 @@
     'as' => 'E_Portfolio_List', 'uses' => 'Dean\ReportController@E_Portfolio_List']);
     Route::get('/E_Portfolio/list/{id}', [
     'as' => 'viewListE_Portfolio', 'uses' => 'Dean\ReportController@viewListE_Portfolio']);
-	Route::post('/E_Portfolio/searchCourse/', 'Dean\E_PortfolioController@searchCourse');
+	Route::post('/E_Portfolio/searchCourse/', 'Dean\E_PortfolioController@searchCourse')->name('dean.report.e_p');
 	Route::get('/E_Portfolio/download/zipFiles/{course_id}/{checked}','Dean\E_PortfolioController@downloadZipFiles');
 ?>
