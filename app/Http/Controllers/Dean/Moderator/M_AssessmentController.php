@@ -75,19 +75,32 @@ class M_AssessmentController extends Controller
         $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
-        // $verified_by = DB::table('staffs')
-        //          ->join('users','staffs.user_id','=','users.user_id')
-        //          ->select('staffs.*','users.*')
-        //          ->where('users.position', '=', 'HoD')
-        //          ->where('staffs.department_id','=',$department_id)
-        //          ->get();
+
+        $group_assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('assessment')
+                    ->get();
 
         if(count($course)>0){
-            return view('dean.Moderator.Assessment.M_AssessmentList',compact('course','assessments','all_assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big'));
+            return view('dean.Moderator.Assessment.M_AssessmentList',compact('course','assessments','all_assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big','group_assessments'));
         }else{
             return redirect()->back();
         }
 	}
+
+    public static function getQuestion($course_id,$question)
+    {
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $course_id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+        return $sample_stored;
+    }
 
 	public function M_Ass_Moderate_Action(Request $request)
 	{
@@ -876,7 +889,11 @@ class M_AssessmentController extends Controller
                     ->get();
 
         if(count($course)>0){
-            return view('dean.Moderator.Assessment.viewWholePaper', compact('assessments','assessment_list','question'));
+            if(count($assessment_list)==0){
+                return redirect()->back()->with('failed','The question is empty.');
+            }else{
+                return view('dean.Moderator.Assessment.viewWholePaper', compact('assessments','assessment_list','question'));
+            }
         }else{
             return redirect()->back();
         }

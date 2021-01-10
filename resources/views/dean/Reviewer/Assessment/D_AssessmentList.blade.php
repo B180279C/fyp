@@ -25,6 +25,15 @@ $option4 = "id='selected-sidebar'";
 .plus:hover{
     background-color: #f2f2f2;
 }
+table.table_question tr:hover td {
+  background-color: #e6e6e6;
+  color: #0d2f81;
+  font-weight: bold;
+}
+
+table.table_question tr{
+  color: #0d2f81;
+}
 @media only screen and (max-width: 600px) {
 
   #course_name{
@@ -116,6 +125,9 @@ function Submit_Moderation(){
 }
 
 $(document).ready(function(){
+  $('tr[data-href]').on("click", function() {
+      window.open($(this).data('href'));
+  });
   $(document).on("click","#downloadReport", function(){
     var actionCA_id = $('#actionCA_id').val();
     window.location = "{{$character}}/Reviewer/Assessment/report/"+actionCA_id;
@@ -236,6 +248,14 @@ $(document).ready(function(){
              @if(\Session::has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
+            @if(\Session::has('failed'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <Strong>{{\Session::get('failed')}}</Strong>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -472,6 +492,38 @@ $(document).ready(function(){
                   <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : <span class="status"></span></span></div>
             </div>
             @endif
+            <hr style="margin: 10px 5px 8px 5px;background-color:#d9d9d9;">
+            <div style="overflow-x: auto;padding:8px 10px 0px 10px;">
+              <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table table_question">
+                <tr style="background-color: #d9d9d9;">
+                  <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;">No</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;">Assessment</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;">Question & Solution</th>
+                </tr>
+                <?php
+                  $q=1;
+                ?>
+                @foreach($group_assessments as $ga)
+                <?php
+                  $sample_stored = App\Http\Controllers\Dean\Moderator\M_AssessmentController::getQuestion($ga->course_id,$ga->assessment);
+                  foreach($sample_stored as $ss){
+                    echo "<tr data-href='".$character."/Reviewer/assessment/view/whole_paper/".$ss->ass_id."'>";
+                      echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>";
+                      echo $q;
+                      echo "</td>";
+                      echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>";
+                      echo $ss->assessment;
+                      echo "</td>";
+                      echo "<td style='border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;'>";
+                      echo $ss->sample_stored;
+                      echo "</td>";
+                    echo "</tr>";
+                    $q++;
+                  }
+                ?>
+                @endforeach
+              </table>
+            </div>
             <hr style="margin: 5px 5px 5px 5px;background-color:black;">
             <div class="row">
                 <h5 style="position: relative;top:3px;left: 10px;" class="tp_title col-10" id="1">
@@ -489,7 +541,7 @@ $(document).ready(function(){
                       </tr>
                       <tr style="background-color: #d9d9d9;">
                         @foreach($assessments as $row)
-                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%"><a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></th>
+                          <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($assessments)}}%">{{$row->assessment_name}}</th>
                         @endforeach
                       </tr>
                       <?php
@@ -549,9 +601,6 @@ $(document).ready(function(){
                           ?>
                           @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
                             <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($all_assessments)}}%">
-                              @if($row->status=="Active")
-                              <a href='{{$character}}/Reviewer/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
-                              @endif
                                 {{$row->assessment_name}}
                                 @if($row->status=="Remove")
                                   (Removed)
@@ -559,7 +608,6 @@ $(document).ready(function(){
                                 @if($row->ass_id>max($array))
                                   (New)
                                 @endif
-                              </a>
                           </th>
                           @endif
                         @endforeach
@@ -635,9 +683,6 @@ $(document).ready(function(){
                           ?>
                           @if((($row->ass_id>=max($array))&&($row->status!="Remove"))||($get == true))
                             <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="{{50/count($all_assessments)}}%" colspan="2">
-                              @if($row->status=="Active")
-                              <a href='{{$character}}/Reviewer/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
-                              @endif
                                 {{$row->assessment_name}}
                                 @if($row->status=="Remove")
                                   (Removed)
@@ -645,7 +690,6 @@ $(document).ready(function(){
                                 @if($row->ass_id>max($array))
                                   (New)
                                 @endif
-                              </a>
                             </th>
                           @endif
                         @endforeach
@@ -769,14 +813,10 @@ $(document).ready(function(){
                     ?>
                     @if($suggest_list!="")
                     <div class="col-12" style="margin-top: 10px;border:0px solid black">
-                        @if($row->status=="Active")
-                          <a href='{{$character}}/Reviewer/assessment/view/whole_paper/{{$row->ass_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
-                        @endif
                             {{$row->assessment_name}} 
                             @if($row->status=="Remove")
                                   (Removed)
                             @endif : 
-                        </a>
                       <div id="suggest_{{$c}}" class="editor">
                         {!!$suggest_list!!}
                       </div>

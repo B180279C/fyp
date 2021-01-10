@@ -26,7 +26,7 @@
 </head>
 <body>
 <div class="question_title">
-	<p style="padding: 0px 0px;margin: 0px 10px;display: inline;font-size: 20px;position: relative;top: 8px;">{{$assessment_list[0]->semester_name}} : {{$question}} / {{$assessments->assessment_name}}</p>
+	<p style="padding: 0px 0px;margin: 0px 10px;display: inline;font-size: 20px;position: relative;top: 8px;">{{$assessment_list[0]->semester_name}} : {{$question}} / {{$assessments->sample_stored}}</p>
 	<p style="padding: 0px;margin: 0px 30px;float: right;display: inline;border-radius: 50%;"><i class="fa fa-download" style="color: black!important;font-size: 20px;padding: 10px 11px;border-radius: 50%;" aria-hidden="true" id="download"></i></p>
 </div>
 <br>

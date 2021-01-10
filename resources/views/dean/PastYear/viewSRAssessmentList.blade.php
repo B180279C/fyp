@@ -241,7 +241,7 @@ function w3_close() {
                       </div>
                   </div>
                   <div class="row" id="assessments"  style="margin-top: -25px;">
-                    @foreach($assessments as $row)
+                    @foreach($sample_stored as $row)
                     <div class="col-12 row align-self-center" id="course_list">
                       <div class="col-12 row align-self-center">
                         <div class="checkbox_style align-self-center">
@@ -252,7 +252,7 @@ function w3_close() {
                             <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                           </div>
                           <div class="col-10" id="assessment_name">
-                            <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->assessment_name}}</b></p>
+                            <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->sample_stored}}</b></p>
                           </div>
                         </a>
                       </div>

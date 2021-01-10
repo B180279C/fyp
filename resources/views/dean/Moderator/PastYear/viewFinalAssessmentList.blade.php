@@ -370,14 +370,14 @@ function w3_close() {
         <p class="pass_page">
              <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
             <a href="{{$character}}/Moderator/PastYear/FinalAssessment/{{$course[0]->course_id}}">Final Assessment</a>/
-            <a href="{{$character}}/Moderator/PastYear/FinalAssessment/{{$course[0]->course_id}}/assessment_name/{{$previous[0]->course_id}}">{{$previous[0]->semester_name}}</a>/
-            <span class="now_page">{{$AssFinal->assessment_name}}</span>/
+            <!-- <a href="{{$character}}/Moderator/PastYear/FinalAssessment/{{$course[0]->course_id}}/assessment_name/{{$previous[0]->course_id}}">{{$previous[0]->semester_name}}</a>/ -->
+            <span class="now_page">{{$previous[0]->semester_name}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
-             <p class="page_title">{{$AssFinal->assessment_name}}</p>
+             <p class="page_title">{{$previous[0]->semester_name}}</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -435,7 +435,7 @@ function w3_close() {
                             <div class="checkbox_style align-self-center">
                               <input type="checkbox" value="{{$row->ass_fx_id}}_{{$row->ass_fx_type}}" class="group_{{$row_group->ass_fx_type}} group_download">
                             </div>
-                            <a href="{{$character}}/Moderator/PastYear/images/final_assessment/{{$course[0]->course_id}}-{{$row->ass_fx_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$previous[0]->semester_name}} : {{$AssFinal->assessment_name}} / {{$row_group->ass_fx_type}} / {{$row->ass_fx_name}} <br> <a href='{{$character}}/Moderator/PastYear/final_assessment/view/whole_paper/{{$course[0]->course_id}}-{{$row->fx_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                            <a href="{{$character}}/Moderator/PastYear/images/final_assessment/{{$course[0]->course_id}}-{{$row->ass_fx_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$previous[0]->semester_name}} : Final / {{$row_group->ass_fx_type}} / {{$row->ass_fx_name}} <br> <a href='{{$character}}/Moderator/PastYear/final_assessment/view/whole_paper/{{$course[0]->course_id}}-{{$row->course_id}}' class='full_question' target='_blank'>Whole paper</a>">
                               <div class="col-1" style="position: relative;top: -2px;">
                                 <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                               </div>

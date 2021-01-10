@@ -18,9 +18,13 @@ $option3 = "id='selected-sidebar'";
     text-decoration: none;
     color: #0d2f81;
 }
-#show_image_link:hover{
-    text-decoration: none;
-    font-weight: bold;
+table.table_question tr:hover td {
+  background-color: #e6e6e6;
+  color: #0d2f81;
+  font-weight: bold;
+}
+table.table_question tr{
+  color: #0d2f81;
 }
 .plus:hover{
     background-color: #f2f2f2;
@@ -174,6 +178,9 @@ function ModerationForm(actionFA_id){
 }
 
 $(document).ready(function(){
+  $('tr[data-href]').on("click", function() {
+      window.open($(this).data('href'));
+  });
   $(document).on("click","#downloadReport", function(){
     var actionFA_id = $('#actionFA_id').val();
     window.location = "{{$character}}/Moderator/FinalExamination/report/"+actionFA_id;
@@ -272,6 +279,14 @@ $(document).ready(function(){
              @if(\Session::has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <Strong>{{\Session::get('success')}}</Strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @endif
+            @if(\Session::has('failed'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <Strong>{{\Session::get('failed')}}</Strong>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -416,7 +431,22 @@ $(document).ready(function(){
                     <div class="col-12" style="padding: 0px 12px;"><span style="font-size: 17px;"><i class="fa fa-circle" aria-hidden="true" style="font-size:5px;vertical-align:middle;"></i> Status : <span class="status"></span></span></div>
               </div>
               @endif
-                <hr style="margin: 5px 5px 0px 5px;background-color:black;">
+              <hr style="margin: 10px 5px 8px 5px;background-color:#d9d9d9;">
+              <div style="overflow-x: auto;padding:8px 10px 0px 10px;">
+                <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table table_question">
+                  <tr style="background-color: #d9d9d9;">
+                    <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;">No</th>
+                    <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;">Assessment</th>
+                    <th style="border-left:1px solid #e6e6e6;color:black;text-align: center;">Question & Solution</th>
+                  </tr>
+                  <tr data-href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->course_id}}'>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">1</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">Final Examination</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">Final Question & Solution</td>
+                  </tr>
+                </table>
+              </div>
+              <hr style="margin: 5px 5px 0px 5px;background-color:black;">
               <p style="padding: 5px 5px 5px 12px;margin: 0px;font-size: 18px;">Assessment List & (CLO)</p>
               @if($moderation_done=="No")
               <div style="overflow-x: auto;padding:3px 10px 5px 10px;">
@@ -430,7 +460,7 @@ $(document).ready(function(){
                       </tr>
                       @foreach($ass_final as $row)
                         <tr>
-                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;"><a href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                          <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">{{$row->assessment_name}}</td>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
                           {{$row->topic}}
                           </td>
@@ -504,9 +534,6 @@ $(document).ready(function(){
                       @if((($row->fx_id>=max($array))&&($row->status!="Remove"))||($get == true))
                         <tr>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
-                            @if($row->status=="Active")
-                            <a href='{{$character}}/Reviewer/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
-                            @endif
                               {{$row->assessment_name}}
                               @if($row->status=="Remove")
                                   (Removed)
@@ -514,7 +541,6 @@ $(document).ready(function(){
                               @if($row->fx_id>max($array))
                                   (New)
                               @endif
-                            </a>
                           </td>
                           <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;vertical-align: middle;">
                           {{$row->topic}}
@@ -787,9 +813,6 @@ $(document).ready(function(){
                     <input type="hidden" name="fx_id_{{$num}}" value="{{$row->fx_id}}">
                     <tr style="background-color: #d9d9d9;">
                       <td colspan="2" class="td_table" style="text-align: left;">
-                        @if($row->status=="Active")
-                          <a href='{{$character}}/Reviewer/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">
-                        @endif
                         {{$row->assessment_name}}
                           @if($row->status=="Remove")
                             (Removed)
@@ -991,7 +1014,7 @@ $(document).ready(function(){
                   <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);padding: 0px;" id="table" class="table">
                     <input type="hidden" name="fx_id_{{$num}}" value="{{$row->fx_id}}">
                     <tr style="background-color: #d9d9d9;">
-                      <td colspan="2" class="td_table" style="text-align: left;"><a href='{{$character}}/Moderator/final_assessment/view/whole_paper/{{$row->fx_id}}' target='_blank' id="show_image_link" style="color:#0d2f81;">{{$row->assessment_name}}</a></td>
+                      <td colspan="2" class="td_table" style="text-align: left;">{{$row->assessment_name}}</td>
                     </tr>
                     <tr>
                       <td colspan="2" class="td_table" style="text-align: left;">

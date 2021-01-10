@@ -59,7 +59,7 @@ $option1 = "id='selected-sidebar'";
       padding: 4px 15px;
     }
     #course_name{
-        margin-left:-28px;
+        margin-left:-50px;
         padding-top:0px;
     }
     #course_action_two{
@@ -100,7 +100,22 @@ $option1 = "id='selected-sidebar'";
   function isset(element) {
     return element.length > 0;
   }
-  $(document).ready(function(){  
+  $(document).ready(function(){
+    oTable = $('#dtBasicExample').DataTable(
+        {
+            "bLengthChange" : false,
+            "bInfo": false,
+            pagingType: 'input',
+            pageLength: 8,
+            language: {
+                oPaginate: {
+                   sNext: '<i class="fa fa-forward"></i>',
+                   sPrevious: '<i class="fa fa-backward"></i>',
+                   sFirst: '<i class="fa fa-step-backward"></i>',
+                   sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            }
+    });  
         $.ajaxSetup({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -122,12 +137,31 @@ $option1 = "id='selected-sidebar'";
         $(document).on('click', '.edit_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
+          // var main_id = $('#main_id').val();
+          // var check_is_main = main_id.split(',');
+          // var main = false;
+          // for(var m = 0; m<(check_is_main.length-1);m++){
+          //   if (num[2]==check_is_main[m]){
+          //     var main = true;
+          //     if(!confirm("Are you sure want to edit the Main Assessment List? Important: If edited the '(Q & S), and Result Stored In', the question & solution, and student result will change be empty.")){
+          //         return false;
+          //     }
+          //   }
+          // }
           $.ajax({
             type:'POST',
             url:'{{$character}}/assessment/AssessmentNameEdit',
             data:{value : num[2]},
             success:function(data){
+              if(main==true){
+                $('.title_main').html('( Main )');
+                $('#main_tf').val('true');
+              }else{
+                $('.title_main').html('');
+                $('#main_tf').val('false');
+              }
               var clo = data[0].CLO;
+              var stored = data[0].sample_stored;
               var clo_list = clo.split(",");
               var option = "";
               var question = '{{$question}}';
@@ -154,8 +188,25 @@ $option1 = "id='selected-sidebar'";
                   }
                 }
               }
+
+              // var stored_option = "";
+              // for(var s = 0;s<=(data[3].length-1);s++){
+              //   if(stored==data[3][s].sample_stored){
+              //     $('#selected').val(data[3][s].sample_stored);
+              //     stored_option += "<option class='option' selected>"+data[3][s].sample_stored+"</option>";
+              //   }else{
+              //     stored_option += "<option class='option'>"+data[3][s].sample_stored+"</option>";
+              //   }
+              //   $('#sample').html("");
+              //   $('#sample').selectpicker('refresh');
+              // }
+              // $('#sample').append(stored_option);
+              // $('#sample').selectpicker('refresh');
+
               $("#CLO").html(option);
               $('#CLO').selectpicker('refresh');
+
+              
               // $('#CLO_ALL').val(clo_full);
               var mark = 0;
               for(var i = 0;i<=(data[1].length-1);i++){
@@ -169,7 +220,10 @@ $option1 = "id='selected-sidebar'";
               document.getElementById("coursework").max = (full_mark-(mark-parseInt(data[0].coursework)));
               document.getElementById('folder_name').value = data[0].assessment_name;
               document.getElementById('coursework').value = data[0].coursework;
-            } 
+              document.getElementById('stored_edit').value = data[0].sample_stored;
+              
+              $('#sample').selectpicker('refresh');
+            }
           });
           $('#folderNameEdit').modal('show');
           return false;
@@ -216,6 +270,58 @@ $option1 = "id='selected-sidebar'";
     });
   });
 
+
+  $(document).on('click', '.add', function(){
+    $('#not_add').html('');  
+    $('#not_add').append('<div class="form-group"><label for="subject_type" class="label" style="font-size:12px;position:relative;top:8px;">(Q & S),and Result Store in</label><input type="text" name="stored" class="form-control" required/></div>');
+    $('.remove').show();
+    $('.add').hide();
+  });
+
+  $(document).on('click', '.remove', function(){
+    $('#not_add').html('');
+    var course_id = $('#course_id').val();
+    var question = $('#question').val();
+    $.ajax({
+      type:'POST',
+      url:'{{route($route_name.".getSampleStored")}}',
+      data:{course_id:course_id,question:question},
+      success:function(data){
+        $('#not_add').html('');  
+        $('#not_add').append('<div class="form-group"><label for="subject_type" class="label" style="font-size:12px;position:relative;top:8px;">(Q & S),and Result Store in</label><select class="selectpicker form-control" name="stored" id="stored" data-width="100%" title="Choose one" required>'+data+'</select></div>');
+        $('#stored').selectpicker('refresh');
+        $('.remove').hide();
+        $('.add').show();
+      }
+    });
+  });
+
+  $(document).on('click', '.edit_add', function(){
+    $('#not_add_edit').html('');  
+    $('#not_add_edit').append('<div class="form-group"><label for="subject_type" class="label" style="font-size:12px;position:relative;top:8px;">(Q & S),and Result Store in</label><input type="text" name="stored" class="form-control" required/></div>');
+    $('.edit_remove').show();
+    $('.edit_add').hide();
+  });
+
+  $(document).on('click', '.edit_remove', function(){
+    $('#not_add_edit').html('');
+    var course_id = $('#course_id').val();
+    var question = $('#question').val();
+    var selected = $('#selected').val();
+    $.ajax({
+      type:'POST',
+      url:'{{route($route_name.".getSampleStoredEdit")}}',
+      data:{course_id:course_id,question:question,selected:selected},
+      success:function(data){
+        $('#not_add_edit').html('');  
+        $('#not_add_edit').append('<div class="form-group"><label for="subject_type" class="label" style="font-size:12px;position:relative;top:8px;">(Q & S),and Result Store in</label><select class="selectpicker form-control" name="stored" id="sample" data-width="100%" title="Choose one" required>'+data+'</select></div>');
+        $('#sample').selectpicker('refresh');
+        $('.edit_remove').hide();
+        $('.edit_add').show();
+      }
+    });
+  });
+
   $(function () {
         $.ajaxSetup({
           headers: {
@@ -249,6 +355,8 @@ $option1 = "id='selected-sidebar'";
             });
         });
     });
+
+
 </script>
 <div id="all">
     <div>
@@ -300,8 +408,50 @@ $option1 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
+            <h5 style="position:relative;left: 10px;margin-top: -15px;">Assessment List</h5>
+            <div style="overflow-x: auto;padding:0px 10px 5px 10px;">
+            <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
+              <thead>
+                <tr style="background-color: #d9d9d9;">
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">No.</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Assessment Name</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">CLO</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Coursework</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Stored</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                $num = 1;
+                $main_id = "";
+                ?>
+                @foreach($assessments as $row)
+                  <tr>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$num}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->assessment_name}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->CLO}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->coursework}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                      {{$row->sample_stored}}
+                    </td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                      <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->ass_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                      <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->ass_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                    </td>
+                  </tr>
+                  <?php
+                  $num++;
+                  ?>
+                @endforeach
+              </tbody>
+            </table>
+            <input type="hidden" id="main_id" value="<?php echo $main_id?>">
+            </div>
+            <hr style="margin: 20px 5px 10px 5px;background-color:black;">
+            <h5 style="position:relative;left: 10px;">Question & Solution</h5>
             <div class="details" style="padding: 0px 5px 5px 5px;">
-              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
+              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
                   <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                       <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                           <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
@@ -318,19 +468,19 @@ $option1 = "id='selected-sidebar'";
                                   <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
                               </span>
                               <hr style="background-color: #d9d9d9;margin: 3px 0px;">
-                              <span>1. Assessment Name in {{$question}}</span><br/>
+                              <span>1. Q & S stored in {{$question}}</span><br/>
                           </span>
                       </div>
                   </div>
               </div>
               
-              <div class="row" id="assessments" style="margin-top: -25px;">
+              <div class="row" id="assessments" style="margin-top: -10px;">
               <?php
               $i=0;
               ?>
-              @foreach($assessments as $row)
+              @foreach($sample_stored as $row)
                 <div class="col-12 row align-self-center" id="course_list">
-                    <div class="col-8 row align-self-center" style="padding-left: 20px;">
+                    <div class="col-12 row align-self-center" style="padding-left: 20px;">
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" name="group{{$row->ass_id}}" value="{{$row->ass_id}}" class="group_download">
                       </div>
@@ -339,13 +489,9 @@ $option1 = "id='selected-sidebar'";
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
                         <div class="col-10" id="course_name">
-                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->assessment_name}}</b></p>
+                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->sample_stored}}</b></p>
                         </div>
                       </a>
-                    </div>
-                    <div class="col-4" id="course_action_two">
-                      <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->ass_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                      <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->ass_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                     </div>
                 </div>
               <?php
@@ -465,6 +611,39 @@ $option1 = "id='selected-sidebar'";
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 25px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-folder" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+            @if((count($assessments)==0))
+            <div id="empty_now" class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                    <label for="subject_type" class="bmd-label-floating">(Q & S), Result Store in</label>
+                    <input type="text" name="stored" class="form-control" required/>
+                </div>
+            </div>
+            @else
+            <div id="not_empty" class="col-11 row">
+                <div class="col-11" style="padding-left: 20px;" id="not_add">
+                  <div class="form-group">
+                    <label for="subject_type" class="bmd-label-floating" style="font-size: 12px;">(Q & S),and Result Store in</label>
+                    <select class="selectpicker form-control" id="stored" name="stored" data-width="100%" title="Choose one" required>
+                      @foreach($sample_stored as $row)
+                      <option class="option">{{$row->sample_stored}}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+                <div class="col-1 align-self-center" style="padding: 25px 0px 0px 2%;">
+                    <button type="button" class="btn btn-raised btn-success add"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-raised btn-danger remove" style="display: none;"><i class="fa fa-times" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            @endif
+        </div>
         <br>
       </div>
       <div class="modal-footer">
@@ -483,7 +662,7 @@ $option1 = "id='selected-sidebar'";
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content content2">
       <div class="modal-header header2">
-        <h5 class="modal-title title2" id="exampleModalLabel">Edit Folder Name</h5>
+        <h5 class="modal-title title2" id="exampleModalLabel">Edit Folder Name <span class="title_main"></span></h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -537,6 +716,30 @@ $option1 = "id='selected-sidebar'";
                       <span class="bmd-help" id="mark_record_2">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
                 </div>
             </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-1 align-self-center" style="padding: 25px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-folder" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+            <div id="not_empty" class="col-11" style="padding-left: 20px;">
+              <div id="not_add_edit">
+                  <div class="form-group">
+                    <label for="subject_type" class="label" style="font-size: 12px;">(Q & S),and Result Store in</label>
+                    <!-- <select class="selectpicker form-control" name="stored" data-width="100%" id="sample" title="Choose one"required>
+                    </select> -->
+                    <input type="text" name="stored" class="form-control" id="stored_edit" readonly/>
+                  </div>
+              </div>
+              <!-- <div class="col-1 align-self-center" style="padding: 25px 0px 0px 2%;">
+                <button type="button" class="btn btn-raised btn-success edit_add"><i class="fa fa-plus" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-raised btn-danger edit_remove" style="display: none;"><i class="fa fa-times" aria-hidden="true"></i></button>
+              </div> -->
+            </div>
+            <input type="hidden" value="" id="selected">
+            <input type="hidden" name="main_tf" id="main_tf">
         </div>
         <br>
       </div>

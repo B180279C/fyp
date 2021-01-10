@@ -102,15 +102,17 @@ class D_PastYearController extends Controller
                     ->join('courses','courses.course_id','=','assessments.course_id')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->join('assessment_list','assessment_list.ass_id','=','assessments.ass_id')
                     ->select('subjects.*','courses.*','semesters.*','assessments.*')
                     ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
                     ->where('courses.course_id','!=',$course_id)
                     ->Where(function($query) use ($value) {
-                        $query->orWhere('assessments.assessment_name','LIKE','%'.$value.'%')
-                        	->orWhere('assessments.assessment','LIKE','%'.$value.'%')
+                        $query->orWhere('assessments.sample_stored','LIKE','%'.$value.'%')
+                            ->orWhere('assessments.assessment','LIKE','%'.$value.'%')
                             ->orWhere('semesters.semester_name','LIKE','%'.$value.'%');
                     })
                     ->where('courses.status', '=', 'Active')
+                    ->groupBy('assessment_list.ass_id')
                     ->orderByDesc('semesters.semester_name')
                     ->get();
            	if(count($data_name)>0) {
@@ -126,7 +128,7 @@ class D_PastYearController extends Controller
 	                $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	                $result .= '</div>';
 	                $result .= '<div class="col-10" id="assessment_name">';
-	                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_name->semester_name." : ".$ass_row_name->assessment_name.'</b></p>';
+	                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_name->semester_name." : ".$ass_row_name->sample_stored.'</b></p>';
 	                $result .= '</div>';
 	          		$result .= '</a>';
 	                $result .= '</div>';
@@ -134,7 +136,7 @@ class D_PastYearController extends Controller
            		}
            	}else{
            		$data_word = DB::table('assessment_list')
-           			->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
                     ->join('courses','courses.course_id','=','assessments.course_id')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -157,12 +159,12 @@ class D_PastYearController extends Controller
                         $result .= '<div class="checkbox_style align-self-center">';
                         $result .= '<input type="checkbox" value="'.$ass_row_word->ass_li_id.'" class="group_q group_download">';
                         $result .= '</div>';
-                        $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$course_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/Reviewer/PastYear/assessment/view/whole_paper/".$course_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                        $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$course_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->sample_stored.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/Reviewer/PastYear/assessment/view/whole_paper/".$course_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                         $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                         $result .= '</div>';
                        	$result .= '<div class="col-10" id="course_name">';
-                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->semester_name." : ".$ass_row_word->assessment_name." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
+                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->semester_name." : ".$ass_row_word->sample_stored." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
                         $result .= '</div>';
                        	$result .= '</a>';
                         $result .= '</div>';
@@ -258,14 +260,15 @@ class D_PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
-        $assessments = DB::table('assessments')
+        $sample_stored = DB::table('assessments')
                  ->select('assessments.*')
                  ->where('assessments.course_id', '=', $course_id)
                  ->where('status', '=', 'Active')
+                 ->groupBy('sample_stored')
                  ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.PastYear.viewAssessmentName',compact('course','previous','assessments','id'));
+            return view('dean.Reviewer.PastYear.viewAssessmentName',compact('course','previous','sample_stored','id'));
         }else{
             return redirect()->back();
         }
@@ -316,12 +319,12 @@ class D_PastYearController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$ass_row_word->ass_li_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$original_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/Reviewer/PastYear/assessment/view/whole_paper/".$original_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                    $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$original_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->sample_stored.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/Reviewer/PastYear/assessment/view/whole_paper/".$original_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->assessment_name." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
+                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->sample_stored." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -340,6 +343,7 @@ class D_PastYearController extends Controller
                  ->select('assessments.*')
                  ->where('assessments.course_id', '=', $course_id)
                  ->where('status', '=', 'Active')
+                 ->groupBy('sample_stored')
                  ->get();
 
             foreach($assessments as $row){
@@ -353,7 +357,7 @@ class D_PastYearController extends Controller
 	            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	            $result .= '</div>';
 	            $result .= '<div class="col-10" id="assessment_name">';
-	            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->assessment_name.'</b></p>';
+	            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->sample_stored.'</b></p>';
 	            $result .= '</div>';
 	        	$result .= '</a>';
 	            $result .= '</div>';
@@ -501,7 +505,7 @@ class D_PastYearController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$course_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/Reviewer/PastYear/assessment/view/whole_paper/".$course_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$course_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->sample_stored.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/Reviewer/PastYear/assessment/view/whole_paper/".$course_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -558,7 +562,7 @@ class D_PastYearController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$course_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."Reviewer/PastYear/assessment/view/whole_paper/".$course_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/Reviewer/PastYear/images/assessment/'.$course_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->sample_stored.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."Reviewer/PastYear/assessment/view/whole_paper/".$course_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -611,6 +615,7 @@ class D_PastYearController extends Controller
 
         if($value!=""){
         	$data_name = DB::table('assessments')
+                    ->join('assessment_result_students','assessment_result_students.ass_id','=','assessments.ass_id')
                     ->join('courses','courses.course_id','=','assessments.course_id')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -618,12 +623,13 @@ class D_PastYearController extends Controller
                     ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
                     ->where('courses.course_id','!=',$course_id)
                     ->Where(function($query) use ($value) {
-                        $query->orWhere('assessments.assessment_name','LIKE','%'.$value.'%')
-                        	->orWhere('assessments.assessment','LIKE','%'.$value.'%');
+                        $query->orWhere('assessments.sample_stored','LIKE','%'.$value.'%')
+                            ->orWhere('assessments.assessment','LIKE','%'.$value.'%');
                     })
                     ->where('courses.status', '=', 'Active')
                     ->orderByDesc('semesters.semester_name')
-                    ->orderBy('assessments.assessment_name')
+                    ->orderBy('assessments.sample_stored')
+                    ->groupBy('assessment_result_students.ass_id')
                     ->get();
            	if(count($data_name)>0) {
            		$result .= '<input type="hidden" id="data" value="name">';
@@ -638,7 +644,7 @@ class D_PastYearController extends Controller
 	                $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	                $result .= '</div>';
 	                $result .= '<div class="col-10" id="assessment_name">';
-	                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_name->semester_name." : ".$ass_row_name->assessment_name.'</b></p>';
+	                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_name->semester_name." : ".$ass_row_name->sample_stored.'</b></p>';
 	                $result .= '</div>';
 	          		$result .= '</a>';
 	                $result .= '</div>';
@@ -646,23 +652,23 @@ class D_PastYearController extends Controller
            		}
            	}else{
            		$batch_list = DB::table('assessment_result_students')
-			                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
-			                 ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-			                 ->join('courses','assessments.course_id','=','courses.course_id')
-			                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-			                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-			                 ->select('assessment_result_students.*','students.*','courses.*','semesters.*','subjects.*')
-			                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
-			                 ->where('courses.course_id','!=',$course_id)
-			                 ->Where(function($query) use ($value) {
-			                    $query->orWhere('students.batch','LIKE','%'.$value.'%')
-			                    	->orWhere('semesters.semester_name','LIKE','%'.$value.'%');
-			                 })
-			                 ->where('assessment_result_students.status','=','Active')
-			                 ->groupBy('students.batch')
-			                 ->groupBy('courses.semester')
-			                 ->orderByDesc('semesters.semester_name')
-			                 ->get();
+                             ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
+                             ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                             ->join('courses','assessments.course_id','=','courses.course_id')
+                             ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                             ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                             ->select('assessment_result_students.*','students.*','courses.*','semesters.*','subjects.*')
+                             ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
+                             ->where('courses.course_id','!=',$course_id)
+                             ->Where(function($query) use ($value) {
+                                $query->orWhere('students.batch','LIKE','%'.$value.'%')
+                                    ->orWhere('semesters.semester_name','LIKE','%'.$value.'%');
+                             })
+                             ->where('assessment_result_students.status','=','Active')
+                             ->groupBy('students.batch')
+                             ->groupBy('courses.semester')
+                             ->orderByDesc('semesters.semester_name')
+                             ->get();
 			    if(count($batch_list)>0) {
 				    $result .= '<input type="hidden" id="data" value="batch">';
 				    foreach($batch_list as $rs_row){
@@ -684,25 +690,25 @@ class D_PastYearController extends Controller
 	           		}
 	           	}else{
 	           		$student_list = DB::table('assessment_result_students')
-	           					->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-				                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
-				                 ->join('users','users.user_id', '=', 'students.user_id')
-				                 ->join('courses','assessments.course_id','=','courses.course_id')
-				                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-				                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-				                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*','subjects.*')
-				                 ->Where(function($query) use ($value) {
-				                    $query->orWhere('assessment_result_students.student_id','LIKE','%'.$value.'%')
-				                        ->orWhere('students.batch','LIKE','%'.$value.'%')
-				                        ->orWhere('users.name','LIKE','%'.$value.'%');
-				                 })
-				                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
-				                 ->where('courses.course_id','!=',$course_id)
-				                 ->where('assessment_result_students.status','=','Active')
-				                 ->groupBy('assessment_result_students.student_id')
-				                 ->groupBy('courses.semester')
-				                 ->orderByDesc('semesters.semester_name')
-				                 ->get();
+                                ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
+                                 ->join('users','users.user_id', '=', 'students.user_id')
+                                 ->join('courses','assessments.course_id','=','courses.course_id')
+                                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*','subjects.*')
+                                 ->Where(function($query) use ($value) {
+                                    $query->orWhere('assessment_result_students.student_id','LIKE','%'.$value.'%')
+                                        ->orWhere('students.batch','LIKE','%'.$value.'%')
+                                        ->orWhere('users.name','LIKE','%'.$value.'%');
+                                 })
+                                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
+                                 ->where('courses.course_id','!=',$course_id)
+                                 ->where('assessment_result_students.status','=','Active')
+                                 ->groupBy('assessment_result_students.student_id')
+                                 ->groupBy('courses.semester')
+                                 ->orderByDesc('semesters.semester_name')
+                                 ->get();
 				    if(count($student_list)>0) {
 				    	$result .= '<input type="hidden" id="data" value="student">';
 					    foreach($student_list as $stu_row){
@@ -724,23 +730,23 @@ class D_PastYearController extends Controller
 		           		}
 	           		}else{
 	           			$submitted_list = DB::table('assessment_result_students')
-	           					->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-				                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
-				                 ->join('users','users.user_id', '=', 'students.user_id')
-				                 ->join('courses','assessments.course_id','=','courses.course_id')
-				                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-				                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
-				                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*','subjects.*')
-				                 ->where('courses.course_id','!=',$course_id)
-				                 ->Where(function($query) use ($value) {
-				                    $query->orWhere('assessment_result_students.submitted_by','LIKE','%'.$value.'%');
-				                 })
-				                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
-				                 ->where('assessment_result_students.status','=','Active')
-				                 ->groupBy('assessment_result_students.submitted_by')
-				                 ->groupBy('courses.semester')
-				                 ->orderByDesc('semesters.semester_name')
-				                 ->get();
+                                ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                                 ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
+                                 ->join('users','users.user_id', '=', 'students.user_id')
+                                 ->join('courses','assessments.course_id','=','courses.course_id')
+                                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                                 ->select('assessment_result_students.*','students.*','users.*','assessments.*','courses.*','semesters.*','subjects.*')
+                                 ->where('courses.course_id','!=',$course_id)
+                                 ->Where(function($query) use ($value) {
+                                    $query->orWhere('assessment_result_students.submitted_by','LIKE','%'.$value.'%');
+                                 })
+                                 ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
+                                 ->where('assessment_result_students.status','=','Active')
+                                 ->groupBy('assessment_result_students.submitted_by')
+                                 ->groupBy('courses.semester')
+                                 ->orderByDesc('semesters.semester_name')
+                                 ->get();
 				        if(count($submitted_list)>0){
 				        	$result .= '<input type="hidden" id="data" value="submitted_by">';
 					    	foreach($submitted_list as $sub_row){
@@ -849,14 +855,15 @@ class D_PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
-        $assessments = DB::table('assessments')
+        $sample_stored = DB::table('assessments')
                  ->select('assessments.*')
                  ->where('assessments.course_id', '=', $course_id)
                  ->where('status', '=', 'Active')
+                 ->groupBy('sample_stored')
                  ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.PastYear.viewSRAssessmentList',compact('search','id','course','previous','assessments'));
+            return view('dean.Reviewer.PastYear.viewSRAssessmentList',compact('search','id','course','previous','sample_stored'));
         }else{
             return redirect()->back();
         }
@@ -881,34 +888,34 @@ class D_PastYearController extends Controller
 
         if($value!=""){
 			$batch_list = DB::table('assessment_result_students')
-			        ->join('students','assessment_result_students.student_id','=','students.student_id')
-			       	->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-			        ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-			        ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-			        ->select('assessment_result_students.*','students.*','courses.*','assessments.*','semesters.*')
-			        ->Where(function($query) use ($value) {
+                    ->join('students','assessment_result_students.student_id','=','students.student_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                    ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('assessment_result_students.*','students.*','courses.*','assessments.*','semesters.*')
+                    ->Where(function($query) use ($value) {
                         $query->orWhere('students.batch','LIKE','%'.$value.'%');
                     })
-			        ->where('courses.course_id', '=', $course_id)
-			        ->where('assessments.status', '=', 'Active')
-			        ->groupBy('assessment_result_students.ass_id')
-			        ->groupBy('students.batch')
-			        ->orderBy('students.batch')
-			        ->get();
+                    ->where('courses.course_id', '=', $course_id)
+                    ->where('assessments.status', '=', 'Active')
+                    ->groupBy('assessment_result_students.ass_id')
+                    ->groupBy('students.batch')
+                    ->orderBy('students.batch')
+                    ->get();
 			if(count($batch_list)>0){
 				$result .= '<input type="hidden" id="data" value="batch">';
 				foreach($batch_list as $row){
 					$result .= '<div class="col-12 row align-self-center" id="course_list">';
 		            $result .= '<div class="col-12 row align-self-center">';
 		            $result .= '<div class="checkbox_style align-self-center">';
-		            $result .= '<input type="checkbox" value="'.$row->batch.'" class="group_download">';
+		            $result .= '<input type="checkbox" value="'.$row->ar_stu_id.'" class="group_download">';
 		            $result .= '</div>';
 		            $result .= '<a href="'.$character.'/Reviewer/PastYear/sampleResult/'.$original_id.'/name/'.$row->ass_id.'/'.$row->batch.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 		            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 		            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 		            $result .= '</div>';
 		            $result .= '<div class="col-10" id="assessment_name">';
-		            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->assessment_name.' ( '.$row->batch.' ) </b></p>';
+		            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->sample_stored.' ( '.$row->batch.' ) </b></p>';
 		            $result .= '</div>';
 		        	$result .= '</a>';
 		            $result .= '</div>';
@@ -916,36 +923,36 @@ class D_PastYearController extends Controller
 	        	}
 			}else{
 				$student_list = DB::table('assessment_result_students')
-			        ->join('students','assessment_result_students.student_id','=','students.student_id')
-			        ->join('users','users.user_id','=','students.user_id')
-			       	->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-			        ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-			        ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-			        ->select('assessment_result_students.*','students.*','courses.*','assessments.*','semesters.*','users.*')
-			        ->Where(function($query) use ($value) {
+                    ->join('students','assessment_result_students.student_id','=','students.student_id')
+                    ->join('users','users.user_id','=','students.user_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                    ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('assessment_result_students.*','students.*','courses.*','assessments.*','semesters.*','users.*')
+                    ->Where(function($query) use ($value) {
                         $query->orWhere('students.student_id','LIKE','%'.$value.'%')
-                        	  ->orWhere('users.name','LIKE','%'.$value.'%');
+                              ->orWhere('users.name','LIKE','%'.$value.'%');
                     })
                     ->groupBy('assessment_result_students.ass_id')
-			        ->groupBy('students.batch')
-			        ->where('courses.course_id', '=', $course_id)
-			        ->where('assessments.status', '=', 'Active')
-			        ->orderBy('students.batch')
-			        ->get();
+                    ->groupBy('students.batch')
+                    ->where('courses.course_id', '=', $course_id)
+                    ->where('assessments.status', '=', 'Active')
+                    ->orderBy('students.batch')
+                    ->get();
 			    if(count($student_list)>0){
 			    	$result .= '<input type="hidden" id="data" value="student">';
 				    foreach($student_list as $row){
 						$result .= '<div class="col-12 row align-self-center" id="course_list">';
 			            $result .= '<div class="col-12 row align-self-center">';
 			            $result .= '<div class="checkbox_style align-self-center">';
-			            $result .= '<input type="checkbox" value="'.$row->student_id.'" class="group_download">';
+			            $result .= '<input type="checkbox" value="'.$row->ar_stu_id.'" class="group_download">';
 			            $result .= '</div>';
 			            $result .= '<a href="'.$character.'/Reviewer/PastYear/sampleResult/'.$original_id.'/result/'.$row->ar_stu_id.'" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">';
 			            $result .= '<div class="col-1" style="position: relative;top: -2px;">';
 			            $result .= '<img src="'.url('image/folder2.png').'" width="25px" height="25px"/>';
 			            $result .= '</div>';
 			            $result .= '<div class="col-10" id="assessment_word">';
-			            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->assessment_name.' ( '.$row->student_id." ".$row->name.' ) </b></p>';
+			            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->sample_stored.' ( '.$row->student_id." ".$row->name.' ) </b></p>';
 			            $result .= '</div>';
 			        	$result .= '</a>';
 			            $result .= '</div>';
@@ -953,21 +960,20 @@ class D_PastYearController extends Controller
 		        	}
 		        }else{
 		        	$submitted_list = DB::table('assessment_result_students')
-			        ->join('students','assessment_result_students.student_id','=','students.student_id')
-			        ->join('users','users.user_id','=','students.user_id')
-			       	->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-			        ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
-			        ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
-			        ->select('assessment_result_students.*','students.*','courses.*','assessments.*','semesters.*','users.*')
-			        ->Where(function($query) use ($value) {
+                    ->join('students','assessment_result_students.student_id','=','students.student_id')
+                    ->join('users','users.user_id','=','students.user_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                    ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('assessment_result_students.*','students.*','courses.*','assessments.*','semesters.*','users.*')
+                    ->Where(function($query) use ($value) {
                         $query->orWhere('assessment_result_students.submitted_by','LIKE','%'.$value.'%');
                     })
                     ->groupBy('assessment_result_students.ass_id')
-			        ->groupBy('students.batch')
-			        ->where('courses.course_id', '=', $course_id)
-			        ->where('assessments.status', '=', 'Active')
-			        ->orderBy('students.batch')
-			        ->get();
+                    ->where('courses.course_id', '=', $course_id)
+                    ->where('assessments.status', '=', 'Active')
+                    ->orderBy('students.batch')
+                    ->get();
 			        if(count($submitted_list)>0){
 			        	$result .= '<input type="hidden" id="data" value="submitted_by">';
 					    foreach($submitted_list as $row){
@@ -981,7 +987,7 @@ class D_PastYearController extends Controller
 				            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 				            $result .= '</div>';
 				            $result .= '<div class="col-10" id="assessment_name">';
-				            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->assessment_name.' ( '.$row->submitted_by.' ) </b></p>';
+				            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->sample_stored.' ( '.$row->submitted_by.' ) </b></p>';
 				            $result .= '</div>';
 				        	$result .= '</a>';
 				            $result .= '</div>';
@@ -999,6 +1005,7 @@ class D_PastYearController extends Controller
                  ->select('assessments.*')
                  ->where('assessments.course_id', '=', $course_id)
                  ->where('status', '=', 'Active')
+                 ->groupBy('sample_stored')
                  ->get();
 
             foreach($assessments as $row){
@@ -1012,7 +1019,7 @@ class D_PastYearController extends Controller
 		            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 		            $result .= '</div>';
 		            $result .= '<div class="col-10" id="assessment_name">';
-		            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->assessment_name.'</b></p>';
+		            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->sample_stored.'</b></p>';
 		            $result .= '</div>';
 		        	$result .= '</a>';
 		            $result .= '</div>';
@@ -1117,7 +1124,7 @@ class D_PastYearController extends Controller
                  ->where('assessment_result_students.ass_id', '=', $ass_id)
                  ->Where(function($query) use ($value) {
                     $query->orWhere('assessment_result_students.student_id','LIKE','%'.$value.'%')
-                    	->orWhere('assessment_result_students.submitted_by','LIKE','%'.$value.'%')
+                        ->orWhere('assessment_result_students.submitted_by','LIKE','%'.$value.'%')
                         ->orWhere('students.batch','LIKE','%'.$value.'%')
                         ->orWhere('users.name','LIKE','%'.$value.'%');
                  })
@@ -1360,7 +1367,7 @@ class D_PastYearController extends Controller
         $ass_id = $assessment_list->ass_id;
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
-        $question = $assessments->assessment_name;
+        $question = $assessments->sample_stored;
 
         if(auth()->user()->position=="Dean"){
             $course = DB::table('courses')

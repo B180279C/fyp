@@ -91,12 +91,14 @@ class PastYearController extends Controller
                 $zip->addEmptyDir($course[0]->semester_name);
 
             	$assessments = DB::table('assessments')
-		                 ->select('assessments.*')
-		                 ->where('course_id', '=', $string[$i])
-		                 ->where('status', '=', 'Active')
-		                 ->get();
+                         ->select('assessments.*')
+                         ->where('course_id', '=', $string[$i])
+                         ->where('status', '=', 'Active')
+                         ->groupBy('sample_stored')
+                         ->get();
+
                 foreach($assessments as $ass_row){
-                	$zip->addEmptyDir($course[0]->semester_name."/".$ass_row->assessment_name);
+                	$zip->addEmptyDir($course[0]->semester_name."/".$ass_row->sample_stored);
                 	$result_list = DB::table('assessment_list')
                          ->select('assessment_list.*')
                          ->where('assessment_list.ass_id', '=', $ass_row->ass_id)
@@ -104,18 +106,18 @@ class PastYearController extends Controller
                          ->get();
                     foreach($result_list as $rl_row){
 		                if($rl_row->ass_type=="Question"){
-		                    $zip->addEmptyDir($course[0]->semester_name."/".$ass_row->assessment_name."/Question");
+		                    $zip->addEmptyDir($course[0]->semester_name."/".$ass_row->sample_stored."/Question");
 		                }else{
-		                    $zip->addEmptyDir($course[0]->semester_name."/".$ass_row->assessment_name."/Solution"); 
+		                    $zip->addEmptyDir($course[0]->semester_name."/".$ass_row->sample_stored."/Solution"); 
 		                }
 		                foreach ($files as $key => $value) {
 		                    $relativeNameInZipFile = basename($value);
 		                    if($rl_row->ass_document == $relativeNameInZipFile){
 		                        $ext = explode('.',$relativeNameInZipFile);
 		                        if($rl_row->ass_type=="Question"){
-		                            $zip->addFile($value,$course[0]->semester_name."/".$ass_row->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+		                            $zip->addFile($value,$course[0]->semester_name."/".$ass_row->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
 		                        }else{
-		                            $zip->addFile($value,$course[0]->semester_name."/".$ass_row->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+		                            $zip->addFile($value,$course[0]->semester_name."/".$ass_row->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
 		                        } 
 		                    }
 		                }
@@ -138,7 +140,7 @@ class PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
-                 $zip->addEmptyDir($course[0]->semester_name."/".$assessments->assessment_name);
+                 $zip->addEmptyDir($course[0]->semester_name."/".$assessments->sample_stored);
 
                  $result_list = DB::table('assessment_list')
                          ->select('assessment_list.*')
@@ -148,18 +150,18 @@ class PastYearController extends Controller
 
                  foreach($result_list as $rl_row){
 		            if($rl_row->ass_type=="Question"){
-		                $zip->addEmptyDir($course[0]->semester_name."/".$assessments->assessment_name."/Question");
+		                $zip->addEmptyDir($course[0]->semester_name."/".$assessments->sample_stored."/Question");
 		            }else{
-		                $zip->addEmptyDir($course[0]->semester_name."/".$assessments->assessment_name."/Solution"); 
+		                $zip->addEmptyDir($course[0]->semester_name."/".$assessments->sample_stored."/Solution"); 
 		            }
 		            foreach ($files as $key => $value) {
 		                $relativeNameInZipFile = basename($value);
 		                if($rl_row->ass_document == $relativeNameInZipFile){
 		                    $ext = explode('.',$relativeNameInZipFile);
 		                    if($rl_row->ass_type=="Question"){
-		                        $zip->addFile($value,$course[0]->semester_name."/".$assessments->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+		                        $zip->addFile($value,$course[0]->semester_name."/".$assessments->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
 		                    }else{
-		                        $zip->addFile($value,$course[0]->semester_name."/".$assessments->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+		                        $zip->addFile($value,$course[0]->semester_name."/".$assessments->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
 		                    } 
 		                }
 		            }
@@ -185,21 +187,21 @@ class PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
-                 $zip->addEmptyDir($course[0]->semester_name."/".$assessments->assessment_name);
+                 $zip->addEmptyDir($course[0]->semester_name."/".$assessments->sample_stored);
 
 		         if($assessment_list->ass_type=="Question"){
-		            $zip->addEmptyDir($course[0]->semester_name."/".$assessments->assessment_name."/Question");
+		            $zip->addEmptyDir($course[0]->semester_name."/".$assessments->sample_stored."/Question");
 		         }else{
-		            $zip->addEmptyDir($course[0]->semester_name."/".$assessments->assessment_name."/Solution"); 
+		            $zip->addEmptyDir($course[0]->semester_name."/".$assessments->sample_stored."/Solution"); 
 		         }
 		         foreach ($files as $key => $value) {
 		           	$relativeNameInZipFile = basename($value);
 		            if($assessment_list->ass_document == $relativeNameInZipFile){
 		                $ext = explode('.',$relativeNameInZipFile);
 		                if($assessment_list->ass_type=="Question"){
-		                    $zip->addFile($value,$course[0]->semester_name."/".$assessments->assessment_name."/Question/".$assessment_list->ass_name.'.'.$ext[1]);
+		                    $zip->addFile($value,$course[0]->semester_name."/".$assessments->sample_stored."/Question/".$assessment_list->ass_name.'.'.$ext[1]);
 		                }else{
-		                    $zip->addFile($value,$course[0]->semester_name."/".$assessments->assessment_name."/Solution/".$assessment_list->ass_name.'.'.$ext[1]);
+		                    $zip->addFile($value,$course[0]->semester_name."/".$assessments->sample_stored."/Solution/".$assessment_list->ass_name.'.'.$ext[1]);
 		                } 
 		            }
 		        }
@@ -228,13 +230,14 @@ class PastYearController extends Controller
 	            $zip->addEmptyDir("Question & Solution/".$p_row->semester_name);
 
 	           	$assessments = DB::table('assessments')
-			                 ->select('assessments.*')
-			                 ->where('course_id', '=', $p_row->course_id)
-			                 ->where('status', '=', 'Active')
-			                 ->get();
+                             ->select('assessments.*')
+                             ->where('course_id', '=', $p_row->course_id)
+                             ->where('status', '=', 'Active')
+                             ->groupBy('sample_stored')
+                             ->get();
 
 	            foreach($assessments as $ass_row){
-	                	$zip->addEmptyDir("Question & Solution/".$p_row->semester_name."/".$ass_row->assessment_name);
+	                	$zip->addEmptyDir("Question & Solution/".$p_row->semester_name."/".$ass_row->sample_stored);
 	                	$result_list = DB::table('assessment_list')
 	                         ->select('assessment_list.*')
 	                         ->where('assessment_list.ass_id', '=', $ass_row->ass_id)
@@ -242,18 +245,18 @@ class PastYearController extends Controller
 	                         ->get();
 	                foreach($result_list as $rl_row){
 			                if($rl_row->ass_type=="Question"){
-			                    $zip->addEmptyDir("Question & Solution/".$p_row->semester_name."/".$ass_row->assessment_name."/Question");
+			                    $zip->addEmptyDir("Question & Solution/".$p_row->semester_name."/".$ass_row->sample_stored."/Question");
 			                }else{
-			                    $zip->addEmptyDir("Question & Solution/".$p_row->semester_name."/".$ass_row->assessment_name."/Solution"); 
+			                    $zip->addEmptyDir("Question & Solution/".$p_row->semester_name."/".$ass_row->sample_stored."/Solution"); 
 			                }
 			            foreach ($files as $key => $value) {
 			                $relativeNameInZipFile = basename($value);
 			                if($rl_row->ass_document == $relativeNameInZipFile){
 			                    $ext = explode('.',$relativeNameInZipFile);
 			                    if($rl_row->ass_type=="Question"){
-			                        $zip->addFile($value,"Question & Solution/".$p_row->semester_name."/".$ass_row->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+			                        $zip->addFile($value,"Question & Solution/".$p_row->semester_name."/".$ass_row->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
 			                    }else{
-			                        $zip->addFile($value,"Question & Solution/".$p_row->semester_name."/".$ass_row->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+			                        $zip->addFile($value,"Question & Solution/".$p_row->semester_name."/".$ass_row->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
 			                    } 
 			                }
 			            }
@@ -293,15 +296,17 @@ class PastYearController extends Controller
                     ->join('courses','courses.course_id','=','assessments.course_id')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->join('assessment_list','assessment_list.ass_id','=','assessments.ass_id')
                     ->select('subjects.*','courses.*','semesters.*','assessments.*')
                     ->where('subjects.subject_id', '=', $subjects[0]->subject_id)
                     ->where('courses.course_id','!=',$course_id)
                     ->Where(function($query) use ($value) {
-                        $query->orWhere('assessments.assessment_name','LIKE','%'.$value.'%')
-                        	->orWhere('assessments.assessment','LIKE','%'.$value.'%')
+                        $query->orWhere('assessments.sample_stored','LIKE','%'.$value.'%')
+                            ->orWhere('assessments.assessment','LIKE','%'.$value.'%')
                             ->orWhere('semesters.semester_name','LIKE','%'.$value.'%');
                     })
                     ->where('courses.status', '=', 'Active')
+                    ->groupBy('assessment_list.ass_id')
                     ->orderByDesc('semesters.semester_name')
                     ->get();
            	if(count($data_name)>0) {
@@ -317,7 +322,7 @@ class PastYearController extends Controller
 	                $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	                $result .= '</div>';
 	                $result .= '<div class="col-10" id="assessment_name">';
-	                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_name->semester_name." : ".$ass_row_name->assessment_name.'</b></p>';
+	                $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_name->semester_name." : ".$ass_row_name->sample_stored.'</b></p>';
 	                $result .= '</div>';
 	          		$result .= '</a>';
 	                $result .= '</div>';
@@ -325,7 +330,7 @@ class PastYearController extends Controller
            		}
            	}else{
            		$data_word = DB::table('assessment_list')
-           			->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
                     ->join('courses','courses.course_id','=','assessments.course_id')
                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
@@ -348,12 +353,12 @@ class PastYearController extends Controller
                         $result .= '<div class="checkbox_style align-self-center">';
                         $result .= '<input type="checkbox" value="'.$ass_row_word->ass_li_id.'" class="group_q group_download">';
                         $result .= '</div>';
-                        $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$course_id.'-'.$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$course_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                        $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$course_id.'-'.$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->sample_stored.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$course_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                         $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                         $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                         $result .= '</div>';
                        	$result .= '<div class="col-10" id="course_name">';
-                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->semester_name." : ".$ass_row_word->assessment_name." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
+                        $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->semester_name." : ".$ass_row_word->sample_stored." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
                         $result .= '</div>';
                        	$result .= '</a>';
                         $result .= '</div>';
@@ -430,14 +435,15 @@ class PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
-        $assessments = DB::table('assessments')
+        $sample_stored = DB::table('assessments')
                  ->select('assessments.*')
                  ->where('assessments.course_id', '=', $course_id)
                  ->where('status', '=', 'Active')
+                 ->groupBy('sample_stored')
                  ->get();
 
         if(count($course)>0){
-            return view('student.PastYear.viewAssessmentName',compact('course','previous','assessments','id'));
+            return view('student.PastYear.viewAssessmentName',compact('course','previous','sample_stored','id'));
         }else{
             return redirect()->back();
         }
@@ -474,7 +480,7 @@ class PastYearController extends Controller
                 $assessments = Assessments::where('ass_id','=',$string[$i])->firstOrFail();
                 $course_id = $assessments->course_id;
 
-                $zip->addEmptyDir($assessments->assessment_name);
+                $zip->addEmptyDir($assessments->sample_stored);
                 $result_list = DB::table('assessment_list')
                          ->select('assessment_list.*')
                          ->where('assessment_list.ass_id', '=', $assessments->ass_id)
@@ -482,18 +488,18 @@ class PastYearController extends Controller
                          ->get();
                 foreach($result_list as $rl_row){
                     if($rl_row->ass_type=="Question"){
-                        $zip->addEmptyDir($assessments->assessment_name."/Question");
+                        $zip->addEmptyDir($assessments->sample_stored."/Question");
                     }else{
-                        $zip->addEmptyDir($assessments->assessment_name."/Solution"); 
+                        $zip->addEmptyDir($assessments->sample_stored."/Solution"); 
                     }
                     foreach ($files as $key => $value) {
                         $relativeNameInZipFile = basename($value);
                         if($rl_row->ass_document == $relativeNameInZipFile){
                             $ext = explode('.',$relativeNameInZipFile);
                             if($rl_row->ass_type=="Question"){
-                                $zip->addFile($value,$assessments->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$assessments->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
                             }else{
-                                $zip->addFile($value,$assessments->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$assessments->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
                             } 
                         }
                     }
@@ -515,21 +521,21 @@ class PastYearController extends Controller
                  ->where('course_id', '=', $course_id)
                  ->get();
 
-                 $zip->addEmptyDir($assessments->assessment_name);
+                 $zip->addEmptyDir($assessments->sample_stored);
 
                  if($assessment_list->ass_type=="Question"){
-                    $zip->addEmptyDir($assessments->assessment_name."/Question");
+                    $zip->addEmptyDir($assessments->sample_stored."/Question");
                  }else{
-                    $zip->addEmptyDir($assessments->assessment_name."/Solution"); 
+                    $zip->addEmptyDir($assessments->sample_stored."/Solution"); 
                  }
                  foreach ($files as $key => $value) {
                     $relativeNameInZipFile = basename($value);
                     if($assessment_list->ass_document == $relativeNameInZipFile){
                         $ext = explode('.',$relativeNameInZipFile);
                         if($assessment_list->ass_type=="Question"){
-                            $zip->addFile($value,$assessments->assessment_name."/Question/".$assessment_list->ass_name.'.'.$ext[1]);
+                            $zip->addFile($value,$assessments->sample_stored."/Question/".$assessment_list->ass_name.'.'.$ext[1]);
                         }else{
-                            $zip->addFile($value,$assessments->assessment_name."/Solution/".$assessment_list->ass_name.'.'.$ext[1]);
+                            $zip->addFile($value,$assessments->sample_stored."/Solution/".$assessment_list->ass_name.'.'.$ext[1]);
                         } 
                     }
                 }
@@ -539,10 +545,11 @@ class PastYearController extends Controller
                              ->select('assessments.*')
                              ->where('course_id', '=', $string[1])
                              ->where('status', '=', 'Active')
+                             ->groupBy('sample_stored')
                              ->get();
 
             foreach($assessments as $ass_row){
-                        $zip->addEmptyDir($ass_row->assessment_name);
+                        $zip->addEmptyDir($ass_row->sample_stored);
                         $result_list = DB::table('assessment_list')
                              ->select('assessment_list.*')
                              ->where('assessment_list.ass_id', '=', $ass_row->ass_id)
@@ -550,18 +557,18 @@ class PastYearController extends Controller
                              ->get();
                 foreach($result_list as $rl_row){
                             if($rl_row->ass_type=="Question"){
-                                $zip->addEmptyDir($ass_row->assessment_name."/Question");
+                                $zip->addEmptyDir($ass_row->sample_stored."/Question");
                             }else{
-                                $zip->addEmptyDir($ass_row->assessment_name."/Solution"); 
+                                $zip->addEmptyDir($ass_row->sample_stored."/Solution"); 
                             }
                     foreach ($files as $key => $value) {
                         $relativeNameInZipFile = basename($value);
                         if($rl_row->ass_document == $relativeNameInZipFile){
                             $ext = explode('.',$relativeNameInZipFile);
                             if($rl_row->ass_type=="Question"){
-                                $zip->addFile($value,$ass_row->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$ass_row->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
                             }else{
-                                $zip->addFile($value,$ass_row->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$ass_row->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
                             } 
                         }
                     }
@@ -597,7 +604,7 @@ class PastYearController extends Controller
         $result = "";
         if($value!=""){
         	$data_word = DB::table('assessment_list')
-           			->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
                     ->join('courses','courses.course_id','=','assessments.course_id')
                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
                     ->select('courses.*','semesters.*','assessments.*','assessment_list.*')
@@ -618,12 +625,12 @@ class PastYearController extends Controller
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" value="'.$ass_row_word->ass_li_id.'" class="group_download">';
                     $result .= '</div>';
-                    $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->assessment_name.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                    $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$ass_row_word->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$ass_row_word->semester_name.' : '.$ass_row_word->sample_stored.' / '.$ass_row_word->ass_type.' / '.$ass_row_word->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$ass_row_word->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                     $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                     $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->assessment_name." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
+                    $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$ass_row_word->sample_stored." / ".$ass_row_word->ass_type." / ".$ass_row_word->ass_name.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -642,6 +649,7 @@ class PastYearController extends Controller
                  ->select('assessments.*')
                  ->where('assessments.course_id', '=', $course_id)
                  ->where('status', '=', 'Active')
+                 ->groupBy('sample_stored')
                  ->get();
 
             foreach($assessments as $row){
@@ -655,7 +663,7 @@ class PastYearController extends Controller
 	            $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
 	            $result .= '</div>';
 	            $result .= '<div class="col-10" id="assessment_name">';
-	            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->assessment_name.'</b></p>';
+	            $result .= '<p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>'.$row->sample_stored.'</b></p>';
 	            $result .= '</div>';
 	        	$result .= '</a>';
 	            $result .= '</div>';
@@ -736,7 +744,7 @@ class PastYearController extends Controller
                         ->where('courses.course_id', '=', $course_id)
                         ->get();
 
-        $ZipFile_name = $subjects[0]->semester_name." ".$assessments->assessment_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $subjects[0]->semester_name." ".$assessments->sample_stored." ( ".$subjects[0]->subject_code." )";
         $zip = new ZipArchive;
         $fileName = storage_path('private/Assessment/PastYear/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
@@ -855,7 +863,7 @@ class PastYearController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->sample_stored.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -912,7 +920,7 @@ class PastYearController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/PastYear/images/assessment/'.$original_id."-".$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$previous[0]->semester_name.' : '.$assessments->sample_stored.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/PastYear/assessment/view/whole_paper/".$original_id."-".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -960,7 +968,7 @@ class PastYearController extends Controller
         $ass_id = $assessment_list->ass_id;
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
-        $question = $assessments->assessment_name;
+        $question = $assessments->sample_stored;
 
         if(count($course)>0){
             $ext = "";

@@ -192,13 +192,13 @@ $option4 = "id='selected-sidebar'";
             <a href="{{$character}}/Reviewer/course/{{$course[0]->course_id}}" class="first_page">Past Year</a>/
             <a href="{{$character}}/Reviewer/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
             <a href="{{$character}}/Reviewer/PastYear/sampleResult/{{$course[0]->course_id}}/previous/{{$previous[0]->course_id}}/All">{{$previous[0]->semester_name}}</a>/
-            <span class="now_page">{{$assessments->assessment_name}}</span>/
+            <span class="now_page">{{$assessments->sample_stored}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
-            <p class="page_title">{{$assessments->assessment_name}}</p>
+            <p class="page_title">{{$assessments->sample_stored}}</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 250px;">
                     <div style="text-align: right;padding:10px;">

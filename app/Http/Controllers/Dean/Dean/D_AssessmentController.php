@@ -94,6 +94,13 @@ class D_AssessmentController extends Controller
         $verified_by = Staff::where('id', '=', $course[0]->verified_by)->firstOrFail();
         $verified_person_name = User::where('user_id', '=', $verified_by->user_id)->firstOrFail();
 
+        $group_assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('assessment')
+                    ->get();
+
         // $verified_by = DB::table('staffs')
         //          ->join('users','staffs.user_id','=','users.user_id')
         //          ->select('staffs.*','users.*')
@@ -102,12 +109,11 @@ class D_AssessmentController extends Controller
         //          ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.Assessment.D_AssessmentList',compact('course','assessments','all_assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big'));
+            return view('dean.Reviewer.Assessment.D_AssessmentList',compact('course','assessments','all_assessments','TP_Ass','action','moderator_person_name','verified_person_name','action_big','group_assessments'));
         }else{
             return redirect()->back();
         }
 	}
-
 
 	public function D_Ass_Verify_Action(Request $request)
 	{
@@ -1020,7 +1026,11 @@ class D_AssessmentController extends Controller
                     ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.Assessment.viewWholePaper', compact('assessments','assessment_list','question'));
+            if(count($assessment_list)==0){
+                return redirect()->back()->with('failed','The question is empty.');
+            }else{
+                return view('dean.Reviewer.Assessment.viewWholePaper', compact('assessments','assessment_list','question'));
+            }
         }else{
             return redirect()->back();
         }

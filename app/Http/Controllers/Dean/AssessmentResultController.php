@@ -30,16 +30,16 @@ class AssessmentResultController extends Controller
                  ->where('course_id', '=', $id)
                  ->get();
 
-        $assessments = DB::table('assessments')
+        $sample_stored = DB::table('assessments')
                     ->select('assessments.*')
                     ->where('course_id', '=', $id)
                     ->where('assessment', '=', $question)
                     ->where('status', '=', 'Active')
-                    ->orderBy('assessments.assessment_name')
+                    ->groupBy('sample_stored')
                     ->get();
 
-        if((count($course)>0)&&(count($assessments)>0)){
-            return view('dean.AssessmentResult.viewAssessmentStudentResult',compact('course','question','assessments'));
+        if((count($course)>0)&&(count($sample_stored)>0)){
+            return view('dean.AssessmentResult.viewAssessmentStudentResult',compact('course','question','sample_stored'));
         }else{
             return redirect()->back();
         }
@@ -66,7 +66,7 @@ class AssessmentResultController extends Controller
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
 
-        $ass_name  = $assessments['assessment_name'];
+        $ass_name  = $assessments['sample_stored'];
 
         $count     = $request->get('count'.$ass_id);
 
@@ -290,11 +290,12 @@ class AssessmentResultController extends Controller
             $assessment_results = DB::table('assessments')
                  ->select('assessments.*')
                  ->Where(function($query) use ($value) {
-                    $query->orWhere('assessments.assessment_name','LIKE','%'.$value.'%');
+                    $query->orWhere('assessments.sample_stored','LIKE','%'.$value.'%');
                  })
                  ->where('course_id', '=', $course_id)
                  ->where('assessment','=',$question)
                  ->where('status','=','Active')
+                 ->groupBy('sample_stored')
                  ->orderBy('assessments.assessment_name')
                  ->get();
             if(count($assessment_results)>0) {
@@ -309,7 +310,7 @@ class AssessmentResultController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -329,6 +330,7 @@ class AssessmentResultController extends Controller
                      ->where('course_id', '=', $course_id)
                      ->where('status','=','Active')
                      ->where('assessment','=',$question)
+                     ->groupBy('sample_stored')
                      ->orderBy('assessments.assessment_name')
                      ->get();
             if(count($assessment_results)>0) {
@@ -343,7 +345,7 @@ class AssessmentResultController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -574,7 +576,7 @@ class AssessmentResultController extends Controller
         if($download == "checked"){
             for($i=1;$i<(count($string)-1);$i++){
                 $checkASSID = Assessments::where('ass_id', '=', $string[$i])->firstOrFail();
-                $zip->addEmptyDir($checkASSID->assessment_name);
+                $zip->addEmptyDir($checkASSID->sample_stored);
 
                 $group_result = DB::table('assessment_result_students')
                          ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
@@ -586,7 +588,7 @@ class AssessmentResultController extends Controller
                          ->get();
 
                 foreach($group_result as $row){
-                    $zip->addEmptyDir($checkASSID->assessment_name."/".$row->student_id);
+                    $zip->addEmptyDir($checkASSID->sample_stored."/".$row->student_id);
 
                     $result_list = DB::table('assessment_result_students')
                                  ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
@@ -598,18 +600,18 @@ class AssessmentResultController extends Controller
                                  ->get();
                     foreach($result_list as $rl_row){
                         if($rl_row->submitted_by=="Lecturer"){
-                            $zip->addEmptyDir($checkASSID->assessment_name."/".$row->student_id."/Lecturer");
+                            $zip->addEmptyDir($checkASSID->sample_stored."/".$row->student_id."/Lecturer");
                         }else{
-                            $zip->addEmptyDir($checkASSID->assessment_name."/".$row->student_id."/Students"); 
+                            $zip->addEmptyDir($checkASSID->sample_stored."/".$row->student_id."/Students"); 
                         }
                         foreach ($files as $key => $value) {
                             $relativeNameInZipFile = basename($value);
                             if($rl_row->document == $relativeNameInZipFile){
                                 $ext = explode('.',$relativeNameInZipFile);
                                 if($rl_row->submitted_by=="Lecturer"){
-                                    $zip->addFile($value,$checkASSID->assessment_name."/".$row->student_id."/Lecturer/".$rl_row->document_name.'.'.$ext[1]);
+                                    $zip->addFile($value,$checkASSID->sample_stored."/".$row->student_id."/Lecturer/".$rl_row->document_name.'.'.$ext[1]);
                                 }else{
-                                    $zip->addFile($value,$checkASSID->assessment_name."/".$row->student_id."/Students/".$rl_row->document_name.'.'.$ext[1]);
+                                    $zip->addFile($value,$checkASSID->sample_stored."/".$row->student_id."/Students/".$rl_row->document_name.'.'.$ext[1]);
                                 } 
                             }
                         }
@@ -622,10 +624,11 @@ class AssessmentResultController extends Controller
                      ->where('course_id', '=', $course_id)
                      ->where('assessment','=',$question)
                      ->where('status','=','Active')
+                     ->groupBy('sample_stored')
                      ->get();
 
             foreach($assessments as $ass_row){
-                $zip->addEmptyDir($ass_row->assessment_name);
+                $zip->addEmptyDir($ass_row->sample_stored);
                 $group_result = DB::table('assessment_result_students')
                          ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
                          ->join('users','users.user_id', '=', 'students.user_id')
@@ -635,7 +638,7 @@ class AssessmentResultController extends Controller
                          ->groupBy('assessment_result_students.student_id')
                          ->get();
                 foreach($group_result as $row){
-                    $zip->addEmptyDir($ass_row->assessment_name."/".$row->student_id);
+                    $zip->addEmptyDir($ass_row->sample_stored."/".$row->student_id);
 
                     $result_list = DB::table('assessment_result_students')
                         ->join('students','students.student_id', '=', 'assessment_result_students.student_id')
@@ -647,18 +650,18 @@ class AssessmentResultController extends Controller
                         ->get();
                     foreach($result_list as $rl_row){
                         if($rl_row->submitted_by=="Lecturer"){
-                            $zip->addEmptyDir($ass_row->assessment_name."/".$row->student_id."/Lecturer");
+                            $zip->addEmptyDir($ass_row->sample_stored."/".$row->student_id."/Lecturer");
                         }else{
-                            $zip->addEmptyDir($ass_row->assessment_name."/".$row->student_id."/Students"); 
+                            $zip->addEmptyDir($ass_row->sample_stored."/".$row->student_id."/Students"); 
                         }
                         foreach ($files as $key => $value) {
                             $relativeNameInZipFile = basename($value);
                             if($rl_row->document == $relativeNameInZipFile){
                                 $ext = explode('.',$relativeNameInZipFile);
                                 if($rl_row->submitted_by=="Lecturer"){
-                                    $zip->addFile($value,$ass_row->assessment_name."/".$row->student_id."/Lecturer/".$rl_row->document_name.'.'.$ext[1]);
+                                    $zip->addFile($value,$ass_row->sample_stored."/".$row->student_id."/Lecturer/".$rl_row->document_name.'.'.$ext[1]);
                                 }else{
-                                    $zip->addFile($value,$ass_row->assessment_name."/".$row->student_id."/Students/".$rl_row->document_name.'.'.$ext[1]);
+                                    $zip->addFile($value,$ass_row->sample_stored."/".$row->student_id."/Students/".$rl_row->document_name.'.'.$ext[1]);
                                 } 
                             }
                         }
@@ -693,7 +696,7 @@ class AssessmentResultController extends Controller
                         ->where('courses.course_id', '=', $course_id)
                         ->get();
 
-        $ZipFile_name = $assessments->assessment_name." ( ".$subjects[0]->subject_code." )";
+        $ZipFile_name = $assessments->sample_stored." ( ".$subjects[0]->subject_code." )";
         $zip = new ZipArchive;
         $fileName = storage_path('private/Assessment_Result/Zip_Files/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
@@ -803,7 +806,7 @@ class AssessmentResultController extends Controller
         $assessments = Assessments::where('ass_id', '=', $f_ass_id)->firstOrFail();
         $course_id = $assessments->course_id;
 
-        $ZipFile_name = $assessments->assessment_name." ( ".$student_id." )";
+        $ZipFile_name = $assessments->sample_stored." ( ".$student_id." )";
         $zip = new ZipArchive;
         $fileName = storage_path('private/Assessment_Result/Zip_Files/'.$ZipFile_name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);

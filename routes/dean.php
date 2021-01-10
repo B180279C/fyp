@@ -341,6 +341,8 @@
 	Route::post('/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form')->name('dean.CA.submit_for_verify');
 	Route::get('/Assessment/report/{actionCA_id}','Dean\AssessmentController@ModerationFormReport');
 	Route::get('/assessment/create/previous/{id}/{question}','Dean\AssessmentController@createPreviousAss');
+	Route::post('/assessment/get/SampleStored/','Dean\AssessmentController@getSampleStored')->name('dean.getSampleStored');
+	Route::post('/assessment/get/SampleStoredEdit/','Dean\AssessmentController@getSampleStoredEdit')->name('dean.getSampleStoredEdit');
 
     // Continuous Assessment Student Result
     Route::get('/AssessmentResult/{id}/question/{question}', [

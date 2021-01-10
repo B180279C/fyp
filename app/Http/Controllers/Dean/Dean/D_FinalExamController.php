@@ -1224,10 +1224,7 @@ class D_FinalExamController extends Controller
         $department_id = $staff_dean->department_id;
 
         $checkImageFXID = AssessmentFinal::where('ass_fx_document', '=', $image_name)->firstOrFail();
-        $fx_id = $checkImageFXID->fx_id;
-
-        $checkCourseId = AssFinal::where('fx_id', '=', $fx_id)->firstOrFail();
-        $course_id = $checkCourseId->course_id;
+        $course_id = $checkImageFXID->course_id;
 
         if(auth()->user()->position=="Dean"){
             $course = DB::table('courses')
@@ -1265,14 +1262,12 @@ class D_FinalExamController extends Controller
         }
     }
 
-    public function view_wholePaper($fx_id)
+    public function view_wholePaper($course_id)
     {
         $user_id       = auth()->user()->user_id;
         $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
         $faculty_id    = $staff_dean->faculty_id;
         $department_id = $staff_dean->department_id;
-
-        $assessment_final = AssFinal::where('fx_id', '=', $fx_id)->firstOrFail();
 
         if(auth()->user()->position=="Dean"){
             $course = DB::table('courses')
@@ -1284,7 +1279,7 @@ class D_FinalExamController extends Controller
                      ->join('staffs', 'staffs.id','=','courses.lecturer')
                      ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                      ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                     ->where('courses.course_id', '=', $assessment_final->course_id)
+                     ->where('courses.course_id', '=', $course_id)
                      ->where('faculty.faculty_id','=',$faculty_id)
                      ->get();
         }else if(auth()->user()->position=="HoD"){
@@ -1297,24 +1292,27 @@ class D_FinalExamController extends Controller
                      ->join('staffs', 'staffs.id','=','courses.lecturer')
                      ->join('users', 'staffs.user_id', '=' , 'users.user_id')
                      ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
-                     ->where('courses.course_id', '=', $assessment_final->course_id)
+                     ->where('courses.course_id', '=', $course_id)
                      ->where('departments.department_id','=',$department_id)
                      ->get();
         }
 
         $assessment_list = DB::table('assessment_final')
-                    ->join('ass_final','assessment_final.fx_id','=','ass_final.fx_id')
-                    ->join('courses', 'courses.course_id', '=', 'ass_final.course_id')
+                    ->join('courses','assessment_final.course_id','=','courses.course_id')
                     ->join('semesters', 'semesters.semester_id', '=', 'courses.semester')
-                    ->select('assessment_final.*','courses.*','semesters.*','ass_final.*')
-                    ->where('ass_final.fx_id', '=', $assessment_final->fx_id)
+                    ->select('assessment_final.*','courses.*','semesters.*')
+                    ->where('assessment_final.course_id', '=', $course_id)
                     ->where('assessment_final.status', '=', 'Active')
                     ->orderBy('assessment_final.ass_fx_id')
                     ->orderBy('assessment_final.ass_fx_name')
                     ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.FinalExam.viewWholePaper', compact('assessment_list','assessment_final'));
+            if(count($assessment_list)==0){
+                return redirect()->back()->with('failed','The question is empty.');
+            }else{
+                return view('dean.Reviewer.FinalExam.viewWholePaper', compact('assessment_list'));
+            }
         }else{
             return redirect()->back();
         }

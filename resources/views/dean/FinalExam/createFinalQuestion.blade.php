@@ -6,6 +6,26 @@ $option1 = "id='selected-sidebar'";
 
 @section('content')
 <style type="text/css">
+.checkbox_group_style{
+  border:0px solid black;
+  padding: 1px 10px 0px 10px!important;
+  margin: 0px!important;
+}
+.checkbox_style{
+  border:0px solid black;
+  padding: 0px 10px!important;
+  margin: 0px!important;
+  display: inline;
+  width: 28px;
+}
+.group{
+  margin-top:3px;
+  padding-left: 15px;
+  border:0px solid black;
+  display: inline;
+  padding: 0px!important;
+  margin: 0px!important;
+}
 .dropzone .dz-preview{
   border-bottom: 1px solid black;
   padding-left: 10px;
@@ -101,7 +121,78 @@ $option1 = "id='selected-sidebar'";
   function isset(element) {
     return element.length > 0;
   }
+  function setType(value){
+    $('#ass_type').val(value);
+  }
   $(document).ready(function(){  
+    oTable = $('#dtBasicExample').DataTable(
+        {
+            "bLengthChange" : false,
+            "bInfo": false,
+            pagingType: 'input',
+            pageLength: 8,
+            language: {
+                oPaginate: {
+                   sNext: '<i class="fa fa-forward"></i>',
+                   sPrevious: '<i class="fa fa-backward"></i>',
+                   sFirst: '<i class="fa fa-step-backward"></i>',
+                   sLast: '<i class="fa fa-step-forward"></i>'
+                }
+            }
+    }); 
+    $('.group_checkbox').click(function(){
+      var id = $(this).attr("id");
+      var type = id.split("group_");
+      // console.log(type[1]);
+      if($(this).prop("checked") == true){
+        $('.group_'+type[1]).prop("checked", true);
+      }
+      else if($(this).prop("checked") == false){
+        $('.group_'+type[1]).prop("checked", false);
+      }
+    });
+    $('[data-toggle="lightbox"]').click(function(event) {
+                  event.preventDefault();
+                  $(this).ekkoLightbox({
+                    type: 'image',
+                    onContentLoaded: function() {
+                      var container = $('.ekko-lightbox-container');
+                      var content = $('.modal-content');
+                      var backdrop = $('.modal-backdrop');
+                      var overlay = $('.ekko-lightbox-nav-overlay');
+                      var modal = $('.modal');
+                      var image = container.find('img');
+                      var windowHeight = $(window).height();
+                      var dialog = container.parents('.modal-dialog');
+                      var data_header = $('.modal-header');
+                      var data_title = $('.modal-title');
+                      var body = $('.modal-body');
+                      // console.log(image.width());
+
+                      if((image.width() > 380) && (image.width() < 430)){
+                         dialog.css('max-width','700px');
+                         image.css('height','900px');
+                         image.css('width','700px');
+                         overlay.css('height','900px');
+                      }else{
+                         overlay.css('height','100%');
+                      }
+                      // backdrop.css('opacity','1');
+                      data_header.css('background-color','white');
+                      data_header.css('padding','10px');
+                      data_header.css('margin','0px 24px');
+                      data_header.css('border-bottom','1px solid black');
+                      data_title.css('font-size','18px');
+
+                      body.css('padding-top','0px');
+                      content.css('background', "none");
+                      content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                    }
+                  });
+                }); 
         $.ajaxSetup({
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -118,6 +209,12 @@ $option1 = "id='selected-sidebar'";
           var id = $(this).attr("id");
           var value = document.getElementById(id).value;
           $("#form"+id).val(value);
+        });
+
+        $(document).on('click', '.download_button', function(){
+          var id = $(this).attr("id");
+          var num = id.split("_");
+          window.location = '{{$character}}/FinalExamination/download/'+num[2];
         });
 
         $(document).on('click', '.edit_button', function(){
@@ -206,21 +303,21 @@ $option1 = "id='selected-sidebar'";
         });
 
         $(document).on('click', '#checkDownloadAction', function(){
-            var checkedValue = ""; 
-            var inputElements = document.getElementsByClassName('group_download');
-            for(var i=0; inputElements[i]; i++){
-              if(inputElements[i].checked){
-                checkedValue += inputElements[i].value+"_";
-              }
+          var checkedValue = ""; 
+          var inputElements = document.getElementsByClassName('group_download');
+          for(var i=0; inputElements[i]; i++){
+            if(inputElements[i].checked){
+              checkedValue += inputElements[i].value+"---";
             }
-            if(checkedValue!=""){
-              var course_id = $('#course_id').val();
-              var id = course_id+"_"+checkedValue;
-              window.location = "{{$character}}/FinalExamination/AllZipFiles/"+id+"/checked";
-            }else{
-              alert("Please select the document first.");
-            }
-          });
+          }
+          if(checkedValue!=""){
+            var course_id = $('#course_id').val();
+            var id = course_id+"---"+checkedValue;
+            window.location = "{{$character}}/FinalExamination/download/zipFiles/"+id+"/checked";
+          }else{
+            alert("Please select the document first.");
+          }
+        });
 
     $(document).on('click', '#checkAction', function(){
       var course_id = $('#course_id').val();
@@ -230,6 +327,105 @@ $option1 = "id='selected-sidebar'";
       return false;
     });
   });
+
+var i = 0;
+  var m = 1;
+  Dropzone.options.dropzoneFile =
+  {
+        acceptedFiles: ".jpg,.jpeg,.png",
+        addRemoveLinks: true,
+        timeout: 50000,
+        renameFile: function(file) {
+            var re = /(?:\.([^.]+))?$/;
+            var ext = re.exec(file.name)[1];
+            var newName = new Date().getTime()+"."+ext;
+            return newName;
+        },
+        init: function() {
+            this.on("addedfile", function(file){
+              $('.submit_button').prop('disabled', true);
+              i++;
+              var re = /(?:\.([^.]+))?$/;
+              var ext = re.exec(file.name)[0];
+              var filename = file.name.split(ext);
+              file._captionLabel = Dropzone.createElement("<div class='changelabel'><label class='label' style='font-size:13px'>File Name</label></div>")
+              file._captionBox = Dropzone.createElement("<div class='changeName'><input id='"+i+"' type='text' name='caption' value='"+filename[0]+"' class='form-control filename'><div id='loader"+i+"' class='loader'></div><span id='loading_word"+i+"' class='loading_word'> Loading OCR </span></div>");
+              file.previewElement.appendChild(file._captionLabel);
+              file.previewElement.appendChild(file._captionBox);
+              $('.dz-remove').css('display','none');
+              $('.dz-remove').attr('class', 'dz-remove'+i+"   dz-remove-new");
+              //chinese chi_sim
+              Tesseract.recognize(
+                file,
+                'eng',
+                { 
+                  logger: m => console.log(m)
+                }
+              ).then(({ data: { text } }) => {
+                for(var c=0;c<=i;c++){
+                  var checkfile = $('#'+c).val();
+                  if(filename[0]==checkfile){
+                    writeInput(c,filename[0],ext,file.upload.filename,text);
+                    $('.dz-remove'+c).css('display','block');
+                    $('#loader'+c).css('display','none');
+                    $('#loading_word'+c).css('display','none');
+                  }
+                }
+                
+                m++;
+                if (!isset($('#loader'+m))){
+                  if(m>=i){
+                    $('.submit_button').prop('disabled', false);
+                  }
+                }
+              });
+            });
+        },
+        removedfile: function(file)
+        {
+            var name = file.upload.filename;
+            var count = $('#count').val();
+            for(var i=0;i<=count;i++){
+              var fake = $('#fake'+i).val();
+                if(fake==name){
+                    var id = i;
+                    document.getElementById("form"+id).value = "";
+                    document.getElementById("ext"+id).value = "";
+                    document.getElementById("fake"+id).value = "";
+                    document.getElementById("text"+id).value = "";
+                }
+            }
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                },
+                type: 'POST',
+                url: '{{ url($character."/FinalExamination/destoryFiles") }}',
+                data: {filename: name},
+                success: function (data){
+                    console.log("File has been successfully removed!!");
+                },
+                error: function(e) {
+                    console.log(e);
+                }
+            });
+            var fileRef;
+            return (fileRef = file.previewElement) != null ? 
+            fileRef.parentNode.removeChild(file.previewElement) : void 0;
+        },
+        success: function(file, response) {
+            document.getElementById('count').value = i;
+        },
+        error: function(file, response) {
+            alert(response);
+        }
+  };  
+  function writeInput(num,name,ext,fake,text){
+    $(document).ready(function(){  
+      $("#writeInput").append("<input type='hidden' id='form"+num+"' name='form"+num+"' value='"+name+"'><input type='hidden' id='ext"+num+"' name='ext"+num+"' value='"+ext+"'><input type='hidden' id='fake"+num+"' name='fake"+num+"' value='"+fake+"'><input type='hidden' id='text"+num+"' name='text"+num+"'>");
+      $('#text'+num).val(text);
+    });
+  }
 
   $(function () {
         $.ajaxSetup({
@@ -242,10 +438,65 @@ $option1 = "id='selected-sidebar'";
           var course_id = $('#course_id').val();
           $.ajax({
               type:'POST',
-              url:'{{route($route_name.".final.searchAssessmentList")}}',
+              url: "{{route($route_name.'.final.searchKey')}}",
               data:{value:value,course_id:course_id},
               success:function(data){
                 document.getElementById("assessments").innerHTML = data;
+                $('.group_checkbox').click(function(){
+                    var id = $(this).attr("id");
+                    var type = id.split("group_");
+                    // console.log(type[1]);
+                    if($(this).prop("checked") == true){
+                      $('.group_'+type[1]).prop("checked", true);
+                      // console.log(ass_rs_id[1]+" Checkbox is checked.");
+                    }
+                    else if($(this).prop("checked") == false){
+                      $('.group_'+type[1]).prop("checked", false);
+                      // console.log(ass_rs_id[1]+" Checkbox is unchecked.");
+                    }
+                });
+                $('[data-toggle="lightbox"]').click(function(event) {
+                  event.preventDefault();
+                  $(this).ekkoLightbox({
+                    type: 'image',
+                    onContentLoaded: function() {
+                      var container = $('.ekko-lightbox-container');
+                      var content = $('.modal-content');
+                      var backdrop = $('.modal-backdrop');
+                      var overlay = $('.ekko-lightbox-nav-overlay');
+                      var modal = $('.modal');
+                      var image = container.find('img');
+                      var windowHeight = $(window).height();
+                      var dialog = container.parents('.modal-dialog');
+                      var data_header = $('.modal-header');
+                      var data_title = $('.modal-title');
+                      var body = $('.modal-body');
+                      // console.log(image.width());
+
+                      if((image.width() > 380) && (image.width() < 430)){
+                         dialog.css('max-width','700px');
+                         image.css('height','900px');
+                         image.css('width','700px');
+                         overlay.css('height','900px');
+                      }else{
+                         overlay.css('height','100%');
+                      }
+                      // backdrop.css('opacity','1');
+                      data_header.css('background-color','white');
+                      data_header.css('padding','10px');
+                      data_header.css('margin','0px 24px');
+                      data_header.css('border-bottom','1px solid black');
+                      data_title.css('font-size','18px');
+
+                      body.css('padding-top','0px');
+                      content.css('background', "none");
+                      content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                    }
+                  });
+                });
               }
           });
         }
@@ -254,10 +505,65 @@ $option1 = "id='selected-sidebar'";
             var course_id = $('#course_id').val();
             $.ajax({
                type:'POST',
-               url:'{{route($route_name.".final.searchAssessmentList")}}',
+               url: "{{route($route_name.'.final.searchKey')}}",
                data:{value:value,course_id:course_id},
                success:function(data){
-                  document.getElementById("assessments").innerHTML = data;
+                    document.getElementById("assessments").innerHTML = data;
+                  $('.group_checkbox').click(function(){
+                      var id = $(this).attr("id");
+                      var type = id.split("group_");
+                      // console.log(type[1]);
+                      if($(this).prop("checked") == true){
+                        $('.group_'+type[1]).prop("checked", true);
+                        // console.log(ass_rs_id[1]+" Checkbox is checked.");
+                      }
+                      else if($(this).prop("checked") == false){
+                        $('.group_'+type[1]).prop("checked", false);
+                        // console.log(ass_rs_id[1]+" Checkbox is unchecked.");
+                      }
+                  });
+                    $('[data-toggle="lightbox"]').click(function(event) {
+                  event.preventDefault();
+                  $(this).ekkoLightbox({
+                    type: 'image',
+                    onContentLoaded: function() {
+                      var container = $('.ekko-lightbox-container');
+                      var content = $('.modal-content');
+                      var backdrop = $('.modal-backdrop');
+                      var overlay = $('.ekko-lightbox-nav-overlay');
+                      var modal = $('.modal');
+                      var image = container.find('img');
+                      var windowHeight = $(window).height();
+                      var dialog = container.parents('.modal-dialog');
+                      var data_header = $('.modal-header');
+                      var data_title = $('.modal-title');
+                      var body = $('.modal-body');
+                      // console.log(image.width());
+
+                      if((image.width() > 380) && (image.width() < 430)){
+                         dialog.css('max-width','700px');
+                         image.css('height','900px');
+                         image.css('width','700px');
+                         overlay.css('height','900px');
+                      }else{
+                         overlay.css('height','100%');
+                      }
+                      // backdrop.css('opacity','1');
+                      data_header.css('background-color','white');
+                      data_header.css('padding','10px');
+                      data_header.css('margin','0px 24px');
+                      data_header.css('border-bottom','1px solid black');
+                      data_title.css('font-size','18px');
+
+                      body.css('padding-top','0px');
+                      content.css('background', "none");
+                      content.css('-webkit-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('-moz-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('-o-box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                      content.css('box-shadow', "0 5px 15px rgba(0,0,0,0)");
+                    }
+                  });
+                });
                }
             });
         });
@@ -287,10 +593,11 @@ $option1 = "id='selected-sidebar'";
                   <ul class="sidebar-action-ul">
                       <a id="checkAction"><li class="sidebar-action-li"><i class="fa fa-fast-backward" style="padding: 0px 10px;" aria-hidden="true"></i>Previous of Assessment List</li></a>
                       <a id="open_folder"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a New Assessment</li></a>
+                      <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
                       @if((count($ass_final)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
-                        <a href='{{$character}}/FinalExamination/AllZipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
+                        <a href='{{$character}}/FinalExamination/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   </ul>
                 </div>
@@ -314,8 +621,48 @@ $option1 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
+            <h5 style="position:relative;left: 10px;margin-top: -15px;">Assessment List</h5>
+            <div style="overflow-x: auto;padding:0px 10px 5px 10px;">
+            <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
+              <thead>
+                <tr style="background-color: #d9d9d9;">
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">No.</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Assessment Name</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">CLO</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Topic</th>
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Coursework</th>
+                  
+                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                $num = 1;
+                $main_id = "";
+                ?>
+                @foreach($ass_final as $row)
+                  <tr>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$num}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->assessment_name}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->CLO}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->topic}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->coursework}}</td>
+                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
+                      <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
+                      <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                    </td>
+                  </tr>
+                  <?php
+                  $num++;
+                  ?>
+                @endforeach
+              </tbody>
+            </table>
+            </div>
+            <hr style="margin: 20px 5px 10px 5px;background-color:black;">
+            <h5 style="position:relative;left: 10px;">Question & Solution</h5>
             <div class="details" style="padding: 0px 5px 5px 5px;">
-              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
+              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
                   <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                       <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                           <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
@@ -331,39 +678,52 @@ $option1 = "id='selected-sidebar'";
                                   <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
                               </span>
                               <hr style="background-color: #d9d9d9;margin: 3px 0px;">
-                              <span>1. Assessment Name in Final</span><br/>
+                              <span>1. Keyword in Each Question</span><br/>
                           </span>
                       </div>
                   </div>
               </div>
-              
-              <div class="row" id="assessments" style="margin-top: -25px;">
-              <?php
+              <div class="row" id="assessments" style="margin-top: -10px;">
+             <?php
               $i=0;
               ?>
-              @foreach($ass_final as $row)
+              @foreach($group_list as $row_group)
+                <div style="border-bottom:1px solid black;padding:0px;" class="col-md-12">
+                  <div class="col-12 row" style="padding:10px;margin: 0px;">
+                    <div class="checkbox_group_style">
+                      <input type="checkbox" id='group_{{$row_group->ass_fx_type}}' class="group_checkbox">
+                    </div>
+                    <h5 class="group plus" id="{{$i}}">{{$row_group->ass_fx_type}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                  </div>
+                  <div id="assessment_list_{{$i}}" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">
+              @foreach($assessment_final as $row)
+              @if($row_group->ass_fx_type == $row->ass_fx_type)
                 <div class="col-12 row align-self-center" id="course_list">
-                    <div class="col-9 row align-self-center" style="padding-left: 20px;">
+                    <div class="col-9 row align-self-center" >
                       <div class="checkbox_style align-self-center">
-                        <input type="checkbox" name="group{{$row->fx_id}}" value="{{$row->fx_id}}" class="group_download">
+                        <input type="checkbox" value="{{$row->ass_fx_id}}_{{$row->ass_fx_type}}" class="group_{{$row_group->ass_fx_type}} group_download">
                       </div>
-                      <a href='{{$character}}/FinalExamination/view_list/{{$row->fx_id}}' class="col-11 row" style="padding:10px 0px;margin-left:0px;color:#0d2f81;border:0px solid black;" id="show_image_link">
+                      <a href="{{$character}}/images/final_assessment/{{$row->ass_fx_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$course[0]->semester_name}} : Final / {{$row_group->ass_fx_type}} /  {{$row->ass_fx_name}} <br> <a href='{{$character}}/final_assessment/view/whole_paper/{{$row->course_id}}' class='full_question' target='_blank'>Whole paper</a>">
                         <div class="col-1" style="position: relative;top: -2px;">
-                          <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
+                          <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                         </div>
                         <div class="col-10" id="course_name">
-                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->assessment_name}} ( {{$row->coursework}}% )</b></p>
+                          <p style="margin: 0px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"> <b>{{$row->ass_fx_name}}</b></p>
                         </div>
                       </a>
                     </div>
                     <div class="col-3" id="course_action_two">
-                      <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                      <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
+                      <i class="fa fa-download download_button" aria-hidden="true" id="download_button_{{$row->ass_fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:blue;background-color: white;width: 28px;"></i>&nbsp;
+                      <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->ass_fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
                     </div>
-                </div>
+                  </div>
+                @endif
+                @endforeach
               <?php
               $i++;
               ?>
+                </div>
+              </div>
               @endforeach
               @if($i==0)
               <div style="display: block;border:1px solid black;padding: 50px;width: 100%;margin: 10px 20px 0px 20px;">
@@ -601,6 +961,56 @@ $option1 = "id='selected-sidebar'";
         &nbsp;
         <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">
       </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content content2">
+      <div class="modal-header header2">
+        <h5 class="modal-title title2"  id="exampleModalLabel">Upload Files</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="row" style="padding: 15px 22px 0px 22px;">
+            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
+                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
+                    <i class="fa fa-file" aria-hidden="true" style="font-size: 18px;"></i>
+                </p>
+            </div>
+                <div class="col-11" style="padding-left: 20px;">
+                <div class="form-group">
+                      <label for="subject_type" class="label">Assessment Type</label>
+                      <select class="form-control selectpicker" onchange="setType(this.value)">
+                          <option class="option" value="Question">Question</option>
+                          <option class="option" value="Solution">Solution</option>
+                      </select>
+                </div>
+            </div>
+      </div>
+      <hr style="background-color: #d9d9d9;padding: 0px;margin:0px 20px;" class="row">
+      <form method="post" action="{{$character}}/FinalExamination/uploadFiles" enctype="multipart/form-data"
+        class="dropzone" id="dropzoneFile" style="margin: 20px;font-size: 20px;color:#a6a6a6;border-style: double;">
+        @csrf
+
+      </form>
+      <form method="post" action="{{$character}}/FinalExamination/storeFiles">
+        {{csrf_field()}}
+        <input type="hidden" name="count" value="0" id="count">
+        <input type="hidden" value="{{$course[0]->course_id}}" name="course_id">
+        <input type="hidden" name="ass_fx_type" id="ass_type" value="Question">
+        <div id="writeInput"></div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
+        &nbsp;
+        <input type="submit" class="btn btn-raised btn-primary submit_button" style="background-color: #3C5AFF;color: white;margin-right: 13px;" disabled value="Save Changes">
+        </div>
       </form>
     </div>
   </div>

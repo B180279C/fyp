@@ -404,7 +404,7 @@ function w3_close() {
                                     <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
                                 </span>
                                 <hr style="background-color: #d9d9d9;margin: 3px 0px;">
-                                <span>1. Assessment Name in Previous Semester</span><br/>
+                                <span>1. (Q & S) Stored in Previous Semester</span><br/>
                                 <span>2. Keyword in Each Question</span><br/>
                                 <span>3. Semester</span><br/>
                               </span>
@@ -458,7 +458,7 @@ function w3_close() {
                                   <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
                               </span>
                               <hr style="background-color: #d9d9d9;margin: 3px 0px;">
-                              <span>1. Assessment Name in Previous Semester</span><br/>
+                              <span>1. (Q & S) Stored in Previous Semester</span><br/>
                               <span>2. Semester</span><br/>
                               <span>3. Student Id OR Name</span><br/>
                               <span>4. Batch </span><br/>

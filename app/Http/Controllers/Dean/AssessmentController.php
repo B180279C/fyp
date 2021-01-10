@@ -15,6 +15,7 @@ use App\Department;
 use App\Faculty;
 use App\Assessments;
 use App\AssessmentList;
+use App\AssessmentResultStudent;
 use App\Imports\syllabusRead;
 use ZipArchive;
 use File;
@@ -159,8 +160,7 @@ class AssessmentController extends Controller
                     ->where('course_id', '=', $id)
                     ->where('assessment', '=', $question)
                     ->where('status', '=', 'Active')
-                    ->where('sample_stored','=','own')
-                    ->orderBy('assessments.assessment_name')
+                    ->groupBy('sample_stored')
                     ->get();
 
         if(count($course)>0){
@@ -168,6 +168,48 @@ class AssessmentController extends Controller
         }else{
             return redirect()->back();
         }
+    }
+
+
+    public function getSampleStored(Request $request)
+    {
+        $id = $request->get('course_id');
+        $question = $request->get('question');
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+        $result = "";
+        foreach($sample_stored as $row){
+            $result .= '<option class="option">'.$row->sample_stored.'</option>';
+        }
+        return $result;
+    }
+
+    public function getSampleStoredEdit(Request $request)
+    {
+        $id = $request->get('course_id');
+        $question = $request->get('question');
+        $selected = $request->get('selected');
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+        $result = "";
+        foreach($sample_stored as $row){
+            if($selected == $row->sample_stored){
+                $result .= '<option class="option" selected>'.$row->sample_stored.'</option>';
+            }else{
+                $result .= '<option class="option">'.$row->sample_stored.'</option>';
+            }
+        }
+        return $result;
     }
 
     public function assessmentImage($image_name)
@@ -204,6 +246,7 @@ class AssessmentController extends Controller
         $coursework = $request->get('coursework');
         $CLO_ALL = $request->get('CLO_ALL');
         $total = $request->get('total');
+        $stored = $request->get('stored');
         $CLO_List = "";
         if($CLO!=null){  
           foreach($CLO as $value){
@@ -217,6 +260,7 @@ class AssessmentController extends Controller
             'CLO'               =>  $CLO_List,
             'coursemark'        =>  $total,
             'coursework'        =>  $coursework,
+            'sample_stored'     =>  $stored,
             'status'            =>  'Active',
         ]);
         $assessment->save();
@@ -238,9 +282,17 @@ class AssessmentController extends Controller
         $TP_Ass = DB::table('tp_assessment_method')
                   ->select('tp_assessment_method.*')
                   ->where('course_id', '=', $folder->course_id)
-                  ->get();       
+                  ->get();
 
-        return [$folder,$assessments,$TP_Ass];
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $folder->course_id)
+                    ->where('assessment', '=', $folder->assessment)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();       
+
+        return [$folder,$assessments,$TP_Ass,$sample_stored];
     }
 
     public function updateAssessmentName(Request $request){
@@ -249,6 +301,7 @@ class AssessmentController extends Controller
         $CLO = array();
         $CLO = $request->get('CLO');
         $CLO_ALL = $request->get('CLO_ALL');
+        $main_tf = $request->get('main_tf');
         $CLO_List = "";
         if($CLO!=null){  
           foreach($CLO as $value){
@@ -260,7 +313,7 @@ class AssessmentController extends Controller
         $assessment->CLO  = $CLO_List;
         $assessment->coursemark  = $request->get('total');
         $assessment->coursework  = $request->get('coursework');
-
+        $assessment->sample_stored  = $request->get('stored');
         $assessment->save();
         return redirect()->back()->with('success','Edit Assessment Detail Successfully');
     }
@@ -307,7 +360,33 @@ class AssessmentController extends Controller
 
     public function removeActive($id){
         $assessment = Assessments::where('ass_id', '=', $id)->firstOrFail();
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $assessment->course_id)
+                    ->where('assessment', '=', $assessment->assessment)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+        foreach ($sample_stored as $row) {
+            if($id == $row->ass_id){
+                $assessment->status  = "Remove";
+                $assessment->save();
+                $sample_stored_second = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $assessment->course_id)
+                    ->where('assessment', '=', $assessment->assessment)
+                    ->where('sample_stored', '=', $assessment->sample_stored)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+                if(count($sample_stored_second)>0){
+                    $assessment_list = AssessmentList::where('ass_id','=',$id)->update(['ass_id' => $sample_stored_second[0]->ass_id]);
+                    $assessment_student_result = AssessmentResultStudent::where('ass_id','=',$id)->update(['ass_id' => $sample_stored_second[0]->ass_id]);
+                }
+            }
+        }
         $assessment_list = AssessmentList::where('ass_id','=',$id)->update(['status' => 'Remove']);
+        $assessment_student_result = AssessmentResultStudent::where('ass_id','=',$id)->update(['status' => 'Remove']);
         $assessment->status  = "Remove";
         $assessment->save();
         return redirect()->back()->with('success','Remove Successfully');
@@ -422,7 +501,7 @@ class AssessmentController extends Controller
         $ass_id = $assessment_list->ass_id;
 
         $assessments = Assessments::where('ass_id', '=', $ass_id)->firstOrFail();
-        $question = $assessments->assessment_name;
+        $question = $assessments->sample_stored;
 
         $course = DB::table('courses')
                  ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
@@ -463,17 +542,18 @@ class AssessmentController extends Controller
         if($value!=""){
             $assessments = DB::table('assessments')
                         ->select('assessments.*')
-                        ->where('assessments.assessment_name','LIKE','%'.$value.'%')
+                        ->where('assessments.sample_stored','LIKE','%'.$value.'%')
                         ->where('assessments.assessment', '=', $question)
                         ->where('assessments.status', '=', 'Active')
                         ->where('assessments.course_id','=',$course_id)
+                        ->groupBy('assessments.sample_stored')
                         ->orderBy('assessments.assessment_name')
                         ->orderBy('assessments.ass_id')
                         ->get();
             if(count($assessments)>0) {
                 foreach ($assessments as $row) {
                     $result .= '<div class="col-12 row align-self-center" id="course_list">';
-                    $result .= '<div class="col-8 row align-self-center" style="padding-left: 20px;">';
+                    $result .= '<div class="col-12 row align-self-center" style="padding-left: 20px;">';
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" name="group'.$row->ass_id.'" value="'.$row->ass_id.'" class="group_download">';
                     $result .= '</div>';
@@ -482,13 +562,9 @@ class AssessmentController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
-                    $result .= '</div>';
-                    $result .= '<div class="col-4" id="course_action_two">';
-                    $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->ass_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                        <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ass_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
                     $result .= '</div>';
                     $result .= '</div> ';
                 }
@@ -503,6 +579,7 @@ class AssessmentController extends Controller
                     ->where('course_id', '=', $course_id)
                     ->where('assessment', '=', $question)
                     ->where('status', '=', 'Active')
+                    ->groupBy('assessments.sample_stored')
                     ->orderBy('assessments.assessment_name')
                     ->orderBy('assessments.ass_id')
                     ->get();
@@ -510,7 +587,7 @@ class AssessmentController extends Controller
             if(count($assessments)>0) {
                 foreach ($assessments as $row) {
                     $result .= '<div class="col-12 row align-self-center" id="course_list">';
-                    $result .= '<div class="col-8 row align-self-center" style="padding-left: 20px;">';
+                    $result .= '<div class="col-12 row align-self-center" style="padding-left: 20px;">';
                     $result .= '<div class="checkbox_style align-self-center">';
                     $result .= '<input type="checkbox" name="group'.$row->ass_id.'" value="'.$row->ass_id.'" class="group_download">';
                     $result .= '</div>';
@@ -519,13 +596,9 @@ class AssessmentController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
-                    $result .= '</div>';
-                    $result .= '<div class="col-4" id="course_action_two">';
-                    $result .= '<i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_'.$row->ass_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                        <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_'.$row->ass_id.'" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>';
                     $result .= '</div>';
                     $result .= '</div> ';
                 }
@@ -721,7 +794,7 @@ class AssessmentController extends Controller
         if($download == "checked"){
             for($i=1;$i<(count($string)-1);$i++){
                 $checkASSID = Assessments::where('ass_id', '=', $string[$i])->firstOrFail();
-                $zip->addEmptyDir($checkASSID->assessment_name);
+                $zip->addEmptyDir($checkASSID->sample_stored);
 
                 $result_list = DB::table('assessment_list')
                          ->select('assessment_list.*')
@@ -731,18 +804,18 @@ class AssessmentController extends Controller
 
                 foreach($result_list as $rl_row){
                     if($rl_row->ass_type=="Question"){
-                        $zip->addEmptyDir($checkASSID->assessment_name."/Question");
+                        $zip->addEmptyDir($checkASSID->sample_stored."/Question");
                     }else{
-                        $zip->addEmptyDir($checkASSID->assessment_name."/Solution"); 
+                        $zip->addEmptyDir($checkASSID->sample_stored."/Solution"); 
                     }
                     foreach ($files as $key => $value) {
                         $relativeNameInZipFile = basename($value);
                         if($rl_row->ass_document == $relativeNameInZipFile){
                             $ext = explode('.',$relativeNameInZipFile);
                             if($rl_row->ass_type=="Question"){
-                                $zip->addFile($value,$checkASSID->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$checkASSID->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
                             }else{
-                                $zip->addFile($value,$checkASSID->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$checkASSID->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
                             } 
                         }
                     }
@@ -754,10 +827,11 @@ class AssessmentController extends Controller
                      ->where('course_id', '=', $course_id)
                      ->where('assessment','=',$question)
                      ->where('status','=','Active')
+                     ->groupBy('sample_stored')
                      ->get();
 
             foreach($assessments as $ass_row){
-                $zip->addEmptyDir($ass_row->assessment_name);
+                $zip->addEmptyDir($ass_row->sample_stored);
                 $result_list = DB::table('assessment_list')
                          ->select('assessment_list.*')
                          ->where('assessment_list.ass_id', '=', $ass_row->ass_id)
@@ -765,18 +839,18 @@ class AssessmentController extends Controller
                          ->get();
                 foreach($result_list as $rl_row){
                     if($rl_row->ass_type=="Question"){
-                        $zip->addEmptyDir($ass_row->assessment_name."/Question");
+                        $zip->addEmptyDir($ass_row->sample_stored."/Question");
                     }else{
-                        $zip->addEmptyDir($ass_row->assessment_name."/Solution"); 
+                        $zip->addEmptyDir($ass_row->sample_stored."/Solution"); 
                     }
                     foreach ($files as $key => $value) {
                         $relativeNameInZipFile = basename($value);
                         if($rl_row->ass_document == $relativeNameInZipFile){
                             $ext = explode('.',$relativeNameInZipFile);
                             if($rl_row->ass_type=="Question"){
-                                $zip->addFile($value,$ass_row->assessment_name."/Question/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$ass_row->sample_stored."/Question/".$rl_row->ass_name.'.'.$ext[1]);
                             }else{
-                                $zip->addFile($value,$ass_row->assessment_name."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
+                                $zip->addFile($value,$ass_row->sample_stored."/Solution/".$rl_row->ass_name.'.'.$ext[1]);
                             } 
                         }
                     }
@@ -810,7 +884,7 @@ class AssessmentController extends Controller
                         ->where('courses.course_id', '=', $course_id)
                         ->get();
 
-        $name = $assessments->assessment_name." ( ".$subjects[0]->subject_code." )";
+        $name = $assessments->sample_stored." ( ".$subjects[0]->subject_code." )";
         $zip = new ZipArchive;
         $fileName = storage_path('private/Assessment/Zip_Files/'.$name.'.zip');
         $zip->open($fileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
@@ -1490,6 +1564,7 @@ class AssessmentController extends Controller
                         'CLO'               =>  $row->CLO,
                         'coursemark'        =>  $row->coursemark,
                         'coursework'        =>  $row->coursework,
+                        'sample_stored'     =>  $row->sample_stored,    
                         'status'            =>  'Active',
                     ]);
                     $assessment->save();

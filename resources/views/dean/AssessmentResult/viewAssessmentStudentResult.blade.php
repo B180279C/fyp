@@ -354,7 +354,7 @@ function writeInput(id,num,name,ext,fake){
     <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">{{$question}} ( R )</p>
-             @if((count($assessments)!=0))
+             @if((count($sample_stored)!=0))
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -396,7 +396,7 @@ function writeInput(id,num,name,ext,fake){
                                   <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
                               </span>
                               <hr style="background-color: #d9d9d9;margin: 3px 0px;">
-                              <span>1. Assessment Name in {{$question}}</span><br/>
+                              <span>1. Result Stored in {{$question}}</span><br/>
                           </span>
                       </div>
                   </div>
@@ -406,7 +406,7 @@ function writeInput(id,num,name,ext,fake){
               <?php
               $i=0;
               ?>
-              @foreach($assessments as $row)
+              @foreach($sample_stored as $row)
                 <div class="col-12 row align-self-center" id="course_list">
                     <div class="col-8 row align-self-center" style="padding-left: 20px;">
                       <div class="checkbox_style align-self-center">
@@ -417,7 +417,7 @@ function writeInput(id,num,name,ext,fake){
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
                         <div class="col-10" id="course_name">
-                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->assessment_name}}</b></p>
+                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->sample_stored}}</b></p>
                         </div>
                       </a>
                     </div>
@@ -455,7 +455,7 @@ function writeInput(id,num,name,ext,fake){
       <div id="error-message"></div>
       <form method="post" action="{{$character}}/ass_rs_storeFiles" id="myForm" style="margin: 0px;">
       {{csrf_field()}}
-      @foreach($assessments as $row_model)
+      @foreach($sample_stored as $row_model)
       <div class="dropzone" id="dropzoneFile{{$row_model->ass_id}}" style="padding:25px;display: none;font-size: 20px;color:#a6a6a6;border-style: double;">
         <div class="dz-message" data-dz-message><span>Drop Files in Here to Upload</span></div>
       </div>

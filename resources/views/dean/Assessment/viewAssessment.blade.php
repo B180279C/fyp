@@ -450,7 +450,7 @@ function ModerationForm(actionCA_id){
                           <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="20%"><b>Question & Solution</b></td>
                           <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="10%"><b>Status</b></td>
                           <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="15%"><b>Student Result</b></td>
-                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="10%"><b>Count</b></td>
+                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="15%"><b>Count (Ass.List)</b></td>
                         </tr>
                     </thead>
                     <tbody>

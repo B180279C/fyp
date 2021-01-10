@@ -201,7 +201,7 @@ $(document).on('click', '#checkDownloadAction', function(){
             <a href="{{$character}}/Moderator/course/{{$id}}" class="first_page">Past Year</a>/
             <a href="{{$character}}/Moderator/PastYear/assessment/{{$id}}">Continuous Assessment</a>/
             <a href="{{$character}}/Moderator/PastYear/sampleResult/{{$id}}/previous/{{$course[0]->course_id}}/All">{{$course[0]->semester_name}}</a>/
-            <a href="{{$character}}/Moderator/PastYear/sampleResult/{{$id}}/name/{{$assessments->ass_id}}/All">{{$assessments->assessment_name}}</a>/
+            <a href="{{$character}}/Moderator/PastYear/sampleResult/{{$id}}/name/{{$assessments->ass_id}}/All">{{$assessments->sample_stored}}</a>/
             <span class="now_page">{{$assessment_result_student->student_id}}</span>
         </p>
         <hr class="separate_hr">

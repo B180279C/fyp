@@ -355,13 +355,13 @@ $option1 = "id='selected-sidebar'";
             <a href="{{$character}}/course/action/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->subject_code}} {{$course[0]->subject_name}}</a>/
             <a href="{{$character}}/assessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <a href="{{$character}}/AssessmentResult/{{$course[0]->course_id}}/question/{{$assessments->assessment}}">{{$assessments->assessment}} ( R )</a>/
-            <span class="now_page">{{$assessments->assessment_name}}</span>/
+            <span class="now_page">{{$assessments->sample_stored}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
-            <p class="page_title">{{$assessments->assessment_name}}</p>
+            <p class="page_title">{{$assessments->sample_stored}}</p>
             <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 250px;">
                     <div style="text-align: right;padding:10px;">

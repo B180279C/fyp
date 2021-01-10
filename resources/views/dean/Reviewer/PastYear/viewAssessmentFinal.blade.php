@@ -110,6 +110,21 @@ $option4 = "id='selected-sidebar'";
 }
 
 @media only screen and (min-width: 600px) {
+
+  .tooltiptext{
+    width:300px;
+    background-color:#e6e6e6;
+    color: black;
+    text-align: left;
+    border-radius: 6px;
+    border:1px solid black;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    top:38%;
+    left:103%;
+  }
+
   .tooltiptext_2{
     width:300px;
     background-color:#e6e6e6;
@@ -405,8 +420,7 @@ function w3_close() {
                                     <i class="fa fa-info-circle" style="color: #0d2f81;" aria-hidden="true"></i> Important : 
                                 </span>
                                 <hr style="background-color: #d9d9d9;margin: 3px 0px;">
-                                <span>1. Final Assessment Name in Previous Semester</span><br/>
-                                <span>2. Semester</span><br/>
+                                <span>1. Keyword in Previous Semester</span><br/>
                               </span>
                           </div>
                       </div>
@@ -418,7 +432,7 @@ function w3_close() {
                         <div class="checkbox_style align-self-center">
                           <input type="checkbox" value="{{$row->course_id}}" class="group_q group_download">
                         </div>
-                        <a href="{{$character}}/Reviewer/PastYear/FinalAssessment/{{$course[0]->course_id}}/assessment_name/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
+                        <a href="{{$character}}/Reviewer/PastYear/FinalAssessment/{{$course[0]->course_id}}/list/{{$row->course_id}}" id="show_image_link" class="col-11 row" style="padding:10px 0px;margin-left:-10px;color:#0d2f81;border:0px solid black;">
                           <div class="col-1" style="position: relative;top: -2px;">
                             <img src="{{url('image/folder2.png')}}" width="25px" height="25px"/>
                           </div>
