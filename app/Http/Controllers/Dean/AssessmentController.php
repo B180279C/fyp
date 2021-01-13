@@ -39,6 +39,13 @@ class AssessmentController extends Controller
                  ->where('course_id', '=', $id)
                  ->get();
 
+        $group_assessments = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $id)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('assessments.assessment')
+                            ->get();
+
         $assessments = DB::table('assessments')
                     ->select('assessments.*')
                     ->where('course_id', '=', $id)
@@ -66,9 +73,34 @@ class AssessmentController extends Controller
         //          ->get();
 
         if(count($course)>0){
-            return view('dean.Assessment.viewAssessment',compact('course','assessments','action','moderator_person_name','verified_person_name'));
+            return view('dean.Assessment.viewAssessment',compact('course','assessments','group_assessments','action','moderator_person_name','verified_person_name'));
         }else{
             return redirect()->back();
+        }
+    }
+
+    public static function getCoursework($course_id,$question)
+    {
+
+        $sample_stored = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $course_id)
+                            ->where('assessment', '=', $question)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('sample_stored')
+                            ->get();
+        foreach($sample_stored as $row){
+            $assessment_list = DB::table('assessment_list')
+                            ->select('assessment_list.*')
+                            ->where('assessment_list.ass_id', '=', $row->ass_id)
+                            ->where('assessment_list.status', '=', 'Active')
+                            ->groupBy('assessment_list.ass_id')
+                            ->get();
+            if(count($assessment_list)>0){
+                return "true";
+            }else{
+                return "false";
+            }
         }
     }
 
@@ -94,14 +126,122 @@ class AssessmentController extends Controller
                     ->orderBy('assessments.assessment_name')
                     ->get();
 
+        $group_assessments = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $id)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('assessments.assessment')
+                            ->get();
+
+        $lecturer_result = DB::table('assessment_result_students')
+                 ->join('assessments', 'assessments.ass_id', '=', 'assessment_result_students.ass_id')
+                 ->select('assessment_result_students.student_id','assessments.assessment')
+                 ->where('assessments.course_id', '=', $id)
+                 ->where('assessment_result_students.submitted_by','=', 'Lecturer')
+                 ->where('assessment_result_students.status','=','Active')
+                 ->groupBy('assessment_result_students.ass_id')
+                 ->groupBy('assessment_result_students.student_id')
+                 ->get();
+
+        $ass_id = array();
+        $count = array();
+        foreach ($group_assessments as $group) {
+            $sample_stored = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $id)
+                            ->where('assessment', '=', $group->assessment)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('sample_stored')
+                            ->orderBy('assessments.assessment_name')
+                            ->get();
+            foreach($sample_stored as $ss){
+                array_push($ass_id,$ss->ass_id);
+            }
+            array_push($count,[count($sample_stored),$sample_stored[0]->assessment]);
+        }
+
+        $assessment_list = DB::table('assessment_list')
+                    ->join('assessments', 'assessments.ass_id', '=', 'assessment_list.ass_id')
+                    ->select('assessment_list.ass_id','assessments.assessment')
+                    ->where('assessments.course_id', '=', $id)
+                    ->where('assessment_list.status', '=', 'Active')
+                    ->groupBy('assessment_list.ass_id')
+                    ->get();
+
         if(count($course)>0){
             $path = storage_path('private/syllabus/'.$course[0]->syllabus);
             $array = (new syllabusRead)->toArray($path);
-            return response()->json([$array[0],$assessments]);
+            return response()->json([$array[0],$assessments,$assessment_list,$ass_id,$count,$lecturer_result]);
             // return response()->json($array[0]);
         }else{
             return redirect()->back();
         }      
+    }
+
+    public function create_assessment_list($id,$coursework,$question)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+        $assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+
+        $mark = 0;
+        foreach ($assessments as $row){
+            $mark = $mark+$row->coursework;
+        }
+
+        $previous_semester = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('subjects.*','courses.*','semesters.*')
+                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                    ->where('courses.course_id','!=',$id)
+                    ->where('courses.status', '=', 'Active')
+                    ->orderByDesc('courses.semester')
+                    ->get();
+
+        $group_assessments = DB::table('assessments')
+                    ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
+                    ->select('assessments.*','courses.*')
+                    ->where('courses.subject_id','=',$course[0]->subject_id)
+                    ->where('assessments.assessment', '=', $question)
+                    ->where('assessments.status', '=', 'Active')
+                    ->groupBy('assessments.course_id')
+                    ->get();
+
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+
+        if(count($course)>0){
+            return view('dean.Assessment.createAssList',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework','sample_stored'));
+        }else{
+            return redirect()->back();
+        }
     }
 
     public function create_question($id,$coursework,$question)
@@ -169,7 +309,6 @@ class AssessmentController extends Controller
             return redirect()->back();
         }
     }
-
 
     public function getSampleStored(Request $request)
     {
@@ -671,7 +810,7 @@ class AssessmentController extends Controller
                     $result .= '<div class="checkbox_group_style">';
                     $result .= '<input type="checkbox" id="group_'.$row_group->ass_type.'" class="group_checkbox">';
                     $result .= '</div>';
-                    $result .= '<h5 class="group plus" id="'.$i.'">'.$row_group->ass_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
+                    $result .= '<h5 class="group plus" id="plus_'.$i.'">'.$row_group->ass_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
                     $result .= '</div>';
                     $result .= '<div id="assessment_list_'.$i.'" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">';
                     foreach($assessment_list as $row){
@@ -729,7 +868,7 @@ class AssessmentController extends Controller
                     $result .= '<div class="checkbox_group_style">';
                     $result .= '<input type="checkbox" id="group_'.$row_group->ass_type.'" class="group_checkbox">';
                     $result .= '</div>';
-                    $result .= '<h5 class="group plus" id="'.$i.'">'.$row_group->ass_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
+                    $result .= '<h5 class="group plus" id="plus_'.$i.'">'.$row_group->ass_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
                     $result .= '</div>';
                     $result .= '<div id="assessment_list_'.$i.'" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">';
                     foreach($assessment_list as $row){
@@ -1501,7 +1640,7 @@ class AssessmentController extends Controller
                   ->where('course_id', '=', $id)
                   ->get();
 
-      if(count($TP_Ass)<=0){
+      if(count($TP_Ass)==0){
         return redirect()->back()->with('Failed',"The Teaching Plan(Assessment Method) are related with assessment list. So, Please fill in that first.");
       }
 

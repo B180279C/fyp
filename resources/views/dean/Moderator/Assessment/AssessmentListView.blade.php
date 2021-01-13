@@ -366,13 +366,13 @@ $option3 = "id='selected-sidebar'";
             <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <a href="{{$character}}/Moderator/viewAssessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <a href="{{$character}}/Moderator/assessment/create/{{$course[0]->course_id}}/question/{{$assessments->coursemark}}/{{$question}}">{{$question}} ( Q & S )</a>/
-            <span class="now_page">{{$assessments->assessment_name}}</span>/
+            <span class="now_page">{{$assessments->sample_stored}}</span>/
         </p>
         <hr class="separate_hr">
     </div>
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">
-             <p class="page_title">{{$assessments->assessment_name}}</p>
+             <p class="page_title">{{$assessments->sample_stored}}</p>
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -439,7 +439,7 @@ $option3 = "id='selected-sidebar'";
                       <div class="checkbox_style align-self-center">
                         <input type="checkbox" value="{{$row->ass_li_id}}_{{$row->ass_type}}" class="group_{{$row_group->ass_type}} group_download">
                       </div>
-                      <a href="{{$character}}/Moderator/images/assessment/{{$row->ass_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$course[0]->semester_name}} : {{$assessments->assessment_name}} / {{$row_group->ass_type}} / {{$row->ass_name}} <br> <a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' class='full_question' target='_blank'>Whole paper</a>">
+                      <a href="{{$character}}/Moderator/images/assessment/{{$row->ass_document}}" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="{{$course[0]->semester_name}} : {{$assessments->sample_stored}} / {{$row_group->ass_type}} / {{$row->ass_name}} <br> <a href='{{$character}}/Moderator/assessment/view/whole_paper/{{$row->ass_id}}' class='full_question' target='_blank'>Whole paper</a>">
                         <div class="col-1" style="position: relative;top: -2px;">
                           <img src="{{url('image/img_icon.png')}}" width="25px" height="20px"/>
                         </div>

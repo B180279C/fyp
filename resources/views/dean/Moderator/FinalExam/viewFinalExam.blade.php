@@ -119,8 +119,12 @@ $option3 = "id='selected-sidebar'";
               $('.total').html(percentage);
               var mark = document.getElementById('mark').innerHTML;
               if(mark==percentage){
-                $('.mark_color').css('color', 'green');
-                $('.status').html("<span style='color:green'>Complete</span>");
+                if(response[2].length>0){
+                  $('.mark_color').css('color', 'green');
+                  $('.status').html("<span style='color:green'>Complete</span>");
+                }else{
+                  $('.status').html("<span style='color:red'>Not Complete</span>");
+                }
                 status = true;
               }else{
                 $('.mark_color').css('color', 'red');
@@ -130,17 +134,16 @@ $option3 = "id='selected-sidebar'";
               var row = table.insertRow(0);
               var cell = row.insertCell(0);
               var cell1 = row.insertCell(1);
-              var cell2 = row.insertCell(2);
               cell.style.backgroundColor = "#d9d9d9";
               cell1.style.backgroundColor = "#d9d9d9";
-              cell2.style.backgroundColor = "#d9d9d9";
               cell1.style.textAlign  = "center";
-              cell2.style.textAlign  = "center";
+              cell1.style.borderLeft  = "1px solid #e6e6e6";
               cell1.style.width  = "15%";
-              cell2.style.width  = "15%";
+              cell1.id = "myThTd";
+              document.getElementById("myThTd").colSpan = "2";
               cell.innerHTML  = "<b>"+name+" ( "+percentage+ "% )</b>";
-              cell1.innerHTML = '<b>Add</b>';
-              cell2.innerHTML = '<b>Status & Count</b>';
+              cell1.innerHTML = '<b>Action & Status</b>';
+
 
               var row_paper = table.insertRow(1);
               var cell = row_paper.insertCell(0);
@@ -155,16 +158,37 @@ $option3 = "id='selected-sidebar'";
               cell2.style.borderLeft  = "1px solid #d9d9d9";
               cell2.style.borderBottom  = "1px solid #d9d9d9";
               cell2.style.borderRight  = "1px solid #d9d9d9";
+              cell.innerHTML  = "Assessment List";
+              cell1.innerHTML = '<a href="{{$character}}/Moderator/FinalExamination/list/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              if(status==true){
+                cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
+              }else{
+                cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
+              }
+
+              var row_paper = table.insertRow(2);
+              var cell = row_paper.insertCell(0);
+              var cell1 = row_paper.insertCell(1);
+              var cell2 = row_paper.insertCell(2);
+              cell1.style.textAlign  = "center";
+              cell2.style.textAlign  = "center";
+              cell.style.borderLeft  = "1px solid #d9d9d9";
+              cell.style.borderBottom  = "1px solid #d9d9d9";
+              cell1.style.borderLeft  = "1px solid #d9d9d9";
+              cell1.style.borderBottom  = "1px solid #d9d9d9";
+              cell2.style.borderLeft  = "1px solid #d9d9d9";
+              cell2.style.borderBottom  = "1px solid #d9d9d9";
+              cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Question Paper & Solution";
               cell1.innerHTML = '<a href="{{$character}}/Moderator/FinalExamination/question/'+percentage+'/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
-              if(status==true){
+              if(response[2].length>0){
                 cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
               }else{
                 cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
               }
               
 
-              var row_result = table.insertRow(2);
+              var row_result = table.insertRow(3);
               var cell = row_result.insertCell(0);
               var cell1 = row_result.insertCell(1);
               var cell2 = row_result.insertCell(2);
@@ -179,12 +203,17 @@ $option3 = "id='selected-sidebar'";
               cell2.style.borderRight  = "1px solid #d9d9d9";
               cell.innerHTML  = "Student Result";
               cell1.innerHTML = '<a href="{{$character}}/Moderator/FinalResult/'+course_id+'/" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+              // if(response[1].length>=9){
+              //   cell2.innerHTML = '<i class="fa fa-check correct" aria-hidden="true"></i>';
+              // }else{
+              //   cell2.innerHTML = '<i class="fa fa-times wrong" aria-hidden="true"></i>';
+              // }
               cell2.innerHTML = response[1].length;
 
               var moderation_done = $('#moderation_done').val();
               var actionFA_id = $('#actionFA_id').val();
               if(moderation_done=="Yes"){
-                var row = table.insertRow(3);
+                var row = table.insertRow(4);
                 var cell = row.insertCell(0);
                 var cell1 = row.insertCell(1);
                 cell.style.borderLeft  = "1px solid #d9d9d9";

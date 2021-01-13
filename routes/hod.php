@@ -274,6 +274,8 @@ Route::get($character.'/assessment/{id}','Dean\AssessmentController@viewAssessme
 Route::post($character.'/assessment/getSyllabusData', 'Dean\AssessmentController@getSyllabusData');
 Route::get($character.'/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'hod.createQuestion', 'uses' => 'Dean\AssessmentController@create_question']);
+Route::get($character.'/assessment/create/{id}/list/{coursework}/{question}', [
+    'as' => 'createAssList', 'uses' => 'Dean\AssessmentController@create_assessment_list']);
 Route::post($character.'/assessment/openNewAssessment', 'Dean\AssessmentController@openNewAssessment');
 Route::post($character.'/assessment/AssessmentNameEdit', 'Dean\AssessmentController@AssessmentNameEdit');
 Route::post($character.'/assessment/updateAssessmentName', 'Dean\AssessmentController@updateAssessmentName');
@@ -298,6 +300,7 @@ Route::get($character.'/assessment/Action/Submit/{id}', 'Dean\AssessmentControll
 Route::post($character.'/assessment/Action/HOD/', 'Dean\AssessmentController@SubmitSelf_D_Form')->name('hod.CA.submit_for_verify');
 Route::get($character.'/Assessment/report/{actionCA_id}','Dean\AssessmentController@ModerationFormReport');
 Route::get($character.'/assessment/create/previous/{id}/{question}','Dean\AssessmentController@createPreviousAss');
+Route::post($character.'/assessment/question/SampleStored/Active','Dean\AssessmentController@getSampleStoredActive')->name('hod.question.getSampleStoredActive');
 Route::post($character.'/assessment/get/SampleStored/','Dean\AssessmentController@getSampleStored')->name('hod.getSampleStored');
 Route::post($character.'/assessment/get/SampleStoredEdit/','Dean\AssessmentController@getSampleStoredEdit')->name('hod.getSampleStoredEdit');
 
@@ -332,6 +335,8 @@ Route::get($character.'/AssessmentResult/Student/{student_id}/download/zipFiles/
 Route::get($character.'/FinalExamination/{id}/', [
     'as' => 'hod.viewFinalExamination', 'uses' => 'Dean\FinalExaminationController@viewFinalExamination']);
 Route::post($character.'/FinalExamination/getSyllabusData', 'Dean\FinalExaminationController@getSyllabusData');
+Route::get($character.'/FinalExamination/list/{coursework}/{id}/', [
+    'as' => 'create_final_list', 'uses' => 'Dean\FinalExaminationController@create_final_list']);
 Route::get($character.'/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'hod.createQuestion', 'uses' => 'Dean\FinalExaminationController@create_question']);
 Route::post($character.'/FinalExamination/openNewAssessment', 'Dean\FinalExaminationController@openNewAssessment');
@@ -528,6 +533,8 @@ Route::get($character.'/Moderator/viewAssessment/{id}','Dean\Moderator\M_Assessm
 Route::post($character.'/Moderator/assessment/getSyllabusData', 'Dean\Moderator\M_AssessmentController@getSyllabusData');
 Route::get($character.'/Moderator/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'hod.M_V_Question', 'uses' => 'Dean\Moderator\M_AssessmentController@create_question']);
+Route::get($character.'/Moderator/assessment/create/{id}/list/{coursework}/{question}', [
+    'as' => 'create_assessment_list', 'uses' => 'Dean\Moderator\M_AssessmentController@create_assessment_list']);
 Route::get($character.'/Moderator/assessment/view_list/{ass_id}', 'Dean\Moderator\M_AssessmentController@assessment_list_view');
 Route::get($character.'/Moderator/assessment/view/whole_paper/{ass_id}', 'Dean\Moderator\M_AssessmentController@view_wholePaper');
 Route::get($character.'/Moderator/images/assessment/{image_name}', [
@@ -564,6 +571,8 @@ Route::get($character.'/Moderator/Assessment/report/{actionCA_id}','Dean\Moderat
 Route::get($character.'/Moderator/FinalExam/{id}/', [
     'as' => 'hod.M_FinalExamination', 'uses' => 'Dean\Moderator\M_FinalExamController@viewFinalExamination']);
 Route::post($character.'/Moderator/FinalExamination/getSyllabusData', 'Dean\Moderator\M_FinalExamController@getSyllabusData');
+Route::get($character.'/Moderator/FinalExamination/list/{coursework}/{id}/', [
+    'as' => 'create_final_list', 'uses' => 'Dean\Moderator\M_FinalExamController@create_final_list']);
 Route::get($character.'/Moderator/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'hod.M_FX_Question', 'uses' => 'Dean\Moderator\M_FinalExamController@create_question']);
 Route::get($character.'/Moderator/images/final_assessment/{image_name}', [
@@ -714,6 +723,8 @@ Route::get($character.'/Reviewer/teachingPlan/report/{id}', 'Dean\Dean\D_Teachin
 //Reviewer Assessment
 Route::get($character.'/Reviewer/viewAssessment/{id}','Dean\Dean\D_AssessmentController@viewAssessment');
 Route::post($character.'/Reviewer/assessment/getSyllabusData', 'Dean\Dean\D_AssessmentController@getSyllabusData');
+Route::get($character.'/Reviewer/assessment/create/{id}/list/{coursework}/{question}', [
+    'as' => 'create_assessment_list', 'uses' => 'Dean\Dean\D_AssessmentController@create_assessment_list']);
 Route::get($character.'/Reviewer/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'createQuestion', 'uses' => 'Dean\Dean\D_AssessmentController@create_question']);
 Route::get($character.'/Reviewer/assessment/view_list/{ass_id}', 'Dean\Dean\D_AssessmentController@assessment_list_view')->name('dean.ass.assessment_list_view');
@@ -753,6 +764,8 @@ Route::get($character.'/Reviewer/Assessment/report/{actionCA_id}','Dean\Dean\D_A
 Route::get($character.'/Reviewer/FinalExam/{id}/', [
     'as' => 'hod.D_FinalExamination', 'uses' => 'Dean\Dean\D_FinalExamController@viewFinalExamination']);
 Route::post($character.'/Reviewer/FinalExamination/getSyllabusData', 'Dean\Dean\D_FinalExamController@getSyllabusData');
+Route::get($character.'/Reviewer/FinalExamination/list/{coursework}/{id}/', [
+'as' => 'hod.create_final_list', 'uses' => 'Dean\Dean\D_FinalExamController@create_final_list']);
 Route::get($character.'/Reviewer/FinalExamination/question/{coursework}/{id}/', [
 'as' => 'hod.D_createQuestion', 'uses' => 'Dean\Dean\D_FinalExamController@create_question']);
 Route::get($character.'/Reviewer/FinalExamination/view_list/{fx_id}', 'Dean\Dean\D_FinalExamController@final_assessment_list_view');

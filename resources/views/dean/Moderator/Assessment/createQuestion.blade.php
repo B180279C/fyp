@@ -238,7 +238,7 @@ $option3 = "id='selected-sidebar'";
               <?php
               $i=0;
               ?>
-              @foreach($assessments as $row)
+              @foreach($sample_stored as $row)
                 <div class="col-12 row align-self-center" id="course_list">
                     <div class="col-12 row align-self-center" style="padding-left: 20px;">
                       <div class="checkbox_style align-self-center">
@@ -249,7 +249,7 @@ $option3 = "id='selected-sidebar'";
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
                         <div class="col-10" id="course_name">
-                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->assessment_name}}</b></p>
+                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->sample_stored}}</b></p>
                         </div>
                       </a>
                     </div>

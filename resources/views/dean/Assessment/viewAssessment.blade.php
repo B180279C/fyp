@@ -142,6 +142,7 @@ function ModerationForm(actionCA_id){
               var new_count = 0;
               var table = document.getElementById("table");
               var total = 0;
+
               
               for(var i = 0;i<=(response[0].length-1);i++){
                   if((response[0][i][1]==null)&&(response[0][i][2]!=null)&&(response[0][i][3]!=null)&&(response[0][i][9]!=null)){
@@ -156,24 +157,14 @@ function ModerationForm(actionCA_id){
                       }
                     }
 
-                    total = total + response[0][i][9]; 
-                    var assessment_count = 0;
-                    var status = "fa fa-times wrong";
-                    for(var a = 0; a<=(response[1].length-1);a++){
-                      var assessment = response[0][i][3];
-                      assessment = assessment.replace(' ', '');
-                      if(assessment == response[1][a]['assessment']){
-                        assessment_count++;
-                        status = "fa fa-check correct";
-                      }
-                    }
-
                     var row = table.insertRow(count);
                     var cell = row.insertCell(0);
                     var cell1 = row.insertCell(1);
                     var cell2 = row.insertCell(2);
                     var cell3 = row.insertCell(3);
                     var cell4 = row.insertCell(4);
+                    var cell5 = row.insertCell(5);
+                    var cell6 = row.insertCell(6);
                     cell.style.borderLeft  = "1px solid #d9d9d9";
                     cell.style.borderBottom  = "1px solid #d9d9d9";
                     cell1.style.textAlign  = "center";
@@ -188,16 +179,86 @@ function ModerationForm(actionCA_id){
                     cell4.style.textAlign  = "center";
                     cell4.style.borderLeft  = "1px solid #d9d9d9";
                     cell4.style.borderBottom  = "1px solid #d9d9d9";
-                    cell4.style.borderRight  = "1px solid #d9d9d9";
+                    cell5.style.textAlign  = "center";
+                    cell5.style.borderLeft  = "1px solid #d9d9d9";
+                    cell5.style.borderBottom  = "1px solid #d9d9d9";
+                    cell6.style.textAlign  = "center";
+                    cell6.style.borderLeft  = "1px solid #d9d9d9";
+                    cell6.style.borderBottom  = "1px solid #d9d9d9";
+                    cell6.style.borderRight  = "1px solid #d9d9d9";
+
+                    total = total + response[0][i][9]; 
+                    var assessment_count = 0;
+                    var status = "fa fa-times wrong";
+                    
+                    var assessment = response[0][i][3];
+                    assessment = assessment.replace(' ', '');
+                    for(var a = 0; a<=(response[1].length-1);a++){
+                      if(assessment == response[1][a]['assessment']){
+                        assessment_count += parseInt(response[1][a]['coursework']);
+                      }
+                    }
+                    if(assessment_count == response[0][i][9]){
+                      status = "fa fa-check correct";
+                    }
+
+                    // console.log(response[2]);
+                    var count_question = 0;
+                    for(var b = 0;b<=(response[2].length-1);b++){
+                      if(response[2][b]['assessment']==assessment){
+                          for(var c = 0;c<=(response[3].length-1);c++){
+                          if(response[2][b]['ass_id']==response[3][c]){
+                            count_question++;
+                          }
+                        }
+                      }
+                    }
+
+                    var status_2 = "fa fa-times wrong";
+                    for(var d = 0;d<=(response[4].length-1);d++){
+                      if(response[4][d][1]==assessment){
+                        if(response[4][d][0]==count_question){
+                          if(count_question!=0){
+                            status_2 = "fa fa-check correct";
+                          }
+                        }
+                      }
+                    }
+
+
+                    var count_result = 0;
+                    for(var e = 0;e<=(response[5].length-1);e++){
+                      if(response[5][e]['assessment']==assessment){
+                        count_result++;
+                      }
+                    }
+                    
+                    // if(count_result>=9){
+                    //   var status_3 = "fa fa-check correct";
+                    // }else{
+                    //   var status_3 = "fa fa-times wrong";
+                    // }
+                    // console.log(response[5]);
+
                     cell.innerHTML  = response[0][i][3]+" ( "+response[0][i][9]+ "% )";
-                    cell1.innerHTML = '<a href="{{$character}}/assessment/create/'+course_id+'/question/'+response[0][i][9]+'/'+response[0][i][3]+'" style="font-size:18px;margin-left:15%;width:70%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+                    cell1.innerHTML = '<a href="{{$character}}/assessment/create/'+course_id+'/list/'+response[0][i][9]+'/'+response[0][i][3]+'" style="font-size:18px;margin-left:15%;width:70%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" style="position:relative;top:1px;"></i> (List)</a>';
                     cell2.innerHTML = '<i class="'+status+'" aria-hidden="true"></i>';
+
                     if(status=="fa fa-check correct"){
-                      cell3.innerHTML = '<a href="{{$character}}/AssessmentResult/'+course_id+'/question/'+response[0][i][3]+'" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" ></i></a>';
+                      cell3.innerHTML = '<a href="{{$character}}/assessment/create/'+course_id+'/question/'+response[0][i][9]+'/'+response[0][i][3]+'" style="font-size:18px;margin-left:15%;width:70%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" style="position:relative;top:1px;"></i> (Q & S)</a>';
                     }else{
                       cell3.innerHTML = '<i class="fa fa-lock wrong" aria-hidden="true" style="font-size:20px;"></i>';
                     }
-                    cell4.innerHTML = assessment_count;
+                    cell4.innerHTML = '<i class="'+status_2+'" aria-hidden="true"></i>';
+
+                    if(status=="fa fa-check correct"){
+                      cell5.innerHTML = '<a href="{{$character}}/AssessmentResult/'+course_id+'/question/'+response[0][i][3]+'" style="font-size:18px;width:100%;display:block;" class="question_link"><i class="fa fa-plus" aria-hidden="true" style="position:relative;top:1px;"></i> (Result)</a>';
+                    }else{
+                      cell5.innerHTML = '<i class="fa fa-lock wrong" aria-hidden="true" style="font-size:20px;"></i>';
+                    }
+
+                    // cell6.innerHTML = '<i class="'+status_3+'" aria-hidden="true"></i>';
+                    cell6.innerHTML = count_result;
                   }
               }
               $('.total').html(total);
@@ -218,7 +279,7 @@ function ModerationForm(actionCA_id){
                 cell.style.borderLeft  = "1px solid #d9d9d9";
                 cell1.style.textAlign  = "center";
                 cell1.id = "myTd";
-                document.getElementById("myTd").colSpan = "4";
+                document.getElementById("myTd").colSpan = "6";
                 cell.innerHTML  = "<b>Continuous Assessment ( CA ) Moderation</b>";
                 cell1.innerHTML  = "<button class='btn btn-raised btn-primary' style='background-color: #3C5AFF;padding:5px 10px;margin:0px;' onclick='ModerationForm("+actionCA_id+")'><b><i class='fa fa-download'></i> Continuous Assessment Moderation Form</b></button>";
               }
@@ -252,8 +313,17 @@ function ModerationForm(actionCA_id){
               <div style="overflow-x: auto;padding:15px 0px 5px 0px;">
                 <?php
                 $mark = 0;
-                foreach($assessments as $row){
-                  $mark = $mark+$row->coursework;
+                foreach($group_assessments as $group){
+                  $question_get =  App\Http\Controllers\Dean\AssessmentController::getCoursework($group->course_id,$group->assessment);
+                  foreach($assessments as $row){
+                    if($group->assessment==$row->assessment){
+                      if($question_get=="true"){
+                        $mark = $mark+$row->coursework;
+                      }else{
+                        $mark = $mark;
+                      }
+                    }
+                  }
                 }
                 ?>
                 <input type="hidden" id="course_id" value="{{$course[0]->course_id}}">
@@ -447,16 +517,17 @@ function ModerationForm(actionCA_id){
                     <thead>
                         <tr style="background-color: #d9d9d9;">
                           <td><b>Continuous Assessment List ( {{$course[0]->semester_name}} )</b></td>
-                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="20%"><b>Question & Solution</b></td>
-                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="10%"><b>Status</b></td>
+                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="55%" colspan="6"><b>Action & Status</b></td>
+                          <!-- <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="10%"><b>Status</b></td>
                           <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="15%"><b>Student Result</b></td>
-                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="15%"><b>Count (Ass.List)</b></td>
+                          <td style="border-left:1px solid #e6e6e6;color:black;text-align: center;" width="15%"><b>Count (Ass.List)</b></td> -->
                         </tr>
                     </thead>
                     <tbody>
                       <tr></tr>
                     </tbody>
                   </table>
+                  </div>
                 </div>
               </div>
             </div>

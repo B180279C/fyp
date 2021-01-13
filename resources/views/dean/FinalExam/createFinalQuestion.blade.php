@@ -110,36 +110,20 @@ $option1 = "id='selected-sidebar'";
 }
 </style>
 <script type="text/javascript">
-  function w3_open() {
-      document.getElementById("action_sidebar").style.display = "block";
-      document.getElementById("button_open").style.display = "none";
-  }
-  function w3_close() {
-      document.getElementById("action_sidebar").style.display = "none";
-      document.getElementById("button_open").style.display = "block";
-  }
-  function isset(element) {
-    return element.length > 0;
-  }
-  function setType(value){
-    $('#ass_type').val(value);
-  }
-  $(document).ready(function(){  
-    oTable = $('#dtBasicExample').DataTable(
-        {
-            "bLengthChange" : false,
-            "bInfo": false,
-            pagingType: 'input',
-            pageLength: 8,
-            language: {
-                oPaginate: {
-                   sNext: '<i class="fa fa-forward"></i>',
-                   sPrevious: '<i class="fa fa-backward"></i>',
-                   sFirst: '<i class="fa fa-step-backward"></i>',
-                   sLast: '<i class="fa fa-step-forward"></i>'
-                }
-            }
-    }); 
+  $(document).ready(function(){
+    $(document).on('click', '.plus', function(){
+        var id = $(this).attr("id"); 
+        id = id.split("_");
+        $('#assessment_list_'+id[1]).slideToggle("slow", function(){
+        if($('#assessment_list_'+id[1]).is(":visible")){
+          $('#icon_'+id[1]).removeClass('fa fa-plus');
+          $('#icon_'+id[1]).addClass('fa fa-minus');
+        }else{
+          $('#icon_'+id[1]).removeClass('fa fa-minus');
+          $('#icon_'+id[1]).addClass('fa fa-plus');
+        }
+        });
+    });
     $('.group_checkbox').click(function(){
       var id = $(this).attr("id");
       var type = id.split("group_");
@@ -151,7 +135,26 @@ $option1 = "id='selected-sidebar'";
         $('.group_'+type[1]).prop("checked", false);
       }
     });
-    $('[data-toggle="lightbox"]').click(function(event) {
+  });
+
+  
+
+  function w3_open() {
+      document.getElementById("action_sidebar").style.display = "block";
+      document.getElementById("button_open").style.display = "none";
+  }
+  function w3_close() {
+      document.getElementById("action_sidebar").style.display = "none";
+      document.getElementById("button_open").style.display = "block";
+  }
+  function setType(value){
+    $('#ass_type').val(value);
+  }
+  function isset(element) {
+    return element.length > 0;
+  }
+  $(document).ready(function(){ 
+  $('[data-toggle="lightbox"]').click(function(event) {
                   event.preventDefault();
                   $(this).ekkoLightbox({
                     type: 'image',
@@ -198,9 +201,6 @@ $option1 = "id='selected-sidebar'";
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
         });
-        $(document).on('click', '#open_folder', function(){
-            $('#openFolderModal').modal('show');
-        });
         $(document).on('click', '#open_document', function(){
             $('#openDocumentModal').modal('show');
         });
@@ -217,88 +217,11 @@ $option1 = "id='selected-sidebar'";
           window.location = '{{$character}}/FinalExamination/download/'+num[2];
         });
 
-        $(document).on('click', '.edit_button', function(){
-          var id = $(this).attr("id");
-          var num = id.split("_");
-          $.ajax({
-            type:'POST',
-            url:'{{$character}}/FinalExamination/AssessmentNameEdit',
-            data:{value : num[2]},
-            success:function(data){
-              var clo = data[0].CLO;
-              var clo_list = clo.split(",");
-              var option = "";
-              for(var c = 0;c<=(data[2].length-1);c++){
-                var assessment_list = data[2][c].assessment.split('///');
-                var markdown = data[2][c].markdown.split(',');
-                var assessment = assessment_list[0].split(',');
-                for(var i = 0; i<=assessment.length-1;i++){
-                  var assessment_rep = assessment[i].replace(' ','');
-                  if(assessment_rep=="FinalExamination"){
-                    if(markdown[i]=="yes"){
-                      var selected = false;
-                      for(var d = 0;d<=(clo_list.length-1);d++){
-                        if(clo_list[d]==("CLO"+(c+1))){
-                          var selected = true;
-                        }
-                      }
-                      if(selected==true){
-                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"' selected>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
-                      }else{
-                        option += "<option title='CLO "+(c+1)+"' class='option' value='CLO"+(c+1)+"'>CLO "+(c+1)+" : "+data[2][c].CLO+" ( "+data[2][c].domain_level+" , "+data[2][c].PO+" ) </option>";
-                      }
-                    }
-                  }
-                }
-              }
-              $("#CLO").html(option);
-              $('#CLO').selectpicker('refresh');
-
-              var topic = data[0].topic;
-              var topic_selected = topic.split(',');
-              var option = "";
-              for(var c = 0;c<=(data[3].length-1);c++){
-                var sel = false;
-                var topic_num = (data[3][c].lecture_topic).split('///');
-                // var title = "Topic "+topic_num[0];
-                for(var d = 0;d<=(topic_selected.length-1);d++){
-                  var selected = topic_selected[d];
-                  if(selected==("Topic"+topic_num[0])){
-                    sel = true;
-                  }
-                } 
-                if(sel == true){
-                  option += "<option class='option' title='Topic "+topic_num[0]+"' value='Topic"+topic_num[0]+"' selected>Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
-                }else{
-                  option += "<option class='option' title='Topic "+topic_num[0]+"' value='Topic"+topic_num[0]+"'>Topic "+topic_num[0]+" : "+topic_num[1]+"</option>";
-                } 
-              }
-              $("#topic").html(option);
-              $('#topic').selectpicker('refresh');
-
-              var mark = 0;
-              for(var i = 0;i<=(data[1].length-1);i++){
-                var mark = mark+parseInt(data[1][i].coursework);
-              }
-              // console.log(mark);
-              var full_mark = '{{$coursework}}';
-              document.getElementById('fx_id').value = num[2];
-              document.getElementById('mark_record').innerHTML = "The Final Examination of coursework is {{$coursework}}%, It already insert "+(mark-parseInt(data[0].coursework))+"%.";
-              document.getElementById('mark_record_2').innerHTML = "So, It Cannot insert over "+(full_mark-(mark-parseInt(data[0].coursework)))+"% of coursework.";
-              document.getElementById("coursework").max = (full_mark-(mark-parseInt(data[0].coursework)));
-              document.getElementById('folder_name').value = data[0].assessment_name;
-              document.getElementById('coursework').value = data[0].coursework;
-            } 
-          });
-          $('#folderNameEdit').modal('show');
-          return false;
-        });
-
         $(document).on('click', '.remove_button', function(){
           var id = $(this).attr("id");
           var num = id.split("_");
           if(confirm('Are you sure you want to remove the it?')) {
-            window.location = "{{$character}}/FinalExamination/remove/"+num[2];
+            window.location = "{{$character}}/FinalExamination/remove/list/"+num[2];
           }     
         });
 
@@ -318,17 +241,8 @@ $option1 = "id='selected-sidebar'";
             alert("Please select the document first.");
           }
         });
-
-    $(document).on('click', '#checkAction', function(){
-      var course_id = $('#course_id').val();
-      if(confirm('Are you sure want to use previous semester of final assessment list? (Important : If the course is a long semester, you will get the last long semester of the final assessment list. On the contrary, if it is a short semester, you will get the last short semester.')) {
-        window.location = "{{$character}}/FinalExamination/create/previous/"+course_id;
-      }
-      return false;
-    });
   });
-
-var i = 0;
+  var i = 0;
   var m = 1;
   Dropzone.options.dropzoneFile =
   {
@@ -522,7 +436,7 @@ var i = 0;
                         // console.log(ass_rs_id[1]+" Checkbox is unchecked.");
                       }
                   });
-                    $('[data-toggle="lightbox"]').click(function(event) {
+                  $('[data-toggle="lightbox"]').click(function(event) {
                   event.preventDefault();
                   $(this).ekkoLightbox({
                     type: 'image',
@@ -584,24 +498,21 @@ var i = 0;
     <div class="row" style="padding: 10px 10px 0px 10px;">
         <div class="col-md-12">
              <p class="page_title">Final ( Q & S )</p>
-             @if(count($TP_Ass)!=0&&count($tp)!=0)
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
-                <div id="action_sidebar" class="w3-animate-right" style="display: none;width: 260px;">
+                <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
-                      <a id="checkAction"><li class="sidebar-action-li"><i class="fa fa-fast-backward" style="padding: 0px 10px;" aria-hidden="true"></i>Previous of Assessment List</li></a>
-                      <a id="open_folder"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a New Assessment</li></a>
+                      <!-- <a id="open_folder"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a New Folder</li></a> -->
                       <a id="open_document"><li class="sidebar-action-li"><i class="fa fa-upload" style="padding: 0px 10px;" aria-hidden="true"></i>Upload Files</li></a>
-                      @if((count($ass_final)!=0))
+                      @if((count($group_list)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
                         <a href='{{$character}}/FinalExamination/download/zipFiles/{{$course[0]->course_id}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
                       @endif
                   </ul>
                 </div>
-              @endif
                 <br>
                 <br>
             @if(\Session::has('success'))
@@ -612,57 +523,8 @@ var i = 0;
                 </button>
             </div>
             @endif
-
-            @if(\Session::has('Failed'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <Strong>{{\Session::get('Failed')}}</Strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            @endif
-            <h5 style="position:relative;left: 10px;margin-top: -15px;">Assessment List</h5>
-            <div style="overflow-x: auto;padding:0px 10px 5px 10px;">
-            <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
-              <thead>
-                <tr style="background-color: #d9d9d9;">
-                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">No.</th>
-                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Assessment Name</th>
-                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">CLO</th>
-                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Topic</th>
-                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Coursework</th>
-                  
-                  <th style="border-left:1px solid #e6e6e6;color:black;border-bottom: 1px solid #d9d9d9;text-align: center;">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                $num = 1;
-                $main_id = "";
-                ?>
-                @foreach($ass_final as $row)
-                  <tr>
-                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$num}}</td>
-                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->assessment_name}}</td>
-                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->CLO}}</td>
-                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->topic}}</td>
-                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">{{$row->coursework}}</td>
-                    <td style="border-left:1px solid #d9d9d9;border-bottom: 1px solid #d9d9d9;text-align: center;">
-                      <i class="fa fa-wrench edit_button" aria-hidden="true" id="edit_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:green;background-color: white;width: 28px;"></i>&nbsp;
-                      <i class="fa fa-times remove_button" aria-hidden="true" id="remove_button_{{$row->fx_id}}" style="border: 1px solid #cccccc;padding:5px;border-radius: 50%;color:red;background-color: white;width: 28px;text-align: center;"></i>
-                    </td>
-                  </tr>
-                  <?php
-                  $num++;
-                  ?>
-                @endforeach
-              </tbody>
-            </table>
-            </div>
-            <hr style="margin: 20px 5px 10px 5px;background-color:black;">
-            <h5 style="position:relative;left: 10px;">Question & Solution</h5>
             <div class="details" style="padding: 0px 5px 5px 5px;">
-              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
+              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
                   <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                       <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                           <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
@@ -683,8 +545,9 @@ var i = 0;
                       </div>
                   </div>
               </div>
-              <div class="row" id="assessments" style="margin-top: -10px;">
-             <?php
+
+              <div class="row" id="assessments" style="margin-top: -25px;">
+              <?php
               $i=0;
               ?>
               @foreach($group_list as $row_group)
@@ -693,7 +556,7 @@ var i = 0;
                     <div class="checkbox_group_style">
                       <input type="checkbox" id='group_{{$row_group->ass_fx_type}}' class="group_checkbox">
                     </div>
-                    <h5 class="group plus" id="{{$i}}">{{$row_group->ass_fx_type}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                    <h5 class="group plus" id="plus_{{$i}}">{{$row_group->ass_fx_type}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
                   </div>
                   <div id="assessment_list_{{$i}}" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">
               @foreach($assessment_final as $row)
@@ -731,6 +594,10 @@ var i = 0;
               </div>
               @endif
               </div>
+              
+              
+              
+                </div>
             </div>
         </div>
     </div>
@@ -758,214 +625,6 @@ var i = 0;
     padding-top: 20px!important;
   }
 </style>
-
-<!-- Modal -->
-<div class="modal fade bd-example-modal-lg" id="openFolderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content content2">
-      <div class="modal-header header2">
-        <h5 class="modal-title title2" id="exampleModalLabel">Open New Assessment</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form method="post" action="{{$character}}/FinalExamination/openNewAssessment">
-        {{csrf_field()}}
-      <div class="modal-body body2">
-        <div id="message"></div>
-        <br>
-        <input type="hidden" name="course_id" value="{{$course[0]->course_id}}">
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-file" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="bmd-label-floating">Assessment Name</label>
-                      <input type="text" name="assessment_name" class="form-control" required/>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-list-alt" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="bmd-label-floating">Course Learning Outcome ( CLO )</label>
-                      <select class="selectpicker form-control" name="CLO[]" data-width="100%" title="Choose one" multiple required>
-                        <?php
-                          $num = 1;
-                          $check = "";
-                          foreach($TP_Ass as $row){
-                            $assessment_list = explode('///',$row->assessment);
-                            $markdown = explode(',',$row->markdown);
-                            $assessment = explode(',',$assessment_list[0]);
-                            for($i = 0; $i<=count($assessment)-1;$i++){
-                              $assessment_rep = str_replace(' ','',$assessment[$i]);
-                              if($assessment_rep=="FinalExamination"){
-                                if($markdown[$i]=="yes"){
-                                  $check .= $row->am_id.',';
-                                  echo "<option title='CLO ".$num."' class='option' value='CLO".$num."'>CLO ".$num." : ".$row->CLO." ( ".$row->domain_level." , ".$row->PO." ) </option>";
-                                }
-                              }
-                            }
-                            $num++;
-                          }
-                      ?>
-                      </select>
-                      <input type="hidden" name="CLO_ALL" value="{{$check}}">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="bmd-label-floating">Topic(s) Covered</label>
-                      <select class="selectpicker form-control" name="topic[]" data-width="100%" title="Choose one" multiple required>
-                        @foreach($tp as $row)
-                          @if($row->lecture_topic!=NULL)
-                            <?php
-                              $topic_num = explode('///',$row->lecture_topic)
-                            ?>
-                            <option class="option" title="Topic {{$topic_num[0]}}" value="Topic{{$topic_num[0]}}">Topic {{$topic_num[0]}} : {{$topic_num[1]}}</option>
-                          @endif
-                        @endforeach
-                      </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-percent" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="bmd-label-floating">Coursework</label>
-                      <input type="hidden" name="total" value="{{$coursework}}">
-                      <input type="number" name="coursework" min="0" max="{{$coursework-$mark}}" class="form-control" required/>
-                      <span class="bmd-help" id="mark_record">The Final Examination of coursework is {{$coursework}}%, It already insert {{$mark}}%.</span>
-                      <span class="bmd-help" id="mark_record_2">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
-                </div>
-            </div>
-        </div>
-        <br>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
-        &nbsp;
-        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">
-      </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade bd-example-modal-lg" id="folderNameEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content content2">
-      <div class="modal-header header2">
-        <h5 class="modal-title title2" id="exampleModalLabel">Edit Folder Name</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form method="post" action="{{$character}}/FinalExamination/updateAssessmentName">
-        {{csrf_field()}}
-      <div class="modal-body body2">
-        <div id="message"></div>
-        <br>
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-folder" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="label">Assessment Name</label>
-                      <input type="hidden" name="fx_id" id="fx_id">
-                      <input type="text" name="assessment_name" class="form-control" id="folder_name" placeholder="Folder" required/>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-list-alt" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="bmd-label-floating">Course Learning Outcome ( CLO )</label>
-                      <select class="selectpicker form-control" name="CLO[]" data-width="100%" id="CLO" title="Choose one" multiple required>
-                      </select>
-                      <input type="hidden" name="CLO_ALL" id="CLO_ALL">
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-tag" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="bmd-label-floating">Topic(s) Covered</label>
-                      <select class="selectpicker form-control" name="topic[]" data-width="100%" id="topic" title="Choose one" multiple required>
-                      </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-1 align-self-center" style="padding: 15px 0px 0px 2%;">
-                <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
-                    <i class="fa fa-percent" aria-hidden="true" style="font-size: 18px;"></i>
-                </p>
-            </div>
-                <div class="col-11" style="padding-left: 20px;">
-                <div class="form-group">
-                      <label for="subject_type" class="label">Coursework</label>
-                      <input type="hidden" name="total" value="{{$coursework}}">
-                      <input type="number" name="coursework" min="0" max="{{$coursework-$mark}}" class="form-control" id="coursework" required/>
-                      <span class="bmd-help" id="mark_record">The Final Examination of coursework is {{$coursework}}%, It already insert {{$mark}}%.</span>
-                      <span class="bmd-help" id="mark_record_2">So, It Cannot insert over {{$coursework-$mark}}% of coursework.</span>
-                </div>
-            </div>
-        </div>
-
-        <br>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
-        &nbsp;
-        <input type="submit" class="btn btn-raised btn-primary" style="background-color: #3C5AFF;color: white;margin: 0px!important;" value="Save Changes">
-      </div>
-      </form>
-    </div>
-  </div>
-</div>
-
 
 <!-- Modal -->
 <div class="modal fade bd-example-modal-lg" id="openDocumentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

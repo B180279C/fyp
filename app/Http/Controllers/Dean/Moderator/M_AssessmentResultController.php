@@ -33,16 +33,16 @@ class M_AssessmentResultController extends Controller
                  ->where('courses.course_id', '=', $id)
                  ->get();
 
-        $assessments = DB::table('assessments')
+        $sample_stored = DB::table('assessments')
                     ->select('assessments.*')
                     ->where('course_id', '=', $id)
                     ->where('assessment', '=', $question)
                     ->where('status', '=', 'Active')
-                    ->orderBy('assessments.assessment_name')
+                    ->groupBy('sample_stored')
                     ->get();
 
-        if((count($course)>0)&&(count($assessments)>0)){
-            return view('dean.Moderator.AssessmentResult.viewAssessmentStudentResult',compact('course','question','assessments'));
+        if((count($course)>0)&&(count($sample_stored)>0)){
+            return view('dean.Moderator.AssessmentResult.viewAssessmentStudentResult',compact('course','question','sample_stored'));
         }else{
             return redirect()->back();
         }
@@ -233,11 +233,12 @@ class M_AssessmentResultController extends Controller
             $assessment_results = DB::table('assessments')
                  ->select('assessments.*')
                  ->Where(function($query) use ($value) {
-                    $query->orWhere('assessments.assessment_name','LIKE','%'.$value.'%');
+                    $query->orWhere('assessments.sample_stored','LIKE','%'.$value.'%');
                  })
                  ->where('course_id', '=', $course_id)
                  ->where('assessment','=',$question)
                  ->where('status','=','Active')
+                 ->groupBy('sample_stored')
                  ->orderBy('assessments.assessment_name')
                  ->get();
             if(count($assessment_results)>0) {
@@ -252,7 +253,7 @@ class M_AssessmentResultController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -269,6 +270,7 @@ class M_AssessmentResultController extends Controller
                      ->where('course_id', '=', $course_id)
                      ->where('status','=','Active')
                      ->where('assessment','=',$question)
+                     ->groupBy('sample_stored')
                      ->orderBy('assessments.assessment_name')
                      ->get();
             if(count($assessment_results)>0) {
@@ -283,7 +285,7 @@ class M_AssessmentResultController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';

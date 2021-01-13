@@ -297,38 +297,38 @@ class ReportController extends Controller
                     ->where('course_id', '=', $id)
                     ->where('status', '=', 'Active')
                     ->orderBy('assessments.assessment_name')
+                    ->groupBy('assessments.sample_stored')
                     ->get();
 
-        $assessment_list = DB::table('assessment_list')
-                    ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
-                    ->select('assessment_list.*','assessments.*')
-                    ->where('assessment_list.status', '=', 'Active')
-                    ->where('assessments.course_id', '=', $id)
-                    ->get();
+            $assessment_list = DB::table('assessment_list')
+                        ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
+                        ->select('assessment_list.*','assessments.*')
+                        ->where('assessment_list.status', '=', 'Active')
+                        ->where('assessments.course_id', '=', $id)
+                        ->get();
 
-        $lecturer_result = DB::table('assessment_result_students')
-                 ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
-                 ->select('assessment_result_students.*','assessments.*')
-                 ->where('assessments.course_id', '=', $id)
-                 ->where('assessment_result_students.submitted_by','=', 'Lecturer')
-                 ->where('assessment_result_students.status','=','Active')
-                 ->groupBy('assessment_result_students.student_id')
-                 ->groupBy('assessments.ass_id')
-                 ->get();
+            $lecturer_result = DB::table('assessment_result_students')
+                     ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                     ->select('assessment_result_students.*','assessments.*')
+                     ->where('assessments.course_id', '=', $id)
+                     ->where('assessment_result_students.submitted_by','=', 'Lecturer')
+                     ->where('assessment_result_students.status','=','Active')
+                     ->groupBy('assessment_result_students.student_id')
+                     ->groupBy('assessments.ass_id')
+                     ->get();
 
-        $ass_final = DB::table('ass_final')
-                    ->select('ass_final.*')
-                    ->where('course_id', '=', $id)
-                    ->where('status', '=', 'Active')
-                    ->orderBy('ass_final.assessment_name')
-                    ->get();
+            $ass_final = DB::table('ass_final')
+                        ->select('ass_final.*')
+                        ->where('course_id', '=', $id)
+                        ->where('status', '=', 'Active')
+                        ->orderBy('ass_final.assessment_name')
+                        ->get();
 
-        $assessment_final = DB::table('assessment_final')
-                    ->join('ass_final','ass_final.fx_id','=','assessment_final.fx_id')
-                    ->select('assessment_final.*','ass_final.*')
-                    ->where('ass_final.course_id', '=', $id)
-                    ->where('assessment_final.status', '=', 'Active')
-                    ->get();
+            $assessment_final = DB::table('assessment_final')
+                        ->select('assessment_final.*')
+                        ->where('assessment_final.course_id', '=', $id)
+                        ->where('assessment_final.status', '=', 'Active')
+                        ->get();
 
         $lecturer_fx_result = DB::table('assessment_final_result')
                  ->join('students','students.student_id', '=', 'assessment_final_result.student_id')

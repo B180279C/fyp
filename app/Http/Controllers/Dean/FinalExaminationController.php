@@ -51,6 +51,13 @@ class FinalExaminationController extends Controller
                   ->orderBy('actionFA_id')
                   ->get();
 
+        $assessment_final = DB::table('assessment_final')
+                    ->select('assessment_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessment_final.ass_fx_name')
+                    ->get();
+
         $moderator_by = Staff::where('id', '=', $course[0]->moderator)->firstOrFail();
         $moderator_person_name = User::where('user_id', '=', $moderator_by->user_id)->firstOrFail();
 
@@ -60,22 +67,8 @@ class FinalExaminationController extends Controller
         $approved_by = Staff::where('id', '=', $course[0]->approved_by)->firstOrFail();
         $approved_person_name = User::where('user_id', '=', $approved_by->user_id)->firstOrFail();
 
-        // $verified_by = DB::table('staffs')
-        //          ->join('users','staffs.user_id','=','users.user_id')
-        //          ->select('staffs.*','users.*')
-        //          ->where('users.position', '=', 'HoD')
-        //          ->where('staffs.department_id','=',$department_id)
-        //          ->get();
-
-        // $approved_by = DB::table('staffs')
-        //          ->join('users','staffs.user_id','=','users.user_id')
-        //          ->select('staffs.*','users.*')
-        //          ->where('users.position', '=', 'Dean')
-        //          ->where('staffs.faculty_id','=',$faculty_id)
-        //          ->get();
-
         if(count($course)>0){
-            return view('dean.FinalExam.viewFinalExam',compact('course','ass_final','action','moderator_person_name','verified_person_name','approved_person_name'));
+            return view('dean.FinalExam.viewFinalExam',compact('course','ass_final','action','moderator_person_name','verified_person_name','approved_person_name','assessment_final'));
         }else{
             return redirect()->back();
         }
@@ -105,13 +98,79 @@ class FinalExaminationController extends Controller
                  ->groupBy('assessment_final_result.student_id')
                  ->get();
 
+        $assessment_final = DB::table('assessment_final')
+                    ->select('assessment_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessment_final.ass_fx_name')
+                    ->get();
+
         if(count($course)>0){
             $path = storage_path('private/syllabus/'.$course[0]->syllabus);
             $array = (new syllabusRead)->toArray($path);
-            return response()->json([$array[0],$lecturer_result]);
+            return response()->json([$array[0],$lecturer_result,$assessment_final]);
         }else{
             return redirect()->back();
         }      
+    }
+
+    public function create_final_list($coursework,$id)
+    {
+      $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+
+        $course = DB::table('courses')
+                 ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                 ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                 ->select('courses.*','subjects.*','semesters.*')
+                 ->where('lecturer', '=', $staff_dean->id)
+                 ->where('course_id', '=', $id)
+                 ->get();
+
+        $ass_final = DB::table('ass_final')
+                    ->select('ass_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('ass_final.assessment_name')
+                    ->get();
+
+        $assessment_final = DB::table('assessment_final')
+                    ->select('assessment_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessment_final.ass_fx_name')
+                    ->get();
+
+        $group_list = DB::table('assessment_final')
+                    ->select('assessment_final.*')
+                    ->where('course_id', '=', $id)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('assessment_final.ass_fx_type')
+                    ->get();
+
+        $mark = 0;
+        foreach ($ass_final as $row){
+            $mark = $mark+$row->coursework;
+        }
+                  
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+        $tp = DB::table('teaching_plan')
+                  ->join('plan_topics','teaching_plan.tp_id','=','plan_topics.tp_id')
+                  ->select('teaching_plan.*','plan_topics.*')
+                  ->where('teaching_plan.course_id', '=', $id)
+                  ->groupBy('plan_topics.lecture_topic')
+                  ->get();
+
+        if(count($course)>0){
+            return view('dean.FinalExam.createFinalList',compact('course','mark','coursework','ass_final','TP_Ass','tp','group_list','assessment_final'));
+        }else{
+            return redirect()->back();
+        }
     }
 
     public function create_question($coursework,$id)
@@ -396,7 +455,6 @@ class FinalExaminationController extends Controller
             $ext  = $request->get('ext'.$i);
             $fake = $request->get('fake'.$i);
             $text = $request->get('text'.$i);
-
             array_push($array, $name);
             sort($array);
         }
@@ -410,7 +468,7 @@ class FinalExaminationController extends Controller
                     $text = $request->get('text'.$i);
                     if($value == $name){
                         $assessments = new AssessmentFinal([
-                            'course_id'                     =>  $request->get('course_id'),
+                            'course_id'                 =>  $request->get('course_id'),
                             'ass_fx_name'               =>  $name,
                             'ass_fx_type'               =>  $request->get('ass_fx_type'),
                             'ass_fx_document'           =>  $fake,
@@ -603,7 +661,7 @@ class FinalExaminationController extends Controller
                     $result .= '<div class="checkbox_group_style">';
                     $result .= '<input type="checkbox" id="group_'.$row_group->ass_fx_type.'" class="group_checkbox">';
                     $result .= '</div>';
-                    $result .= '<h5 class="group plus" id="'.$i.'">'.$row_group->ass_fx_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
+                    $result .= '<h5 class="group plus" id="plus_'.$i.'">'.$row_group->ass_fx_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
                     $result .= '</div>';
                     $result .= '<div id="assessment_list_'.$i.'" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">';
                     foreach($assessment_list as $row){
@@ -661,7 +719,7 @@ class FinalExaminationController extends Controller
                     $result .= '<div class="checkbox_group_style">';
                     $result .= '<input type="checkbox" id="group_'.$row_group->ass_fx_type.'" class="group_checkbox">';
                     $result .= '</div>';
-                    $result .= '<h5 class="group plus" id="'.$i.'">'.$row_group->ass_fx_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
+                    $result .= '<h5 class="group plus" id="plus_'.$i.'">'.$row_group->ass_fx_type.' (<i class="fa fa-minus" aria-hidden="true" id="icon_'.$i.'" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>';
                     $result .= '</div>';
                     $result .= '<div id="assessment_list_'.$i.'" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">';
                     foreach($assessment_final as $row){

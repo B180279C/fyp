@@ -315,7 +315,9 @@
 	//Assessment
 	Route::get('/assessment/{id}','Dean\AssessmentController@viewAssessment')->name('dean.viewAssessment');
 	Route::post('/assessment/getSyllabusData', 'Dean\AssessmentController@getSyllabusData');
-	Route::get('/assessment/create/{id}/question/{coursework}/{question}', [
+	Route::get('/assessment/create/{id}/list/{coursework}/{question}', [
+    'as' => 'createAssList', 'uses' => 'Dean\AssessmentController@create_assessment_list']);
+    Route::get('/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'createQuestion', 'uses' => 'Dean\AssessmentController@create_question']);
     Route::post('/assessment/openNewAssessment', 'Dean\AssessmentController@openNewAssessment');
     Route::post('/assessment/AssessmentNameEdit', 'Dean\AssessmentController@AssessmentNameEdit');
@@ -376,6 +378,8 @@
 	Route::get('/FinalExamination/{id}/', [
     'as' => 'viewFinalExamination', 'uses' => 'Dean\FinalExaminationController@viewFinalExamination']);
     Route::post('/FinalExamination/getSyllabusData', 'Dean\FinalExaminationController@getSyllabusData');
+    Route::get('/FinalExamination/list/{coursework}/{id}/', [
+    'as' => 'create_final_list', 'uses' => 'Dean\FinalExaminationController@create_final_list']);
     Route::get('/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'createQuestion', 'uses' => 'Dean\FinalExaminationController@create_question']);
     Route::post('/FinalExamination/openNewAssessment', 'Dean\FinalExaminationController@openNewAssessment');
@@ -567,6 +571,8 @@
 	Route::post('/Moderator/assessment/getSyllabusData', 'Dean\Moderator\M_AssessmentController@getSyllabusData');
 	Route::get('/Moderator/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'createQuestion', 'uses' => 'Dean\Moderator\M_AssessmentController@create_question']);
+    Route::get('/Moderator/assessment/create/{id}/list/{coursework}/{question}', [
+    'as' => 'create_assessment_list', 'uses' => 'Dean\Moderator\M_AssessmentController@create_assessment_list']);
 	Route::get('/Moderator/assessment/view_list/{ass_id}', 'Dean\Moderator\M_AssessmentController@assessment_list_view')->name('dean.ass.assessment_list_view');
 	Route::get('/Moderator/assessment/view/whole_paper/{ass_id}', 'Dean\Moderator\M_AssessmentController@view_wholePaper');
 	Route::get('/Moderator/images/assessment/{image_name}', [
@@ -603,6 +609,8 @@
 	Route::get('/Moderator/FinalExam/{id}/', [
     'as' => 'FinalExamination', 'uses' => 'Dean\Moderator\M_FinalExamController@viewFinalExamination']);
     Route::post('/Moderator/FinalExamination/getSyllabusData', 'Dean\Moderator\M_FinalExamController@getSyllabusData');
+    Route::get('/Moderator/FinalExamination/list/{coursework}/{id}/', [
+    'as' => 'create_final_list', 'uses' => 'Dean\Moderator\M_FinalExamController@create_final_list']);
     Route::get('/Moderator/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'createQuestion', 'uses' => 'Dean\Moderator\M_FinalExamController@create_question']);
     
@@ -752,6 +760,8 @@
 	//Dean Assessment
 	Route::get('/Reviewer/viewAssessment/{id}','Dean\Dean\D_AssessmentController@viewAssessment');
 	Route::post('/Reviewer/assessment/getSyllabusData', 'Dean\Dean\D_AssessmentController@getSyllabusData');
+	Route::get('/Reviewer/assessment/create/{id}/list/{coursework}/{question}', [
+    'as' => 'create_assessment_list', 'uses' => 'Dean\Dean\D_AssessmentController@create_assessment_list']);
 	Route::get('/Reviewer/assessment/create/{id}/question/{coursework}/{question}', [
     'as' => 'createQuestion', 'uses' => 'Dean\Dean\D_AssessmentController@create_question']);
 	Route::get('/Reviewer/assessment/view_list/{ass_id}', 'Dean\Dean\D_AssessmentController@assessment_list_view')->name('dean.ass.assessment_list_view');
@@ -790,6 +800,8 @@
 	Route::get('/Reviewer/FinalExam/{id}/', [
     'as' => 'FinalExamination', 'uses' => 'Dean\Dean\D_FinalExamController@viewFinalExamination']);
     Route::post('/Reviewer/FinalExamination/getSyllabusData', 'Dean\Dean\D_FinalExamController@getSyllabusData');
+    Route::get('/Reviewer/FinalExamination/list/{coursework}/{id}/', [
+'as' => 'create_final_list', 'uses' => 'Dean\Dean\D_FinalExamController@create_final_list']);
     Route::get('/Reviewer/FinalExamination/question/{coursework}/{id}/', [
     'as' => 'createQuestion', 'uses' => 'Dean\Dean\D_FinalExamController@create_question']);
     

@@ -554,6 +554,7 @@ class CourseController extends Controller
 
     public function storeCourses(Request $request)
     {
+
         $course_type = "Normal";
         $count = $request->get('count');
         $failed = "";
@@ -562,7 +563,7 @@ class CourseController extends Controller
         $repeat_newLine_failed = "";
         $repeat_data_failed = "";
         for($i=0;$i<=$count;$i++){
-            // echo "<br/>".$i."<br/>";
+        //     // echo "<br/>".$i."<br/>";
             $subject_code   = $request->get('subject_code'.$i);
             $subject_name   = $request->get('subject_name'.$i);
             $semester_name  = $request->get('semester'.$i);
@@ -574,7 +575,6 @@ class CourseController extends Controller
             $programme_name = $request->get('programme'.$i);
             $timetable      = $request->get('timetable'.$i);
             $programme      = Programme::where('programme_name', '=', $programme_name)->first();
-
             $subject = DB::table('subjects')
                     ->select('subjects.*')
                     ->where('subjects.subject_code', '=', $subject_code)
@@ -795,6 +795,7 @@ class CourseController extends Controller
                     'approved_by'       => $approved_staff[0]->id,
                     'status'            => "Active",
                 ]);
+
                 $course->save();
                 $course_id = $course->course_id;
                 $classList = explode(';',$timetable);
@@ -816,8 +817,8 @@ class CourseController extends Controller
                     ]);
                     $insertTT->save();
                 }
-                return redirect()->back()->with('success','Data Added');
             }
+            return redirect()->back()->with('success','Data Added');
         }
     }
 

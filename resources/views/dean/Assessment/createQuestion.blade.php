@@ -380,13 +380,9 @@ $option1 = "id='selected-sidebar'";
                         <button onclick="w3_close()" class="button_close"><i class="fa fa-times" aria-hidden="true"></i></button>
                     </div>
                   <ul class="sidebar-action-ul">
-                      <a id="checkAction"><li class="sidebar-action-li"><i class="fa fa-fast-backward" style="padding: 0px 10px;" aria-hidden="true"></i>Previous of Assessment List</li></a>
-                      <a id="open_folder"><li class="sidebar-action-li"><i class="fa fa-folder" style="padding: 0px 10px;" aria-hidden="true"></i>Make a New Assessment</li></a>
-                      @if((count($assessments)!=0))
                       <p class="title_method">Download</p>
                         <a id="checkDownloadAction"><li class="sidebar-action-li"><i class="fa fa-check-square-o" style="padding: 0px 10px;" aria-hidden="true"></i>Checked Item</li></a>
                         <a href='{{$character}}/assessment/AllZipFiles/{{$course[0]->course_id}}_{{$question}}/All'><li class="sidebar-action-li"><i class="fa fa-download" style="padding: 0px 10px;" aria-hidden="true"></i>All Result</li></a>
-                      @endif
                   </ul>
                 </div>
               @endif
@@ -408,7 +404,7 @@ $option1 = "id='selected-sidebar'";
                 </button>
             </div>
             @endif
-            <h5 style="position:relative;left: 10px;margin-top: -15px;">Assessment List</h5>
+            <!-- <h5 style="position:relative;left: 10px;margin-top: -15px;">Assessment List</h5>
             <div style="overflow-x: auto;padding:0px 10px 5px 10px;">
             <table style="text-align: left;box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);border:none;" id="dtBasicExample">
               <thead>
@@ -447,11 +443,11 @@ $option1 = "id='selected-sidebar'";
               </tbody>
             </table>
             <input type="hidden" id="main_id" value="<?php echo $main_id?>">
-            </div>
-            <hr style="margin: 20px 5px 10px 5px;background-color:black;">
-            <h5 style="position:relative;left: 10px;">Question & Solution</h5>
+            </div> -->
+            <!-- <hr style="margin: 20px 5px 10px 5px;background-color:black;"> -->
+            <!-- <h5 style="position:relative;left: 10px;">Question & Solution</h5> -->
             <div class="details" style="padding: 0px 5px 5px 5px;">
-              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -10px;">
+              <div class="col-md-6 row" style="padding:0px 20px;position: relative;top: -25px;">
                   <div class="col-1 align-self-center" style="padding: 15px 0px 0px 2%;">
                       <p class="text-center align-self-center" style="margin: 0px;padding:0px;font-size: 20px;width: 30px!important;border-radius: 50%;background-color: #0d2f81;color: gold;">
                           <i class="fa fa-search" aria-hidden="true" style="font-size: 20px;"></i>
@@ -474,7 +470,7 @@ $option1 = "id='selected-sidebar'";
                   </div>
               </div>
               
-              <div class="row" id="assessments" style="margin-top: -10px;">
+              <div class="row" id="assessments" style="margin-top: -25px;">
               <?php
               $i=0;
               ?>

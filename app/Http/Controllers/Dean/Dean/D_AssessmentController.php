@@ -700,6 +700,13 @@ class D_AssessmentController extends Controller
                      ->get();
         }
 
+        $group_assessments = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $id)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('assessments.assessment')
+                            ->get();
+
         $assessments = DB::table('assessments')
                     ->select('assessments.*')
                     ->where('course_id', '=', $id)
@@ -727,9 +734,34 @@ class D_AssessmentController extends Controller
         //          ->get();
 
         if(count($course)>0){
-            return view('dean.Reviewer.Assessment.viewAssessment',compact('course','assessments','action','moderator_person_name','verified_person_name'));
+            return view('dean.Reviewer.Assessment.viewAssessment',compact('course','assessments','group_assessments','action','moderator_person_name','verified_person_name'));
         }else{
             return redirect()->back();
+        }
+    }
+
+    public static function getCoursework($course_id,$question)
+    {
+
+        $sample_stored = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $course_id)
+                            ->where('assessment', '=', $question)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('sample_stored')
+                            ->get();
+        foreach($sample_stored as $row){
+            $assessment_list = DB::table('assessment_list')
+                            ->select('assessment_list.*')
+                            ->where('assessment_list.ass_id', '=', $row->ass_id)
+                            ->where('assessment_list.status', '=', 'Active')
+                            ->groupBy('assessment_list.ass_id')
+                            ->get();
+            if(count($assessment_list)>0){
+                return "true";
+            }else{
+                return "false";
+            }
         }
     }
 
@@ -776,14 +808,144 @@ class D_AssessmentController extends Controller
                     ->orderBy('assessments.assessment_name')
                     ->get();
 
+        $group_assessments = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $id)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('assessments.assessment')
+                            ->get();
+
+        $lecturer_result = DB::table('assessment_result_students')
+                 ->join('assessments', 'assessments.ass_id', '=', 'assessment_result_students.ass_id')
+                 ->select('assessment_result_students.student_id','assessments.assessment')
+                 ->where('assessments.course_id', '=', $id)
+                 ->where('assessment_result_students.submitted_by','=', 'Lecturer')
+                 ->where('assessment_result_students.status','=','Active')
+                 ->groupBy('assessment_result_students.ass_id')
+                 ->groupBy('assessment_result_students.student_id')
+                 ->get();
+
+        $ass_id = array();
+        $count = array();
+        foreach ($group_assessments as $group) {
+            $sample_stored = DB::table('assessments')
+                            ->select('assessments.*')
+                            ->where('course_id', '=', $id)
+                            ->where('assessment', '=', $group->assessment)
+                            ->where('status', '=', 'Active')
+                            ->groupBy('sample_stored')
+                            ->orderBy('assessments.assessment_name')
+                            ->get();
+            foreach($sample_stored as $ss){
+                array_push($ass_id,$ss->ass_id);
+            }
+            array_push($count,[count($sample_stored),$sample_stored[0]->assessment]);
+        }
+
+        $assessment_list = DB::table('assessment_list')
+                    ->join('assessments', 'assessments.ass_id', '=', 'assessment_list.ass_id')
+                    ->select('assessment_list.ass_id','assessments.assessment')
+                    ->where('assessments.course_id', '=', $id)
+                    ->where('assessment_list.status', '=', 'Active')
+                    ->groupBy('assessment_list.ass_id')
+                    ->get();
+
         if(count($course)>0){
             $path = storage_path('private/syllabus/'.$course[0]->syllabus);
             $array = (new syllabusRead)->toArray($path);
-            return response()->json([$array[0],$assessments]);
+            return response()->json([$array[0],$assessments,$assessment_list,$ass_id,$count,$lecturer_result]);
             // return response()->json($array[0]);
         }else{
             return redirect()->back();
-        }      
+        }  
+    }
+
+
+    public function create_assessment_list($id,$coursework,$question)
+    {
+        $user_id       = auth()->user()->user_id;
+        $staff_dean    = Staff::where('user_id', '=', $user_id)->firstOrFail();
+        $faculty_id    = $staff_dean->faculty_id;
+        $department_id = $staff_dean->department_id;
+
+        if(auth()->user()->position=="Dean"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('faculty.faculty_id','=',$faculty_id)
+                     ->get();
+        }else if(auth()->user()->position=="HoD"){
+            $course = DB::table('courses')
+                     ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                     ->join('programmes', 'programmes.programme_id', '=', 'subjects.programme_id')
+                     ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                     ->join('departments', 'departments.department_id', '=', 'programmes.department_id')
+                     ->join('faculty', 'faculty.faculty_id', '=', 'departments.faculty_id')
+                     ->join('staffs', 'staffs.id','=','courses.lecturer')
+                     ->join('users', 'staffs.user_id', '=' , 'users.user_id')
+                     ->select('courses.*','subjects.*','semesters.*','staffs.*','users.*','programmes.*','faculty.*')
+                     ->where('courses.course_id', '=', $id)
+                     ->where('departments.department_id','=',$department_id)
+                     ->get();
+        }
+
+        $assessments = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->orderBy('assessments.assessment_name')
+                    ->get();
+
+        $mark = 0;
+        foreach ($assessments as $row){
+            $mark = $mark+$row->coursework;
+        }
+
+        $previous_semester = DB::table('courses')
+                    ->join('subjects', 'courses.subject_id', '=', 'subjects.subject_id')
+                    ->join('semesters', 'courses.semester', '=', 'semesters.semester_id')
+                    ->select('subjects.*','courses.*','semesters.*')
+                    ->where('subjects.subject_id', '=', $course[0]->subject_id)
+                    ->where('courses.course_id','!=',$id)
+                    ->where('courses.status', '=', 'Active')
+                    ->orderByDesc('courses.semester')
+                    ->get();
+
+        $group_assessments = DB::table('assessments')
+                    ->join('courses', 'courses.course_id', '=', 'assessments.course_id')
+                    ->select('assessments.*','courses.*')
+                    ->where('courses.subject_id','=',$course[0]->subject_id)
+                    ->where('assessments.assessment', '=', $question)
+                    ->where('assessments.status', '=', 'Active')
+                    ->groupBy('assessments.course_id')
+                    ->get();
+
+        $TP_Ass = DB::table('tp_assessment_method')
+                  ->select('tp_assessment_method.*')
+                  ->where('course_id', '=', $id)
+                  ->get();
+
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+
+        if(count($course)>0){
+            return view('dean.Reviewer.Assessment.createAssList',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework','sample_stored'));
+        }else{
+            return redirect()->back();
+        }
     }
 
     public function create_question($id,$coursework,$question)
@@ -858,8 +1020,16 @@ class D_AssessmentController extends Controller
                   ->where('course_id', '=', $id)
                   ->get();
 
+        $sample_stored = DB::table('assessments')
+                    ->select('assessments.*')
+                    ->where('course_id', '=', $id)
+                    ->where('assessment', '=', $question)
+                    ->where('status', '=', 'Active')
+                    ->groupBy('sample_stored')
+                    ->get();
+
         if(count($course)>0){
-            return view('dean.Reviewer.Assessment.createQuestion',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework'));
+            return view('dean.Reviewer.Assessment.createQuestion',compact('course','mark','question','assessments','previous_semester','group_assessments','TP_Ass','coursework','sample_stored'));
         }else{
             return redirect()->back();
         }
@@ -1108,13 +1278,15 @@ class D_AssessmentController extends Controller
         if($value!=""){
             $assessments = DB::table('assessments')
                         ->select('assessments.*')
-                        ->where('assessments.assessment_name','LIKE','%'.$value.'%')
+                        ->where('assessments.sample_stored','LIKE','%'.$value.'%')
                         ->where('assessments.assessment', '=', $question)
                         ->where('assessments.status', '=', 'Active')
                         ->where('assessments.course_id','=',$course_id)
+                        ->groupBy('assessments.sample_stored')
                         ->orderBy('assessments.assessment_name')
                         ->orderBy('assessments.ass_id')
                         ->get();
+
             if(count($assessments)>0) {
                 foreach ($assessments as $row) {
                     $result .= '<div class="col-12 row align-self-center" id="course_list">';
@@ -1127,7 +1299,7 @@ class D_AssessmentController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -1144,6 +1316,7 @@ class D_AssessmentController extends Controller
                     ->where('course_id', '=', $course_id)
                     ->where('assessment', '=', $question)
                     ->where('status', '=', 'Active')
+                    ->groupBy('assessments.sample_stored')
                     ->orderBy('assessments.assessment_name')
                     ->orderBy('assessments.ass_id')
                     ->get();
@@ -1160,7 +1333,7 @@ class D_AssessmentController extends Controller
                     $result .= '<img src="'.url('image/file.png').'" width="20px" height="25px"/>';
                     $result .= '</div>';
                     $result .= '<div class="col-10" id="course_name">';
-                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->assessment_name.'</b></p>';
+                    $result .= '<p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>'.$row->sample_stored.'</b></p>';
                     $result .= '</div>';
                     $result .= '</a>';
                     $result .= '</div>';
@@ -1262,7 +1435,7 @@ class D_AssessmentController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/Reviewer/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/Reviewer/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/Reviewer/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$assessments->sample_stored.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/Reviewer/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';
@@ -1319,7 +1492,7 @@ class D_AssessmentController extends Controller
                             $result .= '<div class="checkbox_style align-self-center">';
                             $result .= '<input type="checkbox" value="'.$row->ass_li_id.'_'.$row->ass_type.'" class="group_'.$row_group->ass_type.' group_download">';
                             $result .= '</div>';
-                            $result .= '<a href="'.$character.'/Reviewer/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$assessments->assessment_name.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/Reviewer/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
+                            $result .= '<a href="'.$character.'/Reviewer/images/assessment/'.$row->ass_document.'" data-toggle="lightbox" data-gallery="example-gallery" class="col-11 row" style="padding:10px 0px;margin-left:5px;color:#0d2f81;border:0px solid black;" id="show_image_link" data-title="'.$course[0]->semester_name.' : '.$assessments->sample_stored.' / '.$row_group->ass_type.' / '.$row->ass_name.' <br> <a href='.$character."/Reviewer/assessment/view/whole_paper/".$row->ass_id.' class='."full_question".' target='."_blank".'>Whole paper</a>">';
                             $result .= '<div class="col-1" style="position: relative;top: -2px;">';
                               $result .= '<img src="'.url('image/img_icon.png').'" width="25px" height="20px"/>';
                             $result .= '</div>';

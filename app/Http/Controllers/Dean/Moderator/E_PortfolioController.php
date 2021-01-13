@@ -46,6 +46,7 @@ class E_PortfolioController extends Controller
                     ->where('course_id', '=', $id)
                     ->where('status', '=', 'Active')
                     ->orderBy('assessments.assessment_name')
+                    ->groupBy('assessments.sample_stored')
                     ->get();
 
         $assessment_list = DB::table('assessment_list')
@@ -73,9 +74,8 @@ class E_PortfolioController extends Controller
                     ->get();
 
         $assessment_final = DB::table('assessment_final')
-        			->join('ass_final','ass_final.fx_id','=','assessment_final.fx_id')
-                    ->select('assessment_final.*','ass_final.*')
-                    ->where('ass_final.course_id', '=', $id)
+                    ->select('assessment_final.*')
+                    ->where('assessment_final.course_id', '=', $id)
                     ->where('assessment_final.status', '=', 'Active')
                     ->get();
 
@@ -151,17 +151,18 @@ class E_PortfolioController extends Controller
                     ->where('course_id', '=', $id)
                     ->where('status', '=', 'Active')
                     ->orderBy('assessments.assessment_name')
+                    ->groupBy('assessments.sample_stored')
                     ->get();
 
         $assessment_list = DB::table('assessment_list')
-        			->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
+                    ->join('assessments','assessments.ass_id','=','assessment_list.ass_id')
                     ->select('assessment_list.*','assessments.*')
                     ->where('assessment_list.status', '=', 'Active')
                     ->where('assessments.course_id', '=', $id)
                     ->get();
 
         $lecturer_result = DB::table('assessment_result_students')
-        		 ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
+                 ->join('assessments','assessments.ass_id','=','assessment_result_students.ass_id')
                  ->select('assessment_result_students.*','assessments.*')
                  ->where('assessments.course_id', '=', $id)
                  ->where('assessment_result_students.submitted_by','=', 'Lecturer')
@@ -178,9 +179,8 @@ class E_PortfolioController extends Controller
                     ->get();
 
         $assessment_final = DB::table('assessment_final')
-        			->join('ass_final','ass_final.fx_id','=','assessment_final.fx_id')
-                    ->select('assessment_final.*','ass_final.*')
-                    ->where('ass_final.course_id', '=', $id)
+                    ->select('assessment_final.*')
+                    ->where('assessment_final.course_id', '=', $id)
                     ->where('assessment_final.status', '=', 'Active')
                     ->get();
 
@@ -461,7 +461,7 @@ class E_PortfolioController extends Controller
     	foreach($assessments as $row){
 
     		$table->addRow(1);
-	    	$table->addCell(2000,$cellRowNorSpan)->addText($num.'. '.$row->assessment_name,$fontStyle,$noSpaceAndLeft);
+	    	$table->addCell(2000,$cellRowNorSpan)->addText($num.'. '.$row->sample_stored,$fontStyle,$noSpaceAndLeft);
 	    	$table->addCell(4000,$styleCell)->addText('a) Moderated Question(s)',Null,$noSpaceAndLeft);
 	    	$question = 0;
 	    	foreach($assessment_list as $row_list){

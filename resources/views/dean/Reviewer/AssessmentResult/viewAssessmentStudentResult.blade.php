@@ -164,7 +164,7 @@ $option4 = "id='selected-sidebar'";
     <div class="row" style="padding: 10px 10px 5px 10px;">
         <div class="col-md-12">
              <p class="page_title">{{$question}} ( R )</p>
-             @if((count($assessments)!=0))
+             @if((count($sample_stored)!=0))
              <button onclick="w3_open()" class="button_open" id="button_open" style="float: right;margin-top: 10px;"><i class="fa fa-ellipsis-h" aria-hidden="true"></i></button>
                 <div id="action_sidebar" class="w3-animate-right" style="display: none">
                     <div style="text-align: right;padding:10px;">
@@ -216,7 +216,7 @@ $option4 = "id='selected-sidebar'";
               <?php
               $i=0;
               ?>
-              @foreach($assessments as $row)
+              @foreach($sample_stored as $row)
                 <div class="col-12 row align-self-center" id="course_list">
                     <div class="col-12 row align-self-center" style="padding-left: 20px;">
                       <div class="checkbox_style align-self-center">
@@ -227,7 +227,7 @@ $option4 = "id='selected-sidebar'";
                           <img src="{{url('image/file.png')}}" width="20px" height="25px"/>
                         </div>
                         <div class="col-10" id="course_name">
-                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->assessment_name}}</b></p>
+                          <p style="margin: 0px 0px 0px 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" id="file_name"><b>{{$row->sample_stored}}</b></p>
                         </div>
                       </a>
                     </div>

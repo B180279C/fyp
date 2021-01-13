@@ -177,7 +177,7 @@ $(document).ready(function() {
               				@foreach($assessments as $row)
               					<tr>
               						<td rowspan="3" class="td" style="border-bottom: 1px solid grey;">
-              							<b>{{$num}}. {{$row->assessment_name}}</b>
+              							<b>{{$num}}. {{$row->sample_stored}}</b>
               						</td>
               						<td class="td">a) Moderated Question(s)</td>
               						<td class="td">

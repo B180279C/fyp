@@ -188,16 +188,17 @@ $option1 = "id='selected-sidebar'";
 
         $(document).on('click', '.plus', function(){
             var id = $(this).attr("id"); 
-            $('#assessment_list_'+id).slideToggle("slow", function(){
-              if($('#assessment_list_'+id).is(":visible")){
-                $('#icon_'+id).removeClass('fa fa-plus');
-                $('#icon_'+id).addClass('fa fa-minus');
-              }else{
-                $('#icon_'+id).removeClass('fa fa-minus');
-                $('#icon_'+id).addClass('fa fa-plus');
-              }
+            id = id.split("_");
+            $('#assessment_list_'+id[1]).slideToggle("slow", function(){
+            if($('#assessment_list_'+id[1]).is(":visible")){
+              $('#icon_'+id[1]).removeClass('fa fa-plus');
+              $('#icon_'+id[1]).addClass('fa fa-minus');
+            }else{
+              $('#icon_'+id[1]).removeClass('fa fa-minus');
+              $('#icon_'+id[1]).addClass('fa fa-plus');
+            }
             });
-          });
+        });
 
         $(document).on('click', '#open_folder', function(){
             $('#openFolderModal').modal('show');
@@ -440,7 +441,7 @@ $option1 = "id='selected-sidebar'";
                         // console.log(ass_rs_id[1]+" Checkbox is unchecked.");
                       }
                   });
-                    $('[data-toggle="lightbox"]').click(function(event) {
+                  $('[data-toggle="lightbox"]').click(function(event) {
                   event.preventDefault();
                   $(this).ekkoLightbox({
                     type: 'image',
@@ -561,7 +562,7 @@ $option1 = "id='selected-sidebar'";
                     <div class="checkbox_group_style">
                       <input type="checkbox" id='group_{{$row_group->ass_type}}' class="group_checkbox">
                     </div>
-                    <h5 class="group plus" id="{{$i}}">{{$row_group->ass_type}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
+                    <h5 class="group plus" id="plus_{{$i}}">{{$row_group->ass_type}} (<i class="fa fa-minus" aria-hidden="true" id="icon_{{$i}}" style="color: #0d2f81;position: relative;top: 2px;"></i>)</h5>
                   </div>
                   <div id="assessment_list_{{$i}}" class="col-12 row align-self-center list" style="margin-left:0px;padding:0px;">
                 @foreach($assessment_list as $row)

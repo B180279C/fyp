@@ -214,7 +214,7 @@ $(document).on('click', '#checkDownloadAction', function(){
             <a href="{{$character}}/Moderator/course/{{$course[0]->course_id}}">{{$course[0]->semester_name}} : {{$course[0]->short_form_name}} / {{$course[0]->subject_code}} {{$course[0]->subject_name}} ( {{$course[0]->name}} )</a>/
             <a href="{{$character}}/Moderator/viewAssessment/{{$course[0]->course_id}}">Continuous Assessment</a>/
             <a href="{{$character}}/Moderator/AssessmentResult/{{$course[0]->course_id}}/question/{{$assessments->assessment}}">{{$assessments->assessment}} ( R )</a>/
-            <a href="{{$character}}/Moderator/AssessmentResult/studentResult/{{$assessments->ass_id}}/">{{$assessments->assessment_name}}</a>/
+            <a href="{{$character}}/Moderator/AssessmentResult/studentResult/{{$assessments->ass_id}}/">{{$assessments->sample_stored}}</a>/
             <span class="now_page">{{$assessment_result_student->student_id}}</span>/
         </p>
         <hr class="separate_hr">
