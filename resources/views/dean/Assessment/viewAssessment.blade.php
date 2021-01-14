@@ -314,14 +314,13 @@ function ModerationForm(actionCA_id){
                 <?php
                 $mark = 0;
                 foreach($group_assessments as $group){
-                  $question_get =  App\Http\Controllers\Dean\AssessmentController::getCoursework($group->course_id,$group->assessment);
                   foreach($assessments as $row){
-                    if($group->assessment==$row->assessment){
-                      if($question_get=="true"){
-                        $mark = $mark+$row->coursework;
-                      }else{
-                        $mark = $mark;
-                      }
+                  $question_get =  App\Http\Controllers\Dean\AssessmentController::getCoursework($group->course_id,$group->assessment,$row->ass_id);
+                  $string = explode('_',$question_get);
+                    if(($group->assessment==$row->assessment)&&($string[0]==$row->ass_id)){
+                      $mark = $mark+$string[1];
+                    }else{
+                      $mark = $mark;
                     }
                   }
                 }
