@@ -740,29 +740,33 @@ class D_AssessmentController extends Controller
         }
     }
 
-    public static function getCoursework($course_id,$question)
+    public static function getCoursework($course_id,$question,$ass_id)
     {
 
         $sample_stored = DB::table('assessments')
-                            ->select('assessments.*')
+                            ->select('assessments.*', DB::raw('SUM(coursework) as sum_work'))
                             ->where('course_id', '=', $course_id)
                             ->where('assessment', '=', $question)
                             ->where('status', '=', 'Active')
                             ->groupBy('sample_stored')
                             ->get();
         foreach($sample_stored as $row){
-            $assessment_list = DB::table('assessment_list')
+            
+            if($row->ass_id==$ass_id){
+                $assessment_list = DB::table('assessment_list')
                             ->select('assessment_list.*')
                             ->where('assessment_list.ass_id', '=', $row->ass_id)
                             ->where('assessment_list.status', '=', 'Active')
                             ->groupBy('assessment_list.ass_id')
                             ->get();
-            if(count($assessment_list)>0){
-                return "true";
-            }else{
-                return "false";
+                if(count($assessment_list)>0){
+                    return $assessment_list[0]->ass_id."_".$row->sum_work;
+                }else{
+                    return "false";
+                }
             }
         }
+        return count($sample_stored);
     }
 
     public function getSyllabusData(Request $request)
